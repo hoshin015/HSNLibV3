@@ -31,8 +31,10 @@ float4 main(VS_OUT pin) : SV_TARGET
     // èoóÕÇ∑ÇÈêFÇï‚ê≥Ç∑ÇÈ
     contribution /= luminance;
     color.rgb *= contribution * intensity;
-    
+
+#if USE_LinearWorkflow
     color.rgb = pow(color.rgb, 2.2f);
-    
+#endif
+
     return color;
 }

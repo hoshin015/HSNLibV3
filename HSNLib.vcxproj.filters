@@ -1,0 +1,856 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="シェーダーファイル">
+      <UniqueIdentifier>{2038c7ac-d674-4263-9908-800fa4c3fbf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib">
+      <UniqueIdentifier>{0e593af1-d0a7-49cb-b352-7b066e190265}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\Graphics">
+      <UniqueIdentifier>{e83f7f88-9afc-4c1c-b6e3-b182bf8ef8b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\Misc">
+      <UniqueIdentifier>{61c2a66f-6026-4327-8c3f-2282ea33ac85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\ImGui">
+      <UniqueIdentifier>{043d27e8-4084-46d1-9b00-18cb1071ade2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\2D">
+      <UniqueIdentifier>{4fa73d85-0a97-4906-b015-3dd435678867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\Text">
+      <UniqueIdentifier>{e6197c73-c549-4502-a30c-67d7157b29eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\Input">
+      <UniqueIdentifier>{56925361-b0b6-4a07-974b-1918d941bce6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\3D">
+      <UniqueIdentifier>{aba23948-3025-4b57-8331-958ce0e51259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\Effekseer">
+      <UniqueIdentifier>{48ba55f6-8e61-427f-b64d-fd19131db3de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\Audio">
+      <UniqueIdentifier>{0ce5ed7c-a0a5-4627-9445-11c20f275995}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\Math">
+      <UniqueIdentifier>{7cb0b190-8a88-4e15-ba52-1699e465afeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="0_ImGui">
+      <UniqueIdentifier>{86292678-a811-4e4c-996c-2b213c66e430}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source">
+      <UniqueIdentifier>{d1302a82-3fac-457e-b0c9-aed82139a92b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\Scene">
+      <UniqueIdentifier>{aa009b92-e711-45dd-9fc1-c167ee95d878}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="0_ImGui\Implot">
+      <UniqueIdentifier>{50f7a556-0853-4996-bb9b-48a7760a9e07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\Game">
+      <UniqueIdentifier>{54e4a433-db32-47d2-bcc0-fe70f66f2fbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\Game\Object">
+      <UniqueIdentifier>{1e102edc-c251-40c7-8dea-cae2eeed7405}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\Game\Object\Base">
+      <UniqueIdentifier>{a8ee7d03-722d-464d-8e30-c7bee80e6b5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\Game\Object\Stage">
+      <UniqueIdentifier>{7f60a7ea-8b06-4384-aff6-768793116144}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\Resource">
+      <UniqueIdentifier>{e6e12837-eabf-4bc4-8adf-687580eef333}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\Resource\Model">
+      <UniqueIdentifier>{a76c1e19-c574-4437-9976-19467c11c445}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\Resource\Sprite">
+      <UniqueIdentifier>{b3468726-47c0-4758-87ea-6d67d103efbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\Shadow">
+      <UniqueIdentifier>{a85db3d2-36c5-4dff-a6a1-b0863a8d8590}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\Bloom">
+      <UniqueIdentifier>{912922ba-fb53-4da4-a5a3-3de2c29e978f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\SkyMap">
+      <UniqueIdentifier>{e7874614-efc6-44d2-a0b3-52568be3a16e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\OffScreen">
+      <UniqueIdentifier>{94f2ee0e-d7b2-445d-bf42-9d92361bfe9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\Particle">
+      <UniqueIdentifier>{3794878a-d848-4ebc-9325-c394c153a4ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\Phong">
+      <UniqueIdentifier>{a8cf39ef-27ea-4d1d-bedc-82baf9d95c28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\SkinnedMesh">
+      <UniqueIdentifier>{289c68e9-53d2-4644-bcc7-03f397d53d09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\Debug">
+      <UniqueIdentifier>{0a313853-5174-4328-893a-c35f39d09ca0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\Sprite">
+      <UniqueIdentifier>{86c647d5-6241-4ac5-8dce-61a80de24f90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\Particle">
+      <UniqueIdentifier>{488a362e-0435-4850-bb82-397f4e062725}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\Game\Object\Player">
+      <UniqueIdentifier>{58d92753-9a37-419d-86e7-4d846f3733ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\Water">
+      <UniqueIdentifier>{382ddfaa-22a6-4bfe-8798-c117deb4db87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\UserInterface">
+      <UniqueIdentifier>{1d62c75f-1e8d-4230-b1a8-c5cf6c60615a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Library\Graphics\Graphics.cpp">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ImGui\ImGuiManager.cpp">
+      <Filter>1_HSNLib\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\AdapterReader.cpp">
+      <Filter>1_HSNLib\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ErrorLogger.cpp">
+      <Filter>1_HSNLib\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Framework.cpp">
+      <Filter>1_HSNLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\WinMain.cpp">
+      <Filter>1_HSNLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\2D\Primitive2D.cpp">
+      <Filter>1_HSNLib\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Graphics\Shader.cpp">
+      <Filter>1_HSNLib\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\2D\Sprite.cpp">
+      <Filter>1_HSNLib\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Text\Text.cpp">
+      <Filter>1_HSNLib\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Input\InputManager.cpp">
+      <Filter>1_HSNLib\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\2D\GraphicsSpriteBatch.cpp">
+      <Filter>1_HSNLib\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\SkinnedMesh.cpp">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Graphics\Texture.cpp">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\Camera.cpp">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Effekseer\Effect.cpp">
+      <Filter>1_HSNLib\Effekseer</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Effekseer\EffectManager.cpp">
+      <Filter>1_HSNLib\Effekseer</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Audio\AudioManager.cpp">
+      <Filter>1_HSNLib\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\DebugPrimitive.cpp">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\Sprite3D.cpp">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Text\FontTexture.cpp">
+      <Filter>1_HSNLib\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Text\DispString.cpp">
+      <Filter>1_HSNLib\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\ResourceManager.cpp">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\LineRenderer.cpp">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\2D\UVScrollSprite.cpp">
+      <Filter>1_HSNLib\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Graphics\FrameBuffer.cpp">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Graphics\FullScreenQuad.cpp">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\2D\GaussianBlurSprite.cpp">
+      <Filter>1_HSNLib\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\SkyMap.cpp">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\2D\MaskSprite.cpp">
+      <Filter>1_HSNLib\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\GraphEditor.cpp">
+      <Filter>0_ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\ImCurveEdit.cpp">
+      <Filter>0_ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\ImGradient.cpp">
+      <Filter>0_ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui.cpp">
+      <Filter>0_ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_demo.cpp">
+      <Filter>0_ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_draw.cpp">
+      <Filter>0_ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_impl_dx11.cpp">
+      <Filter>0_ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_impl_win32.cpp">
+      <Filter>0_ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_tables.cpp">
+      <Filter>0_ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\imgui_widgets.cpp">
+      <Filter>0_ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\ImGuizmo.cpp">
+      <Filter>0_ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\ImSequencer.cpp">
+      <Filter>0_ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Math\Math.cpp">
+      <Filter>1_HSNLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\Implot\implot.cpp">
+      <Filter>0_ImGui\Implot</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\Implot\implot_demo.cpp">
+      <Filter>0_ImGui\Implot</Filter>
+    </ClCompile>
+    <ClCompile Include="External\ImGui\Implot\implot_items.cpp">
+      <Filter>0_ImGui\Implot</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Resource\Model\ModelResource.cpp">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Resource\Model\LoadFbx.cpp">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Scene.cpp">
+      <Filter>2_Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneManager.cpp">
+      <Filter>2_Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneModelEditor.cpp">
+      <Filter>2_Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneTitle.cpp">
+      <Filter>2_Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneSpriteEditor.cpp">
+      <Filter>2_Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneTest.cpp">
+      <Filter>2_Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Resource\Model\LoadModel.cpp">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\Light.cpp">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\3D\LightManager.cpp">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Graphics\RenderContext.cpp">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\ModelEditorObject.cpp">
+      <Filter>2_Source\Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\TestStatic.cpp">
+      <Filter>2_Source\Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Base\AnimatedModel.cpp">
+      <Filter>2_Source\Game\Object\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Base\AnimatedObject.cpp">
+      <Filter>2_Source\Game\Object\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Base\BaseModel.cpp">
+      <Filter>2_Source\Game\Object\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Base\BaseObject.cpp">
+      <Filter>2_Source\Game\Object\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Base\StaticModel.cpp">
+      <Filter>2_Source\Game\Object\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Base\StaticObject.cpp">
+      <Filter>2_Source\Game\Object\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Math\Collision.cpp">
+      <Filter>1_HSNLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Stage\StageManager.cpp">
+      <Filter>2_Source\Game\Object\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Stage\StageMain.cpp">
+      <Filter>2_Source\Game\Object\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Graphics\Bloom.cpp">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Resource\Sprite\SpriteResource.cpp">
+      <Filter>1_HSNLib\Resource\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Resource\Sprite\LoadSprite.cpp">
+      <Filter>1_HSNLib\Resource\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Resource\Sprite\LoadImageFormat.cpp">
+      <Filter>1_HSNLib\Resource\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\TestAnimated.cpp">
+      <Filter>2_Source\Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Graphics\Shadow.cpp">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Particle\Particle.cpp">
+      <Filter>1_HSNLib\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Resource\Model\AnimationBindResource.cpp">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Particle\Emitter.cpp">
+      <Filter>1_HSNLib\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\ScenePlayer.cpp">
+      <Filter>2_Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Player\Player.cpp">
+      <Filter>2_Source\Game\Object\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Player\PlayerManager.cpp">
+      <Filter>2_Source\Game\Object\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Particle\EmitterManager.cpp">
+      <Filter>1_HSNLib\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UserInterface\UserInterface.cpp">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UserInterface\UiPause.cpp">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Library\Graphics\Graphics.h">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\ConsoleData.h">
+      <Filter>1_HSNLib\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ImGui\ImGuiManager.h">
+      <Filter>1_HSNLib\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\AdapterReader.h">
+      <Filter>1_HSNLib\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ErrorLogger.h">
+      <Filter>1_HSNLib\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Timer.h">
+      <Filter>1_HSNLib\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Framework.h">
+      <Filter>1_HSNLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\2D\Primitive2D.h">
+      <Filter>1_HSNLib\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\2D\Sprite.h">
+      <Filter>1_HSNLib\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Text\Text.h">
+      <Filter>1_HSNLib\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Input\InputManager.h">
+      <Filter>1_HSNLib\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\2D\GraphicsSpriteBatch.h">
+      <Filter>1_HSNLib\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\SkinnedMesh.h">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Graphics\Shader.h">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Graphics\Texture.h">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\Camera.h">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Effekseer\Effect.h">
+      <Filter>1_HSNLib\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Effekseer\EffectManager.h">
+      <Filter>1_HSNLib\Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\MemoryLeak.h">
+      <Filter>1_HSNLib\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Audio\AudioManager.h">
+      <Filter>1_HSNLib\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\DebugPrimitive.h">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\Sprite3D.h">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Text\FontTexture.h">
+      <Filter>1_HSNLib\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Text\DispString.h">
+      <Filter>1_HSNLib\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Text\FontEnum.h">
+      <Filter>1_HSNLib\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\ResourceManager.h">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\LineRenderer.h">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\2D\UVScrollSprite.h">
+      <Filter>1_HSNLib\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Graphics\FrameBuffer.h">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Graphics\FullScreenQuad.h">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\2D\GaussianBlurSprite.h">
+      <Filter>1_HSNLib\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\SkyMap.h">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\2D\MaskSprite.h">
+      <Filter>1_HSNLib\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\GraphEditor.h">
+      <Filter>0_ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imconfig.h">
+      <Filter>0_ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\ImCurveEdit.h">
+      <Filter>0_ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\ImGradient.h">
+      <Filter>0_ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imgui.h">
+      <Filter>0_ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imgui_impl_dx11.h">
+      <Filter>0_ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imgui_impl_win32.h">
+      <Filter>0_ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imgui_internal.h">
+      <Filter>0_ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\ImGuizmo.h">
+      <Filter>0_ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\ImSequencer.h">
+      <Filter>0_ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imstb_rectpack.h">
+      <Filter>0_ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imstb_textedit.h">
+      <Filter>0_ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\imstb_truetype.h">
+      <Filter>0_ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\ImZoomSlider.h">
+      <Filter>0_ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Math\Math.h">
+      <Filter>1_HSNLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Math\OperatorXMFloat3.h">
+      <Filter>1_HSNLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\Implot\implot.h">
+      <Filter>0_ImGui\Implot</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\Implot\implot_internal.h">
+      <Filter>0_ImGui\Implot</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Resource\Model\ModelResource.h">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Resource\Model\LoadFbx.h">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\RegisterNum.h">
+      <Filter>1_HSNLib\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\Scene.h">
+      <Filter>2_Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneManager.h">
+      <Filter>2_Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneModelEditor.h">
+      <Filter>2_Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneTitle.h">
+      <Filter>2_Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneSpriteEditor.h">
+      <Filter>2_Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneTest.h">
+      <Filter>2_Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Resource\Model\LoadModel.h">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\Light.h">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\3D\LightManager.h">
+      <Filter>1_HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Graphics\RenderContext.h">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\ModelEditorObject.h">
+      <Filter>2_Source\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\TestStatic.h">
+      <Filter>2_Source\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Base\AnimatedModel.h">
+      <Filter>2_Source\Game\Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Base\AnimatedObject.h">
+      <Filter>2_Source\Game\Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Base\BaseModel.h">
+      <Filter>2_Source\Game\Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Base\BaseObject.h">
+      <Filter>2_Source\Game\Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Base\StaticModel.h">
+      <Filter>2_Source\Game\Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Base\StaticObject.h">
+      <Filter>2_Source\Game\Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Stage\Stage.h">
+      <Filter>2_Source\Game\Object\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Math\Collision.h">
+      <Filter>1_HSNLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Stage\StageManager.h">
+      <Filter>2_Source\Game\Object\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Stage\StageMain.h">
+      <Filter>2_Source\Game\Object\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Graphics\Bloom.h">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\MyCereal.h">
+      <Filter>1_HSNLib\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Resource\Sprite\SpriteResource.h">
+      <Filter>1_HSNLib\Resource\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Resource\Sprite\LoadSprite.h">
+      <Filter>1_HSNLib\Resource\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Resource\Sprite\LoadImageFormat.h">
+      <Filter>1_HSNLib\Resource\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\TestAnimated.h">
+      <Filter>2_Source\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Graphics\Shadow.h">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Particle\Particle.h">
+      <Filter>1_HSNLib\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Resource\Model\AnimationBindResource.h">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Particle\Emitter.h">
+      <Filter>1_HSNLib\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\ScenePlayer.h">
+      <Filter>2_Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Player\Player.h">
+      <Filter>2_Source\Game\Object\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Player\PlayerManager.h">
+      <Filter>2_Source\Game\Object\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Particle\EmitterManager.h">
+      <Filter>1_HSNLib\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UserInterface\UserInterface.h">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Easing.h">
+      <Filter>1_HSNLib\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UserInterface\UiPause.h">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Library\Icon\Icon.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Library\Shader\ColorFilter_PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ShadowMapCasterVS.hlsl">
+      <Filter>シェーダーファイル\Shadow</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\BloomFinalPass_PS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianBlur_PS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianBlurX_VS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianBlurY_VS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\LuminanceExtraction_PS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SkyMap_VS.hlsl">
+      <Filter>シェーダーファイル\SkyMap</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SkyMap_PS.hlsl">
+      <Filter>シェーダーファイル\SkyMap</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianAvgPs.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\FullScreenQuad_PS.hlsl">
+      <Filter>シェーダーファイル\OffScreen</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\FullScreenQuad_VS.hlsl">
+      <Filter>シェーダーファイル\OffScreen</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ShadowMapCasterStaticVS.hlsl">
+      <Filter>シェーダーファイル\Shadow</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\PhongPS.hlsl">
+      <Filter>シェーダーファイル\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\PhongVS.hlsl">
+      <Filter>シェーダーファイル\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\StaticPhongPS.hlsl">
+      <Filter>シェーダーファイル\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\StaticPhongVS.hlsl">
+      <Filter>シェーダーファイル\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SkinnedMesh_PS.hlsl">
+      <Filter>シェーダーファイル\SkinnedMesh</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SkinnedMesh_VS.hlsl">
+      <Filter>シェーダーファイル\SkinnedMesh</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SkinnedMeshPBR_PS.hlsl">
+      <Filter>シェーダーファイル\SkinnedMesh</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SkinnedMeshPBR_VS.hlsl">
+      <Filter>シェーダーファイル\SkinnedMesh</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GeometricPrimitive_PS.hlsl">
+      <Filter>シェーダーファイル\Debug</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GeometricPrimitive_VS.hlsl">
+      <Filter>シェーダーファイル\Debug</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Primitive2D_PS.hlsl">
+      <Filter>シェーダーファイル\Debug</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Primitive2D_VS.hlsl">
+      <Filter>シェーダーファイル\Debug</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Line_PS.hlsl">
+      <Filter>シェーダーファイル\Debug</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Line_VS.hlsl">
+      <Filter>シェーダーファイル\Debug</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\UVScroll_VS.hlsl">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Sprite3D_PS.hlsl">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Sprite3D_VS.hlsl">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SpritePS.hlsl">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SpriteVS.hlsl">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\UVScroll_PS.hlsl">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Mask_PS.hlsl">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Mask_VS.hlsl">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\FontTexture_PS.hlsl">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\FontTexture_VS.hlsl">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ParticlesGS.hlsl">
+      <Filter>シェーダーファイル\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ParticlesUpdateCS.hlsl">
+      <Filter>シェーダーファイル\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ParticlesInitCS.hlsl">
+      <Filter>シェーダーファイル\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ParticlesVS.hlsl">
+      <Filter>シェーダーファイル\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ParticlesPS.hlsl">
+      <Filter>シェーダーファイル\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ParticlesEmitCS.hlsl">
+      <Filter>シェーダーファイル\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\WaterPS.hlsl">
+      <Filter>シェーダーファイル\Water</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Library\Shader\Light.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\FilterFunctions.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Library\Shader\ShadowmapFunctions.hlsli">
+      <Filter>シェーダーファイル\Shadow</Filter>
+    </None>
+    <None Include="Library\Shader\ShadowmapCaster.hlsli">
+      <Filter>シェーダーファイル\Shadow</Filter>
+    </None>
+    <None Include="Library\Shader\GaussianBlur.hlsli">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </None>
+    <None Include="Library\Shader\SkyMap.hlsli">
+      <Filter>シェーダーファイル\SkyMap</Filter>
+    </None>
+    <None Include="Library\Shader\FullScreenQuad.hlsli">
+      <Filter>シェーダーファイル\OffScreen</Filter>
+    </None>
+    <None Include="Library\Shader\ShadowmapCasterStatic.hlsli">
+      <Filter>シェーダーファイル\Shadow</Filter>
+    </None>
+    <None Include="Library\Shader\Phong.hlsli">
+      <Filter>シェーダーファイル\Phong</Filter>
+    </None>
+    <None Include="Library\Shader\StaticPhong.hlsli">
+      <Filter>シェーダーファイル\Phong</Filter>
+    </None>
+    <None Include="Library\Shader\SkinnedMesh.hlsli">
+      <Filter>シェーダーファイル\SkinnedMesh</Filter>
+    </None>
+    <None Include="Library\Shader\SkinnedMeshPBR.hlsli">
+      <Filter>シェーダーファイル\SkinnedMesh</Filter>
+    </None>
+    <None Include="Library\Shader\GeometricPrimitive.hlsli">
+      <Filter>シェーダーファイル\Debug</Filter>
+    </None>
+    <None Include="Library\Shader\Primitive2D.hlsli">
+      <Filter>シェーダーファイル\Debug</Filter>
+    </None>
+    <None Include="Library\Shader\Line.hlsli">
+      <Filter>シェーダーファイル\Debug</Filter>
+    </None>
+    <None Include="Library\Shader\Sprite.hlsli">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </None>
+    <None Include="Library\Shader\Sprite3D.hlsli">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </None>
+    <None Include="Library\Shader\UVScroll.hlsli">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </None>
+    <None Include="Library\Shader\Mask.hlsli">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </None>
+    <None Include="Library\Shader\FontTexture.hlsli">
+      <Filter>シェーダーファイル\Sprite</Filter>
+    </None>
+    <None Include="Library\Shader\Particles.hlsli">
+      <Filter>シェーダーファイル\Particle</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,7 @@
+.vs/
+External/
+HSNLib/
+Data/
+x64/
+HSNLib.vcxproj.user
+imgui.ini

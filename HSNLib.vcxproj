@@ -253,6 +253,8 @@
     <ClCompile Include="Source\Game\Object\TestAnimated.cpp" />
     <ClCompile Include="Source\UserInterface\UserInterface.cpp" />
     <ClCompile Include="Source\UserInterface\UiPause.cpp" />
+    <ClCompile Include="Source\Game\Object\StateMachine\StateBase.cpp" />
+    <ClCompile Include="Source\Game\Object\StateMachine\StateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Easing.h" />
@@ -346,6 +348,8 @@
     <ClInclude Include="Source\Game\Object\TestAnimated.h" />
     <ClInclude Include="Source\UserInterface\UserInterface.h" />
     <ClInclude Include="Source\UserInterface\UiPause.h" />
+    <ClInclude Include="Source\Game\Object\StateMachine\StateBase.h" />
+    <ClInclude Include="Source\Game\Object\StateMachine\StateMachine.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc" />

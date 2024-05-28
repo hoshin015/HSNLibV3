@@ -34,7 +34,7 @@ private:
 private:
     DirectX::XMFLOAT3 velocity = { 0,0,0 };
     float moveSpeed = 3.0f;     // プレイヤーが１秒間に加速する加速度
-    float rot = 360;            // プレイヤーが１秒間に回転する角度
+    float rot = 720;            // プレイヤーが１秒間に回転する角度
 
     // 入力データ保管用
     using inputData = std::variant<bool, int, float, DirectX::XMFLOAT2>;

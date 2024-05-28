@@ -113,6 +113,9 @@
     <Filter Include="2_Source\UserInterface">
       <UniqueIdentifier>{1d62c75f-1e8d-4230-b1a8-c5cf6c60615a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="2_Source\Game\Object\StateMachine">
+      <UniqueIdentifier>{5cc900d7-b598-4cfa-84b1-f9a1ac90976e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -360,6 +363,12 @@
     </ClCompile>
     <ClCompile Include="Source\UserInterface\UiPause.cpp">
       <Filter>2_Source\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\StateMachine\StateMachine.cpp">
+      <Filter>2_Source\Game\Object\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\StateMachine\StateBase.cpp">
+      <Filter>2_Source\Game\Object\StateMachine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -635,6 +644,12 @@
     </ClInclude>
     <ClInclude Include="Source\UserInterface\UiPause.h">
       <Filter>2_Source\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\StateMachine\StateMachine.h">
+      <Filter>2_Source\Game\Object\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\StateMachine\StateBase.h">
+      <Filter>2_Source\Game\Object\StateMachine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

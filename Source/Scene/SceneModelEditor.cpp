@@ -376,6 +376,12 @@ void SceneModelEditor::DrawDebugGUI()
 
 			ModelResource::Animation& animationClip = modelObject->GetModel()->GetModelResource()->GetAnimationClips().at(animationClipIndex);
 
+			if(ImGui::Button("DoubleAnimationPlay"))
+			{
+				modelObject->SetDoubleCurrentAnimationIndex(1);
+				modelObject->SetIsDoubleAnimation(true);
+			}
+
 			ImGui::PushID(0);
 			ImGuiManager::Instance().InputText("name", animationClip.name);
 			ImGui::PopID();

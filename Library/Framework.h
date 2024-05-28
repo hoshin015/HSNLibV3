@@ -22,7 +22,7 @@ public:
 private:
 	HWND hwnd;
 
-	const wchar_t* windowName = L"HSNLibV2";
+	const wchar_t* windowName = L"HSNLibV3";
 	const int screenWidth = 1280;
 	const int screenHeight = 720;
 

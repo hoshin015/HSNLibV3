@@ -30,14 +30,21 @@ protected:
 	std::unique_ptr<AnimatedModel> model;
 
 	// --- アニメーションフラグ ---
-	ModelResource::KeyFrame keyFrame;		// 使用されるキーフレーム
-	int currentKeyFrame = 0;				// 現在のフレーム
-	int currentAnimationIndex = 0;			// 現在再生中のアニメーション番号
-	float currentAnimationSeconds = 0.0f;	// 現在再生中の秒数
+	ModelResource::KeyFrame keyFrame;				// 使用されるキーフレーム
+	int currentKeyFrame = 0;						// 現在のフレーム
+	int currentAnimationIndex = 0;					// 現在再生中のアニメーション番号
+	float currentAnimationSeconds = 0.0f;			// 現在再生中の秒数
 
-	bool animationLoopFlag = true;			// ループ再生するかどうか
-	bool animationEndFlag = false;			// アニメーションが最後のキーフレームに到達したかどうか
-	bool isPlayAnimation = true;			// アニメーションを再生中かどうか
+	bool animationLoopFlag = true;					// ループ再生するかどうか
+	bool animationEndFlag = false;					// アニメーションが最後のキーフレームに到達したかどうか
+	bool isPlayAnimation = true;					// アニメーションを再生中かどうか
+
+	// --- ダブルアニメーション用フラグ ---
+	bool isDoubleAnimations = false;				// 上半身別アニメーション使うかのフラグ
+	ModelResource::KeyFrame doubleKeyFrame;			// 上半身に使用されるキーフレーム
+	int doubleCurrentKeyFrame = 0;					// 上半身の現在のフレーム
+	int doubleCurrentAnimationIndex = 0;			// 上半身のアニメーション番号
+	float doubleCurrentAnimationSeconds = 0.0f;		// 上半身の現在再生中の秒数
 
 public:
 	int GetCurrentKeyFrame() { return currentKeyFrame; }
@@ -52,4 +59,7 @@ public:
 	void SetAnimationLoopFlag(bool b) { animationLoopFlag = b; }
 	void SetAnimationEndFlag(bool b) { animationEndFlag = b; }
 	void SetIsPlayAnimation(bool b) { isPlayAnimation = b; }
+
+	void SetIsDoubleAnimation(bool b) { isDoubleAnimations = b; }
+	void SetDoubleCurrentAnimationIndex(int index) { doubleCurrentAnimationIndex = index; }
 };

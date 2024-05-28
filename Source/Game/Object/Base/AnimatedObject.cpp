@@ -86,23 +86,76 @@ void AnimatedObject::UpdateAnimation()
 	// keyFrame設定
 	keyFrame = animation.sequence.at(currentKeyFrame);
 
-	//node の数だけ繰り返す
-	//size_t nodeCount = keyFrame.animKeyData.size();
-	//for (size_t nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
-	//{
-	//	// 現在の index の node を取得
-	//	ModelResource::AnimKeyData& keyData = keyFrame.animKeyData.at(nodeIndex);
-	//
-	//	// それぞれの値に対応する行列の作成
-	//	XMMATRIX S = XMMatrixScaling(keyData.scaling.x, keyData.scaling.y, keyData.scaling.z);
-	//	XMMATRIX R = XMMatrixRotationQuaternion(XMLoadFloat4(&keyData.rotation));
-	//	XMMATRIX T = XMMatrixTranslation(keyData.translation.x, keyData.translation.y, keyData.translation.z);
-	//
-	//	// 親行列があれば親の行列をかける
-	//	int64_t parentIndex = modelResource->GetNodeGroup().nodeData.at(nodeIndex).parentIndex;
-	//	XMMATRIX P = parentIndex < 0 ? XMMatrixIdentity() : XMLoadFloat4x4(&keyFrame.animKeyData.at(parentIndex).globalTransform);
-	//
-	//	// globalTransform に値を設定
-	//	XMStoreFloat4x4(&keyData.globalTransform, S * R * T * P);
-	//}
+
+	// ダブルアニメーションが有効なら上半身のみ別キーにする
+	if(isDoubleAnimations)
+	{
+		// ダブルアニメーションデータ取得
+		ModelResource::Animation& doubleAnimation = model->GetModelResource()->GetAnimationClips().at(doubleCurrentAnimationIndex);
+
+		doubleCurrentKeyFrame = static_cast<int>(doubleCurrentAnimationSeconds * animation.samplingRate);
+
+		// 経過時間
+		doubleCurrentAnimationSeconds += Timer::Instance().DeltaTime();
+
+		// 現在のフレームが最大フレームを超えていたら
+		if (doubleCurrentAnimationSeconds >= doubleAnimation.secondsLength)
+		{
+			// ダブルアニメーションをOFF
+			isDoubleAnimations = false;
+			doubleCurrentKeyFrame = 0;
+			doubleCurrentAnimationSeconds = 0.0f;
+
+			return;
+		}
+
+		doubleKeyFrame = doubleAnimation.sequence.at(doubleCurrentKeyFrame);
+
+		// 上半身アニメーションを使用するノードの index を格納するベクター (親行列が上半身アニメーション)
+		std::vector<uint32_t> doubleAnimationNodeIndex;
+
+		//node の数だけ繰り返す
+		size_t nodeCount = doubleKeyFrame.nodes.size();
+		for (size_t nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
+		{
+			// 現在の index の node を取得
+			ModelResource::KeyFrame::Node& keyData = doubleKeyFrame.nodes.at(nodeIndex);
+
+			// それぞれの値に対応する行列の作成
+			DirectX::XMMATRIX S = DirectX::XMMatrixScaling(keyData.scaling.x, keyData.scaling.y, keyData.scaling.z);
+			DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(XMLoadFloat4(&keyData.rotation));
+			DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(keyData.translation.x, keyData.translation.y, keyData.translation.z);
+
+			// 親行列があれば親の行列をかける
+			uint32_t uniqueIndex = model->GetModelResource()->GetSceneView().GetIndex(keyData.uniqueId);			// このノードのuniqueId 取得
+			int64_t parentIndex = model->GetModelResource()->GetSceneView().nodes.at(uniqueIndex).parentIndex;		// このuniqueId の parent の親の index を取得
+
+			// 乗算すべき親行列がどちらのアニメーションかを調べる
+			bool doubleAnimationParent = false;
+			for (auto checkIndex : doubleAnimationNodeIndex)
+			{
+				if(parentIndex == checkIndex)
+				{
+					doubleAnimationParent = true;						// 親はダブルアニメーションの行列を使用
+					doubleAnimationNodeIndex.push_back(uniqueIndex);	// このノードの子のために追加
+					break;
+				}
+			}
+
+			DirectX::XMMATRIX P;
+
+			if (keyData.name == "mixamorig:Spine")
+			{
+				doubleAnimationNodeIndex.push_back(uniqueIndex);
+				doubleAnimationParent = true;						// 親はダブルアニメーションの行列を使用(こっちは場合によってはやめたほうがいいかも)
+			}
+
+			if(doubleAnimationParent)
+			{
+				P = parentIndex < 0 ? DirectX::XMMatrixIdentity() : DirectX::XMLoadFloat4x4(&keyFrame.nodes.at(parentIndex).globalTransform);
+				XMStoreFloat4x4(&keyData.globalTransform, S * R * T * P);
+				keyFrame.nodes.at(nodeIndex).globalTransform = keyData.globalTransform;
+			}
+		}
+	}
 }

@@ -115,7 +115,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 specularLig = (directionSpecular + pointSpecular + spotSpecular) * specularPower;
 
     float3 lig = diffuseLig + specularLig + ambient;
-    
+
     float4 finalColor;
     finalColor.a = diffuseColor.a * pin.color.a;
     finalColor.rgb = diffuseColor.rgb * lig.rgb * pin.color.rgb;

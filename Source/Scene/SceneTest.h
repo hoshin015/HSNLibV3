@@ -11,7 +11,7 @@
 // --- Game ---
 #include "../Game/Object/TestStatic.h"
 #include "../Game/Object/TestAnimated.h"
-
+#include "../Game/Object/Player/Player.h"
 
 
 // テストシーン
@@ -47,4 +47,6 @@ private:
 	std::unique_ptr<Sprite> sprTest;
 	std::unique_ptr<Sprite> sprTest2;
 	std::unique_ptr<Sprite> sprTest3;
+
+	std::unique_ptr<Player> player;
 };

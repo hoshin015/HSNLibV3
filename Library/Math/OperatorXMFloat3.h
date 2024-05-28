@@ -401,3 +401,10 @@ inline DirectX::XMFLOAT3& operator*=(DirectX::XMFLOAT3& f1, const float f2)
 #pragma endregion
 
 #endif
+
+inline float Float3Length(DirectX::XMFLOAT3 f1)
+{
+	DirectX::XMVECTOR F1 = DirectX::XMLoadFloat3(&f1);
+	F1 = DirectX::XMVector3Length(F1);
+	return DirectX::XMVectorGetX(F1);
+}

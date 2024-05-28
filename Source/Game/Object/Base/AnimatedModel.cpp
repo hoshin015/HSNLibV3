@@ -31,9 +31,6 @@ void AnimatedModel::Render(DirectX::XMFLOAT4X4 world, ModelResource::KeyFrame* k
 		dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		dc->IASetInputLayout(inputLayout.Get());
 
-		
-
-
 		Constants data;
 
 		// アニメーション

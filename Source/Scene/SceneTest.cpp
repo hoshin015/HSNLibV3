@@ -35,7 +35,7 @@ void SceneTest::Initialize()
 		DirectX::XMFLOAT3(0, 1, 0)			// 上方向ベクトル
 	);
 	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(45), DirectX::XMConvertToRadians(180), 0 });
-	Camera::Instance().cameraType = Camera::CAMERA::FREE;
+	Camera::Instance().cameraType = Camera::CAMERA::TARGET_PLAYER;
 
 	// ライト初期設定
 	Light* directionLight = new Light(LightType::Directional);
@@ -68,6 +68,7 @@ void SceneTest::Initialize()
 	sprTest3->SetScale({ 0.2, 0.2 });
 	sprTest3->UpdateAnimation();
 
+	player = std::make_unique<Player>("Data/Fbx/Character/Character.model");
 
 	Particle::Instance().Initialize();
 
@@ -130,6 +131,7 @@ void SceneTest::Update()
 	EffectManager::Instance().Update();
 
 	// --- カメラ処理 ---
+	Camera::Instance().SetTarget(player->GetPos());
 	Camera::Instance().Update();
 
 
@@ -141,6 +143,7 @@ void SceneTest::Update()
 
 	testStatic->Update();
 	testAnimated->Update();
+	player->Update();
 
 	sprTest->SetAngle(sprTest->GetAngle() + 180 * Timer::Instance().DeltaTime());
 	sprTest->UpdateAnimation();
@@ -190,6 +193,7 @@ void SceneTest::Render()
 				shadow->SetAnimatedShader();
 				StageManager::Instance().Render(true);
 				testAnimated->Render(true);
+				player->Render(true);
 
 				// static object
 				shadow->SetStaticShader();
@@ -201,6 +205,7 @@ void SceneTest::Render()
 		// 通常描画用にテクスチャと定数バッファ更新
 		shadow->SetShadowTextureAndConstants();
 	}
+
 
 	// rasterizerStateの設定
 	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
@@ -217,6 +222,7 @@ void SceneTest::Render()
 
 		testStatic->Render();
 		testAnimated->Render();
+		player->Render();
 
 		// rasterizerStateの設定
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);

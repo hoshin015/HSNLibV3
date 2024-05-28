@@ -349,13 +349,7 @@
     <ClCompile Include="Library\Particle\Emitter.cpp">
       <Filter>1_HSNLib\Particle</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Scene\ScenePlayer.cpp">
-      <Filter>2_Source\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Game\Object\Player\Player.cpp">
-      <Filter>2_Source\Game\Object\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\Object\Player\PlayerManager.cpp">
       <Filter>2_Source\Game\Object\Player</Filter>
     </ClCompile>
     <ClCompile Include="Library\Particle\EmitterManager.cpp">
@@ -627,13 +621,7 @@
     <ClInclude Include="Library\Particle\Emitter.h">
       <Filter>1_HSNLib\Particle</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Scene\ScenePlayer.h">
-      <Filter>2_Source\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Game\Object\Player\Player.h">
-      <Filter>2_Source\Game\Object\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\Object\Player\PlayerManager.h">
       <Filter>2_Source\Game\Object\Player</Filter>
     </ClInclude>
     <ClInclude Include="Library\Particle\EmitterManager.h">

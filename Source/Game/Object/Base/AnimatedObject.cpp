@@ -54,15 +54,6 @@ void AnimatedObject::UpdateAnimation()
 
 	currentKeyFrame = static_cast<int>(currentAnimationSeconds * animation.samplingRate);
 
-
-	//int keyCount = animation.sequence.size();
-	//for (int keyIndex = 0; keyIndex < keyCount - 1; keyIndex++)
-	//{
-	//	const ModelResource::KeyFrame& keyFrame0 = animation.sequence.at(keyIndex);
-	//	const ModelResource::KeyFrame& keyFrame1 = animation.sequence.at(keyIndex+1);
-	//	if(currentAnimationSeconds >= keyFrame0.)
-	//}
-
 	// 経過時間
 	currentAnimationSeconds += Timer::Instance().DeltaTime();
 	// 現在のフレームが最大フレームを超えていたら
@@ -144,6 +135,7 @@ void AnimatedObject::UpdateAnimation()
 
 			DirectX::XMMATRIX P;
 
+			// ここの名前は変えれるようにしたほうがよさそう
 			if (keyData.name == "mixamorig:Spine")
 			{
 				doubleAnimationNodeIndex.push_back(uniqueIndex);

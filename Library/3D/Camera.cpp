@@ -161,6 +161,8 @@ void Camera::FreeCameraUpdate()
 	DirectX::XMFLOAT3 front;
 	DirectX::XMStoreFloat3(&front, Front);
 
+
+
 	// カメラ座標から前ベクトル方向に一定距離離れた注視点を求める
 	focus.x = eye.x + front.x * 10;
 	focus.y = eye.y + front.y * 10;
@@ -257,14 +259,20 @@ void Camera::TargetCameraUpdate()
 	DirectX::XMFLOAT3 front;
 	DirectX::XMStoreFloat3(&front, Front);
 
+	DirectX::XMVECTOR Right = Transform.r[0];
+	DirectX::XMFLOAT3 right;
+	DirectX::XMStoreFloat3(&right, Right);
+
 	// 注視点から後ろベクトル方向に一定距離離れたカメラ視点を求める
 	DirectX::XMFLOAT3 eye;
-	eye.x = target.x - front.x * 15;
-	eye.y = target.y - front.y * 15;
-	eye.z = target.z - front.z * 15;
+	eye.x = target.x - front.x * 25;
+	eye.y = target.y - front.y * 25;
+	eye.z = target.z - front.z * 25;
 
 	// カメラの視点と注視点を設定
 	SetLookAt(eye, target, DirectX::XMFLOAT3(0, 1, 0));
+
+
 }
 
 void Camera::ModelEditorCameraUpdate()

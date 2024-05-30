@@ -34,12 +34,30 @@ Camera::Camera()
 	angle = { DirectX::XMConvertToRadians(15),DirectX::XMConvertToRadians(180), 0 };
 }
 
-void Camera::Update()
+// 入力
+void Camera::Input()
 {
 	// --- 入力処理 ---
-	InputManager& inputManager = InputManager::Instance();
-	inputManager.ResetScrollWheelValue();
-	
+	InputManager& input = InputManager::Instance();
+	input.ResetScrollWheelValue();
+
+	DirectX::XMFLOAT2 move;
+	move.x = input.GetKeyPress(Keyboard::L) - input.GetKeyPress(Keyboard::J);
+	move.y = input.GetKeyPress(Keyboard::K) - input.GetKeyPress(Keyboard::I);
+
+	if(input.IsGamePadConnected() && move.x == 0 && move.y == 0)
+	{
+		move.x = input.GetThumSticksRightX();
+		move.y = -input.GetThumSticksRightY();
+	}
+
+	inputMap["Move"] = move;
+}
+
+void Camera::Update()
+{
+	Input();
+
 	switch (cameraType)
 	{
 	case CAMERA::TARGET_PLAYER:
@@ -214,28 +232,9 @@ void Camera::TargetCameraUpdate()
 	// --- 入力処理 ---
 	InputManager& inputManager = InputManager::Instance();
 
-	float ax = 0;
-	float ay = 0;
-
-	if (inputManager.GetKeyPress(DirectX::Keyboard::J)) ax--;
-	if (inputManager.GetKeyPress(DirectX::Keyboard::L)) ax++;
-	if (inputManager.GetKeyPress(DirectX::Keyboard::I)) ay--;
-	if (inputManager.GetKeyPress(DirectX::Keyboard::K)) ay++;
-
-	difX = oldCursorX - inputManager.GetCursorPosX();
-	difY = oldCursorY - inputManager.GetCursorPosY();
-	oldCursorX = inputManager.GetCursorPosX();
-	oldCursorY = inputManager.GetCursorPosY();
-
-	if (inputManager.GetMousePress(MOUSEBUTTON_STATE::rightButton))
-	{
-		angle.y -= difX * Timer::Instance().DeltaTime() * 3;
-		angle.x -= difY * Timer::Instance().DeltaTime() * 3;
-	}
-
 	// スティック入力値に合わせてX軸とY軸を回転
-	angle.x += ay * 2 * Timer::Instance().DeltaTime();
-	angle.y += ax * 2 * Timer::Instance().DeltaTime();
+	angle.x += GetInput<DirectX::XMFLOAT2>("Move").y * 2 * Timer::Instance().DeltaTime();
+	angle.y += GetInput<DirectX::XMFLOAT2>("Move").x * 2 * Timer::Instance().DeltaTime();
 
 	// X軸のカメラ回転を制限
 	if (angle.x > maxAngleX) angle.x = maxAngleX;

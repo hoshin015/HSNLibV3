@@ -152,4 +152,75 @@ void AnimatedObject::UpdateAnimation()
 			}
 		}
 	}
+
+
+
+	// アニメーションブレンド(次のアニメーションへの自然な遷移)
+	// 現在のアニメーションがループアニメーションなら今から遷移
+	// 現在のアニメーションが非ループアニメーションなら指定した時間から指定した時間を掛けて遷移
+	if(beforeAnimationIndex != -1)
+	{
+		float blendRate = 1.0f;
+		if (animationBlendTransitionDurations > animationBlendTimer)
+		{
+			animationBlendTimer += Timer::Instance().DeltaTime();
+			if (animationBlendTimer > animationBlendTransitionDurations)
+			{
+				animationBlendTimer = animationBlendTransitionDurations;
+			}
+			blendRate = animationBlendTransitionDurations / animationBlendTimer;
+			blendRate *= blendRate;
+
+			ModelResource::Animation& blendAnimation = model->GetModelResource()->GetAnimationClips().at(beforeAnimationIndex);
+			int blendAnimationCurrentKeyFrame = static_cast<int>(animationBlendTimer * animation.samplingRate);
+
+			const ModelResource::KeyFrame* keyFrames[2] =
+			{
+				&keyFrame,													// 現在再生中のキーフレーム
+				&blendAnimation.sequence.at(blendAnimationCurrentKeyFrame)	// 次のアニメーションのキーフレーム
+			};
+			BlendAnimation(keyFrames, blendRate, keyFrame);
+		}
+		else
+		{
+			beforeAnimationIndex = -1;
+		}
+	}
+}
+
+// アニメーションブレンド
+void AnimatedObject::BlendAnimation(const ModelResource::KeyFrame* keyFrames[2], float factor,
+	ModelResource::KeyFrame& keyFrame)
+{
+	// 出力対象の keyFrame の node を合成する keyFrame の node のサイズにする
+	size_t nodeCount = keyFrames[0]->nodes.size();
+	keyFrame.nodes.resize(nodeCount);
+	// 全ての node を処理する
+	for (size_t nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
+	{
+		// scale の合成
+		DirectX::XMVECTOR S[2] =
+		{
+			XMLoadFloat3(&keyFrames[0]->nodes.at(nodeIndex).scaling),
+			XMLoadFloat3(&keyFrames[1]->nodes.at(nodeIndex).scaling)
+		};
+		XMStoreFloat3(&keyFrame.nodes.at(nodeIndex).scaling, DirectX::XMVectorLerp(S[0], S[1], factor));
+
+		// rotation の合成
+		DirectX::XMVECTOR R[2] =
+		{
+			XMLoadFloat4(&keyFrames[0]->nodes.at(nodeIndex).rotation),
+			XMLoadFloat4(&keyFrames[1]->nodes.at(nodeIndex).rotation)
+		};
+		XMStoreFloat4(&keyFrame.nodes.at(nodeIndex).rotation, DirectX::XMQuaternionSlerp(R[0], R[1], factor));
+
+		// translation の合成
+		DirectX::XMVECTOR T[2] =
+		{
+			XMLoadFloat3(&keyFrames[0]->nodes.at(nodeIndex).translation),
+			XMLoadFloat3(&keyFrames[1]->nodes.at(nodeIndex).translation)
+		};
+		XMStoreFloat3(&keyFrame.nodes.at(nodeIndex).translation, DirectX::XMVectorLerp(T[0], T[1], factor));
+	}
+
 }

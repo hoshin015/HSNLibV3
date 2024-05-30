@@ -266,7 +266,7 @@ void SceneTest::Render()
 	bloom->DrawDebugGui();
 	shadow->DrawDebugGui();
 
-	DispString::Instance().Draw(L"てすとめっせーじ", {200,200},100);
+	DispString::Instance().Draw(L"てすとめっせーじ", {200,50},50);
 
 #if SHOW_PERFORMANCE
 	// --- パフォーマンス描画 ---

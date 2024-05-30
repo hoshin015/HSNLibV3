@@ -65,7 +65,7 @@ void Player::Input()
 	inputMoveData.y = input->GetKeyPress(Keyboard::W) - input->GetKeyPress(Keyboard::S);
 
 	// コントローラー対応
-	if(input->IsGamePadConnected())
+	if(input->IsGamePadConnected() && inputMoveData.x == 0 && inputMoveData.y == 0)
 	{
 		inputMoveData.x = input->GetThumSticksLeftX();
 		inputMoveData.y = input->GetThumSticksLeftY();
@@ -77,9 +77,9 @@ void Player::Input()
 	inputRunData = InputManager::Instance().GetKeyPress(DirectX::Keyboard::LeftShift);
 
 	// コントローラー対応
-	if (input->IsGamePadConnected())
+	if (input->IsGamePadConnected() && !inputRunData)
 	{
-		inputRunData = input->GetGamePadButtonPressed(GAMEPADBUTTON_STATE::dpadRight);
+		inputRunData = input->GetGamePadButtonPress(GAMEPADBUTTON_STATE::rightShoulder);
 	}
 	inputMap["Run"] = inputRunData;
 
@@ -88,9 +88,9 @@ void Player::Input()
 	inputAttackData = InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter);
 
 	// コントローラー対応
-	if (input->IsGamePadConnected())
+	if (input->IsGamePadConnected() && !inputAttackData)
 	{
-		inputAttackData = input->GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
+		inputAttackData = input->GetGamePadButtonPressed(GAMEPADBUTTON_STATE::y);
 	}
 	inputMap["Attack"] = inputAttackData;
 
@@ -99,7 +99,7 @@ void Player::Input()
 	inputDrinkData = InputManager::Instance().GetKeyPressed(DirectX::Keyboard::E);
 
 	// コントローラー対応
-	if (input->IsGamePadConnected())
+	if (input->IsGamePadConnected() && !inputDrinkData)
 	{
 		inputDrinkData = input->GetGamePadButtonPressed(GAMEPADBUTTON_STATE::x);
 	}

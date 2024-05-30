@@ -3,6 +3,9 @@
 #include <d3d11.h>
 #include <wrl.h>
 #include <DirectXMath.h>
+#include <map>
+#include <string>
+#include <variant>
 using namespace DirectX;
 
 #include "../Graphics/RenderContext.h"
@@ -20,6 +23,9 @@ public:
 		static Camera instance;
 		return instance;
 	}
+
+	// 入力
+	void Input();
 
 	// 更新
 	void Update();
@@ -129,4 +135,13 @@ private:
 	float oldCursorY = 0.0f;
 	float difX = 0.0f;
 	float difY = 0.0f;
+
+	// 入力データ保管用
+	using inputData = std::variant<bool, int, float, DirectX::XMFLOAT2>;
+	std::map<std::string, inputData> inputMap;
+	template <typename T>
+	T GetInput(std::string key)
+	{
+		return std::get<T>(inputMap[key]);
+	}
 };

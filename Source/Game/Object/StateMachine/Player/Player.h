@@ -53,7 +53,7 @@ private:
     std::unique_ptr<StateMachine<Player>> stateMachine;
 
     DirectX::XMFLOAT3 velocity = { 0,0,0 };
-    float moveSpeed = 2.0f;     // プレイヤーが１秒間に加速する加速度
+    float moveSpeed = 3.0f;     // プレイヤーが１秒間に加速する加速度
     float rot = 720;            // プレイヤーが１秒間に回転する角度
 
     // 入力データ保管用

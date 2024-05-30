@@ -9,8 +9,13 @@
 class Framework
 {
 private:
-	Framework() {}
-	~Framework() {}
+	Framework()
+	{
+	}
+
+	~Framework()
+	{
+	}
 
 public:
 	static Framework& Instance()
@@ -22,15 +27,15 @@ public:
 private:
 	HWND hwnd;
 
-	const wchar_t* windowName = L"HSNLibV3";
-	const int screenWidth = 1280;
-	const int screenHeight = 720;
+	const wchar_t* windowName   = L"HSNLibV3";
+	const int      screenWidth  = 1280;
+	const int      screenHeight = 720;
 
 	BOOL showCalcFrame = TRUE;
 
 public:
-	int GetScreenWidth() { return screenWidth; }
-	int GetScreenHeight() { return screenHeight; }
+	int   GetScreenWidth() { return screenWidth; }
+	int   GetScreenHeight() { return screenHeight; }
 	float GetScreenWidthF() { return static_cast<float>(screenWidth); }
 	float GetScreenHeightF() { return static_cast<float>(screenHeight); }
 

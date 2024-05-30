@@ -11,7 +11,9 @@ AnimatedObject::AnimatedObject(const char* filePath)
 void AnimatedObject::UpdateTransform()
 {
 	// スケール変更
-	DirectX::XMMATRIX MS = DirectX::XMMatrixScaling(model->GetModelResource()->GetScale(), model->GetModelResource()->GetScale(), model->GetModelResource()->GetScale());
+	DirectX::XMMATRIX MS = DirectX::XMMatrixScaling(model->GetModelResource()->GetScale(),
+	                                                model->GetModelResource()->GetScale(),
+	                                                model->GetModelResource()->GetScale());
 
 	// 軸変換行列
 	DirectX::XMMATRIX C = DirectX::XMLoadFloat4x4(&model->GetModelResource()->GetCoordinateSystemTransform());
@@ -19,7 +21,9 @@ void AnimatedObject::UpdateTransform()
 	// スケール行列を作成
 	DirectX::XMMATRIX S = DirectX::XMMatrixScaling(GetScaleX(), GetScaleY(), GetScaleZ());
 	// 回転行列を作成
-	DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(GetAngleX()), DirectX::XMConvertToRadians(GetAngleY()), DirectX::XMConvertToRadians(GetAngleZ()));
+	DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(GetAngleX()),
+	                                                            DirectX::XMConvertToRadians(GetAngleY()),
+	                                                            DirectX::XMConvertToRadians(GetAngleZ()));
 	// 位置行列を作成
 	DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(GetPosX(), GetPosY(), GetPosZ());
 
@@ -32,11 +36,11 @@ void AnimatedObject::PlayAnimation(int index, bool loop)
 {
 	if (GetCurrentAnimationIndex() == index && animationLoopFlag == loop) return;
 
-	currentAnimationIndex = index;
+	currentAnimationIndex   = index;
 	currentAnimationSeconds = 0.0f;
 
 	animationLoopFlag = loop;
-	animationEndFlag = false;
+	animationEndFlag  = false;
 }
 
 // アニメーション更新
@@ -70,9 +74,9 @@ void AnimatedObject::UpdateAnimation()
 		else
 		{
 			// 最終秒数で停止
-			currentKeyFrame = animation.sequence.size() - 1;
+			currentKeyFrame         = animation.sequence.size() - 1;
 			currentAnimationSeconds = animation.secondsLength;
-			animationEndFlag = true;
+			animationEndFlag        = true;
 		}
 	}
 
@@ -81,10 +85,11 @@ void AnimatedObject::UpdateAnimation()
 
 
 	// ダブルアニメーションが有効なら上半身のみ別キーにする
-	if(isDoubleAnimations)
+	if (isDoubleAnimations)
 	{
 		// ダブルアニメーションデータ取得
-		ModelResource::Animation& doubleAnimation = model->GetModelResource()->GetAnimationClips().at(doubleCurrentAnimationIndex);
+		ModelResource::Animation& doubleAnimation = model->GetModelResource()->GetAnimationClips().at(
+			doubleCurrentAnimationIndex);
 
 		doubleCurrentKeyFrame = static_cast<int>(doubleCurrentAnimationSeconds * animation.samplingRate);
 
@@ -95,8 +100,8 @@ void AnimatedObject::UpdateAnimation()
 		if (doubleCurrentAnimationSeconds >= doubleAnimation.secondsLength)
 		{
 			// ダブルアニメーションをOFF
-			isDoubleAnimations = false;
-			doubleCurrentKeyFrame = 0;
+			isDoubleAnimations            = false;
+			doubleCurrentKeyFrame         = 0;
 			doubleCurrentAnimationSeconds = 0.0f;
 
 			return;
@@ -117,20 +122,23 @@ void AnimatedObject::UpdateAnimation()
 			// それぞれの値に対応する行列の作成
 			DirectX::XMMATRIX S = DirectX::XMMatrixScaling(keyData.scaling.x, keyData.scaling.y, keyData.scaling.z);
 			DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(XMLoadFloat4(&keyData.rotation));
-			DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(keyData.translation.x, keyData.translation.y, keyData.translation.z);
+			DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(keyData.translation.x, keyData.translation.y,
+			                                                   keyData.translation.z);
 
 			// 親行列があれば親の行列をかける
-			uint32_t uniqueIndex = model->GetModelResource()->GetSceneView().GetIndex(keyData.uniqueId);			// このノードのuniqueId 取得
-			int64_t parentIndex = model->GetModelResource()->GetSceneView().nodes.at(uniqueIndex).parentIndex;		// このuniqueId の parent の親の index を取得
+			uint32_t uniqueIndex = model->GetModelResource()->GetSceneView().GetIndex(keyData.uniqueId);
+			// このノードのuniqueId 取得
+			int64_t parentIndex = model->GetModelResource()->GetSceneView().nodes.at(uniqueIndex).parentIndex;
+			// このuniqueId の parent の親の index を取得
 
 			// 乗算すべき親行列がどちらのアニメーションかを調べる
 			bool doubleAnimationParent = false;
 			for (auto checkIndex : doubleAnimationNodeIndex)
 			{
-				if(parentIndex == checkIndex)
+				if (parentIndex == checkIndex)
 				{
-					doubleAnimationParent = true;						// 親はダブルアニメーションの行列を使用
-					doubleAnimationNodeIndex.push_back(uniqueIndex);	// このノードの子のために追加
+					doubleAnimationParent = true;                    // 親はダブルアニメーションの行列を使用
+					doubleAnimationNodeIndex.push_back(uniqueIndex); // このノードの子のために追加
 					break;
 				}
 			}
@@ -141,12 +149,14 @@ void AnimatedObject::UpdateAnimation()
 			if (keyData.name == "mixamorig:Spine")
 			{
 				doubleAnimationNodeIndex.push_back(uniqueIndex);
-				doubleAnimationParent = true;						// 親はダブルアニメーションの行列を使用(こっちは場合によってはやめたほうがいいかも)
+				doubleAnimationParent = true; // 親はダブルアニメーションの行列を使用(こっちは場合によってはやめたほうがいいかも)
 			}
 
-			if(doubleAnimationParent)
+			if (doubleAnimationParent)
 			{
-				P = parentIndex < 0 ? DirectX::XMMatrixIdentity() : DirectX::XMLoadFloat4x4(&keyFrame.nodes.at(parentIndex).globalTransform);
+				P = parentIndex < 0
+					    ? DirectX::XMMatrixIdentity()
+					    : DirectX::XMLoadFloat4x4(&keyFrame.nodes.at(parentIndex).globalTransform);
 				XMStoreFloat4x4(&keyData.globalTransform, S * R * T * P);
 				keyFrame.nodes.at(nodeIndex).globalTransform = keyData.globalTransform;
 			}
@@ -154,11 +164,10 @@ void AnimatedObject::UpdateAnimation()
 	}
 
 
-
 	// アニメーションブレンド(次のアニメーションへの自然な遷移)
 	// 現在のアニメーションがループアニメーションなら今から遷移
 	// 現在のアニメーションが非ループアニメーションなら指定した時間から指定した時間を掛けて遷移
-	if(beforeAnimationIndex != -1)
+	if (blendAnimationIndex != -1)
 	{
 		float blendRate = 1.0f;
 		if (animationBlendTransitionDurations > animationBlendTimer)
@@ -168,29 +177,58 @@ void AnimatedObject::UpdateAnimation()
 			{
 				animationBlendTimer = animationBlendTransitionDurations;
 			}
-			blendRate = animationBlendTransitionDurations / animationBlendTimer;
+			blendRate = animationBlendTimer / animationBlendTransitionDurations;
 			blendRate *= blendRate;
 
-			ModelResource::Animation& blendAnimation = model->GetModelResource()->GetAnimationClips().at(beforeAnimationIndex);
-			int blendAnimationCurrentKeyFrame = static_cast<int>(animationBlendTimer * animation.samplingRate);
+			ModelResource::Animation& blendAnimation = model->GetModelResource()->GetAnimationClips().at(
+				blendAnimationIndex);
+			int blendAnimationCurrentKeyFrame = static_cast<int>(animationBlendTimer * blendAnimation.samplingRate);
+
+			ModelResource::KeyFrame key = keyFrame;
 
 			const ModelResource::KeyFrame* keyFrames[2] =
 			{
-				&keyFrame,													// 現在再生中のキーフレーム
-				&blendAnimation.sequence.at(blendAnimationCurrentKeyFrame)	// 次のアニメーションのキーフレーム
+				&blendAnimation.sequence.at(blendAnimationCurrentKeyFrame), // 次のアニメーションのキーフレーム
+				&keyFrame,                                                  // 現在再生中のキーフレーム
 			};
 			BlendAnimation(keyFrames, blendRate, keyFrame);
+
+
+			//node の数だけ繰り返す
+			size_t nodeCount = keyFrame.nodes.size();
+			for (size_t nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
+			{
+				// 現在の index の node を取得
+				ModelResource::KeyFrame::Node& keyData = keyFrame.nodes.at(nodeIndex);
+
+				// それぞれの値に対応する行列の作成
+				DirectX::XMMATRIX S = DirectX::XMMatrixScaling(keyData.scaling.x, keyData.scaling.y, keyData.scaling.z);
+				DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(XMLoadFloat4(&keyData.rotation));
+				DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(keyData.translation.x, keyData.translation.y,
+				                                                   keyData.translation.z);
+
+				// 親行列があれば親の行列をかける
+				uint32_t uniqueIndex = model->GetModelResource()->GetSceneView().GetIndex(keyData.uniqueId);
+				// このノードのuniqueId 取得
+				int64_t parentIndex = model->GetModelResource()->GetSceneView().nodes.at(uniqueIndex).parentIndex;
+				// このuniqueId の parent の親の index を取得
+
+				DirectX::XMMATRIX P = parentIndex < 0
+					                      ? DirectX::XMMatrixIdentity()
+					                      : DirectX::XMLoadFloat4x4(&keyFrame.nodes.at(parentIndex).globalTransform);
+				XMStoreFloat4x4(&keyData.globalTransform, S * R * T * P);
+			}
 		}
 		else
 		{
-			beforeAnimationIndex = -1;
+			blendAnimationIndex = -1;
 		}
 	}
 }
 
 // アニメーションブレンド
 void AnimatedObject::BlendAnimation(const ModelResource::KeyFrame* keyFrames[2], float factor,
-	ModelResource::KeyFrame& keyFrame)
+                                    ModelResource::KeyFrame&       keyFrame)
 {
 	// 出力対象の keyFrame の node を合成する keyFrame の node のサイズにする
 	size_t nodeCount = keyFrames[0]->nodes.size();
@@ -222,5 +260,4 @@ void AnimatedObject::BlendAnimation(const ModelResource::KeyFrame* keyFrames[2],
 		};
 		XMStoreFloat3(&keyFrame.nodes.at(nodeIndex).translation, DirectX::XMVectorLerp(T[0], T[1], factor));
 	}
-
 }

@@ -41,6 +41,10 @@ void PlayerNormalState::Exit()
 void PlayerIdleState::Enter()
 {
 	owner->SetVelocity({ 0,0,0 });
+
+	owner->SetBeforeAnimationIndex(owner->GetCurrentAnimationIndex());
+	owner->SetAnimationBlendTimer(0.0f);
+	owner->SetAnimationBlendTransitionDurations(0.2f);
 	owner->PlayAnimation(static_cast<int>(PlayerAnimNum::Idle), true);
 }
 
@@ -84,6 +88,9 @@ void PlayerIdleState::Exit()
 
 void PlayerWalkState::Enter()
 {
+	owner->SetBeforeAnimationIndex(owner->GetCurrentAnimationIndex());
+	owner->SetAnimationBlendTimer(0.0f);
+	owner->SetAnimationBlendTransitionDurations(0.2f);
 	owner->PlayAnimation(static_cast<int>(PlayerAnimNum::Walk), true);
 }
 
@@ -128,6 +135,9 @@ void PlayerWalkState::Exit()
 
 void PlayerRunState::Enter()
 {
+	owner->SetBeforeAnimationIndex(owner->GetCurrentAnimationIndex());
+	owner->SetAnimationBlendTimer(0.0f);
+	owner->SetAnimationBlendTransitionDurations(0.2f);
 	owner->PlayAnimation(static_cast<int>(PlayerAnimNum::Run), true);
 }
 

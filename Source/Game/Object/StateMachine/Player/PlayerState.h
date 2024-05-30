@@ -8,6 +8,7 @@
 ///
 ///////////////////////////
 
+
 // 通常ステート
 class PlayerNormalState : public HierarchicalState<Player>
 {

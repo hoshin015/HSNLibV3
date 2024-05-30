@@ -2,7 +2,7 @@
 
 void TestAnimated::Update()
 {
-	position = { 0, 0, 5 };
+	position = {0, 0, 5};
 
 	// アニメーション更新
 	UpdateAnimation();

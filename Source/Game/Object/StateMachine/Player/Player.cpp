@@ -1,4 +1,6 @@
 #include "Player.h"
+
+#include "PlayerState.h"
 #include "../../Library/Input/InputManager.h"
 #include "../../Library/3D/Camera.h"
 #include "../../Library/Timer.h"
@@ -9,6 +11,16 @@
 
 Player::Player(const char* filePath) : AnimatedObject(filePath)
 {
+	stateMachine = std::make_unique<StateMachine<Player>>();
+	// １層目ステート登録
+	stateMachine->RegisterState(new PlayerNormalState(this));
+	// ２層目ステート登録
+	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerIdleState(this));
+	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerWalkState(this));
+	// ステートセット
+	stateMachine->SetState(static_cast<int>(State::Normal));
+
+
 	// idle アニメーション再生
 	PlayAnimation(static_cast<int>(PlayerAnimNum::Idle), true);
 }
@@ -22,25 +34,12 @@ void Player::Update()
 	// 回転
 	Turn();
 
+	// ステートマシン更新
+	stateMachine->Update();
 
 	position += velocity;
 	velocity *= 0.01f;
-	if (Float3Length(velocity) < 0.0001f)
-	{
-		if (GetCurrentAnimationIndex() != static_cast<int>(PlayerAnimNum::Idle))
-		{
-			PlayAnimation(static_cast<int>(PlayerAnimNum::Idle), true);
-		}
-			
-		velocity = { 0,0,0 };
-	}
-	else
-	{
-		if(GetCurrentAnimationIndex() != static_cast<int>(PlayerAnimNum::Walk))
-		{
-			PlayAnimation(static_cast<int>(PlayerAnimNum::Walk), true);
-		}
-	}
+	
 
 	// アニメーション更新
 	UpdateAnimation();
@@ -74,8 +73,6 @@ void Player::Input()
 		inputMoveData.y = input->GetThumSticksLeftY();
 	}
 	inputMap["Move"] = inputMoveData;
-
-
 }
 
 // 移動量計算

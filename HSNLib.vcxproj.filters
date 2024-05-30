@@ -104,9 +104,6 @@
     <Filter Include="シェーダーファイル\Particle">
       <UniqueIdentifier>{488a362e-0435-4850-bb82-397f4e062725}</UniqueIdentifier>
     </Filter>
-    <Filter Include="2_Source\Game\Object\Player">
-      <UniqueIdentifier>{58d92753-9a37-419d-86e7-4d846f3733ea}</UniqueIdentifier>
-    </Filter>
     <Filter Include="シェーダーファイル\Water">
       <UniqueIdentifier>{382ddfaa-22a6-4bfe-8798-c117deb4db87}</UniqueIdentifier>
     </Filter>
@@ -115,6 +112,9 @@
     </Filter>
     <Filter Include="2_Source\Game\Object\StateMachine">
       <UniqueIdentifier>{5cc900d7-b598-4cfa-84b1-f9a1ac90976e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\Game\Object\StateMachine\Player">
+      <UniqueIdentifier>{58d92753-9a37-419d-86e7-4d846f3733ea}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -352,8 +352,8 @@
     <ClCompile Include="Library\Particle\Emitter.cpp">
       <Filter>1_HSNLib\Particle</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Object\Player\Player.cpp">
-      <Filter>2_Source\Game\Object\Player</Filter>
+    <ClCompile Include="Source\Game\Object\StateMachine\Player\Player.cpp">
+      <Filter>2_Source\Game\Object\StateMachine\Player</Filter>
     </ClCompile>
     <ClCompile Include="Library\Particle\EmitterManager.cpp">
       <Filter>1_HSNLib\Particle</Filter>
@@ -369,6 +369,9 @@
     </ClCompile>
     <ClCompile Include="Source\Game\Object\StateMachine\StateBase.cpp">
       <Filter>2_Source\Game\Object\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\StateMachine\Player\PlayerState.cpp">
+      <Filter>2_Source\Game\Object\StateMachine\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -630,8 +633,8 @@
     <ClInclude Include="Library\Particle\Emitter.h">
       <Filter>1_HSNLib\Particle</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Object\Player\Player.h">
-      <Filter>2_Source\Game\Object\Player</Filter>
+    <ClInclude Include="Source\Game\Object\StateMachine\Player\Player.h">
+      <Filter>2_Source\Game\Object\StateMachine\Player</Filter>
     </ClInclude>
     <ClInclude Include="Library\Particle\EmitterManager.h">
       <Filter>1_HSNLib\Particle</Filter>
@@ -650,6 +653,9 @@
     </ClInclude>
     <ClInclude Include="Source\Game\Object\StateMachine\StateBase.h">
       <Filter>2_Source\Game\Object\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\StateMachine\Player\PlayerState.h">
+      <Filter>2_Source\Game\Object\StateMachine\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

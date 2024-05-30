@@ -11,7 +11,7 @@
 // --- Game ---
 #include "../Game/Object/TestStatic.h"
 #include "../Game/Object/TestAnimated.h"
-#include "../Game/Object/Player/Player.h"
+#include "../Game/Object/StateMachine/Player/Player.h"
 
 
 // テストシーン

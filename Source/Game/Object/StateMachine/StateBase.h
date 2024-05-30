@@ -5,6 +5,7 @@
 template<typename T>
 class State
 {
+public:
 	State(T* owner) : owner(owner){}
 	virtual ~State(){}
 
@@ -32,18 +33,43 @@ public:
 	virtual void Exit() = 0;
 
 	// サブステートセット
-	virtual void SetSubState(int newStateIndex);
+	void SetSubState(int newStateIndex)
+	{
+		currentSubState = subStatePool.at(newStateIndex);
+		currentSubState->Enter();
+	}
 	// サブステート変更
-	virtual void ChangeSubState(int newStateIndex);
+	void ChangeSubState(int newStateIndex)
+	{
+		currentSubState->Exit();
+		currentSubState = subStatePool.at(newStateIndex);
+		currentSubState->Enter();
+	}
 	// サブステート登録
-	virtual void RegisterSubState(State<T>* state);
+	void RegisterSubState(State<T>* state)
+	{
+		subStatePool.emplace_back(state);
+	}
 	// サブステートのインデックス取得
-	virtual int GetSubStateIndex();
+	int GetSubStateIndex()
+	{
+		int i = 0;
+		for (State<T>* state : subStatePool)
+		{
+			if (state == currentSubState)
+			{
+				return i;
+			}
+			i++;
+		}
+
+		return -1;
+	}
 
 protected:
+	// 現在の２層目ステート
+	State<T>* currentSubState = nullptr;
 	// ２層目のステートベクター
 	std::vector<State<T>*> subStatePool;
-	// 現在の２層目ステート
-	State<T>* subState = nullptr;
 };
 

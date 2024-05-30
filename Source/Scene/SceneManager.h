@@ -10,8 +10,13 @@
 class SceneManager
 {
 private:
-	SceneManager() {}
-	~SceneManager() {}
+	SceneManager()
+	{
+	}
+
+	~SceneManager()
+	{
+	}
 
 public:
 	// 唯一のインスタンス取得
@@ -35,5 +40,5 @@ public:
 
 private:
 	Scene* currentScene = nullptr;
-	Scene* nextScene = nullptr;
+	Scene* nextScene    = nullptr;
 };

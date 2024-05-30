@@ -32,7 +32,7 @@ void Player::Update()
 {
 	// 入力データ取得
 	Input();
-	
+
 
 	// ステートマシン更新
 	stateMachine->Update();
@@ -65,7 +65,7 @@ void Player::Input()
 	inputMoveData.y = input->GetKeyPress(Keyboard::W) - input->GetKeyPress(Keyboard::S);
 
 	// コントローラー対応
-	if(input->IsGamePadConnected() && inputMoveData.x == 0 && inputMoveData.y == 0)
+	if (input->IsGamePadConnected() && inputMoveData.x == 0 && inputMoveData.y == 0)
 	{
 		inputMoveData.x = input->GetThumSticksLeftX();
 		inputMoveData.y = input->GetThumSticksLeftY();
@@ -125,11 +125,15 @@ void Player::CalcRunVelocity()
 
 	// カメラの方向に対応する移動
 	float deltaTime = Timer::Instance().DeltaTime();
-	velocity.x += Camera::Instance().GetFront().x * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * runPower * deltaTime;
-	velocity.z += Camera::Instance().GetFront().z * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * runPower * deltaTime;
+	velocity.x += Camera::Instance().GetFront().x * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * runPower *
+		deltaTime;
+	velocity.z += Camera::Instance().GetFront().z * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * runPower *
+		deltaTime;
 
-	velocity.x += Camera::Instance().GetRight().x * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * runPower * deltaTime;
-	velocity.z += Camera::Instance().GetRight().z * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * runPower * deltaTime;
+	velocity.x += Camera::Instance().GetRight().x * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * runPower *
+		deltaTime;
+	velocity.z += Camera::Instance().GetRight().z * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * runPower *
+		deltaTime;
 }
 
 // 移動している方向に向く
@@ -151,7 +155,7 @@ void Player::Turn()
 	DirectX::XMStoreFloat3(&normalizeVelocity, N_VELOCITY);
 
 	// 内積を計算して回転角度を求める
-	float dot = (front.x * normalizeVelocity.x) + (front.z * normalizeVelocity.z);
+	float dot      = (front.x * normalizeVelocity.x) + (front.z * normalizeVelocity.z);
 	float rotPower = (1.0f - dot) * rot;
 	if (rotPower > rot) rotPower = rot;
 

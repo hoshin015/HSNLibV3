@@ -9,9 +9,12 @@
 
 void Scene::DrawMenuBar()
 {
-	if (ImGui::BeginMainMenuBar()) {
-		if (ImGui::BeginMenu("Menu")) {
-			if (ImGui::BeginMenu("Scene")) {
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("Menu"))
+		{
+			if (ImGui::BeginMenu("Scene"))
+			{
 				if (ImGui::MenuItem("Title"))
 				{
 					SceneManager::Instance().ChangeScene(new SceneTitle);
@@ -39,8 +42,8 @@ void Scene::DrawMenuBar()
 // タイマー定数バッファの更新
 void Scene::UpdateTimerConstnat()
 {
-	Graphics* gfx = &Graphics::Instance();
-	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
+	Graphics*            gfx = &Graphics::Instance();
+	ID3D11DeviceContext* dc  = gfx->GetDeviceContext();
 
 	RenderContext* rc = &RenderContext::Instance();
 

@@ -2,31 +2,39 @@
 
 #include <vector>
 
-template<typename T>
+template <typename T>
 class State
 {
 public:
-	State(T* owner) : owner(owner){}
-	virtual ~State(){}
+	State(T* owner) : owner(owner)
+	{
+	}
 
-	// ステートに入った時に実行
-	virtual void Enter() = 0;
-	// ステートで常に実行
-	virtual void Execute() = 0;
-	// ステートから出る時に実行
-	virtual void Exit() = 0;
+	virtual ~State()
+	{
+	}
+
+
+	virtual void Enter() = 0;   // ステートに入った時に実行
+	virtual void Execute() = 0; // ステートで常に実行
+	virtual void Exit() = 0;    // ステートから出る時に実行
 
 protected:
 	T* owner;
 };
 
 // １層目のステートクラス
-template<typename T>
+template <typename T>
 class HierarchicalState : public State<T>
 {
 public:
-	HierarchicalState(T* owner) : State<T>(owner){}
-	virtual ~HierarchicalState(){}
+	HierarchicalState(T* owner) : State<T>(owner)
+	{
+	}
+
+	virtual ~HierarchicalState()
+	{
+	}
 
 	virtual void Enter() = 0;
 	virtual void Execute() = 0;
@@ -38,6 +46,7 @@ public:
 		currentSubState = subStatePool.at(newStateIndex);
 		currentSubState->Enter();
 	}
+
 	// サブステート変更
 	void ChangeSubState(int newStateIndex)
 	{
@@ -45,11 +54,13 @@ public:
 		currentSubState = subStatePool.at(newStateIndex);
 		currentSubState->Enter();
 	}
+
 	// サブステート登録
 	void RegisterSubState(State<T>* state)
 	{
 		subStatePool.emplace_back(state);
 	}
+
 	// サブステートのインデックス取得
 	int GetSubStateIndex()
 	{
@@ -62,7 +73,6 @@ public:
 			}
 			i++;
 		}
-
 		return -1;
 	}
 
@@ -72,4 +82,3 @@ protected:
 	// ２層目のステートベクター
 	std::vector<State<T>*> subStatePool;
 };
-

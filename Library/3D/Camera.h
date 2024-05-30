@@ -15,7 +15,10 @@ class Camera
 {
 private:
 	Camera();
-	~Camera() {}
+
+	~Camera()
+	{
+	}
 
 public:
 	static Camera& Instance()
@@ -83,7 +86,6 @@ public:
 	// 定数バッファの更新
 	void UpdateCameraConstant();
 
-
 public:
 	enum CAMERA
 	{
@@ -93,6 +95,7 @@ public:
 		LOCK,
 		ModelEditor,
 	};
+
 	int cameraType;
 
 private:
@@ -108,7 +111,7 @@ private:
 
 	// far near クリップ距離
 	float nearZ = 1.0f;
-	float farZ = 10000.0f;
+	float farZ  = 10000.0f;
 
 	// カメラの位置
 	DirectX::XMFLOAT3 eye;
@@ -118,27 +121,28 @@ private:
 	DirectX::XMFLOAT3 target;
 
 	// カメラの方向ベクトル
-	DirectX::XMFLOAT3 up;		// 上方向ベクトル
-	DirectX::XMFLOAT3 front;	// 前方向ベクトル
-	DirectX::XMFLOAT3 right;	// 右方向ベクトル
+	DirectX::XMFLOAT3 up;    // 上方向ベクトル
+	DirectX::XMFLOAT3 front; // 前方向ベクトル
+	DirectX::XMFLOAT3 right; // 右方向ベクトル
 
 	// カメラの回転
-	DirectX::XMFLOAT3	angle;
+	DirectX::XMFLOAT3 angle;
 
 
-	float				maxAngleX = DirectX::XMConvertToRadians(30);
-	float				minAngleX = DirectX::XMConvertToRadians(-5);
-	float				limitAngleX = DirectX::XMConvertToRadians(89);
+	float maxAngleX   = DirectX::XMConvertToRadians(30);
+	float minAngleX   = DirectX::XMConvertToRadians(-5);
+	float limitAngleX = DirectX::XMConvertToRadians(89);
 
 	// カーソル座標
 	float oldCursorX = 0.0f;
 	float oldCursorY = 0.0f;
-	float difX = 0.0f;
-	float difY = 0.0f;
+	float difX       = 0.0f;
+	float difY       = 0.0f;
 
 	// 入力データ保管用
 	using inputData = std::variant<bool, int, float, DirectX::XMFLOAT2>;
 	std::map<std::string, inputData> inputMap;
+
 	template <typename T>
 	T GetInput(std::string key)
 	{

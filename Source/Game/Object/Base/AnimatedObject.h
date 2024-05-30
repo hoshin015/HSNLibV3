@@ -33,28 +33,27 @@ protected:
 	std::unique_ptr<AnimatedModel> model;
 
 	// --- アニメーションフラグ ---
-	ModelResource::KeyFrame keyFrame;				// 使用されるキーフレーム
-	int currentKeyFrame = 0;						// 現在のフレーム
-	int currentAnimationIndex = 0;					// 現在再生中のアニメーション番号
-	float currentAnimationSeconds = 0.0f;			// 現在再生中の秒数
+	ModelResource::KeyFrame keyFrame;                       // 使用されるキーフレーム
+	int                     currentKeyFrame         = 0;    // 現在のフレーム
+	int                     currentAnimationIndex   = 0;    // 現在再生中のアニメーション番号
+	float                   currentAnimationSeconds = 0.0f; // 現在再生中の秒数
 
-	bool animationLoopFlag = true;					// ループ再生するかどうか
-	bool animationEndFlag = false;					// アニメーションが最後のキーフレームに到達したかどうか
-	bool isPlayAnimation = true;					// アニメーションを再生中かどうか
+	bool animationLoopFlag = true;  // ループ再生するかどうか
+	bool animationEndFlag  = false; // アニメーションが最後のキーフレームに到達したかどうか
+	bool isPlayAnimation   = true;  // アニメーションを再生中かどうか
 
 	// --- アニメーションブレンド用フラグ ---
-	int beforeAnimationIndex = 0;					// 遷移前のアニメーション番号
-	float animationBlendTimer = 0.0f;				// アニメーションブレンド用タイマー
-	float animationBlendTransitionDurations = 0.0f;	// この時間を掛けてアニメーションを遷移させる
-	float exitTime = 0.0f;							// (非ループアニメーション時使用)現在にアニメーションの時間がここまで到達したら次のアニメーションに遷移開始
-	
+	int   beforeAnimationIndex              = 0;    // 遷移前のアニメーション番号
+	float animationBlendTimer               = 0.0f; // アニメーションブレンド用タイマー
+	float animationBlendTransitionDurations = 0.0f; // この時間を掛けてアニメーションを遷移させる
+	float exitTime                          = 0.0f; // (非ループアニメーション時使用)現在にアニメーションの時間がここまで到達したら次のアニメーションに遷移開始
 
 	// --- ダブルアニメーション用フラグ ---
-	bool isDoubleAnimations = false;				// 上半身別アニメーション使うかのフラグ
-	ModelResource::KeyFrame doubleKeyFrame;			// 上半身に使用されるキーフレーム
-	int doubleCurrentKeyFrame = 0;					// 上半身の現在のフレーム
-	int doubleCurrentAnimationIndex = 0;			// 上半身のアニメーション番号
-	float doubleCurrentAnimationSeconds = 0.0f;		// 上半身の現在再生中の秒数
+	bool                    isDoubleAnimations = false;           // 上半身別アニメーション使うかのフラグ
+	ModelResource::KeyFrame doubleKeyFrame;                       // 上半身に使用されるキーフレーム
+	int                     doubleCurrentKeyFrame         = 0;    // 上半身の現在のフレーム
+	int                     doubleCurrentAnimationIndex   = 0;    // 上半身のアニメーション番号
+	float                   doubleCurrentAnimationSeconds = 0.0f; // 上半身の現在再生中の秒数
 
 public:
 	int GetCurrentKeyFrame() { return currentKeyFrame; }

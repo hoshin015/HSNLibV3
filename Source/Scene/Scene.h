@@ -7,8 +7,13 @@
 class Scene
 {
 public:
-	Scene() {}
-	virtual ~Scene() {}
+	Scene()
+	{
+	}
+
+	virtual ~Scene()
+	{
+	}
 
 
 	// ‰Šú‰»

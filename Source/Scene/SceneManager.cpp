@@ -11,7 +11,7 @@ void SceneManager::Update()
 
 		// 新しいシーンを設定
 		currentScene = nextScene;
-		nextScene = nullptr;
+		nextScene    = nullptr;
 
 		// シーン初期化設定
 		if (!currentScene->IsReady())

@@ -49,3 +49,27 @@ public:
 	void Execute() override;
 	void Exit() override;
 };
+
+// 攻撃ステートオブジェクト
+class PlayerAttackState : public State<Player>
+{
+public:
+	PlayerAttackState(Player* owner) : State<Player>(owner) {}
+	~PlayerAttackState() override {}
+
+	void Enter() override;
+	void Execute() override;
+	void Exit() override;
+};
+
+// ドリンクステートオブジェクト
+class PlayerDrinkState : public State<Player>
+{
+public:
+	PlayerDrinkState(Player* owner) : State<Player>(owner) {}
+	~PlayerDrinkState() override {}
+
+	void Enter() override;
+	void Execute() override;
+	void Exit() override;
+};

@@ -27,7 +27,7 @@ bool UiPause::Update()
 	case UiPauseState::Hidden:
 		{
 			// ポーズフラグがtrueになったら遷移
-			if(InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter))
+			if(InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
 			{
 				pauseText->SetIsRender(true);
 				pauseText1->SetIsRender(true);
@@ -44,7 +44,7 @@ bool UiPause::Update()
 			pauseTimer += Timer::Instance().DeltaTime();
 
 			// 表示中にポーズ解除されたら非表示遷移状態に遷移
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter))
+			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
 			{
 				isPause = false;
 				state = UiPauseState::Hide;
@@ -73,7 +73,7 @@ bool UiPause::Update()
 	case UiPauseState::Visible:
 		{
 			// ポーズフラグがfalseになったら遷移
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter))
+			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
 			{
 				isPause = false;
 				state = UiPauseState::Hide;
@@ -85,7 +85,7 @@ bool UiPause::Update()
 			pauseTimer -= Timer::Instance().DeltaTime();
 
 			// 表示中にポーズ解除されたら非表示遷移状態に遷移
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter))
+			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
 			{
 				isPause = true;
 				state = UiPauseState::Showing;

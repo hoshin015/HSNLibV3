@@ -127,7 +127,4 @@ public:
 	// イージングによる現在のパラメータ取得
 	template<typename Ty>
 	DirectX::XMFLOAT2 GetNowParamVec(EasingFunc<Ty> func, float time, UiEasingValueVec uiEasingValueVec);
-
-	
-
 };

@@ -51,6 +51,7 @@ public:
 	int GetCurrentAnimationIndex() { return currentAnimationIndex; }
 	bool GetAnimationLoopFlag() { return animationLoopFlag; }
 	bool GetIsPlayAnimation() { return isPlayAnimation; }
+	bool GetAnimationEndFlag(){ return animationEndFlag; }
 
 	void SetKeyFrame(ModelResource::KeyFrame kf) { keyFrame = kf; }
 	void SetCurrentKeyFrame(int kf) { currentKeyFrame = kf; }
@@ -59,6 +60,8 @@ public:
 	void SetAnimationLoopFlag(bool b) { animationLoopFlag = b; }
 	void SetAnimationEndFlag(bool b) { animationEndFlag = b; }
 	void SetIsPlayAnimation(bool b) { isPlayAnimation = b; }
+
+	bool GetIsDoubleAnimation() { return isDoubleAnimations; }
 
 	void SetIsDoubleAnimation(bool b) { isDoubleAnimations = b; }
 	void SetDoubleCurrentAnimationIndex(int index) { doubleCurrentAnimationIndex = index; }

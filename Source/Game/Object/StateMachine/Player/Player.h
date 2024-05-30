@@ -30,6 +30,8 @@ public:
     void CalcMoveVelocity();
     // ˆÚ“®‚µ‚Ä‚¢‚é•ûŒü‚ÉŒü‚­
     void Turn();
+    // ˆÚ“®
+    void Move();
 
 public:
     enum class State
@@ -40,6 +42,8 @@ public:
     {
 	    Idle,
         Walk,
+        Attack,
+        Drink,
     };
 private:
     std::unique_ptr<StateMachine<Player>> stateMachine;

@@ -17,6 +17,8 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	// ２層目ステート登録
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerIdleState(this));
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerWalkState(this));
+	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerAttackState(this));
+	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerDrinkState(this));
 	// ステートセット
 	stateMachine->SetState(static_cast<int>(State::Normal));
 
@@ -31,15 +33,10 @@ void Player::Update()
 	Input();
 	// 移動量計算
 	CalcMoveVelocity();
-	// 回転
-	Turn();
 
 	// ステートマシン更新
 	stateMachine->Update();
 
-	position += velocity;
-	velocity *= 0.01f;
-	
 
 	// アニメーション更新
 	UpdateAnimation();
@@ -62,6 +59,7 @@ void Player::Input()
 {
 	InputManager* input = &InputManager::Instance();
 
+	// --- 移動 ---
 	DirectX::XMFLOAT2 inputMoveData;
 	inputMoveData.x = input->GetKeyPress(Keyboard::D) - input->GetKeyPress(Keyboard::A);
 	inputMoveData.y = input->GetKeyPress(Keyboard::W) - input->GetKeyPress(Keyboard::S);
@@ -73,6 +71,28 @@ void Player::Input()
 		inputMoveData.y = input->GetThumSticksLeftY();
 	}
 	inputMap["Move"] = inputMoveData;
+
+	// --- 攻撃 ---
+	bool inputAttackData;
+	inputAttackData = InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter);
+
+	// コントローラー対応
+	if (input->IsGamePadConnected())
+	{
+		inputAttackData = input->GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
+	}
+	inputMap["Attack"] = inputAttackData;
+
+	// --- ドリンク ---
+	bool inputDrinkData;
+	inputDrinkData = InputManager::Instance().GetKeyPressed(DirectX::Keyboard::E);
+
+	// コントローラー対応
+	if (input->IsGamePadConnected())
+	{
+		inputDrinkData = input->GetGamePadButtonPressed(GAMEPADBUTTON_STATE::x);
+	}
+	inputMap["Drink"] = inputDrinkData;
 }
 
 // 移動量計算
@@ -116,4 +136,11 @@ void Player::Turn()
 	// 回転
 	float deltaTime = Timer::Instance().DeltaTime();
 	angle.y += (cross > 0) ? (-rotPower * deltaTime) : (rotPower * deltaTime);
+}
+
+// 移動
+void Player::Move()
+{
+	position += velocity;
+	velocity *= 0.01f;
 }

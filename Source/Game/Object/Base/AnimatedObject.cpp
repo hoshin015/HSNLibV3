@@ -30,6 +30,8 @@ void AnimatedObject::UpdateTransform()
 
 void AnimatedObject::PlayAnimation(int index, bool loop)
 {
+	if (GetCurrentAnimationIndex() == index && animationLoopFlag == loop) return;
+
 	currentAnimationIndex = index;
 	currentAnimationSeconds = 0.0f;
 

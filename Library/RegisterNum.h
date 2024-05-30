@@ -11,7 +11,7 @@
 
 // ’è”
 #define MAX_INSTANCE					512
-#define GAUSSIAN_DOWNSAMPLING_COUNT		1
+#define GAUSSIAN_DOWNSAMPLING_COUNT		4
 #define SHADOWMAP_COUNT					4
 
 // ƒTƒ“ƒvƒ‰[

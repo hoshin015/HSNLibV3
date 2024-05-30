@@ -46,9 +46,16 @@ void PlayerIdleState::Enter()
 
 void PlayerIdleState::Execute()
 {
+	// ‘–‚èˆÚ“®—ÊŒvŽZ
+	owner->CalcWalkVelocity();
+
 	if(Float3Length(owner->GetVelocity()) >= 0.001f)
 	{
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Walk));
+		if (owner->GetInputMap<bool>("Run"))
+		{
+			owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Run));
+		}
 	}
 	if (owner->GetInputMap<bool>("Attack"))
 	{
@@ -82,11 +89,66 @@ void PlayerWalkState::Enter()
 
 void PlayerWalkState::Execute()
 {
+	// •àsˆÚ“®—ÊŒvŽZ
+	owner->CalcWalkVelocity();
+
+	if (owner->GetInputMap<bool>("Run"))
+	{
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Run));
+	}
 	if (Float3Length(owner->GetVelocity()) < 0.001f)
 	{
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
 	}
 	if(owner->GetInputMap<bool>("Attack"))
+	{
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Attack));
+	}
+	if (owner->GetInputMap<bool>("Drink"))
+	{
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Drink));
+	}
+
+	
+
+	// ‰ñ“]
+	owner->Turn();
+
+	// ˆÚ“®
+	owner->Move();
+}
+
+void PlayerWalkState::Exit()
+{
+}
+
+// ========================================================
+// 	PlayerRun
+// ========================================================
+
+void PlayerRunState::Enter()
+{
+	owner->PlayAnimation(static_cast<int>(PlayerAnimNum::Run), true);
+}
+
+void PlayerRunState::Execute()
+{
+	// ‘–‚èˆÚ“®—ÊŒvŽZ
+	owner->CalcRunVelocity();
+
+	if (!owner->GetInputMap<bool>("Run"))
+	{
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Walk));
+	}
+	if (Float3Length(owner->GetVelocity()) < 0.001f)
+	{
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
+	}
+	if (Float3Length(owner->GetVelocity()) < 0.001f)
+	{
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
+	}
+	if (owner->GetInputMap<bool>("Attack"))
 	{
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Attack));
 	}
@@ -102,7 +164,7 @@ void PlayerWalkState::Execute()
 	owner->Move();
 }
 
-void PlayerWalkState::Exit()
+void PlayerRunState::Exit()
 {
 }
 
@@ -139,6 +201,9 @@ void PlayerDrinkState::Enter()
 
 void PlayerDrinkState::Execute()
 {
+	// •àsˆÚ“®—ÊŒvŽZ
+	owner->CalcWalkVelocity();
+
 	if (Float3Length(owner->GetVelocity()) < 0.001f)
 	{
 		owner->PlayAnimation(static_cast<int>(PlayerAnimNum::Idle), true);

@@ -17,6 +17,7 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	// ２層目ステート登録
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerIdleState(this));
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerWalkState(this));
+	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerRunState(this));
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerAttackState(this));
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerDrinkState(this));
 	// ステートセット
@@ -31,8 +32,7 @@ void Player::Update()
 {
 	// 入力データ取得
 	Input();
-	// 移動量計算
-	CalcMoveVelocity();
+	
 
 	// ステートマシン更新
 	stateMachine->Update();
@@ -72,6 +72,17 @@ void Player::Input()
 	}
 	inputMap["Move"] = inputMoveData;
 
+	// --- 走り ---
+	bool inputRunData;
+	inputRunData = InputManager::Instance().GetKeyPress(DirectX::Keyboard::LeftShift);
+
+	// コントローラー対応
+	if (input->IsGamePadConnected())
+	{
+		inputRunData = input->GetGamePadButtonPressed(GAMEPADBUTTON_STATE::dpadRight);
+	}
+	inputMap["Run"] = inputRunData;
+
 	// --- 攻撃 ---
 	bool inputAttackData;
 	inputAttackData = InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter);
@@ -96,7 +107,7 @@ void Player::Input()
 }
 
 // 移動量計算
-void Player::CalcMoveVelocity()
+void Player::CalcWalkVelocity()
 {
 	// カメラの方向に対応する移動
 	float deltaTime = Timer::Instance().DeltaTime();
@@ -105,6 +116,20 @@ void Player::CalcMoveVelocity()
 
 	velocity.x += Camera::Instance().GetRight().x * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * deltaTime;
 	velocity.z += Camera::Instance().GetRight().z * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * deltaTime;
+}
+
+// 走り移動量計算
+void Player::CalcRunVelocity()
+{
+	float runPower = 3.0f;
+
+	// カメラの方向に対応する移動
+	float deltaTime = Timer::Instance().DeltaTime();
+	velocity.x += Camera::Instance().GetFront().x * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * runPower * deltaTime;
+	velocity.z += Camera::Instance().GetFront().z * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * runPower * deltaTime;
+
+	velocity.x += Camera::Instance().GetRight().x * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * runPower * deltaTime;
+	velocity.z += Camera::Instance().GetRight().z * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * runPower * deltaTime;
 }
 
 // 移動している方向に向く

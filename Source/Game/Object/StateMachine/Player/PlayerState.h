@@ -50,6 +50,18 @@ public:
 	void Exit() override;
 };
 
+// 走りステートオブジェクト
+class PlayerRunState : public State<Player>
+{
+public:
+	PlayerRunState(Player* owner) : State<Player>(owner) {}
+	~PlayerRunState() override {}
+
+	void Enter() override;
+	void Execute() override;
+	void Exit() override;
+};
+
 // 攻撃ステートオブジェクト
 class PlayerAttackState : public State<Player>
 {

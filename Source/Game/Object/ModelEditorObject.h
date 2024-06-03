@@ -9,4 +9,7 @@ public:
 
 	void Update() override;
 	void Render(bool isShadow = false) override;
+
+	// デバッグプリミティブ描画
+	void DrawDebugPrimitive();
 };

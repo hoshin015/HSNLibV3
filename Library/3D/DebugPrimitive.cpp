@@ -2,6 +2,7 @@
 #include "../Graphics/Graphics.h"
 #include "../Graphics/Shader.h"
 #include "../ErrorLogger.h"
+#include "../RegisterNum.h"
 
 // 初期化
 void DebugPrimitive::Initialize()
@@ -70,7 +71,7 @@ void DebugPrimitive::Render()
 		// 定数バッファ更新
 		Constants data = { w, sphere.color };
 		dc->UpdateSubresource(constantBuffer.Get(), 0, 0, &data, 0, 0);
-		dc->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
+		dc->VSSetConstantBuffers(_objectConstant, 1, constantBuffer.GetAddressOf());
 
 		dc->Draw(sphereVertexCount, 0);
 	}
@@ -91,7 +92,7 @@ void DebugPrimitive::Render()
 		// 定数バッファ更新
 		Constants data = { w, cylinder.color };
 		dc->UpdateSubresource(constantBuffer.Get(), 0, 0, &data, 0, 0);
-		dc->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
+		dc->VSSetConstantBuffers(_objectConstant, 1, constantBuffer.GetAddressOf());
 
 		dc->Draw(cylinderVertexCount, 0);
 	}

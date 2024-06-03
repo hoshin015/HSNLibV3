@@ -15,6 +15,7 @@
 #include "../../Library/Input/InputManager.h"
 #include "../../Library/Graphics/Graphics.h"
 #include "../../Library/3D/Camera.h"
+#include "../../Library/3D/DebugPrimitive.h"
 #include "../../Library/3D/LineRenderer.h"
 #include "../../Library/3D/LightManager.h"
 #include "../../Library/Graphics/Texture.h"
@@ -104,6 +105,9 @@ void SceneModelEditor::Render()
 	// ベースのライン描画(先に書いておく)
 	DrawGrid(10, 1.0f);
 	LineRenderer::Instance().Render();
+
+	DebugPrimitive::Instance().Render();
+
 
 	// rasterizerStateの設定
 	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
@@ -338,6 +342,14 @@ void SceneModelEditor::DrawDebugGUI()
 						std::string meshName = mesh.meshName + " (mesh)";
 						if (ImGui::TreeNode(meshName.c_str()))
 						{
+							if (ImGui::BeginPopupContextItem()) {
+								if (ImGui::MenuItem(("copy##" + meshName).c_str())) {
+									// meshName をクリップボードにコピー
+									ImGui::SetClipboardText(meshName.c_str());
+								}
+								ImGui::EndPopup();
+							}
+
 							// 再帰的にBoneを描画するラムダ式
 							DrawBoneDebug(mesh.skeleton.bones, 0);
 							ImGui::TreePop();
@@ -375,6 +387,12 @@ void SceneModelEditor::DrawDebugGUI()
 							mySequence.myItems.clear();
 							// 一番上のアイテムを選択状態に
 							mySequence.selectItemNum = 0;
+
+							// 何もアイテムがなければ
+							if (mySequence.myItems.size() == 0)
+							{
+								mySequence.Add("", 0, -10, -10);
+							}
 						}
 					}
 				}
@@ -419,8 +437,7 @@ void SceneModelEditor::DrawDebugGUI()
 					// 削除
 					std::filesystem::path path(modelObject->GetModel()->GetModelResource()->GetFilePath());
 					std::string parentPath = path.parent_path().string();
-					std::string deleteFilename = parentPath + "/Anims/" + modelObject->GetModel()->GetModelResource()->
-						GetAnimationClips().at(animationClipIndex).name + ".anim";
+					std::string deleteFilename = parentPath + "/Anims/" + animationClip.name + ".anim";
 					std::filesystem::remove(deleteFilename);
 
 					modelObject->GetModel()->GetModelResource()->GetAnimationClips().erase(
@@ -464,36 +481,42 @@ void SceneModelEditor::DrawDebugGUI()
 
 			if (ImGui::Button("create"))
 			{
-				// emptyItem の削除
-				if (mySequence.myItems.size() == 1)
+				// emptye を選択中なら実行しない
+				if (selectSequencerItemTypeName != 0)
 				{
-					if (mySequence.myItems.at(0).mType == static_cast<int>(SequencerItemType::EMPTY))
+					// emptyItem の削除
+					if (mySequence.myItems.size() == 1)
 					{
-						mySequence.myItems.clear();
+						if (mySequence.myItems.at(0).mType == static_cast<int>(SequencerItemType::EMPTY))
+						{
+							mySequence.myItems.clear();
+						}
 					}
-				}
 
-				//if (selectSequencerItemTypeName == static_cast<int>(SequencerItemType::Sphere))
-				//{
-				//	CollisionSphere collision;
-				//	collision.name = newSequenceName;
-				//	collision.startFrame = 0;
-				//	collision.endFrame = 10;
-				//	collision.radius = 1.0f;
-				//	model->animationClips.at(animationClipIndex).spheres.push_back(collision);
-				//
-				//	mySequence.Add(newSequenceName, selectSequencerItemTypeName, 0, 10);
-				//}
-				//if (selectSequencerItemTypeName == static_cast<int>(SequencerItemType::SE))
-				//{
-				//	AnimSE animSE;
-				//	animSE.name = newSequenceName;
-				//	animSE.startFrame = 0;
-				//	animSE.endFrame = 10;
-				//	model->animationClips.at(animationClipIndex).animSEs.push_back(animSE);
-				//
-				//	mySequence.Add(newSequenceName, selectSequencerItemTypeName, 0, 10);
-				//}
+					if (selectSequencerItemTypeName == static_cast<int>(SequencerItemType::Sphere))
+					{
+						AnimSphereCollision collision;
+						collision.name = newSequenceName;
+						collision.startFrame = 0;
+						collision.endFrame = 10;
+						collision.radius = 1.0f;
+						collision.position = { 0,0,0 };
+						collision.color = { 1,1,1,1 };
+						animationClip.animSphereCollisions.push_back(collision);
+
+						mySequence.Add(newSequenceName, selectSequencerItemTypeName, 0, 10);
+					}
+					//if (selectSequencerItemTypeName == static_cast<int>(SequencerItemType::SE))
+					//{
+					//	AnimSE animSE;
+					//	animSE.name = newSequenceName;
+					//	animSE.startFrame = 0;
+					//	animSE.endFrame = 10;
+					//	model->animationClips.at(animationClipIndex).animSEs.push_back(animSE);
+					//
+					//	mySequence.Add(newSequenceName, selectSequencerItemTypeName, 0, 10);
+					//}
+				}
 			}
 
 			ImGui::Separator();
@@ -501,6 +524,137 @@ void SceneModelEditor::DrawDebugGUI()
 
 			if (mySequence.selectItemNum != -1)
 			{
+				bool isSkip = false;	// 削除後の処理スキップ用
+
+				// 複製
+				if (ImGui::Button("Deplicate"))
+				{
+					if (mySequence.myItems.at(mySequence.selectItemNum).mType == static_cast<int>(SequencerItemType::Sphere))
+					{
+						int index = mySequence.myItems.at(mySequence.selectItemNum).mTypeIndex;
+
+						AnimSphereCollision collision = animationClip.animSphereCollisions.at(index);
+						animationClip.animSphereCollisions.push_back(collision);
+
+						mySequence.Add(collision.name, static_cast<int>(SequencerItemType::Sphere), collision.startFrame, collision.endFrame);
+					}
+				}
+
+				// 削除
+				ImGui::SameLine();
+				if (ImGui::Button("Delete"))
+				{
+					isSkip = true;
+					// モデルが持ってるアイテムを削除
+					if (mySequence.myItems.at(mySequence.selectItemNum).mType == static_cast<int>(SequencerItemType::Sphere))
+					{
+						int index = mySequence.myItems.at(mySequence.selectItemNum).mTypeIndex;
+						animationClip.animSphereCollisions.erase(animationClip.animSphereCollisions.begin() + index);
+					}
+
+					// mySequence 内のアイテムを削除
+					mySequence.myItems.erase(mySequence.myItems.begin() + mySequence.selectItemNum);
+
+					// 削除した後に選択中のアイテムを０に
+					mySequence.selectItemNum = 0;
+					if (mySequence.myItems.size() == 0)
+					{
+						mySequence.Add("", 0, -10, -10);
+					}
+
+					selectedEntry = -1;
+				}
+
+				std::string& selectName = mySequence.myItems.at(mySequence.selectItemNum).name;
+				int& selectStartFrame = mySequence.myItems.at(mySequence.selectItemNum).mFrameStart;
+				int& selectEndFrame = mySequence.myItems.at(mySequence.selectItemNum).mFrameEnd;
+
+				// 削除処理をしていなければ表示
+				if (!isSkip)
+				{
+					ImGuiManager::Instance().InputText("name", selectName);
+					ImGui::DragInt("start frame", &selectStartFrame);
+					ImGui::DragInt("end frame", &selectEndFrame);
+
+					// --- sphere ---
+					if (mySequence.myItems.at(mySequence.selectItemNum).mType == static_cast<int>(SequencerItemType::Sphere))
+					{
+						int index = mySequence.myItems.at(mySequence.selectItemNum).mTypeIndex;
+
+						// 値のセット
+						animationClip.animSphereCollisions.at(index).name = selectName.c_str();
+						animationClip.animSphereCollisions.at(index).startFrame = selectStartFrame;
+						animationClip.animSphereCollisions.at(index).endFrame = selectEndFrame;
+
+						float& radius = animationClip.animSphereCollisions.at(index).radius;
+						DirectX::XMFLOAT3& position = animationClip.animSphereCollisions.at(index).position;
+						DirectX::XMFLOAT4& color = animationClip.animSphereCollisions.at(index).color;
+						std::string bindBoneName = animationClip.animSphereCollisions.at(index).bindBoneName;
+
+						ImGui::DragFloat("radius", &radius, 0.01f);
+						ImGui::DragFloat3("position", &position.x, 0.01f);
+						ImGui::ColorEdit4("color", &color.x);
+						ImGuiManager::Instance().InputText("bindBoneName", bindBoneName);
+
+						animationClip.animSphereCollisions.at(index).bindBoneName = bindBoneName.c_str();
+					}
+				}
+			}
+		}
+	}
+	ImGui::End();
+
+	//----------------------------------------------------------
+	// ボーン
+	//----------------------------------------------------------
+	ImGui::Begin("Skeleton Collision");
+	{
+		if (modelObject && !modelObject->GetModel()->GetModelResource()->GetAnimationClips().empty())
+		{
+			std::vector<SkeletonSphereCollision>& skeletonSphereCollisions = modelObject->GetModel()->GetModelResource()->GetSkeletonSphereCollisions();
+
+			static std::string boneName = "";
+			static float boneRadius = 1.0f;
+			static DirectX::XMFLOAT3 bonePos = { 0,0,0 };
+			static DirectX::XMFLOAT4 boneColor = { 1,1,1,1 };
+
+			ImGuiManager::Instance().InputText("name", boneName);
+			ImGui::DragFloat("radius", &boneRadius);
+
+			if (ImGui::Button("Add SkeletonCollision"))
+			{
+				SkeletonSphereCollision skeletonSphere;
+				skeletonSphere.name = boneName.c_str();
+				skeletonSphere.radius = boneRadius;
+				skeletonSphere.position = bonePos;
+				skeletonSphere.color = boneColor;
+				skeletonSphereCollisions.push_back(skeletonSphere);
+			}
+
+			std::vector<int> deleteBonesIndex;
+			int boneSphereCount = skeletonSphereCollisions.size();
+			for (int boneSphereIndex = 0; boneSphereIndex < boneSphereCount; boneSphereIndex++)
+			{
+				ImGui::Separator();
+				//if (ImGui::CollapsingHeader(skeletonSphereCollisions.at(boneSphereIndex).name.c_str()))
+				{
+					SkeletonSphereCollision& seletonSphere = skeletonSphereCollisions.at(boneSphereIndex);
+					ImGui::Text(("name : " + seletonSphere.name).c_str());
+					ImGui::DragFloat(("radius##" + std::to_string(boneSphereIndex)).c_str(), &seletonSphere.radius, 0.01f);
+
+					ImGui::SameLine();
+					if (ImGui::Button(("delete##" + std::to_string(boneSphereIndex)).c_str()))
+					{
+						deleteBonesIndex.push_back(boneSphereIndex);
+					}
+				}
+
+				float radius = skeletonSphereCollisions.at(boneSphereIndex).radius;
+			}
+			// 要素の削除
+			for (auto index : deleteBonesIndex)
+			{
+				skeletonSphereCollisions.erase(skeletonSphereCollisions.begin() + index);
 			}
 		}
 	}
@@ -818,8 +972,18 @@ void SceneModelEditor::DrawBoneDebug(const std::vector<ModelResource::Bone>& bon
 
 	// 現在のボーンを描画
 	const ModelResource::Bone& bone = bones[boneIndex];
+
+
 	if (ImGui::TreeNode(bone.name.c_str()))
 	{
+		if (ImGui::BeginPopupContextItem()) {
+			if (ImGui::MenuItem(("copy##" + bone.name).c_str())) {
+				// meshName をクリップボードにコピー
+				ImGui::SetClipboardText(bone.name.c_str());
+			}
+			ImGui::EndPopup();
+		}
+
 		// 子ボーンがある場合、再帰的に描画する
 		for (int i = 0; i < bones.size(); ++i)
 		{

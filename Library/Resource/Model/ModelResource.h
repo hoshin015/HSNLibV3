@@ -6,6 +6,7 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include "../../MyCereal.h"
+#include "../../Audio/AudioManager.h"
 
 
 //--------------------------------------------------------------
@@ -18,6 +19,64 @@ enum class CoordinateSystemTransform
 	RHS_Z_UP,
 	LHS_Z_UP,
 };
+
+
+//--------------------------------------------------------------
+// SkeletonSphereCollision
+//--------------------------------------------------------------
+struct SkeletonSphereCollision
+{
+	std::string       name;          // ノードの名前
+	float             radius = 1.0f; // 当たり判定の半径
+	DirectX::XMFLOAT3 position;      // ボーンに連動させない場合の座標
+	DirectX::XMFLOAT4 color;         // 色
+
+	template <class Archive>
+	void serialize(Archive& archive)
+	{
+		archive(name, radius, position, color);
+	}
+};
+
+//--------------------------------------------------------------
+// AnimSphereCollision
+//--------------------------------------------------------------
+struct AnimSphereCollision
+{
+	std::string       name;         // 名前
+	float             radius;       // 球の半径
+	int               startFrame;   // 開始フレーム
+	int               endFrame;     // 終了フレーム
+	std::string       bindBoneName; // ボーンに連動させて動かす場合はここに名前をいれる
+	DirectX::XMFLOAT3 position;     // ボーンに連動させない場合の座標
+	DirectX::XMFLOAT4 color;        // 色
+
+
+	template <class Archive>
+	void serialize(Archive& archive)
+	{
+		archive(name, radius, startFrame, endFrame, bindBoneName, position, color);
+	}
+};
+
+//--------------------------------------------------------------
+// AnimSe
+//--------------------------------------------------------------
+struct AnimSe
+{
+	MUSIC_LABEL musicType = MUSIC_LABEL::BGM_TEST; // 再生するSE
+	std::string name;                              // 名前
+	int         startFrame;                        // 開始フレーム
+	int         endFrame;                          // 終了フレーム	
+	bool        isPlay = false;                    // 再生されたかどうか
+
+	template <class Archive>
+	void serialize(Archive& archive)
+	{
+		archive(musicType, name, startFrame, endFrame);
+	}
+};
+
 
 class ModelResource
 {
@@ -261,7 +320,9 @@ public:
 		float       samplingRate = 0;
 		float       secondsLength;
 
-		std::vector<KeyFrame> sequence;
+		std::vector<KeyFrame>            sequence;
+		std::vector<AnimSphereCollision> animSphereCollisions; // コリジョンデータ
+		std::vector<AnimSe>              animSes;              // 音データ
 
 		template <class Archive>
 		void serialize(Archive& archive)
@@ -302,6 +363,9 @@ public:
 	// AnimationClips
 	std::vector<Animation>& GetAnimationClips() { return animationClips; }
 
+	// skeletonSphereCollisions
+	std::vector<SkeletonSphereCollision>& GetSkeletonSphereCollisions() { return skeletonSphereCollisions; }
+
 private:
 	std::string filePath; // このリソースのパス
 
@@ -323,6 +387,9 @@ private:
 	std::unordered_map<std::string, Material> materials; // マテリアルの名前(string)でマテリアル(Material)にアクセスできる
 	std::vector<Mesh>                         meshes;
 	std::vector<Animation>                    animationClips;
+
+	// コリジョンデータ
+	std::vector<SkeletonSphereCollision> skeletonSphereCollisions;
 
 public:
 	// 独自形式で書き出し

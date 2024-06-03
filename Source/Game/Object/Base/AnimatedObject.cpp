@@ -264,6 +264,45 @@ void AnimatedObject::UpdateBlendAnimation()
 	}
 }
 
+
+DirectX::XMFLOAT3 AnimatedObject::GetBonePosition(std::string boneName)
+{
+	for(auto& mesh : model->GetModelResource()->GetMeshes())
+	{
+		for(auto& bone : mesh.skeleton.bones)
+		{
+			if(bone.name == boneName)
+			{
+				ModelResource::Animation& animationClip = model->GetModelResource()->GetAnimationClips().
+					at(currentAnimationIndex);
+
+				ModelResource::KeyFrame& keyframe = animationClip.sequence.at(currentKeyFrame);
+
+				int nodeCount = keyframe.nodes.size();
+				for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
+				{
+					ModelResource::KeyFrame::Node& node = keyframe.nodes.at(nodeIndex);
+
+					if (bone.name == node.name)
+					{
+						DirectX::XMMATRIX T = DirectX::XMLoadFloat4x4(&transform);
+						DirectX::XMMATRIX M = DirectX::XMLoadFloat4x4(&node.globalTransform);
+
+						DirectX::XMMATRIX W = M * T;
+						DirectX::XMFLOAT4X4 w;
+						DirectX::XMStoreFloat4x4(&w, W);
+
+						return { w._41, w._42, w._43 };
+					}
+				}
+			}
+		}
+	}
+
+	// 一致するボーンがない場合 0,0,0 を返す
+	return { 0,0,0 };
+}
+
 // アニメーションブレンド
 void AnimatedObject::BlendAnimation(const ModelResource::KeyFrame* keyFrames[2], float factor,
                                     ModelResource::KeyFrame&       keyFrame)

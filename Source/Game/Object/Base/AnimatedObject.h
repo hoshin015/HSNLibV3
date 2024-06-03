@@ -31,6 +31,8 @@ protected:
 	//
 	void UpdateBlendAnimation();
 
+	DirectX::XMFLOAT3 GetBonePosition(std::string boneName);
+
 protected:
 	std::unique_ptr<AnimatedModel> model;
 

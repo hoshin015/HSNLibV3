@@ -171,6 +171,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayer.cpp" />
+    <ClCompile Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayerState.cpp" />
     <ClCompile Include="Library\Particle\EmitterManager.cpp" />
     <ClCompile Include="Library\Particle\Emitter.cpp" />
     <ClCompile Include="Library\Resource\Model\AnimationBindResource.cpp" />
@@ -258,6 +260,8 @@
     <ClCompile Include="Source\Game\Object\StateMachine\StateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayer.h" />
+    <ClInclude Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayerState.h" />
     <ClInclude Include="Library\Easing.h" />
     <ClInclude Include="Library\Particle\EmitterManager.h" />
     <ClInclude Include="Library\Particle\Emitter.h" />

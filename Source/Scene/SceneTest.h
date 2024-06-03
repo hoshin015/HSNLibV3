@@ -12,6 +12,7 @@
 #include "../Game/Object/TestStatic.h"
 #include "../Game/Object/TestAnimated.h"
 #include "../Game/Object/StateMachine/Player/Player.h"
+#include "../Game/Object/StateMachine/BlendTestPlayer/BlendTestPlayer.h"
 
 
 // テストシーン
@@ -49,4 +50,5 @@ private:
 	std::unique_ptr<Sprite> sprTest3;
 
 	std::unique_ptr<Player> player;
+	std::unique_ptr<BlendTestPlayer> blendTestPlayer;
 };

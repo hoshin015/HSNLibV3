@@ -69,6 +69,7 @@ void SceneTest::Initialize()
 	sprTest3->UpdateAnimation();
 
 	player = std::make_unique<Player>("Data/Fbx/Character/Character.model");
+	blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");
 
 	Particle::Instance().Initialize();
 
@@ -143,7 +144,9 @@ void SceneTest::Update()
 
 	testStatic->Update();
 	testAnimated->Update();
+
 	player->Update();
+	//blendTestPlayer->Update();
 
 	sprTest->SetAngle(sprTest->GetAngle() + 180 * Timer::Instance().DeltaTime());
 	sprTest->UpdateAnimation();
@@ -193,7 +196,9 @@ void SceneTest::Render()
 				shadow->SetAnimatedShader();
 				StageManager::Instance().Render(true);
 				testAnimated->Render(true);
+
 				player->Render(true);
+				//blendTestPlayer->Render(true);
 
 				// static object
 				shadow->SetStaticShader();
@@ -222,7 +227,9 @@ void SceneTest::Render()
 
 		testStatic->Render();
 		testAnimated->Render();
+
 		player->Render();
+		//blendTestPlayer->Render();
 
 		// rasterizerStateの設定
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
@@ -261,6 +268,8 @@ void SceneTest::Render()
 #if USE_IMGUI
 	// --- デバッグGUI描画 ---
 	DrawDebugGUI();
+
+	player->DrawDebugImGui(0);
 
 	LightManager::Instance().DrawDebugGui();
 	bloom->DrawDebugGui();

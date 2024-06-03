@@ -61,7 +61,7 @@ void AnimatedObject::UpdateAnimation()
 	currentKeyFrame = static_cast<int>(currentAnimationSeconds * animation.samplingRate);
 
 	// 経過時間
-	currentAnimationSeconds += Timer::Instance().DeltaTime();
+	currentAnimationSeconds += Timer::Instance().DeltaTime() * animationTimeScale;
 	// 現在のフレームが最大フレームを超えていたら
 	if (currentAnimationSeconds >= animation.secondsLength)
 	{
@@ -222,6 +222,44 @@ void AnimatedObject::UpdateAnimation()
 		else
 		{
 			blendAnimationIndex = -1;
+		}
+	}
+}
+
+void AnimatedObject::UpdateBlendAnimation()
+{
+	// 再生中でないなら更新しない
+	if (!isPlayAnimation) return;
+
+	// アニメーションクリップを持たない場合処理しない
+	if (model->GetModelResource()->GetAnimationClips().empty()) return;
+
+	// 最終フレームなら更新しない
+	if (animationEndFlag) return;
+
+	// アニメーションデータ取得
+	ModelResource::Animation& animation = model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex);
+
+	currentKeyFrame = static_cast<int>(currentAnimationSeconds * animation.samplingRate);
+
+	// 経過時間
+	currentAnimationSeconds += Timer::Instance().DeltaTime() * animationTimeScale;
+	// 現在のフレームが最大フレームを超えていたら
+	if (currentAnimationSeconds >= animation.secondsLength)
+	{
+		if (animationLoopFlag)
+		{
+			// 先頭秒数へ
+			currentKeyFrame = 0;
+			//currentAnimationSeconds -= animation.secondsLength;
+			currentAnimationSeconds = 0;
+		}
+		else
+		{
+			// 最終秒数で停止
+			currentKeyFrame = animation.sequence.size() - 1;
+			currentAnimationSeconds = animation.secondsLength;
+			animationEndFlag = true;
 		}
 	}
 }

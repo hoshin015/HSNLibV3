@@ -116,6 +116,9 @@
     <Filter Include="2_Source\Game\Object\StateMachine\Player">
       <UniqueIdentifier>{58d92753-9a37-419d-86e7-4d846f3733ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="2_Source\Game\Object\StateMachine\TestBlendPlayer">
+      <UniqueIdentifier>{29d6daf0-76f3-4ed6-87b0-fbf2dc190144}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -372,6 +375,12 @@
     </ClCompile>
     <ClCompile Include="Source\Game\Object\StateMachine\Player\PlayerState.cpp">
       <Filter>2_Source\Game\Object\StateMachine\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayer.cpp">
+      <Filter>2_Source\Game\Object\StateMachine\TestBlendPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayerState.cpp">
+      <Filter>2_Source\Game\Object\StateMachine\TestBlendPlayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -656,6 +665,12 @@
     </ClInclude>
     <ClInclude Include="Source\Game\Object\StateMachine\Player\PlayerState.h">
       <Filter>2_Source\Game\Object\StateMachine\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayer.h">
+      <Filter>2_Source\Game\Object\StateMachine\TestBlendPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayerState.h">
+      <Filter>2_Source\Game\Object\StateMachine\TestBlendPlayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

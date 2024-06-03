@@ -19,6 +19,8 @@ public:
 	// アニメーション再生
 	void PlayAnimation(int index, bool loop);
 
+	// アニメーションブレンド
+	void BlendAnimation(const ModelResource::KeyFrame* keyFrames[2], float factor, ModelResource::KeyFrame& keyFrame);
 protected:
 	// 姿勢行列更新
 	void UpdateTransform() override;
@@ -26,8 +28,8 @@ protected:
 	// アニメーション更新
 	void UpdateAnimation();
 
-	// アニメーションブレンド
-	void BlendAnimation(const ModelResource::KeyFrame* keyFrames[2], float factor, ModelResource::KeyFrame& keyFrame);
+	//
+	void UpdateBlendAnimation();
 
 protected:
 	std::unique_ptr<AnimatedModel> model;
@@ -37,6 +39,8 @@ protected:
 	int                     currentKeyFrame         = 0;    // 現在のフレーム
 	int                     currentAnimationIndex   = 0;    // 現在再生中のアニメーション番号
 	float                   currentAnimationSeconds = 0.0f; // 現在再生中の秒数
+
+	float					animationTimeScale = 1.0f;	// アニメーションの再生速度
 
 	bool animationLoopFlag = true;  // ループ再生するかどうか
 	bool animationEndFlag  = false; // アニメーションが最後のキーフレームに到達したかどうか
@@ -59,6 +63,7 @@ public:
 	// --- アニメーションフラグ ---
 	int GetCurrentKeyFrame() { return currentKeyFrame; }
 	int GetCurrentAnimationIndex() { return currentAnimationIndex; }
+	float GetCurrentAnimationSeconds() { return currentAnimationSeconds; }
 
 	bool GetAnimationLoopFlag() { return animationLoopFlag; }
 	bool GetIsPlayAnimation() { return isPlayAnimation; }

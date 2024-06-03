@@ -235,3 +235,20 @@ bool ImGuiManager::InputText(const char* label, std::string& str, ImGuiInputText
 	return result;
 }
 
+
+void ImGuiManager::SimpleColor4(std::string label, DirectX::XMFLOAT4& color)
+{
+	ImVec4 imBoneCol = { color.x, color.y, color.z, color.w };
+	// 色の表示用の四角いブロックを作成
+	if (ImGui::ColorButton(("Color##" + label).c_str(), imBoneCol)) {
+		// 四角いブロックがクリックされたときにポップアップを開く
+		ImGui::OpenPopup(("ColorPicker##" + label).c_str());
+	}
+
+	// ポップアップが開いているときにカラーエディターを表示
+	if (ImGui::BeginPopup(("ColorPicker##" + label).c_str())) {
+		ImGui::ColorPicker4(("##picker" + label).c_str(), (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
+		ImGui::EndPopup();
+	}
+}
+

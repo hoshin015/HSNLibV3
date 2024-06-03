@@ -342,8 +342,10 @@ void SceneModelEditor::DrawDebugGUI()
 						std::string meshName = mesh.meshName + " (mesh)";
 						if (ImGui::TreeNode(meshName.c_str()))
 						{
-							if (ImGui::BeginPopupContextItem()) {
-								if (ImGui::MenuItem(("copy##" + meshName).c_str())) {
+							if (ImGui::BeginPopupContextItem())
+							{
+								if (ImGui::MenuItem(("copy##" + meshName).c_str()))
+								{
 									// meshName をクリップボードにコピー
 									ImGui::SetClipboardText(meshName.c_str());
 								}
@@ -387,6 +389,20 @@ void SceneModelEditor::DrawDebugGUI()
 							mySequence.myItems.clear();
 							// 一番上のアイテムを選択状態に
 							mySequence.selectItemNum = 0;
+
+							// アイテムを追加
+							int sphereCount = animationClips.animSphereCollisions.size();
+							for (auto sphere : animationClips.animSphereCollisions)
+							{
+								mySequence.Add(sphere.name.c_str(), static_cast<int>(SequencerItemType::Sphere),
+								               sphere.startFrame, sphere.endFrame);
+							}
+							int seCount = animationClips.animSes.size();
+							for (auto se : animationClips.animSes)
+							{
+								mySequence.Add(se.name.c_str(), static_cast<int>(SequencerItemType::SE), se.startFrame,
+								               se.endFrame);
+							}
 
 							// 何もアイテムがなければ
 							if (mySequence.myItems.size() == 0)
@@ -436,8 +452,8 @@ void SceneModelEditor::DrawDebugGUI()
 				{
 					// 削除
 					std::filesystem::path path(modelObject->GetModel()->GetModelResource()->GetFilePath());
-					std::string parentPath = path.parent_path().string();
-					std::string deleteFilename = parentPath + "/Anims/" + animationClip.name + ".anim";
+					std::string           parentPath     = path.parent_path().string();
+					std::string           deleteFilename = parentPath + "/Anims/" + animationClip.name + ".anim";
 					std::filesystem::remove(deleteFilename);
 
 					modelObject->GetModel()->GetModelResource()->GetAnimationClips().erase(
@@ -493,29 +509,31 @@ void SceneModelEditor::DrawDebugGUI()
 						}
 					}
 
+					// sphere
 					if (selectSequencerItemTypeName == static_cast<int>(SequencerItemType::Sphere))
 					{
 						AnimSphereCollision collision;
-						collision.name = newSequenceName;
+						collision.name       = newSequenceName;
 						collision.startFrame = 0;
-						collision.endFrame = 10;
-						collision.radius = 1.0f;
-						collision.position = { 0,0,0 };
-						collision.color = { 1,1,1,1 };
+						collision.endFrame   = 10;
+						collision.radius     = 1.0f;
+						collision.position   = {0, 0, 0};
+						collision.color      = {1, 1, 1, 1};
 						animationClip.animSphereCollisions.push_back(collision);
 
 						mySequence.Add(newSequenceName, selectSequencerItemTypeName, 0, 10);
 					}
-					//if (selectSequencerItemTypeName == static_cast<int>(SequencerItemType::SE))
-					//{
-					//	AnimSE animSE;
-					//	animSE.name = newSequenceName;
-					//	animSE.startFrame = 0;
-					//	animSE.endFrame = 10;
-					//	model->animationClips.at(animationClipIndex).animSEs.push_back(animSE);
-					//
-					//	mySequence.Add(newSequenceName, selectSequencerItemTypeName, 0, 10);
-					//}
+					// se
+					if (selectSequencerItemTypeName == static_cast<int>(SequencerItemType::SE))
+					{
+						AnimSe animSE;
+						animSE.name       = newSequenceName;
+						animSE.startFrame = 0;
+						animSE.endFrame   = 10;
+						animationClip.animSes.push_back(animSE);
+
+						mySequence.Add(newSequenceName, selectSequencerItemTypeName, 0, 10);
+					}
 				}
 			}
 
@@ -524,19 +542,21 @@ void SceneModelEditor::DrawDebugGUI()
 
 			if (mySequence.selectItemNum != -1)
 			{
-				bool isSkip = false;	// 削除後の処理スキップ用
+				bool isSkip = false; // 削除後の処理スキップ用
 
 				// 複製
 				if (ImGui::Button("Deplicate"))
 				{
-					if (mySequence.myItems.at(mySequence.selectItemNum).mType == static_cast<int>(SequencerItemType::Sphere))
+					if (mySequence.myItems.at(mySequence.selectItemNum).mType == static_cast<int>(
+						SequencerItemType::Sphere))
 					{
 						int index = mySequence.myItems.at(mySequence.selectItemNum).mTypeIndex;
 
 						AnimSphereCollision collision = animationClip.animSphereCollisions.at(index);
 						animationClip.animSphereCollisions.push_back(collision);
 
-						mySequence.Add(collision.name, static_cast<int>(SequencerItemType::Sphere), collision.startFrame, collision.endFrame);
+						mySequence.Add(collision.name, static_cast<int>(SequencerItemType::Sphere),
+						               collision.startFrame, collision.endFrame);
 					}
 				}
 
@@ -546,7 +566,8 @@ void SceneModelEditor::DrawDebugGUI()
 				{
 					isSkip = true;
 					// モデルが持ってるアイテムを削除
-					if (mySequence.myItems.at(mySequence.selectItemNum).mType == static_cast<int>(SequencerItemType::Sphere))
+					if (mySequence.myItems.at(mySequence.selectItemNum).mType == static_cast<int>(
+						SequencerItemType::Sphere))
 					{
 						int index = mySequence.myItems.at(mySequence.selectItemNum).mTypeIndex;
 						animationClip.animSphereCollisions.erase(animationClip.animSphereCollisions.begin() + index);
@@ -565,9 +586,9 @@ void SceneModelEditor::DrawDebugGUI()
 					selectedEntry = -1;
 				}
 
-				std::string& selectName = mySequence.myItems.at(mySequence.selectItemNum).name;
-				int& selectStartFrame = mySequence.myItems.at(mySequence.selectItemNum).mFrameStart;
-				int& selectEndFrame = mySequence.myItems.at(mySequence.selectItemNum).mFrameEnd;
+				std::string& selectName       = mySequence.myItems.at(mySequence.selectItemNum).name;
+				int&         selectStartFrame = mySequence.myItems.at(mySequence.selectItemNum).mFrameStart;
+				int&         selectEndFrame   = mySequence.myItems.at(mySequence.selectItemNum).mFrameEnd;
 
 				// 削除処理をしていなければ表示
 				if (!isSkip)
@@ -577,19 +598,20 @@ void SceneModelEditor::DrawDebugGUI()
 					ImGui::DragInt("end frame", &selectEndFrame);
 
 					// --- sphere ---
-					if (mySequence.myItems.at(mySequence.selectItemNum).mType == static_cast<int>(SequencerItemType::Sphere))
+					if (mySequence.myItems.at(mySequence.selectItemNum).mType == static_cast<int>(
+						SequencerItemType::Sphere))
 					{
 						int index = mySequence.myItems.at(mySequence.selectItemNum).mTypeIndex;
 
 						// 値のセット
-						animationClip.animSphereCollisions.at(index).name = selectName.c_str();
+						animationClip.animSphereCollisions.at(index).name       = selectName.c_str();
 						animationClip.animSphereCollisions.at(index).startFrame = selectStartFrame;
-						animationClip.animSphereCollisions.at(index).endFrame = selectEndFrame;
+						animationClip.animSphereCollisions.at(index).endFrame   = selectEndFrame;
 
-						float& radius = animationClip.animSphereCollisions.at(index).radius;
-						DirectX::XMFLOAT3& position = animationClip.animSphereCollisions.at(index).position;
-						DirectX::XMFLOAT4& color = animationClip.animSphereCollisions.at(index).color;
-						std::string bindBoneName = animationClip.animSphereCollisions.at(index).bindBoneName;
+						float&             radius       = animationClip.animSphereCollisions.at(index).radius;
+						DirectX::XMFLOAT3& position     = animationClip.animSphereCollisions.at(index).position;
+						DirectX::XMFLOAT4& color        = animationClip.animSphereCollisions.at(index).color;
+						std::string        bindBoneName = animationClip.animSphereCollisions.at(index).bindBoneName;
 
 						ImGui::DragFloat("radius", &radius, 0.01f);
 						ImGui::DragFloat3("position", &position.x, 0.01f);
@@ -597,6 +619,38 @@ void SceneModelEditor::DrawDebugGUI()
 						ImGuiManager::Instance().InputText("bindBoneName", bindBoneName);
 
 						animationClip.animSphereCollisions.at(index).bindBoneName = bindBoneName.c_str();
+					}
+					// --- se ---
+					if (mySequence.myItems.at(mySequence.selectItemNum).mType == static_cast<int>(
+						SequencerItemType::SE))
+					{
+						int index = mySequence.myItems.at(mySequence.selectItemNum).mTypeIndex;
+
+						// 値のセット
+						animationClip.animSes.at(index).name       = selectName.c_str();
+						animationClip.animSes.at(index).startFrame = selectStartFrame;
+						animationClip.animSes.at(index).endFrame   = selectEndFrame;
+
+						MUSIC_LABEL& musicType = animationClip.animSes.at(index).musicType;
+
+						std::string musicTypeName[] = {"TEST_MUISC", "WEAPON"};
+
+						if (ImGui::BeginCombo("SE TYPE", musicTypeName[static_cast<int>(musicType)].c_str()))
+						{
+							for (int i = 0; i < IM_ARRAYSIZE(musicTypeName); i++)
+							{
+								const bool isSelected = (static_cast<int>(musicType) == i);
+								if (ImGui::Selectable(musicTypeName[i].c_str(), isSelected))
+								{
+									animationClip.animSes.at(index).musicType = static_cast<MUSIC_LABEL>(i);
+								}
+								if (isSelected)
+								{
+									ImGui::SetItemDefaultFocus();
+								}
+							}
+							ImGui::EndCombo();
+						}
 					}
 				}
 			}
@@ -611,36 +665,88 @@ void SceneModelEditor::DrawDebugGUI()
 	{
 		if (modelObject && !modelObject->GetModel()->GetModelResource()->GetAnimationClips().empty())
 		{
-			std::vector<SkeletonSphereCollision>& skeletonSphereCollisions = modelObject->GetModel()->GetModelResource()->GetSkeletonSphereCollisions();
+			std::vector<SkeletonSphereCollision>& skeletonSphereCollisions = modelObject->GetModel()->GetModelResource()
+				->GetSkeletonSphereCollisions();
 
-			static std::string boneName = "";
-			static float boneRadius = 1.0f;
-			static DirectX::XMFLOAT3 bonePos = { 0,0,0 };
-			static DirectX::XMFLOAT4 boneColor = { 1,1,1,1 };
+			static SkeletonSphereCollision::SkeletonType boneType   = SkeletonSphereCollision::SkeletonType::Normal;
+			static std::string                           boneName   = "";
+			static float                                 boneRadius = 1.0f;
+			static DirectX::XMFLOAT3                     bonePos    = {0, 0, 0};
+
+			const char* skeletonTypeName[] = {
+				"Normal", "WeakPoint1", "WeakPoint2", "WeakPoint3", "HardenedPoint1", "HardenedPoint2", "HardenedPoint3"
+			};
+
+			if (ImGui::BeginCombo(
+				"SkeletonType",
+				skeletonTypeName[static_cast<int>(boneType)]))
+			{
+				for (int i = 0; i < IM_ARRAYSIZE(skeletonTypeName); i++)
+				{
+					const bool isSelected = (static_cast<int>(boneType) == i);
+					if (ImGui::Selectable(skeletonTypeName[i], isSelected))
+					{
+						boneType = static_cast<SkeletonSphereCollision::SkeletonType>(i);
+					}
+					if (isSelected)
+					{
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
 
 			ImGuiManager::Instance().InputText("name", boneName);
 			ImGui::DragFloat("radius", &boneRadius);
+			ImGui::InputFloat3("position", &bonePos.x);
+
 
 			if (ImGui::Button("Add SkeletonCollision"))
 			{
 				SkeletonSphereCollision skeletonSphere;
-				skeletonSphere.name = boneName.c_str();
-				skeletonSphere.radius = boneRadius;
-				skeletonSphere.position = bonePos;
-				skeletonSphere.color = boneColor;
+				skeletonSphere.skeletonType = boneType;
+				skeletonSphere.name         = boneName.c_str();
+				skeletonSphere.radius       = boneRadius;
+				skeletonSphere.position     = bonePos;
 				skeletonSphereCollisions.push_back(skeletonSphere);
 			}
 
+			ImGui::Separator();
+			ImGui::Separator();
+
+
 			std::vector<int> deleteBonesIndex;
-			int boneSphereCount = skeletonSphereCollisions.size();
+			int              boneSphereCount = skeletonSphereCollisions.size();
 			for (int boneSphereIndex = 0; boneSphereIndex < boneSphereCount; boneSphereIndex++)
 			{
 				ImGui::Separator();
 				//if (ImGui::CollapsingHeader(skeletonSphereCollisions.at(boneSphereIndex).name.c_str()))
 				{
 					SkeletonSphereCollision& seletonSphere = skeletonSphereCollisions.at(boneSphereIndex);
-					ImGui::Text(("name : " + seletonSphere.name).c_str());
-					ImGui::DragFloat(("radius##" + std::to_string(boneSphereIndex)).c_str(), &seletonSphere.radius, 0.01f);
+
+					if (ImGui::BeginCombo(
+						"SkeletonType##" + boneSphereIndex,
+						skeletonTypeName[static_cast<int>(seletonSphere.skeletonType)]))
+					{
+						for (int i = 0; i < IM_ARRAYSIZE(skeletonTypeName); i++)
+						{
+							const bool isSelected = (static_cast<int>(seletonSphere.skeletonType) == i);
+							if (ImGui::Selectable(skeletonTypeName[i], isSelected))
+							{
+								seletonSphere.skeletonType = static_cast<SkeletonSphereCollision::SkeletonType>(i);
+							}
+							if (isSelected)
+							{
+								ImGui::SetItemDefaultFocus();
+							}
+						}
+						ImGui::EndCombo();
+					}
+
+					ImGuiManager::Instance().InputText("name##" + boneSphereIndex, seletonSphere.name);
+					ImGui::DragFloat(("radius##" + std::to_string(boneSphereIndex)).c_str(), &seletonSphere.radius,
+					                 0.01f);
+					ImGui::InputFloat3("position", &seletonSphere.position.x);
 
 					ImGui::SameLine();
 					if (ImGui::Button(("delete##" + std::to_string(boneSphereIndex)).c_str()))
@@ -976,8 +1082,10 @@ void SceneModelEditor::DrawBoneDebug(const std::vector<ModelResource::Bone>& bon
 
 	if (ImGui::TreeNode(bone.name.c_str()))
 	{
-		if (ImGui::BeginPopupContextItem()) {
-			if (ImGui::MenuItem(("copy##" + bone.name).c_str())) {
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem(("copy##" + bone.name).c_str()))
+			{
 				// meshName をクリップボードにコピー
 				ImGui::SetClipboardText(bone.name.c_str());
 			}

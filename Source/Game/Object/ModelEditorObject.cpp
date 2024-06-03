@@ -31,6 +31,7 @@ void ModelEditorObject::DrawDebugPrimitive()
 	for(auto& bone : model->GetModelResource()->GetSkeletonSphereCollisions())
 	{
 		DirectX::XMFLOAT3 pos = GetBonePosition(bone.name);
-		DebugPrimitive::Instance().AddSphere(pos, bone.radius, bone.color);
+		DirectX::XMFLOAT4 color = bone.color[static_cast<int>(bone.skeletonType)];
+		DebugPrimitive::Instance().AddSphere(pos, bone.radius, color);
 	}
 }

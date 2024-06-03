@@ -26,15 +26,39 @@ enum class CoordinateSystemTransform
 //--------------------------------------------------------------
 struct SkeletonSphereCollision
 {
-	std::string       name;          // ノードの名前
-	float             radius = 1.0f; // 当たり判定の半径
-	DirectX::XMFLOAT3 position;      // ボーンに連動させない場合の座標
-	DirectX::XMFLOAT4 color;         // 色
+	// 骨のタイプ(このタイプによってダメージを受けた時の倍率と表示する色を変える)
+	enum class SkeletonType
+	{
+		Normal,         // 通常
+		WeakPoint1,     // 弱点１
+		WeakPoint2,     // 弱点２
+		WeakPoint3,     // 弱点３
+		HardenedPoint1, // 硬化１
+		HardenedPoint2, // 硬化2
+		HardenedPoint3, // 硬化3
+		NUM
+	};
+
+	DirectX::XMFLOAT4 color[static_cast<int>(SkeletonType::NUM)] =
+	{
+		{1, 1, 1, 1},
+		{0, 0, 1, 1},
+		{0.3, 0.3, 1, 1},
+		{0.6, 0.6, 1, 1},
+		{0, 1, 0, 1},
+		{0.3, 1, 0.3, 1},
+		{0.6, 1, 0.6, 1},
+	};
+
+	SkeletonType      skeletonType = SkeletonType::Normal; // 骨のタイプ
+	std::string       name;                                // ノードの名前
+	float             radius = 1.0f;                       // 当たり判定の半径
+	DirectX::XMFLOAT3 position;                            // ボーンに連動させない場合の座標
 
 	template <class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(name, radius, position, color);
+		archive(skeletonType, name, radius, position);
 	}
 };
 

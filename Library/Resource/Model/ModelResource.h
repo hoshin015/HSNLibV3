@@ -75,7 +75,6 @@ struct AnimSphereCollision
 	DirectX::XMFLOAT3 position;     // ボーンに連動させない場合の座標
 	DirectX::XMFLOAT4 color;        // 色
 
-
 	template <class Archive>
 	void serialize(Archive& archive)
 	{

@@ -746,7 +746,7 @@ void SceneModelEditor::DrawDebugGUI()
 					ImGuiManager::Instance().InputText("name##" + boneSphereIndex, seletonSphere.name);
 					ImGui::DragFloat(("radius##" + std::to_string(boneSphereIndex)).c_str(), &seletonSphere.radius,
 					                 0.01f);
-					ImGui::InputFloat3("position", &seletonSphere.position.x);
+					ImGui::InputFloat3("position##" + boneSphereIndex, &seletonSphere.position.x);
 
 					ImGui::SameLine();
 					if (ImGui::Button(("delete##" + std::to_string(boneSphereIndex)).c_str()))

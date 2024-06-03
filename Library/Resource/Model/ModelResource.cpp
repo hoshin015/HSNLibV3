@@ -19,7 +19,7 @@ void ModelResource::OutputModelData()
 		std::ofstream ofs(modelFilename.c_str(), std::ios::binary);
 		cereal::BinaryOutputArchive  serialization(ofs);
 
-		serialization(sceneView, scale, coordinateSystemTransformType, coordinateSystemTransform);
+		serialization(sceneView, scale, coordinateSystemTransformType, coordinateSystemTransform, skeletonSphereCollisions);
 	}
 
 	// mesh ÇÃèoóÕ
@@ -98,7 +98,7 @@ void ModelResource::LoadModelData(const char* filePath)
 		std::string modelFilePath = parentPath + "/" + path.stem().string() + ".model";
 		std::ifstream ifs(modelFilePath.c_str(), std::ios::binary);
 		cereal::BinaryInputArchive deserialization(ifs);
-		deserialization(sceneView, scale, coordinateSystemTransformType, coordinateSystemTransform);
+		deserialization(sceneView, scale, coordinateSystemTransformType, coordinateSystemTransform, skeletonSphereCollisions);
 	}
 
 	// mesh ÇÃì«çû

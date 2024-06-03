@@ -470,11 +470,6 @@ void SceneModelEditor::DrawDebugGUI()
 			ImGui::Separator();
 			ImGui::Text("new tileLine item");
 
-			static std::string newSequenceName = "";
-			ImGui::PushID(1);
-			ImGuiManager::Instance().InputText("name", newSequenceName);
-			ImGui::PopID();
-
 			ImGui::PushItemWidth(150);
 			static int selectSequencerItemTypeName;
 			if (ImGui::BeginCombo("type", SequencerItemTypeNames[selectSequencerItemTypeName]))
@@ -513,7 +508,7 @@ void SceneModelEditor::DrawDebugGUI()
 					if (selectSequencerItemTypeName == static_cast<int>(SequencerItemType::Sphere))
 					{
 						AnimSphereCollision collision;
-						collision.name       = newSequenceName;
+						collision.name       = "";
 						collision.startFrame = 0;
 						collision.endFrame   = 10;
 						collision.radius     = 1.0f;
@@ -521,18 +516,18 @@ void SceneModelEditor::DrawDebugGUI()
 						collision.color      = {1, 1, 1, 1};
 						animationClip.animSphereCollisions.push_back(collision);
 
-						mySequence.Add(newSequenceName, selectSequencerItemTypeName, 0, 10);
+						mySequence.Add("", selectSequencerItemTypeName, 0, 10);
 					}
 					// se
 					if (selectSequencerItemTypeName == static_cast<int>(SequencerItemType::SE))
 					{
 						AnimSe animSE;
-						animSE.name       = newSequenceName;
+						animSE.name       = "";
 						animSE.startFrame = 0;
 						animSE.endFrame   = 10;
 						animationClip.animSes.push_back(animSE);
 
-						mySequence.Add(newSequenceName, selectSequencerItemTypeName, 0, 10);
+						mySequence.Add("", selectSequencerItemTypeName, 0, 10);
 					}
 				}
 			}
@@ -720,7 +715,7 @@ void SceneModelEditor::DrawDebugGUI()
 			for (int boneSphereIndex = 0; boneSphereIndex < boneSphereCount; boneSphereIndex++)
 			{
 				ImGui::Separator();
-				//if (ImGui::CollapsingHeader(skeletonSphereCollisions.at(boneSphereIndex).name.c_str()))
+				if (ImGui::CollapsingHeader(skeletonSphereCollisions.at(boneSphereIndex).name.c_str()))
 				{
 					SkeletonSphereCollision& seletonSphere = skeletonSphereCollisions.at(boneSphereIndex);
 
@@ -913,6 +908,36 @@ void SceneModelEditor::DrawModelEditorMenuBar()
 
 					// モデル読込
 					modelObject = std::make_unique<ModelEditorObject>(modelPath.c_str());
+
+					selectedEntry = -1;
+					mySequence.myItems.clear();
+					mySequence.selectItemNum = 0;
+
+					std::vector<ModelResource::Animation>& animationClips = modelObject->GetModel()->GetModelResource()->GetAnimationClips();
+
+					// アイテムを追加
+					if (animationClips.size() > 0)
+					{
+						int animationClipIndex = modelObject->GetCurrentAnimationIndex();
+
+						int sphereCount = animationClips.at(animationClipIndex).animSphereCollisions.size();
+						for (auto sphere : animationClips.at(animationClipIndex).animSphereCollisions)
+						{
+							mySequence.Add(sphere.name.c_str(), static_cast<int>(SequencerItemType::Sphere), sphere.startFrame, sphere.endFrame);
+						}
+						int seCount = animationClips.at(animationClipIndex).animSes.size();
+						for (auto se : animationClips.at(animationClipIndex).animSes)
+						{
+							mySequence.Add(se.name.c_str(), static_cast<int>(SequencerItemType::SE), se.startFrame, se.endFrame);
+						}
+					}
+
+					// 何もアイテムがなければ
+					if (mySequence.myItems.size() == 0)
+					{
+						mySequence.Add("", 0, -10, -10);
+					}
+
 					if (!modelObject->GetModel()->GetModelResource()->GetAnimationClips().empty())
 					{
 						// キーフレームの最大値設定

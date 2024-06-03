@@ -350,7 +350,7 @@ public:
 		template <class Archive>
 		void serialize(Archive& archive)
 		{
-			archive(name, samplingRate, secondsLength, sequence);
+			archive(name, samplingRate, secondsLength, sequence, animSphereCollisions, animSes);
 		}
 	};
 
@@ -398,10 +398,13 @@ private:
 	int                 coordinateSystemTransformType;
 	DirectX::XMFLOAT4X4 coordinateSystemTransform;
 
+	// コリジョンデータ
+	std::vector<SkeletonSphereCollision> skeletonSphereCollisions;
+
 	template <class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(scale, coordinateSystemTransformType, coordinateSystemTransform);
+		archive(scale, coordinateSystemTransformType, coordinateSystemTransform, skeletonSphereCollisions);
 	}
 
 
@@ -411,8 +414,6 @@ private:
 	std::vector<Mesh>                         meshes;
 	std::vector<Animation>                    animationClips;
 
-	// コリジョンデータ
-	std::vector<SkeletonSphereCollision> skeletonSphereCollisions;
 
 public:
 	// 独自形式で書き出し

@@ -45,6 +45,9 @@ public:
 	// ˆÚ“®
 	void Move();
 
+	// “G‚Æ‚ÌÕ“Ëˆ—
+	void CollisionVsEnemy();
+
 public:
 	enum class State
 	{

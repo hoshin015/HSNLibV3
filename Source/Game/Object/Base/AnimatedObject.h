@@ -34,6 +34,7 @@ protected:
 	//
 	void UpdateBlendAnimation();
 
+public:
 	DirectX::XMFLOAT3 GetBonePosition(std::string boneName);
 
 protected:

@@ -16,13 +16,19 @@ enum class PlayerAnimNum
 
 class Player : public AnimatedObject
 {
-public:
 	Player(const char* filePath);
 
 	~Player() override
 	{
 	}
+public:
+	static Player& Instance()
+	{
+		static Player instance("Data/Fbx/Character/Character.model");
+		return instance;
+	}
 
+	void Initialize();
 	void Update() override;
 	void Render(bool isShadow = false) override;
 	void DrawDebugImGui(int number);

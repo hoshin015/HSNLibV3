@@ -4,7 +4,7 @@
 class TestAnimated : public AnimatedObject
 {
 public:
-	TestAnimated(const char* filePath) : AnimatedObject(filePath) {}
+	TestAnimated(const char* filePath) : AnimatedObject(filePath) { PlayAnimation(6, true); }
 	~TestAnimated() override {}
 
 	void Update() override;

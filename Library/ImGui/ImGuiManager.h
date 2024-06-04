@@ -47,6 +47,8 @@ public:
 
 	// std::stringを使ったImGui::InputTextのラッパー関数
 	bool InputText(const char* label, std::string& str, ImGuiInputTextFlags flags = 0);
+	// std::stringを使ったImGui::InputTextのラッパー関数
+	bool InputText(std::string label, std::string& str, ImGuiInputTextFlags flags = 0);
 	// DirectX::XMFLOAT4を使ったImGui::ColorPicker4のラッパー関数
 	void SimpleColor4(std::string label, DirectX::XMFLOAT4& color);
 };

@@ -20,9 +20,12 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerRunState(this));
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerAttackState(this));
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerDrinkState(this));
+}
+
+void Player::Initialize()
+{
 	// ステートセット
 	stateMachine->SetState(static_cast<int>(State::Normal));
-
 
 	// idle アニメーション再生
 	PlayAnimation(static_cast<int>(PlayerAnimNum::Idle), true);

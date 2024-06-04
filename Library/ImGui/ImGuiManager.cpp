@@ -235,6 +235,28 @@ bool ImGuiManager::InputText(const char* label, std::string& str, ImGuiInputText
 	return result;
 }
 
+bool ImGuiManager::InputText(std::string label, std::string& str, ImGuiInputTextFlags flags)
+{
+	// ImGui::InputText用の一時バッファを準備
+	// バッファサイズをstrの長さ+1(ヌル終端)にする
+	static std::vector<char> buffer;
+	buffer.resize(str.size() + 256); // 余裕を持たせてリサイズ
+
+	// std::stringの内容をバッファにコピー
+	memcpy(buffer.data(), str.c_str(), str.size() + 1);
+
+	// ImGui::InputTextを使用
+	bool result = ImGui::InputText(label.c_str(), buffer.data(), buffer.size(), flags);
+
+	// バッファの内容が変更された場合、std::stringに反映
+	if (result)
+	{
+		str = buffer.data();
+	}
+
+	return result;
+}
+
 
 void ImGuiManager::SimpleColor4(std::string label, DirectX::XMFLOAT4& color)
 {

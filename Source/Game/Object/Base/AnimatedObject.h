@@ -14,6 +14,9 @@ public:
 	virtual void Update() = 0;
 	virtual void Render(bool isShadow) = 0;
 
+	// デバッグプリミティブ描画
+	void DrawDebugPrimitive();
+
 	AnimatedModel* GetModel() { return model.get(); }
 
 	// アニメーション再生

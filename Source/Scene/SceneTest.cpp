@@ -22,7 +22,10 @@
 #include "../Game/Object/Stage/StageManager.h"
 #include "../Game/Object/Stage/StageMain.h"
 // --- UserInterface ---
+#include "../../Library/3D/DebugPrimitive.h"
 #include "../UserInterface//UiPause.h"
+#include "../Game/Object/StateMachine/Enemy/Enemy.h"
+#include "../Game/Object/StateMachine/Player/Player.h"
 
 
 
@@ -59,7 +62,6 @@ void SceneTest::Initialize()
 
 
 	testStatic = std::make_unique<TestStatic>("Data/Fbx/Albino/Albino.model");
-	testAnimated = std::make_unique<TestAnimated>("Data/Fbx/CatfishA/CatfishA.model");
 	sprTest = std::make_unique<Sprite>("Data/Texture/bomb/bomb.sprite");
 	sprTest2 = std::make_unique<Sprite>("Data/Texture/Icon.sprite");
 	sprTest2->SetPos({ 200, 100 });
@@ -68,7 +70,6 @@ void SceneTest::Initialize()
 	sprTest3->SetScale({ 0.2, 0.2 });
 	sprTest3->UpdateAnimation();
 
-	player = std::make_unique<Player>("Data/Fbx/Character/Character.model");
 	blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");
 
 	Particle::Instance().Initialize();
@@ -106,6 +107,10 @@ void SceneTest::Initialize()
 
 
 	UiPause::Instance().Initialize();
+
+
+	Enemy::Instance().Initialize();
+	Player::Instance().Initialize();
 }
 
 void SceneTest::Finalize()
@@ -132,7 +137,7 @@ void SceneTest::Update()
 	EffectManager::Instance().Update();
 
 	// --- カメラ処理 ---
-	Camera::Instance().SetTarget(player->GetPos());
+	Camera::Instance().SetTarget(Player::Instance().GetPos());
 	//Camera::Instance().SetTarget(blendTestPlayer->GetPos());
 	Camera::Instance().Update();
 
@@ -144,9 +149,10 @@ void SceneTest::Update()
 	StageManager::Instance().Update();
 
 	testStatic->Update();
-	testAnimated->Update();
 
-	player->Update();
+	Enemy::Instance().Update();
+
+	Player::Instance().Update();
 	//blendTestPlayer->Update();
 
 	sprTest->SetAngle(sprTest->GetAngle() + 180 * Timer::Instance().DeltaTime());
@@ -196,9 +202,9 @@ void SceneTest::Render()
 				// animated object
 				shadow->SetAnimatedShader();
 				StageManager::Instance().Render(true);
-				testAnimated->Render(true);
+				Enemy::Instance().Render(true);
 
-				player->Render(true);
+				Player::Instance().Render(true);
 				//blendTestPlayer->Render(true);
 
 				// static object
@@ -227,10 +233,15 @@ void SceneTest::Render()
 		StageManager::Instance().Render();
 
 		testStatic->Render();
-		testAnimated->Render();
+		Enemy::Instance().Render();
 
-		player->Render();
+		Player::Instance().Render();
 		//blendTestPlayer->Render();
+
+		Enemy::Instance().DrawDebugPrimitive();
+		Player::Instance().DrawDebugPrimitive();
+
+		DebugPrimitive::Instance().Render();
 
 		// rasterizerStateの設定
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
@@ -270,7 +281,7 @@ void SceneTest::Render()
 	// --- デバッグGUI描画 ---
 	DrawDebugGUI();
 
-	player->DrawDebugImGui(0);
+	Player::Instance().DrawDebugImGui(0);
 
 	LightManager::Instance().DrawDebugGui();
 	bloom->DrawDebugGui();

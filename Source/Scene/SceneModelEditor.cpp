@@ -715,12 +715,13 @@ void SceneModelEditor::DrawDebugGUI()
 			for (int boneSphereIndex = 0; boneSphereIndex < boneSphereCount; boneSphereIndex++)
 			{
 				ImGui::Separator();
-				if (ImGui::CollapsingHeader(skeletonSphereCollisions.at(boneSphereIndex).name.c_str()))
+				if (ImGui::CollapsingHeader((skeletonSphereCollisions.at(boneSphereIndex).name + "##" + std::to_string(boneSphereIndex)).c_str()))
 				{
 					SkeletonSphereCollision& seletonSphere = skeletonSphereCollisions.at(boneSphereIndex);
 
+					std::string t = "SkeletonType##" + std::to_string(boneSphereIndex);
 					if (ImGui::BeginCombo(
-						"SkeletonType##" + boneSphereIndex,
+						t.c_str(),
 						skeletonTypeName[static_cast<int>(seletonSphere.skeletonType)]))
 					{
 						for (int i = 0; i < IM_ARRAYSIZE(skeletonTypeName); i++)
@@ -738,7 +739,7 @@ void SceneModelEditor::DrawDebugGUI()
 						ImGui::EndCombo();
 					}
 
-					ImGuiManager::Instance().InputText("name##" + boneSphereIndex, seletonSphere.name);
+					ImGuiManager::Instance().InputText(("name##" + std::to_string(boneSphereIndex)).c_str(), seletonSphere.name);
 					ImGui::DragFloat(("radius##" + std::to_string(boneSphereIndex)).c_str(), &seletonSphere.radius,
 					                 0.01f);
 					ImGui::InputFloat3("position##" + boneSphereIndex, &seletonSphere.position.x);

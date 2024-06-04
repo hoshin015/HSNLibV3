@@ -119,6 +119,9 @@
     <Filter Include="2_Source\Game\Object\StateMachine\TestBlendPlayer">
       <UniqueIdentifier>{29d6daf0-76f3-4ed6-87b0-fbf2dc190144}</UniqueIdentifier>
     </Filter>
+    <Filter Include="2_Source\Game\Object\StateMachine\Enemy">
+      <UniqueIdentifier>{75ceecb8-d8cf-4796-ab51-f4d02806ef37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -381,6 +384,12 @@
     </ClCompile>
     <ClCompile Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayerState.cpp">
       <Filter>2_Source\Game\Object\StateMachine\TestBlendPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\StateMachine\Enemy\Enemy.cpp">
+      <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyState.cpp">
+      <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -671,6 +680,12 @@
     </ClInclude>
     <ClInclude Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayerState.h">
       <Filter>2_Source\Game\Object\StateMachine\TestBlendPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\StateMachine\Enemy\Enemy.h">
+      <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyState.h">
+      <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

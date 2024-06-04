@@ -158,6 +158,21 @@ public:
 			// 一致する Node がなければ -1 を返す
 			return -1;
 		}
+
+		int64_t GetUniqueId(std::string name) const
+		{
+			// 全ての Node 構造体をチェック
+			for (const Node& node : nodes)
+			{
+				if (node.name == name)
+				{
+					return node.uniqueId;
+				}
+			}
+
+			// 一致する Node がなければ -1 を返す
+			return -1;
+		}
 	};
 
 	// マテリアル情報

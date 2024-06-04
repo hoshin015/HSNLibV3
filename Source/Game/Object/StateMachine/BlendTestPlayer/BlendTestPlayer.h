@@ -52,9 +52,6 @@ private:
 	float             rot = 720;  // プレイヤーが１秒間に回転する角度
 	float			  friction = 0.5f;
 
-	float walkThreshold = 0.2f;
-	float runThreshold = 0.4f;
-
 
 	// 入力データ保管用
 	using inputData = std::variant<bool, int, float, DirectX::XMFLOAT2>;
@@ -66,8 +63,7 @@ public:
 	DirectX::XMFLOAT3 GetVelocity() { return velocity; }
 	void              SetVelocity(DirectX::XMFLOAT3 velocity) { this->velocity = velocity; }
 
-	float GetWalkThreshold() { return walkThreshold; }
-	float GetRunThreshold() { return runThreshold; }
+	float GetMaxMoveSpeed() { return maxMoveSpeed; }
 
 	template <typename T>
 	T GetInputMap(std::string str)

@@ -133,6 +133,7 @@ void SceneTest::Update()
 
 	// --- ƒJƒƒ‰ˆ— ---
 	Camera::Instance().SetTarget(player->GetPos());
+	//Camera::Instance().SetTarget(blendTestPlayer->GetPos());
 	Camera::Instance().Update();
 
 

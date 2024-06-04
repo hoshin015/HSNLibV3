@@ -625,7 +625,117 @@ void LoadFbx::AppendAnimation(const char* animationFileName, ModelResource* mode
 	importStatus = fbxImporter->Import(fbxScene);
 	_ASSERT_EXPR_A(importStatus, fbxImporter->GetStatus().GetErrorString());
 
-	FetchAnimations(fbxScene, modelResource, samplingRate);
+	{
+		// 全てのアニメーションスタックの名前の取得
+		FbxArray<FbxString*> animationStackNames;
+		fbxScene->FillAnimStackNameArray(animationStackNames);
+
+
+		// 全てのアニメーションスタックを処理する
+		const int animationStackCount = animationStackNames.GetCount();
+
+		for (int animationStackIndex = 0; animationStackIndex < animationStackCount; animationStackIndex++)
+		{
+			// 全てのアニメーションスタックの名前の取得
+			FbxArray<FbxString*> animationStackNames;
+			fbxScene->FillAnimStackNameArray(animationStackNames);
+
+			// 全てのアニメーションスタックを処理する
+			const int animationStackCount = animationStackNames.GetCount();
+
+			for (int animationStackIndex = 0; animationStackIndex < animationStackCount; animationStackIndex++)
+			{
+				// --- ここから各アニメーションスタックに対する処理 ---
+
+				// 出力先の animationClips に同じ名前があればスキップ
+				bool isContinue = false;
+				for (int i = 0; i < modelResource->GetAnimationClips().size(); i++)
+				{
+					std::string animationStackName = animationStackNames[animationStackIndex]->Buffer();
+					std::string animationName = modelResource->GetAnimationClips().at(i).name;
+					if (animationStackName == animationName) isContinue = true;
+				}
+				if (isContinue) continue;
+
+				// animeClipの名前に アニメーションスタック名をいれる
+				ModelResource::Animation& animationClip = modelResource->GetAnimationClips().emplace_back();
+				animationClip.name = animationStackNames[animationStackIndex]->Buffer();
+
+				// index のアニメーションスタックを取得
+				FbxAnimStack* animationStack = fbxScene->FindMember<FbxAnimStack>(animationClip.name.c_str());
+				fbxScene->SetCurrentAnimationStack(animationStack);
+
+				// --- サンプリングレートとサンプリング間隔の設定 ---
+
+				// タイムモードの取得（時間の表現方法の指定）
+				const FbxTime::EMode timeMode = fbxScene->GetGlobalSettings().GetTimeMode();
+				// タイムモードに対応する１秒の表現をするための変数を用意
+				FbxTime oneSecond;
+				oneSecond.SetTime(0, 0, 1, 0, 0, timeMode);
+				// サンプリングレートの指定
+				animationClip.samplingRate = samplingRate > 0
+					? samplingRate
+					: static_cast<float>(oneSecond.GetFrameRate(timeMode));
+				// サンプリング間隔の計算(この秒数ごとにサンプリングを行う)
+				const FbxTime samplingInterval = static_cast<FbxLongLong>(oneSecond.Get() / animationClip.samplingRate);
+				// アニメーションの開始時間と終了時間の取得
+				const FbxTakeInfo* takeInfo = fbxScene->GetTakeInfo(animationClip.name.c_str());
+				const FbxTime      startTime = takeInfo->mLocalTimeSpan.GetStart();
+				const FbxTime      stopTime = takeInfo->mLocalTimeSpan.GetStop();
+
+				// アニメーション終了時間の保存
+				double doubleSeconds = stopTime.GetSecondDouble() - startTime.GetSecondDouble();
+				//double doubleSeconds = fbxScene->GetTakeInfo(animationClip.name.c_str())->mLocalTimeSpan.GetStop().GetSecondDouble();
+				animationClip.secondsLength = static_cast<float>(doubleSeconds);
+
+				// --- 各キーフレームに対する処理 ---
+				// アニメーションの開始時間から終了時間まで、サンプリング間隔ごとにキーフレームを生成している
+				for (FbxTime time = startTime; time < stopTime; time += samplingInterval)
+				{
+					// キーフレームを生成してシークエンスにemplace_backしている
+					ModelResource::KeyFrame& keyFrame = animationClip.sequence.emplace_back();
+
+					// キーフレームの node の数を このモデルがもつnodeの数にする
+					const size_t nodeCount = modelResource->GetSceneView().nodes.size();
+					keyFrame.nodes.resize(nodeCount);
+
+					// すべての node の処理
+					for (size_t nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
+					{
+						FbxNode* fbxNode = fbxScene->FindNodeByName(
+							modelResource->GetSceneView().nodes.at(nodeIndex).name.c_str());
+						if (fbxNode)
+						{
+							ModelResource::KeyFrame::Node& node = keyFrame.nodes.at(nodeIndex);
+
+							// 名前を取得
+							node.name = fbxNode->GetName();
+
+							// 名前を元に既にいま持っている sceneView から uniqueId を探す
+							node.uniqueId = modelResource->GetSceneView().GetUniqueId(node.name);
+
+							// node の グローバル変換行列にいれる
+							node.globalTransform = toXmfloat4x4(fbxNode->EvaluateGlobalTransform(time));
+
+							// node ローカル の scaling rotation translation にそれぞれ変換行列をいれる
+							const FbxAMatrix& localTransform = fbxNode->EvaluateLocalTransform(time);
+							node.scaling = toXmfloat3(localTransform.GetS());
+							node.rotation = toXmfloat4(localTransform.GetQ());
+							node.translation = toXmfloat3(localTransform.GetT());
+						}
+					}
+				}
+			}
+		}
+		// 全てのアニメーションスタック名の解放
+		for (int animationStackIndex = 0; animationStackIndex < animationStackCount; animationStackIndex++)
+		{
+			delete animationStackNames[animationStackIndex];
+		}
+	}
+
+
+	//FetchAnimations(fbxScene, modelResource, samplingRate);
 
 	fbxManager->Destroy();
 }

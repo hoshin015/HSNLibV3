@@ -55,101 +55,52 @@ void BlendTestPlayerTestState::Execute()
 	// 走り移動量計算
 	owner->CalcVelocity();
 
-	if (std::fabs(owner->GetVelocity().z) <= owner->GetWalkThreshold())
+	float v = -owner->GetVelocity().z;
+	if (v < 0) v = 0;
+
+	float blendRate = v / owner->GetMaxMoveSpeed();
+
+	ModelResource::Animation& animIdle = owner->GetModel()->GetModelResource()->GetAnimationClips().at(static_cast<int>(BlendTestPlayerAnimNum::Idle));
+	ModelResource::Animation& animWalk = owner->GetModel()->GetModelResource()->GetAnimationClips().at(static_cast<int>(BlendTestPlayerAnimNum::Walk));
+
+	float normalTime = owner->GetCurrentAnimationSeconds() / animWalk.secondsLength;
+
+	int idleAnimIndex = static_cast<int>(normalTime * animIdle.sequence.size());
+	int walkAnimIndex = static_cast<int>(normalTime * animWalk.sequence.size());
+
+	ModelResource::KeyFrame key = animIdle.sequence.at(walkAnimIndex);
+	const ModelResource::KeyFrame* keyFrames[2] =
 	{
+		&animIdle.sequence.at(idleAnimIndex),	// idleのアニメーションのキーフレーム
+		&animWalk.sequence.at(walkAnimIndex),  // walkのアニメーションのキーフレーム
+	};
+	owner->BlendAnimation(keyFrames, blendRate, key);
 
-		float blendRate = std::fabs(owner->GetVelocity().z) / owner->GetWalkThreshold();
-
-		ModelResource::Animation& animIdle = owner->GetModel()->GetModelResource()->GetAnimationClips().at(static_cast<int>(BlendTestPlayerAnimNum::Idle));
-		ModelResource::Animation& animWalk = owner->GetModel()->GetModelResource()->GetAnimationClips().at(static_cast<int>(BlendTestPlayerAnimNum::Walk));
-
-		float normalTime = owner->GetCurrentAnimationSeconds() / animWalk.secondsLength;
-
-		int idleAnimIndex = static_cast<int>(normalTime * animIdle.sequence.size());
-		int walkAnimIndex = static_cast<int>(normalTime * animWalk.sequence.size());
-
-		ModelResource::KeyFrame key = animIdle.sequence.at(walkAnimIndex);
-		const ModelResource::KeyFrame* keyFrames[2] =
-		{
-			&animIdle.sequence.at(idleAnimIndex),	// idleのアニメーションのキーフレーム
-			&animWalk.sequence.at(walkAnimIndex),  // walkのアニメーションのキーフレーム
-		};
-		owner->BlendAnimation(keyFrames, blendRate, key);
-
-		size_t nodeCount = key.nodes.size();
-		for (size_t nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
-		{
-			// 現在の index の node を取得
-			ModelResource::KeyFrame::Node& keyData = key.nodes.at(nodeIndex);
-
-			// それぞれの値に対応する行列の作成
-			DirectX::XMMATRIX S = DirectX::XMMatrixScaling(keyData.scaling.x, keyData.scaling.y, keyData.scaling.z);
-			DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(XMLoadFloat4(&keyData.rotation));
-			DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(keyData.translation.x, keyData.translation.y,
-				keyData.translation.z);
-
-			// 親行列があれば親の行列をかける
-			uint32_t uniqueIndex = owner->GetModel()->GetModelResource()->GetSceneView().GetIndex(keyData.uniqueId);
-			// このノードのuniqueId 取得
-			int64_t parentIndex = owner->GetModel()->GetModelResource()->GetSceneView().nodes.at(uniqueIndex).parentIndex;
-			// このuniqueId の parent の親の index を取得
-
-			DirectX::XMMATRIX P = parentIndex < 0
-				? DirectX::XMMatrixIdentity()
-				: DirectX::XMLoadFloat4x4(&key.nodes.at(parentIndex).globalTransform);
-			XMStoreFloat4x4(&keyData.globalTransform, S * R * T * P);
-		}
-
-		owner->SetKeyFrame(key);
-	}
-	else if (std::fabs(owner->GetVelocity().z) <= owner->GetRunThreshold())
+	size_t nodeCount = key.nodes.size();
+	for (size_t nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
 	{
+		// 現在の index の node を取得
+		ModelResource::KeyFrame::Node& keyData = key.nodes.at(nodeIndex);
 
-		float blendRate = (std::fabs(owner->GetVelocity().z) - owner->GetWalkThreshold()) / (owner->GetRunThreshold() - owner->GetWalkThreshold());
+		// それぞれの値に対応する行列の作成
+		DirectX::XMMATRIX S = DirectX::XMMatrixScaling(keyData.scaling.x, keyData.scaling.y, keyData.scaling.z);
+		DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(XMLoadFloat4(&keyData.rotation));
+		DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(keyData.translation.x, keyData.translation.y,
+			keyData.translation.z);
 
-		ModelResource::Animation& animWalk = owner->GetModel()->GetModelResource()->GetAnimationClips().at(static_cast<int>(BlendTestPlayerAnimNum::Walk));
-		ModelResource::Animation& animRun = owner->GetModel()->GetModelResource()->GetAnimationClips().at(static_cast<int>(BlendTestPlayerAnimNum::Run));
+		// 親行列があれば親の行列をかける
+		uint32_t uniqueIndex = owner->GetModel()->GetModelResource()->GetSceneView().GetIndex(keyData.uniqueId);
+		// このノードのuniqueId 取得
+		int64_t parentIndex = owner->GetModel()->GetModelResource()->GetSceneView().nodes.at(uniqueIndex).parentIndex;
+		// このuniqueId の parent の親の index を取得
 
-		float normalTime = owner->GetCurrentAnimationSeconds() / animWalk.secondsLength;
-
-		int walkAnimIndex = static_cast<int>(normalTime * animWalk.sequence.size());
-		int runAnimIndex = static_cast<int>(normalTime * animRun.sequence.size());
-
-		ModelResource::KeyFrame key = animWalk.sequence.at(walkAnimIndex);
-		const ModelResource::KeyFrame* keyFrames[2] =
-		{
-			&animWalk.sequence.at(walkAnimIndex),  // walkのアニメーションのキーフレーム
-			&animRun.sequence.at(runAnimIndex),	// runのアニメーションのキーフレーム
-		};
-		owner->BlendAnimation(keyFrames, blendRate, key);
-
-		size_t nodeCount = key.nodes.size();
-		for (size_t nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
-		{
-			// 現在の index の node を取得
-			ModelResource::KeyFrame::Node& keyData = key.nodes.at(nodeIndex);
-
-			// それぞれの値に対応する行列の作成
-			DirectX::XMMATRIX S = DirectX::XMMatrixScaling(keyData.scaling.x, keyData.scaling.y, keyData.scaling.z);
-			DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(XMLoadFloat4(&keyData.rotation));
-			DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(keyData.translation.x, keyData.translation.y,
-				keyData.translation.z);
-
-			// 親行列があれば親の行列をかける
-			uint32_t uniqueIndex = owner->GetModel()->GetModelResource()->GetSceneView().GetIndex(keyData.uniqueId);
-			// このノードのuniqueId 取得
-			int64_t parentIndex = owner->GetModel()->GetModelResource()->GetSceneView().nodes.at(uniqueIndex).parentIndex;
-			// このuniqueId の parent の親の index を取得
-
-			DirectX::XMMATRIX P = parentIndex < 0
-				? DirectX::XMMatrixIdentity()
-				: DirectX::XMLoadFloat4x4(&key.nodes.at(parentIndex).globalTransform);
-			XMStoreFloat4x4(&keyData.globalTransform, S * R * T * P);
-		}
-
-		owner->SetKeyFrame(key);
+		DirectX::XMMATRIX P = parentIndex < 0
+			? DirectX::XMMatrixIdentity()
+			: DirectX::XMLoadFloat4x4(&key.nodes.at(parentIndex).globalTransform);
+		XMStoreFloat4x4(&keyData.globalTransform, S * R * T * P);
 	}
 
+	owner->SetKeyFrame(key);
 
 	// 回転
 	//owner->Turn();

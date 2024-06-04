@@ -19,14 +19,18 @@ void ModelEditorObject::Render(bool isShadow)
 
 void ModelEditorObject::DrawDebugPrimitive()
 {
-	for(auto& sphere : model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSphereCollisions)
+	if(!model->GetModelResource()->GetAnimationClips().empty())
 	{
-		if(sphere.startFrame <= currentKeyFrame && sphere.endFrame >= currentKeyFrame)
+		for (auto& sphere : model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSphereCollisions)
 		{
-			DirectX::XMFLOAT3 pos = GetBonePosition(sphere.bindBoneName);
-			DebugPrimitive::Instance().AddSphere(pos, sphere.radius, sphere.color);
+			if (sphere.startFrame <= currentKeyFrame && sphere.endFrame >= currentKeyFrame)
+			{
+				DirectX::XMFLOAT3 pos = GetBonePosition(sphere.bindBoneName);
+				DebugPrimitive::Instance().AddSphere(pos, sphere.radius, sphere.color);
+			}
 		}
 	}
+	
 
 	for(auto& bone : model->GetModelResource()->GetSkeletonSphereCollisions())
 	{

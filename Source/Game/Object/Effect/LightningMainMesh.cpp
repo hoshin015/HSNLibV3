@@ -5,10 +5,12 @@ void LightningMainMesh::Initialize()
 {
 	LightningMainMeshChild* l = new LightningMainMeshChild(path.c_str());
 	l->SetPos({ 2,0,0 });
+	l->SetLifeTimer(2.0f);
 	lightningData.emplace_back(l);
 
 	LightningMainMeshChild* l2 = new LightningMainMeshChild(path.c_str());
 	l2->SetPos({ -2,0,0 });
+	l2->SetLifeTimer(2.0f);
 	lightningData.emplace_back(l2);
 }
 
@@ -21,7 +23,7 @@ void LightningMainMesh::Update()
 		data->Update();
 
 		// õ–½Ø‚ê‚È‚ç“o˜^‰ğœ
-		if(data->GetlifeTimer() < 0.0f)
+		if (data->GetlifeTimer() <= 0.0f)
 		{
 			delete data;
 			lightningData.erase(lightningData.begin() + index);
@@ -43,6 +45,7 @@ void LightningMainMesh::Render(bool isShadow)
 void LightningMainMeshChild::Update()
 {
 	lifeTimer -= Timer::Instance().DeltaTime();
+	if (lifeTimer < 0) lifeTimer = 0;
 
 	// p¨s—ñXV
 	UpdateTransform();

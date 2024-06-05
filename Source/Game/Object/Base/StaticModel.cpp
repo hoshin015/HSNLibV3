@@ -156,6 +156,7 @@ void StaticModel::Render(int instancing, DirectX::XMFLOAT4X4* instancingTransfor
 
 			dc->UpdateSubresource(constantBuffer.Get(), 0, 0, &data, 0, 0);
 			dc->VSSetConstantBuffers(_objectConstant, 1, constantBuffer.GetAddressOf());
+			dc->PSSetConstantBuffers(_objectConstant, 1, constantBuffer.GetAddressOf());
 
 			dc->PSSetShaderResources(_deffuseTexture, 1, material.shaderResourceViews[_deffuseTexture].GetAddressOf());
 			dc->PSSetShaderResources(_normalTexture, 1, material.shaderResourceViews[_normalTexture].GetAddressOf());

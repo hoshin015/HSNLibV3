@@ -41,6 +41,8 @@ cbuffer ObjectConstant : register(_objectConstant)
 	uint               instanceCount;
 	uint3              pad;
 	row_major float4x4 worldTransforms[MAX_INSTANCE];
+	float              emissivePower;
+	float3             objPad;
 }
 
 // ƒ‰ƒCƒg‚Ìî•ñ

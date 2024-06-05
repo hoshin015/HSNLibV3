@@ -36,6 +36,8 @@ public:
 				0, 0, 0, 1
 			}
 		};
+		float emissivePower = 1.0f;
+		DirectX::XMFLOAT3 pad;
 	};
 
 private:

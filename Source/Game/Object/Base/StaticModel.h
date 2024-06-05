@@ -24,6 +24,8 @@ public:
 		int instancingCount = 0;
 		DirectX::XMFLOAT3 pad;
 		DirectX::XMFLOAT4X4 transforms[MAX_INSTANCE];
+		float emissivePower = 1.0f;
+		DirectX::XMFLOAT3 objPad;
 	};
 
 private:

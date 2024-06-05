@@ -35,7 +35,7 @@ void SceneModelEditor::Initialize()
 	Camera::Instance().SetAngle(
 		{DirectX::XMConvertToRadians(-45), DirectX::XMConvertToRadians(45), 0}
 	);
-
+	Camera::Instance().SetTarget({0,0,0});
 	Camera::Instance().cameraType = Camera::CAMERA::MODEL_EDITOR;
 
 	// ƒ‰ƒCƒg‰Šúİ’è

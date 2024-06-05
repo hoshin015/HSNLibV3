@@ -41,6 +41,7 @@ void DebugPrimitive::Initialize()
 // •`‰æÀs
 void DebugPrimitive::Render()
 {
+#if USE_DEBUG_PRIMITIVE
 	// --- Graphics æ“¾ ---
 	Graphics* gfx = &Graphics::Instance();
 	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
@@ -97,27 +98,32 @@ void DebugPrimitive::Render()
 		dc->Draw(cylinderVertexCount, 0);
 	}
 	cylinders.clear();
+#endif
 }
 
 // ‹…’Ç‰Á
 void DebugPrimitive::AddSphere(const DirectX::XMFLOAT3& center, float radius, const DirectX::XMFLOAT4& color)
 {
+#if USE_DEBUG_PRIMITIVE
 	Sphere sphere;
 	sphere.center = center;
 	sphere.radius = radius;
 	sphere.color = color;
 	spheres.emplace_back(sphere);
+#endif
 }
 
 // ‰~’Œ’Ç‰Á
 void DebugPrimitive::AddCylinder(const DirectX::XMFLOAT3& position, float radius, float height, const DirectX::XMFLOAT4& color)
 {
+#if USE_DEBUG_PRIMITIVE
 	Cylinder cylinder;
 	cylinder.position = position;
 	cylinder.radius = radius;
 	cylinder.height = height;
 	cylinder.color = color;
 	cylinders.emplace_back(cylinder);
+#endif
 }
 
 // ‹…ƒƒbƒVƒ…ì¬

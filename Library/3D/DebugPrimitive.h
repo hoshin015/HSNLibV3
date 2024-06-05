@@ -4,6 +4,8 @@
 #include <DirectXMath.h>
 #include <wrl.h>
 
+#define USE_DEBUG_PRIMITIVE 1
+
 class DebugPrimitive
 {
 private:

@@ -275,7 +275,7 @@ void SceneTest::Render()
 		// depthStencilState‚ÌÝ’è
 		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_OFF);
 		// blendState‚ÌÝ’è
-		gfx->SetBlend(BLEND_STATE::ALPHA);
+		gfx->SetBlend(BLEND_STATE::ADD);
 		lightningEffect->Render();
 		// rasterizerState‚ÌÝ’è
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);

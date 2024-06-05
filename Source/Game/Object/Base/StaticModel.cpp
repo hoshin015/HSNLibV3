@@ -105,7 +105,7 @@ void StaticModel::CreateComObject()
 }
 
 
-void StaticModel::Render(int instancing, DirectX::XMFLOAT4X4* instancingTransform, bool isShadow)
+void StaticModel::Render(int instancing, DirectX::XMFLOAT4X4* instancingTransform, float* emissivePowers, bool isShadow)
 {
 	// --- Graphics Žæ“¾ ---
 	Graphics* gfx = &Graphics::Instance();
@@ -115,6 +115,7 @@ void StaticModel::Render(int instancing, DirectX::XMFLOAT4X4* instancingTransfor
 	for (int index = 0; index < MAX_INSTANCE; index++)
 	{
 		data.transforms[index] = {};
+		data.emissivePowers[index] = {};
 	}
 	
 
@@ -143,6 +144,8 @@ void StaticModel::Render(int instancing, DirectX::XMFLOAT4X4* instancingTransfor
 		{
 			DirectX::XMMATRIX M = XMLoadFloat4x4(&mesh.defaultGlobalTransform) * XMLoadFloat4x4(&instancingTransform[index]);
 			XMStoreFloat4x4(&data.transforms[index], M);
+
+			data.emissivePowers[index].x = emissivePowers[index];
 		}
 
 		// --- subset ‚²‚Æ‚Ì•`‰æ ---

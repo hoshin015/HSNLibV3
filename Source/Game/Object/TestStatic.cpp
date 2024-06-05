@@ -16,5 +16,6 @@ void TestStatic::Update()
 
 void TestStatic::Render(bool isShadow)
 {
-	model->Render(instanceNum, m, isShadow);
+	float e = 2;
+	model->Render(instanceNum, m, &e, isShadow);
 }

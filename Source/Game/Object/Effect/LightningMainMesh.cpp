@@ -6,11 +6,13 @@ void LightningMainMesh::Initialize()
 	LightningMainMeshChild* l = new LightningMainMeshChild(path.c_str());
 	l->SetPos({ 2,0,0 });
 	l->SetLifeTimer(2.0f);
+	l->SetEmissivePower(0);
 	lightningData.emplace_back(l);
 
 	LightningMainMeshChild* l2 = new LightningMainMeshChild(path.c_str());
 	l2->SetPos({ -2,0,0 });
 	l2->SetLifeTimer(2.0f);
+	l2->SetEmissivePower(1.0f);
 	lightningData.emplace_back(l2);
 }
 
@@ -30,8 +32,9 @@ void LightningMainMesh::Update()
 			continue;
 		}
 
-		// 更新した行列をいれる
+		// 更新した値を配列にいれる
 		m[index] = data->GetTransform();
+		e[index] = data->GetEmissivePower();
 
 		index++;
 	}
@@ -39,7 +42,8 @@ void LightningMainMesh::Update()
 
 void LightningMainMesh::Render(bool isShadow)
 {
-	model->Render(lightningData.size(), m, isShadow);
+	if (lightningData.empty()) return;
+	model->Render(lightningData.size(), m, e, isShadow);
 }
 
 void LightningMainMeshChild::Update()

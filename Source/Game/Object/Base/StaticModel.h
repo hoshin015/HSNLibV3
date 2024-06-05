@@ -14,7 +14,7 @@ public:
 	void CreateComObject();
 
 	// •`‰æ
-	void Render(int instancing, DirectX::XMFLOAT4X4* instancingTransform, bool isShadow);
+	void Render(int instancing, DirectX::XMFLOAT4X4* instancingTransform ,float* emissivePowers, bool isShadow);
 
 	struct Constants
 	{
@@ -24,8 +24,7 @@ public:
 		int instancingCount = 0;
 		DirectX::XMFLOAT3 pad;
 		DirectX::XMFLOAT4X4 transforms[MAX_INSTANCE];
-		float emissivePower = 1.0f;
-		DirectX::XMFLOAT3 objPad;
+		DirectX::XMFLOAT4 emissivePowers[MAX_INSTANCE];
 	};
 
 private:

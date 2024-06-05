@@ -20,6 +20,7 @@ struct VS_OUT
 	float4 worldTangent : TANGENT;
 	float2 texcoord : TEXCOORD;
 	float4 color : COLOR;
+	float4  emissivePower : EMISSIVE_POWER;
 };
 
 // BONE ‚ÌÅ‘å”
@@ -41,8 +42,7 @@ cbuffer ObjectConstant : register(_objectConstant)
 	uint               instanceCount;
 	uint3              pad;
 	row_major float4x4 worldTransforms[MAX_INSTANCE];
-	float              emissivePower;
-	float3             objPad;
+	float4             emissivePowers[MAX_INSTANCE];
 }
 
 // ƒ‰ƒCƒg‚Ìî•ñ

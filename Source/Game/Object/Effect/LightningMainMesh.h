@@ -21,7 +21,9 @@ public:
 
 private:
 	std::string path = "";
-	DirectX::XMFLOAT4X4 m[999] = {};
+
+	DirectX::XMFLOAT4X4 m[MAX_INSTANCE] = {};	// 姿勢行列配列
+	float e[MAX_INSTANCE] = {};					// エミッシブ力配列
 
 	std::vector<LightningMainMeshChild*> lightningData;
 };
@@ -42,8 +44,12 @@ public:
 
 private:
 	float lifeTimer = 2.0f;
+	float emissivePower = 1.0f;
 
 public:
 	float GetlifeTimer() { return lifeTimer; }
 	void SetLifeTimer(float t) { lifeTimer = t; }
+
+	float GetEmissivePower() { return emissivePower; }
+	void SetEmissivePower(float e) { emissivePower = e; }
 };

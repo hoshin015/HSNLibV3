@@ -22,6 +22,8 @@ VS_OUT main(VS_IN vin)
     
     vout.texcoord = vin.texcoord;
     vout.color = materialColorKd;
+
+    vout.emissivePower.x = emissivePowers[vin.instanceId].x;
     
     return vout;
 }

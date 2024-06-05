@@ -122,6 +122,9 @@
     <Filter Include="2_Source\Game\Object\StateMachine\Enemy">
       <UniqueIdentifier>{75ceecb8-d8cf-4796-ab51-f4d02806ef37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="2_Source\Game\Object\Effect">
+      <UniqueIdentifier>{cbca59f8-c723-4739-b76e-6ca7e7629db9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -390,6 +393,12 @@
     </ClCompile>
     <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyState.cpp">
       <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\LightningEffect.cpp">
+      <Filter>2_Source\Game\Object\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\LightningMainMesh.cpp">
+      <Filter>2_Source\Game\Object\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -686,6 +695,12 @@
     </ClInclude>
     <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyState.h">
       <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\LightningEffect.h">
+      <Filter>2_Source\Game\Object\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\LightningMainMesh.h">
+      <Filter>2_Source\Game\Object\Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -111,6 +111,8 @@ void SceneTest::Initialize()
 
 	Enemy::Instance().Initialize();
 	Player::Instance().Initialize();
+
+	lightningEffect = std::make_unique<LightningMainMesh>("Data/Fbx/normal/lightning1.model");
 }
 
 void SceneTest::Finalize()
@@ -163,6 +165,12 @@ void SceneTest::Update()
 
 	EmitterManager::Instance().Update();
 	Particle::Instance().Update();
+
+	if(InputManager::Instance().GetKeyPressed(Keyboard::F2))
+	{
+		lightningEffect->Initialize();
+	}
+	lightningEffect->Update();
 }
 
 void SceneTest::Render()
@@ -252,6 +260,23 @@ void SceneTest::Render()
 		
 		Particle::Instance().Render();
 
+		// rasterizerStateÇÃê›íË
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+		// depthStencilStateÇÃê›íË
+		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_OFF);
+		// blendStateÇÃê›íË
+		gfx->SetBlend(BLEND_STATE::ALPHA);
+
+
+
+
+		// rasterizerStateÇÃê›íË
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
+		// depthStencilStateÇÃê›íË
+		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_OFF);
+		// blendStateÇÃê›íË
+		gfx->SetBlend(BLEND_STATE::ALPHA);
+		lightningEffect->Render();
 		// rasterizerStateÇÃê›íË
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
 		// depthStencilStateÇÃê›íË

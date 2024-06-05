@@ -171,6 +171,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Object\Effect\LightningMainMesh.cpp" />
+    <ClCompile Include="Source\Game\Object\Effect\LightningEffect.cpp" />
     <ClCompile Include="Source\Game\Object\StateMachine\Enemy\Enemy.cpp" />
     <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyState.cpp" />
     <ClCompile Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayer.cpp" />
@@ -262,6 +264,8 @@
     <ClCompile Include="Source\Game\Object\StateMachine\StateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Object\Effect\LightningMainMesh.h" />
+    <ClInclude Include="Source\Game\Object\Effect\LightningEffect.h" />
     <ClInclude Include="Source\Game\Object\StateMachine\Enemy\Enemy.h" />
     <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyState.h" />
     <ClInclude Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayer.h" />

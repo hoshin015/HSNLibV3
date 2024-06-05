@@ -11,6 +11,7 @@
 // --- Game ---
 #include "../Game/Object/TestStatic.h"
 #include "../Game/Object/StateMachine/BlendTestPlayer/BlendTestPlayer.h"
+#include "../Game/Object/Effect/LightningMainMesh.h"
 
 
 // テストシーン
@@ -47,4 +48,6 @@ private:
 	std::unique_ptr<Sprite> sprTest3;
 
 	std::unique_ptr<BlendTestPlayer> blendTestPlayer;
+
+	std::unique_ptr<LightningMainMesh> lightningEffect;
 };

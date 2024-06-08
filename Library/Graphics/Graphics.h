@@ -41,6 +41,8 @@ enum class BLEND_STATE
 	MULTIPLY,
 
 	PARTICLE_APLHA,
+	WBOIT,
+	WBOIT_FINAL,
 
 	NUM,
 };
@@ -53,36 +55,6 @@ enum class DEPTHSTENCIL_STATE
 	ZT_OFF_ZW_OFF,
 
 	NUM,
-};
-
-enum class OBJECT_TYPE
-{
-	OFF_LUMINANCE,
-	ON_LUMINANCE,
-};
-
-enum class PS_TYPE
-{
-	LuminanceExtraction_PS,
-	Blur_PS,
-	ColorFilter_PS,
-	GaussianBlur_PS,
-	BloomFinalPass_PS,
-
-	SkinnedMesh_PS,
-
-	NUM
-};
-
-enum class VS_TYPE
-{
-	GaussianBlurX_VS,
-	GaussianBlurY_VS,
-	ShadowMapCaster_VS,
-
-	SkinnedMesh_VS,
-
-	NUM
 };
 
 

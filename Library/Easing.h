@@ -3,6 +3,7 @@
 #include <cmath>        // std::cos, std::sin, std::pow, std::sqrt
 #include <limits>       // std::numeric_limits
 #include <algorithm>    // std::max, std::min
+#include <DirectXMath.h>
 
 // イージング関数
 struct Easing
@@ -389,4 +390,72 @@ public:
     {
         return (max - min) * time / totaltime + min;
     }
+
+
+
+
+
+
+
+    struct EasingValue
+    {
+        float startTime;
+        float endTime;
+        float startValue;
+        float endValue;
+    };
+
+    struct EasingValueVec2
+    {
+        float             startTime;
+        float             endTime;
+        DirectX::XMFLOAT2 startValueVec;
+        DirectX::XMFLOAT2 endValueVec;
+    };
+
+    template <typename Ty>
+    using EasingFunc = Ty(*)(Ty, Ty, Ty, Ty);
+
+    template <typename Ty>
+    // イージングによる現在のパラメータ取得
+    static float GetNowParam(EasingFunc<Ty> func, float time, EasingValue uiEasingValue)
+    {
+        if (time < uiEasingValue.startTime)
+        {
+            return uiEasingValue.startValue;
+        }
+        if (time > uiEasingValue.endTime)
+        {
+            return uiEasingValue.endValue;
+        }
+
+        return func(time - uiEasingValue.startTime, uiEasingValue.endTime - uiEasingValue.startTime, uiEasingValue.endValue,
+            uiEasingValue.startValue);
+    }
+    // イージングによる現在のパラメータ取得
+    template <typename Ty>
+    static DirectX::XMFLOAT2 GetNowParamVec(EasingFunc<Ty> func, float time, EasingValueVec2 uiEasingValueVec)
+    {
+        if (time < uiEasingValueVec.startTime)
+        {
+            return uiEasingValueVec.startValueVec;
+        }
+        if (time > uiEasingValueVec.endTime)
+        {
+            return uiEasingValueVec.endValueVec;
+        }
+
+
+        DirectX::XMFLOAT2 vec2 =
+        {
+            func(time - uiEasingValueVec.startTime, uiEasingValueVec.endTime - uiEasingValueVec.startTime,
+                 uiEasingValueVec.endValueVec.x, uiEasingValueVec.startValueVec.x),
+            func(time - uiEasingValueVec.startTime, uiEasingValueVec.endTime - uiEasingValueVec.startTime,
+                 uiEasingValueVec.endValueVec.y, uiEasingValueVec.startValueVec.y)
+        };
+
+        return vec2;
+    }
 };
+
+

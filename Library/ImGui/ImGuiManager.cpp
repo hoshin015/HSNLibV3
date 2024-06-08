@@ -3,6 +3,7 @@
 #include "ImGuiManager.h"
 #include "ConsoleData.h"
 #include "../../External/ImGui/Implot/implot.h"
+#include "../../External/ImGui/IconFontCppHeaders-main/IconsFontAwesome5.h"
 
 // =====================================================================
 
@@ -50,13 +51,13 @@ void ImGuiManager::Initialize(HWND hwnd)
 	// ウィンドウの深度変更対応
 	io.ConfigViewportsNoDefaultParent = true;
 
-
 	// Font
+	io.Fonts->AddFontDefault();
 	io.Fonts->AddFontFromFileTTF("Data/Font/meiryob.ttc", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
 
 	ImGui_ImplWin32_Init(hwnd);
 	ImGui_ImplDX11_Init(Graphics::Instance().GetDevice(), Graphics::Instance().GetDeviceContext());
-	
+
 	// スタイルの設定
 	ImGui::StyleColorsDark();
 

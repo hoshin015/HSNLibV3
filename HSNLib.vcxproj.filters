@@ -59,9 +59,6 @@
     <Filter Include="2_Source\Game\Object">
       <UniqueIdentifier>{1e102edc-c251-40c7-8dea-cae2eeed7405}</UniqueIdentifier>
     </Filter>
-    <Filter Include="2_Source\Game\Object\Base">
-      <UniqueIdentifier>{a8ee7d03-722d-464d-8e30-c7bee80e6b5f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="2_Source\Game\Object\Stage">
       <UniqueIdentifier>{7f60a7ea-8b06-4384-aff6-768793116144}</UniqueIdentifier>
     </Filter>
@@ -124,6 +121,15 @@
     </Filter>
     <Filter Include="2_Source\Game\Object\Effect">
       <UniqueIdentifier>{cbca59f8-c723-4739-b76e-6ca7e7629db9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\WbOit">
+      <UniqueIdentifier>{3bbe8c23-9fee-442b-a74a-3d2e71868344}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="0_ImGui\IconFontCppHeaders-main">
+      <UniqueIdentifier>{c8a9ef1f-8bfc-4dd9-bce0-bb5fb2e0b82f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\Game\Object\Base">
+      <UniqueIdentifier>{a8ee7d03-722d-464d-8e30-c7bee80e6b5f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -399,6 +405,9 @@
     </ClCompile>
     <ClCompile Include="Source\Game\Object\Effect\LightningMainMesh.cpp">
       <Filter>2_Source\Game\Object\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Graphics\WbOitBuffer.cpp">
+      <Filter>1_HSNLib\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -702,6 +711,12 @@
     <ClInclude Include="Source\Game\Object\Effect\LightningMainMesh.h">
       <Filter>2_Source\Game\Object\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="Library\Graphics\WbOitBuffer.h">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="External\ImGui\IconFontCppHeaders-main\IconsFontAwesome5.h">
+      <Filter>0_ImGui\IconFontCppHeaders-main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">
@@ -840,6 +855,15 @@
     </FxCompile>
     <FxCompile Include="Library\Shader\WaterPS.hlsl">
       <Filter>シェーダーファイル\Water</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\WbOitPS.hlsl">
+      <Filter>シェーダーファイル\WbOit</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\WbOitPhongPS.hlsl">
+      <Filter>シェーダーファイル\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\WbOitStaticPhongPS.hlsl">
+      <Filter>シェーダーファイル\Phong</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -17,7 +17,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
         {
             p.position += p.velocity * deltaTime;
             
-            if (p.position.y < 0)
+            while (p.position.y < 0)
             {
                 //p.velocity = 0;
                 p.position.y += 10;

@@ -67,9 +67,21 @@ void StaticModel::CreateComObject()
 		{"WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT},
 		{"BONES", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT},
 	};
-	CreateVsFromCso("Data/Shader/StaticPhongVS.cso", vertexShader.ReleaseAndGetAddressOf(), inputLayout.ReleaseAndGetAddressOf(), inputElementDesc, ARRAYSIZE(inputElementDesc));
-	//--- pixelShader の作成 ---
-	CreatePsFromCso("Data/Shader/StaticPhongPS.cso", pixelShader.ReleaseAndGetAddressOf());
+
+	for (auto& [name, material] : modelResource->GetMaterials())
+	{
+		std::string shaderPath = "Data/Shader/";
+
+		if (material.vertexShaderName.empty()) material.vertexShaderName = "StaticPhongVS";
+		if (material.pixelShaderName.empty()) material.pixelShaderName = "StaticPhongPS";
+
+		// 頂点シェーダー作成
+		CreateVsFromCso((shaderPath + material.vertexShaderName + ".cso").c_str(), vertexShaderMap[name].ReleaseAndGetAddressOf(), inputLayout.ReleaseAndGetAddressOf(), inputElementDesc, ARRAYSIZE(inputElementDesc));
+
+		//--- pixelShader の作成 ---
+		CreatePsFromCso((shaderPath + material.pixelShaderName + ".cso").c_str(), pixelShaderMap[name].ReleaseAndGetAddressOf());
+	}
+
 
 	//--- constantBuffer の作成 ---
 	D3D11_BUFFER_DESC bufferDesc{};
@@ -130,14 +142,6 @@ void StaticModel::Render(int instancing, DirectX::XMFLOAT4X4* instancingTransfor
 		dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		dc->IASetInputLayout(inputLayout.Get());
 
-		// 影ならシェーダーをセットしない
-		if (!isShadow)
-		{
-			dc->VSSetShader(vertexShader.Get(), nullptr, 0);
-			dc->PSSetShader(pixelShader.Get(), nullptr, 0);
-		}
-
-
 		// インスタンスの各姿勢を保存
 		data.instancingCount = instancing;
 		for (int index = 0; index < instancing; index++)
@@ -153,6 +157,14 @@ void StaticModel::Render(int instancing, DirectX::XMFLOAT4X4* instancingTransfor
 		{
 			// マテリアルの取得
 			const ModelResource::Material& material = modelResource->GetMaterials().at(subset.materialName);
+
+			// 影ならシェーダーをセットしない
+			if (!isShadow)
+			{
+				dc->VSSetShader(vertexShaderMap[material.name].Get(), nullptr, 0);
+				dc->PSSetShader(pixelShaderMap[material.name].Get(), nullptr, 0);
+			}
+
 			data.materialColorKd = material.Kd;
 			data.materialColorKs = material.Ks;
 			data.materialColorKa = material.Ka;

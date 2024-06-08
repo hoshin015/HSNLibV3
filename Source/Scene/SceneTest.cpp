@@ -26,6 +26,7 @@
 #include "../UserInterface//UiPause.h"
 #include "../Game/Object/StateMachine/Enemy/Enemy.h"
 #include "../Game/Object/StateMachine/Player/Player.h"
+#include "../../Library/Graphics/Shader.h"
 
 
 
@@ -55,13 +56,14 @@ void SceneTest::Initialize()
 
 
 	bitBlockTransfer = std::make_unique<FullScreenQuad>();
+	normalBuffer = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(), Framework::Instance().GetScreenHeightF(), true);
 	frameBuffer = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(), Framework::Instance().GetScreenHeightF(), true);
 	bloom = std::make_unique<Bloom>(Framework::Instance().GetScreenWidthF(), Framework::Instance().GetScreenHeightF());
 	shadow = std::make_unique<Shadow>();
 
+	wbOitBuffer = std::make_unique<WbOitBuffer>(Framework::Instance().GetScreenWidthF(), Framework::Instance().GetScreenHeightF());
 
-
-	testStatic = std::make_unique<TestStatic>("Data/Fbx/Albino/Albino.model");
+	testStatic = std::make_unique<TestStatic>("Data/Fbx/StaticAlbino/StaticAlbino.model");
 	sprTest = std::make_unique<Sprite>("Data/Texture/bomb/bomb.sprite");
 	sprTest2 = std::make_unique<Sprite>("Data/Texture/Icon.sprite");
 	sprTest2->SetPos({ 200, 100 });
@@ -82,7 +84,7 @@ void SceneTest::Initialize()
 	emitter0->rateOverTime = 0.5;
 	emitter0->startKind = 0;
 	emitter0->startLifeTime = 1.0f;
-	emitter0->startSize = 0.05f;
+	emitter0->startSize = 0.1f;
 	emitter0->startColor = { 1.8,1.8,1.8,1 };
 	EmitterManager::Instance().Register(emitter0);
 	
@@ -113,6 +115,8 @@ void SceneTest::Initialize()
 	Player::Instance().Initialize();
 
 	lightningEffect = std::make_unique<LightningMainMesh>("Data/Fbx/normal/lightning1.model");
+
+	CreatePsFromCso("Data/Shader/WbOitPS.cso", wbOitPixelShader.GetAddressOf());
 }
 
 void SceneTest::Finalize()
@@ -226,6 +230,51 @@ void SceneTest::Render()
 		shadow->SetShadowTextureAndConstants();
 	}
 
+	// rasterizerStateの設定
+	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+	// depthStencilStateの設定
+	gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
+	// blendStateの設定
+	gfx->SetBlend(BLEND_STATE::ALPHA);
+
+	normalBuffer->Clear(gfx->GetBgColor()); 
+	normalBuffer->Activate();
+	{
+		StageManager::Instance().Render();
+
+		testStatic->Render();
+		Enemy::Instance().Render();
+
+		Player::Instance().Render();
+
+		Enemy::Instance().DrawDebugPrimitive();
+		Player::Instance().DrawDebugPrimitive();
+		DebugPrimitive::Instance().Render();
+	}
+	normalBuffer->DeActivate();
+
+
+	// rasterizerStateの設定
+	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+	// depthStencilStateの設定
+	gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_OFF);
+	// blendStateの設定
+	gfx->SetBlend(BLEND_STATE::WBOIT);
+
+	wbOitBuffer->Clear();
+	wbOitBuffer->Activate(normalBuffer->depthStencilView.Get());
+	{
+		// rasterizerStateの設定
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
+
+		Particle::Instance().Render();
+
+		lightningEffect->Render();
+
+		// rasterizerStateの設定
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+	}
+	wbOitBuffer->DeActivate();
 
 	// rasterizerStateの設定
 	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
@@ -235,56 +284,23 @@ void SceneTest::Render()
 	gfx->SetBlend(BLEND_STATE::ALPHA);
 
 	// 通常描画
-	frameBuffer->Clear(gfx->GetBgColor());
+	float c[4] = { 0,0,0,1 };
+	frameBuffer->Clear(c);
 	frameBuffer->Activate();
 	{
-		StageManager::Instance().Render();
 
-		testStatic->Render();
-		Enemy::Instance().Render();
-
-		Player::Instance().Render();
-		//blendTestPlayer->Render();
-
-		Enemy::Instance().DrawDebugPrimitive();
-		Player::Instance().DrawDebugPrimitive();
-
-		DebugPrimitive::Instance().Render();
-
-		// rasterizerStateの設定
-		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
-		// depthStencilStateの設定
-		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_OFF);
-		// blendStateの設定
-		gfx->SetBlend(BLEND_STATE::ALPHA);
-		
-		Particle::Instance().Render();
-
-		// rasterizerStateの設定
-		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
-		// depthStencilStateの設定
-		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_OFF);
-		// blendStateの設定
-		gfx->SetBlend(BLEND_STATE::ALPHA);
-
-
-
-
-		// rasterizerStateの設定
-		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
-		// depthStencilStateの設定
-		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_OFF);
-		// blendStateの設定
-		gfx->SetBlend(BLEND_STATE::ADD);
-		lightningEffect->Render();
-		// rasterizerStateの設定
-		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
-		// depthStencilStateの設定
-		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_OFF);
-		// blendStateの設定
-		gfx->SetBlend(BLEND_STATE::ALPHA);
+		bitBlockTransfer->blit(normalBuffer->shaderResourceViews->GetAddressOf(), 0, 1);
+		ID3D11ShaderResourceView* srvs[2] =
+		{
+			wbOitBuffer->shaderResourceViews[0].Get(),
+			wbOitBuffer->shaderResourceViews[1].Get(),
+		};
+		bitBlockTransfer->blit(srvs, 0, 2, wbOitPixelShader.Get());
 	}
 	frameBuffer->DeActivate();
+
+	// blendStateの設定
+	gfx->SetBlend(BLEND_STATE::ALPHA);
 
 #if 1
 	// ブルーム処理しての描画
@@ -296,9 +312,9 @@ void SceneTest::Render()
 #endif	
 
 	// ブルームなし
-	sprTest->Render();
-	sprTest2->Render();
-	sprTest3->Render();
+	//sprTest->Render();
+	//sprTest2->Render();
+	//sprTest3->Render();
 
 	UiPause::Instance().Render();
 
@@ -311,6 +327,7 @@ void SceneTest::Render()
 	LightManager::Instance().DrawDebugGui();
 	bloom->DrawDebugGui();
 	shadow->DrawDebugGui();
+	wbOitBuffer->DrawDebugGui();
 
 	DispString::Instance().Draw(L"てすとめっせーじ", {200,50},50);
 

@@ -184,7 +184,7 @@ public:
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceViews[4];
 
 		DirectX::XMFLOAT4 Ka = {0.2f, 0.2f, 0.2f, 1.0f};
-		DirectX::XMFLOAT4 Kd = {0.8f, 0.8f, 0.8f, 1.0f};
+		DirectX::XMFLOAT4 Kd = {1.0f, 1.0f, 1.0f, 1.0f};
 		DirectX::XMFLOAT4 Ks = {1.0f, 1.0f, 1.0f, 1.0f};
 
 		std::string vertexShaderName;

@@ -289,6 +289,44 @@ void Graphics::Initialize(HWND hwnd, int windowWidth, int windowHeight)
 	hr = this->device->CreateBlendState(&blendDesc, blendStates[static_cast<size_t>(BLEND_STATE::PARTICLE_APLHA)].GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
+
+	// WBOIT
+	blendDesc.AlphaToCoverageEnable = FALSE;
+	blendDesc.IndependentBlendEnable = TRUE;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[1].BlendEnable = TRUE;
+	blendDesc.RenderTarget[1].SrcBlend = D3D11_BLEND_ZERO;
+	blendDesc.RenderTarget[1].DestBlend = D3D11_BLEND_INV_SRC_COLOR;
+	blendDesc.RenderTarget[1].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[1].SrcBlendAlpha = D3D11_BLEND_ZERO;
+	blendDesc.RenderTarget[1].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[1].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[1].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_RED;
+	hr = this->device->CreateBlendState(&blendDesc, blendStates[static_cast<size_t>(BLEND_STATE::WBOIT)].GetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
+
+	// WBOIT
+	blendDesc.AlphaToCoverageEnable = FALSE;
+	blendDesc.IndependentBlendEnable = FALSE;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[1].BlendEnable = FALSE;
+	hr = this->device->CreateBlendState(&blendDesc, blendStates[static_cast<size_t>(BLEND_STATE::WBOIT_FINAL)].GetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
+
 	// ------------------------------- SamplerState�̍쐬 -------------------------------
 	D3D11_SAMPLER_DESC samplerDesc;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;

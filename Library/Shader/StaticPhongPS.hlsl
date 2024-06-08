@@ -7,6 +7,7 @@ Texture2D normalTexture : register(_normalTexture);
 Texture2D specularTexture : register(_specularTexture);
 Texture2D emissiveTexture : register(_emissiveTexture);
 
+
 float4 main(VS_OUT pin) : SV_TARGET
 {
 	// ディフューズマップの取得

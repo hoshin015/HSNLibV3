@@ -3,29 +3,24 @@
 
 void LightningMainMesh::Initialize()
 {
-	LightningMainMeshChild* l = new LightningMainMeshChild(path.c_str());
-	l->SetPos({ 2,0,0 });
-	l->SetLifeTimer(2.0f);
-	l->SetEmissivePower(0);
-	lightningData.emplace_back(l);
-
-	LightningMainMeshChild* l2 = new LightningMainMeshChild(path.c_str());
-	l2->SetPos({ -2,0,0 });
-	l2->SetLifeTimer(2.0f);
-	l2->SetEmissivePower(1.0f);
-	lightningData.emplace_back(l2);
+	lightningMainTimer = 0.0f;
+	IsLightningMainMeshChild1Generate = false;
+	IsLightningMainMeshChild2Generate = false;
+	IsLightningMainMeshChild3Generate = false;
 }
 
 void LightningMainMesh::Update()
 {
+	lightningMainTimer += Timer::Instance().DeltaTime();
+
 	int index = 0;
 	for(auto& data : lightningData)
 	{
 		// çsóÒçXêVÇ∆éıçXêV
 		data->Update();
 
-		// éıñΩêÿÇÍÇ»ÇÁìoò^âèú
-		if (data->GetlifeTimer() <= 0.0f)
+		// éıñΩÇí¥Ç¶ÇΩÇÁìoò^âèú
+		if (data->GetlifeTimer() >= data->GetlifeTime())
 		{
 			delete data;
 			lightningData.erase(lightningData.begin() + index);
@@ -38,6 +33,39 @@ void LightningMainMesh::Update()
 
 		index++;
 	}
+
+	if(!IsLightningMainMeshChild1Generate && lightningMainMeshChild1GenerateTime <= lightningMainTimer)
+	{
+		LightningMainMeshChild1* l = new LightningMainMeshChild1(path.c_str());
+		l->SetLifeTimer(0.0f);
+		l->SetPos({ 2,0,0 });
+		l->SetScale({ 1,2,1 });
+		l->SetEmissivePower(3.0);
+		lightningData.emplace_back(l);
+		IsLightningMainMeshChild1Generate = true;
+	}
+	if (!IsLightningMainMeshChild2Generate && lightningMainMeshChild2GenerateTime <= lightningMainTimer)
+	{
+		LightningMainMeshChild2* l = new LightningMainMeshChild2(path.c_str());
+		l->SetLifeTimer(0.0f);
+		l->SetLifeTime(0.1f);
+		l->SetPos({ 2,0,0 });
+		l->SetScale({ 0.5,2,0.5 });
+		l->SetEmissivePower(1.0);
+		lightningData.emplace_back(l);
+		IsLightningMainMeshChild2Generate = true;
+	}
+	if (!IsLightningMainMeshChild3Generate && lightningMainMeshChild3GenerateTime <= lightningMainTimer)
+	{
+		LightningMainMeshChild2* l = new LightningMainMeshChild2(path.c_str());
+		l->SetLifeTimer(0.0f);
+		l->SetLifeTime(0.2f);
+		l->SetPos({ 2,0,0 });
+		l->SetScale({ 0.5,2,0.5 });
+		l->SetEmissivePower(1.0);
+		lightningData.emplace_back(l);
+		IsLightningMainMeshChild3Generate = true;
+	}
 }
 
 void LightningMainMesh::Render(bool isShadow)
@@ -46,10 +74,22 @@ void LightningMainMesh::Render(bool isShadow)
 	model->Render(lightningData.size(), m, e, isShadow);
 }
 
-void LightningMainMeshChild::Update()
+void LightningMainMeshChild1::Update()
 {
-	lifeTimer -= Timer::Instance().DeltaTime();
-	if (lifeTimer < 0) lifeTimer = 0;
+	float s = Easing::GetNowParam(Easing::OutCubic<float>, lifeTimer, lightning1Scale);
+	SetScale({ s, GetScaleY(), s });
+
+	lifeTimer += Timer::Instance().DeltaTime();
+	if (lifeTimer > lifeTime) lifeTimer = lifeTime;
+
+	// épê®çsóÒçXêV
+	UpdateTransform();
+}
+
+void LightningMainMeshChild2::Update()
+{
+	lifeTimer += Timer::Instance().DeltaTime();
+	if (lifeTimer > lifeTime) lifeTimer = lifeTime;
 
 	// épê®çsóÒçXêV
 	UpdateTransform();

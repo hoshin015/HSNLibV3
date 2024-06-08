@@ -50,10 +50,10 @@ float4 main(VS_OUT pin) : SV_TARGET
 	float3 directionSpecular = CalcPhongSpecular(N, L, directionalLightData.color.rgb, ToCamera, 128.0f, Ks);
 
 	// 平行光源の影なので、平行光源に対して影を適応
-	float3 shadow = CalcCascadedShadowColorPCFFilter(shadowTexture, samplerStates[_shadowSampler], pin.shadowTexcoord,
+    float3 shadow = CalcCascadedShadowColorPCFFilter(shadowTexture, samplerStates[_shadowSampler], pin.shadowTexcoord,
 	                                                 shadowColor, shadowBias);
-	directionDiffuse *= shadow;
-	directionSpecular *= shadow;
+    directionDiffuse *= shadow;
+    directionSpecular *= shadow;
 
 
 	// ------ ポイントライト ------
@@ -122,6 +122,6 @@ float4 main(VS_OUT pin) : SV_TARGET
 	finalColor.rgb = diffuseColor.rgb * lig.rgb * pin.color.rgb;
 
     finalColor.rgb += emissive.rgb * emissivePower;
-
+	
 	return finalColor;
 }

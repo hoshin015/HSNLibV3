@@ -229,17 +229,13 @@ void SceneModelEditor::DrawDebugGUI()
 
 						if (ImGui::TreeNode(material.name.c_str()))
 						{
-							ImGui::InputText("vertexShader", &material.vertexShaderName[0],
-							                 material.vertexShaderName.size() + 1);
-							ImGui::InputText("pixelShader", &material.pixelShaderName[0],
-							                 material.vertexShaderName.size() + 1);
+							ImGuiManager::Instance().InputText("vertexShader", material.vertexShaderName);
+							ImGuiManager::Instance().InputText("pixelShader", material.pixelShaderName);
 
 							const char* textureLabelNames[4] = {"Diffuse", "Normal", "Specular", "Emissive"};
 							for (int textureIndex = 0; textureIndex < 4; textureIndex++)
 							{
-								ImGui::InputText(textureLabelNames[textureIndex],
-								                 &material.textureFilenames[textureIndex][0],
-								                 material.textureFilenames[_deffuseTexture].size() + 1);
+								ImGuiManager::Instance().InputText(textureLabelNames[textureIndex], material.textureFilenames[textureIndex]);
 								ImGui::Image(material.shaderResourceViews[textureIndex].Get(), {64, 64});
 								ImGui::SameLine();
 								std::string buttonLabel = textureLabelNames[textureIndex] +

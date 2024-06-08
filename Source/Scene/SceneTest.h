@@ -6,6 +6,7 @@
 #include "../../Library/Graphics/FullScreenQuad.h"
 #include "../../Library/Graphics/Bloom.h"
 #include "../../Library/Graphics/Shadow.h"
+#include "../../Library/Graphics/WbOitBuffer.h"
 // --- Scene ---
 #include "Scene.h"
 // --- Game ---
@@ -38,9 +39,11 @@ private:
 	void DrawDebugGUI();
 private:
 	std::unique_ptr<FrameBuffer> frameBuffer;
+	std::unique_ptr<FrameBuffer> normalBuffer;
 	std::unique_ptr<FullScreenQuad> bitBlockTransfer;
 	std::unique_ptr<Bloom> bloom;
 	std::unique_ptr<Shadow> shadow;
+	std::unique_ptr<WbOitBuffer> wbOitBuffer;
 
 	std::unique_ptr<TestStatic> testStatic;
 	std::unique_ptr<Sprite> sprTest;
@@ -50,4 +53,7 @@ private:
 	std::unique_ptr<BlendTestPlayer> blendTestPlayer;
 
 	std::unique_ptr<LightningMainMesh> lightningEffect;
+
+
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> wbOitPixelShader;
 };

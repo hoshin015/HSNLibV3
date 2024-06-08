@@ -262,8 +262,10 @@
     <ClCompile Include="Source\UserInterface\UiPause.cpp" />
     <ClCompile Include="Source\Game\Object\StateMachine\StateBase.cpp" />
     <ClCompile Include="Source\Game\Object\StateMachine\StateMachine.cpp" />
+    <ClCompile Include="Library\Graphics\WbOitBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="External\ImGui\IconFontCppHeaders-main\IconsFontAwesome5.h" />
     <ClInclude Include="Source\Game\Object\Effect\LightningMainMesh.h" />
     <ClInclude Include="Source\Game\Object\Effect\LightningEffect.h" />
     <ClInclude Include="Source\Game\Object\StateMachine\Enemy\Enemy.h" />
@@ -364,6 +366,7 @@
     <ClInclude Include="Source\UserInterface\UiPause.h" />
     <ClInclude Include="Source\Game\Object\StateMachine\StateBase.h" />
     <ClInclude Include="Source\Game\Object\StateMachine\StateMachine.h" />
+    <ClInclude Include="Library\Graphics\WbOitBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc" />
@@ -695,6 +698,24 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="Library\Shader\WaterPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\WbOitPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\WbOitPhongPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\WbOitStaticPhongPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

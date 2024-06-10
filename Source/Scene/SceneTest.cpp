@@ -15,108 +15,112 @@
 #include "../../Library/Particle/Particle.h"
 #include "../../Library/Particle/EmitterManager.h"
 #include "../../Library/Text/DispString.h"
+#include "../../Library/Graphics/Shader.h"
 // --- Scene ---
 #include "SceneTest.h"
 #include "SceneManager.h"
 // --- Game ---
 #include "../Game/Object/Stage/StageManager.h"
 #include "../Game/Object/Stage/StageMain.h"
+#include "../Game/Object/StateMachine/Enemy/Enemy.h"
+#include "../Game/Object/StateMachine/Player/Player.h"
 // --- UserInterface ---
 #include "../../Library/3D/DebugPrimitive.h"
 #include "../UserInterface//UiPause.h"
-#include "../Game/Object/StateMachine/Enemy/Enemy.h"
-#include "../Game/Object/StateMachine/Player/Player.h"
-#include "../../Library/Graphics/Shader.h"
-
 
 
 void SceneTest::Initialize()
 {
-	// カメラ初期設定
+	// --- カメラ初期設定 ---
 	Camera::Instance().SetLookAt(
-		DirectX::XMFLOAT3(0, 20, 20),		// カメラ座標
-		DirectX::XMFLOAT3(0, 0, 0),			// ターゲット(設定しても意味ない)
-		DirectX::XMFLOAT3(0, 1, 0)			// 上方向ベクトル
+		DirectX::XMFLOAT3(0, 20, 20), // カメラ座標
+		DirectX::XMFLOAT3(0, 0, 0),   // ターゲット(設定しても意味ない)
+		DirectX::XMFLOAT3(0, 1, 0)    // 上方向ベクトル
 	);
-	Camera::Instance().SetAngle({ DirectX::XMConvertToRadians(45), DirectX::XMConvertToRadians(180), 0 });
+	Camera::Instance().SetAngle({DirectX::XMConvertToRadians(45), DirectX::XMConvertToRadians(180), 0});
 	Camera::Instance().cameraType = Camera::CAMERA::TARGET_PLAYER;
 
-	// ライト初期設定
+	// --- ライト初期設定 ---
 	Light* directionLight = new Light(LightType::Directional);
 	directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
 	directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
 	LightManager::Instance().Register(directionLight);
-	LightManager::Instance().SetAmbientColor({ 0.2f, 0.2f, 0.2f, 1.0f });
+	LightManager::Instance().SetAmbientColor({0.2f, 0.2f, 0.2f, 1.0f});
 
 
-	// ステージ初期化
+	// --- ステージ初期化 ---
 	StageManager& stageManager = StageManager::Instance();
-	StageMain* stageMain = new StageMain("Data/Fbx/ExampleStage/ExampleStage.model");
+	StageMain*    stageMain    = new StageMain("Data/Fbx/ExampleStage/ExampleStage.model");
 	stageManager.Register(stageMain);
 
-
+	// --- buffer 系初期化 ---
 	bitBlockTransfer = std::make_unique<FullScreenQuad>();
-	normalBuffer = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(), Framework::Instance().GetScreenHeightF(), true);
-	frameBuffer = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(), Framework::Instance().GetScreenHeightF(), true);
+	frameBuffer      = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
+	                                            Framework::Instance().GetScreenHeightF(), true);
 	bloom = std::make_unique<Bloom>(Framework::Instance().GetScreenWidthF(), Framework::Instance().GetScreenHeightF());
 	shadow = std::make_unique<Shadow>();
+	wbOitBuffer = std::make_unique<WbOitBuffer>(Framework::Instance().GetScreenWidthF(),
+	                                            Framework::Instance().GetScreenHeightF());
 
-	wbOitBuffer = std::make_unique<WbOitBuffer>(Framework::Instance().GetScreenWidthF(), Framework::Instance().GetScreenHeightF());
+	// --- AnimatedObject 初期化 ---
+	blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");
 
+	// --- StaticObject 初期化 ---
 	testStatic = std::make_unique<TestStatic>("Data/Fbx/StaticAlbino/StaticAlbino.model");
-	sprTest = std::make_unique<Sprite>("Data/Texture/bomb/bomb.sprite");
+
+	// --- Sprite 初期化 ---
+	sprTest  = std::make_unique<Sprite>("Data/Texture/bomb/bomb.sprite");
 	sprTest2 = std::make_unique<Sprite>("Data/Texture/Icon.sprite");
-	sprTest2->SetPos({ 200, 100 });
+	sprTest2->SetPos({200, 100});
 	sprTest3 = std::make_unique<Sprite>("Data/Texture/Nessie.sprite");
-	sprTest3->SetPos({ 500, 100 });
-	sprTest3->SetScale({ 0.2, 0.2 });
+	sprTest3->SetPos({500, 100});
+	sprTest3->SetScale({0.2, 0.2});
 	sprTest3->UpdateAnimation();
 
-	blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");
+
+	Enemy::Instance().Initialize();
+	Player::Instance().Initialize();
+
 
 	Particle::Instance().Initialize();
 
-	Emitter* emitter0 = new Emitter();
-	emitter0->position = { 0, 3, 3 };
-	emitter0->rate = 9999;
-	emitter0->duration = 2;
-	emitter0->looping = false;
-	emitter0->rateOverTime = 0.5;
-	emitter0->startKind = 0;
+	// --- Emitter 登録 ---
+	Emitter* emitter0       = new Emitter();
+	emitter0->position      = {0, 3, 3};
+	emitter0->rate          = 9999;
+	emitter0->duration      = 2;
+	emitter0->looping       = false;
+	emitter0->rateOverTime  = 0.5;
+	emitter0->startKind     = 0;
 	emitter0->startLifeTime = 1.0f;
-	emitter0->startSize = 0.1f;
-	emitter0->startColor = { 1.8,1.8,1.8,1 };
+	emitter0->startSize     = 0.1f;
+	emitter0->startColor    = {1.8, 1.8, 1.8, 1};
 	EmitterManager::Instance().Register(emitter0);
-	
-	Emitter* emitter1 = new Emitter();
-	emitter1->position = { 0, 3, 0 };
-	emitter1->rate = 32;
-	emitter1->startKind = 1;
-	emitter1->rateOverTime = 0.25f;
+
+	Emitter* emitter1       = new Emitter();
+	emitter1->position      = {0, 3, 0};
+	emitter1->rate          = 32;
+	emitter1->startKind     = 1;
+	emitter1->rateOverTime  = 0.25f;
 	emitter1->startLifeTime = 6.0f;
-	emitter1->startSize = 0.05f;
+	emitter1->startSize     = 0.05f;
 	EmitterManager::Instance().Register(emitter1);
 
-	Emitter* emitter2 = new Emitter();
-	emitter2->position = { 3, 3, 0 };
-	emitter2->rate = 5;
-	emitter2->startKind = 2;
+	Emitter* emitter2       = new Emitter();
+	emitter2->position      = {3, 3, 0};
+	emitter2->rate          = 5;
+	emitter2->startKind     = 2;
 	emitter2->startLifeTime = 3.0f;
-	emitter2->rateOverTime = 0.5f;
-	emitter2->startColor = { 2,0.4,0.4,1 };
-	emitter2->startSize = 0.3f;
+	emitter2->rateOverTime  = 0.5f;
+	emitter2->startColor    = {2, 0.4, 0.4, 1};
+	emitter2->startSize     = 0.3f;
 	EmitterManager::Instance().Register(emitter2);
 
 
 	UiPause::Instance().Initialize();
 
 
-	Enemy::Instance().Initialize();
-	Player::Instance().Initialize();
-
 	lightningEffect = std::make_unique<LightningMainMesh>("Data/Fbx/normal/lightning1.model");
-
-	CreatePsFromCso("Data/Shader/WbOitPS.cso", wbOitPixelShader.GetAddressOf());
 }
 
 void SceneTest::Finalize()
@@ -170,7 +174,7 @@ void SceneTest::Update()
 	EmitterManager::Instance().Update();
 	Particle::Instance().Update();
 
-	if(InputManager::Instance().GetKeyPressed(Keyboard::F2))
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F2))
 	{
 		lightningEffect->Initialize();
 	}
@@ -180,8 +184,8 @@ void SceneTest::Update()
 void SceneTest::Render()
 {
 	// 必要なポインタ取得
-	Graphics* gfx = &Graphics::Instance();
-	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
+	Graphics*            gfx = &Graphics::Instance();
+	ID3D11DeviceContext* dc  = gfx->GetDeviceContext();
 
 	// renderTargetの設定
 	dc->OMSetRenderTargets(1, gfx->GetRTVAddress(), gfx->GetDSV());
@@ -199,28 +203,26 @@ void SceneTest::Render()
 	// ライトの定数バッファの更新
 	LightManager::Instance().UpdateConstants();
 
-	
-
-	// shadowMap
+	// ====== shadowMap ======
 	{
-		shadow->Clear();					// シャドウマップクリア
-		shadow->UpdateShadowCasterBegin();	// シャドウマップ描画準備
+		shadow->Clear();                   // シャドウマップクリア
+		shadow->UpdateShadowCasterBegin(); // シャドウマップ描画準備
 
 		for (int i = 0; i < SHADOWMAP_COUNT; i++)
 		{
 			shadow->Activate(i);
 			// 影を付けたいモデルはここで描画を行う(Render の引数に true をいれる)
 			{
-				// animated object
-				shadow->SetAnimatedShader();
+				// --- animated object ---
+				shadow->SetAnimatedShader(); // animated object の影描画開始
 				StageManager::Instance().Render(true);
 				Enemy::Instance().Render(true);
 
 				Player::Instance().Render(true);
 				//blendTestPlayer->Render(true);
 
-				// static object
-				shadow->SetStaticShader();
+				// --- static object ---
+				shadow->SetStaticShader(); // static object の影描画開始
 				testStatic->Render(true);
 			}
 			shadow->DeActivate();
@@ -230,16 +232,16 @@ void SceneTest::Render()
 		shadow->SetShadowTextureAndConstants();
 	}
 
-	// rasterizerStateの設定
-	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
-	// depthStencilStateの設定
-	gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
-	// blendStateの設定
-	gfx->SetBlend(BLEND_STATE::ALPHA);
-
-	normalBuffer->Clear(gfx->GetBgColor()); 
-	normalBuffer->Activate();
+	// ====== 不透明描画 ======
+	frameBuffer->Clear(gfx->GetBgColor());
+	frameBuffer->Activate();
 	{
+		// パイプラインバインド設定
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
+		gfx->SetBlend(BLEND_STATE::ALPHA);
+
+		// ここに不透明オブジェクトの描画
 		StageManager::Instance().Render();
 
 		testStatic->Render();
@@ -251,72 +253,59 @@ void SceneTest::Render()
 		Player::Instance().DrawDebugPrimitive();
 		DebugPrimitive::Instance().Render();
 	}
-	normalBuffer->DeActivate();
+	frameBuffer->DeActivate();
 
-
-	// rasterizerStateの設定
-	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
-	// depthStencilStateの設定
-	gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_OFF);
-	// blendStateの設定
-	gfx->SetBlend(BLEND_STATE::WBOIT);
-
+	// ====== 半透明描画 ======
 	wbOitBuffer->Clear();
-	wbOitBuffer->Activate(normalBuffer->depthStencilView.Get());
+	wbOitBuffer->Activate(frameBuffer->depthStencilView.Get());
 	{
-		// rasterizerStateの設定
+		// パイプラインバインド設定
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
 
+		// ここに半透明オブジェクトの描画
 		Particle::Instance().Render();
 
 		lightningEffect->Render();
-
-		// rasterizerStateの設定
-		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
 	}
 	wbOitBuffer->DeActivate();
 
-	// rasterizerStateの設定
-	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
-	// depthStencilStateの設定
-	gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
-	// blendStateの設定
-	gfx->SetBlend(BLEND_STATE::ALPHA);
-
-	// 通常描画
-	float c[4] = { 0,0,0,1 };
-	frameBuffer->Clear(c);
+	// ====== 不透明・半透明の統合 ======
 	frameBuffer->Activate();
 	{
+		// パイプラインバインド設定
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
+		gfx->SetBlend(BLEND_STATE::ALPHA);
 
-		bitBlockTransfer->blit(normalBuffer->shaderResourceViews->GetAddressOf(), 0, 1);
 		ID3D11ShaderResourceView* srvs[2] =
 		{
-			wbOitBuffer->shaderResourceViews[0].Get(),
-			wbOitBuffer->shaderResourceViews[1].Get(),
+			wbOitBuffer->shaderResourceViews[_accumTexture].Get(),
+			wbOitBuffer->shaderResourceViews[_revealTexture].Get(),
 		};
-		bitBlockTransfer->blit(srvs, 0, 2, wbOitPixelShader.Get());
+		bitBlockTransfer->blit(srvs, 0, ARRAYSIZE(srvs), wbOitBuffer->GetWbOitPS());
 	}
 	frameBuffer->DeActivate();
 
-	// blendStateの設定
-	gfx->SetBlend(BLEND_STATE::ALPHA);
-
 #if 1
-	// ブルーム処理しての描画
+	// ====== ブルーム処理しての描画 ======
 	bloom->Make(frameBuffer->shaderResourceViews[0].Get());
 	bitBlockTransfer->blit(bloom->GetSrvAddress(), 0, 1, nullptr, nullptr);
 #else
-	// そのまま描画
+	// ====== そのまま描画 ======
 	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1, nullptr, nullptr);
-#endif	
+#endif
 
-	// ブルームなし
-	//sprTest->Render();
-	//sprTest2->Render();
-	//sprTest3->Render();
+	// ======　ブルームなしの描画　======　
+
+	// ここでスプライト描画
+	sprTest->Render();
+	sprTest2->Render();
+	sprTest3->Render();
 
 	UiPause::Instance().Render();
+
+	// ここで文字描画
+	DispString::Instance().Draw(L"てすとめっせーじ", {200, 50}, 50);
 
 #if USE_IMGUI
 	// --- デバッグGUI描画 ---
@@ -328,8 +317,6 @@ void SceneTest::Render()
 	bloom->DrawDebugGui();
 	shadow->DrawDebugGui();
 	wbOitBuffer->DrawDebugGui();
-
-	DispString::Instance().Draw(L"てすとめっせーじ", {200,50},50);
 
 #if SHOW_PERFORMANCE
 	// --- パフォーマンス描画 ---

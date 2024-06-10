@@ -22,11 +22,16 @@ public:
 
 	void DrawDebugGui();
 
+	ID3D11PixelShader* GetWbOitPS() { return wbOitPixelShader.Get(); }
+
 private:
 	UINT viewportCount = D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE;
 	D3D11_VIEWPORT cachedViewports[D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE];
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> cachedRenderTargetView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> cachedDepthStencilView;
+
+
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> wbOitPixelShader;
 };
 
 

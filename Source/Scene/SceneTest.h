@@ -39,7 +39,6 @@ private:
 	void DrawDebugGUI();
 private:
 	std::unique_ptr<FrameBuffer> frameBuffer;
-	std::unique_ptr<FrameBuffer> normalBuffer;
 	std::unique_ptr<FullScreenQuad> bitBlockTransfer;
 	std::unique_ptr<Bloom> bloom;
 	std::unique_ptr<Shadow> shadow;
@@ -53,7 +52,4 @@ private:
 	std::unique_ptr<BlendTestPlayer> blendTestPlayer;
 
 	std::unique_ptr<LightningMainMesh> lightningEffect;
-
-
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> wbOitPixelShader;
 };

@@ -1,17 +1,16 @@
+#include "../RegisterNum.h"
 #include "FullScreenQuad.hlsli"
 
-#define POINT 0
-#define LINEAR 1
-#define ANISOTROPIC 2
 
-SamplerState samplerStates[3] : register(s0);
-Texture2D accumTexture : register(t0);
-Texture2D revealTexture : register(t1);
+SamplerState samplerStates[_samplerNum] : register(s0);
+
+Texture2D accumTexture : register(_accumTexture);
+Texture2D revealTexture : register(_revealTexture);
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
-    float4 accum = accumTexture.Sample(samplerStates[POINT], pin.texcoord);
-    float reveal = revealTexture.Sample(samplerStates[POINT], pin.texcoord).r;
+    float4 accum = accumTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
+    float reveal = revealTexture.Sample(samplerStates[_pointSampler], pin.texcoord).r;
     
     // ÉJÉâÅ[Çê≥ãKâª
     float3 normalizedColor = accum.rgb / max(accum.a, 1e-5);

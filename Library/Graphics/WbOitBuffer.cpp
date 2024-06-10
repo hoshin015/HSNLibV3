@@ -1,5 +1,6 @@
 #include "WbOitBuffer.h"
 #include "Graphics.h"
+#include "Shader.h"
 #include "../ErrorLogger.h"
 #include "../ImGui/ImGuiManager.h"
 
@@ -80,6 +81,10 @@ WbOitBuffer::WbOitBuffer(uint32_t width, uint32_t height)
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0.0f;
 	viewport.TopLeftY = 0.0f;
+
+
+	// ------- ps ¶¬ -------
+	CreatePsFromCso("Data/Shader/WbOitPS.cso", wbOitPixelShader.GetAddressOf());
 }
 
 
@@ -108,7 +113,12 @@ void WbOitBuffer::Activate(ID3D11DepthStencilView* useDepth)
 		renderTargetViews[0].Get(),
 		renderTargetViews[1].Get(),
 	};
-	dc->OMSetRenderTargets(2, rtvs, useDepth);
+	dc->OMSetRenderTargets(ARRAYSIZE(rtvs), rtvs, useDepth);
+
+	// depthStencilState‚ÌÝ’è
+	gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_OFF);
+	// blendState‚ÌÝ’è
+	gfx->SetBlend(BLEND_STATE::WBOIT);
 }
 
 void WbOitBuffer::DeActivate()

@@ -8,7 +8,6 @@
 ////////////////////////////////////////////////////////////////////
 
 #define USE_LinearWorkflow				0
-#define USE_WBOIT						1
 
 // ====== íËêî ======
 #define MAX_INSTANCE					512

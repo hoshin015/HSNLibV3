@@ -4,6 +4,7 @@
 #include "../../External/ImGui/imgui.h"
 // --- libarary ---
 #include "../../Library/Framework.h"
+#include "../../Library/Graphics/Shader.h"
 #include "../../Library/Graphics/Graphics.h"
 #include "../../Library/Math/OperatorXMFloat3.h"
 #include "../../Library/Timer.h"
@@ -15,7 +16,6 @@
 #include "../../Library/Particle/Particle.h"
 #include "../../Library/Particle/EmitterManager.h"
 #include "../../Library/Text/DispString.h"
-#include "../../Library/Graphics/Shader.h"
 // --- Scene ---
 #include "SceneTest.h"
 #include "SceneManager.h"
@@ -142,7 +142,6 @@ void SceneTest::Update()
 
 	if (UiPause::Instance().Update()) return;
 
-
 	// --- effectManager処理 ---
 	EffectManager::Instance().Update();
 
@@ -236,7 +235,6 @@ void SceneTest::Render()
 	frameBuffer->Clear(gfx->GetBgColor());
 	frameBuffer->Activate();
 	{
-		// パイプラインバインド設定
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
 		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
 		gfx->SetBlend(BLEND_STATE::ALPHA);
@@ -259,7 +257,6 @@ void SceneTest::Render()
 	wbOitBuffer->Clear();
 	wbOitBuffer->Activate(frameBuffer->depthStencilView.Get());
 	{
-		// パイプラインバインド設定
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
 
 		// ここに半透明オブジェクトの描画
@@ -272,7 +269,6 @@ void SceneTest::Render()
 	// ====== 不透明・半透明の統合 ======
 	frameBuffer->Activate();
 	{
-		// パイプラインバインド設定
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
 		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
 		gfx->SetBlend(BLEND_STATE::ALPHA);

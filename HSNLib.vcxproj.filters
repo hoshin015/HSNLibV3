@@ -409,6 +409,9 @@
     <ClCompile Include="Library\Graphics\WbOitBuffer.cpp">
       <Filter>1_HSNLib\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scene\SceneLoading.cpp">
+      <Filter>2_Source\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -716,6 +719,9 @@
     </ClInclude>
     <ClInclude Include="External\ImGui\IconFontCppHeaders-main\IconsFontAwesome5.h">
       <Filter>0_ImGui\IconFontCppHeaders-main</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneLoading.h">
+      <Filter>2_Source\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

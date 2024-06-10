@@ -5,6 +5,7 @@
 #include "SceneTest.h"
 #include "SceneModelEditor.h"
 #include "SceneSpriteEditor.h"
+#include "SceneLoading.h"
 
 // シーンマネージャー
 class SceneManager

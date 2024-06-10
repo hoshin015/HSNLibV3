@@ -20,7 +20,7 @@ void SceneTitle::Initialize()
 {
 	Framework* frameWork = &Framework::Instance();
 
-	spr1 = std::make_unique<Sprite>("Data/Texture/Nessie.png");
+	spr1 = std::make_unique<Sprite>("Data/Texture/Nessie.sprite");
 	spr1->SetPos({100, 100});
 
 	imGuiFrameBuffer = std::make_unique<FrameBuffer>(frameWork->GetScreenWidthF(), frameWork->GetScreenHeightF());
@@ -44,7 +44,7 @@ void SceneTitle::Update()
 
 	if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter))
 	{
-		SceneManager::Instance().ChangeScene(new SceneTest);
+		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
 	}
 
 #if USE_IMGUI

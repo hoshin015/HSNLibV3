@@ -40,6 +40,8 @@
 #define _gaussianConstant				5	// ガウシアンフィルタ用
 #define _gaussianAvgConstant			5	// ガウシアンフィルタ平均用
 
+#define _radialBlurConstant		5	// ラジアルブラー用
+
 // ====== テクスチャ番号 ======
 #define _deffuseTexture		0
 #define _normalTexture		1
@@ -55,6 +57,9 @@
 // wboit
 #define _accumTexture		0
 #define _revealTexture		1
+
+// radialBlur
+#define _radialBlurTexture	0
 
 
 // --- hlsl ---
@@ -72,6 +77,8 @@
 #define _gaussianConstant				b5	// ガウシアンフィルタ用
 #define _gaussianAvgConstant			b5	// ガウシアンフィルタ平均用
 
+#define _radialBlurConstant		b5	// ラジアルブラー用
+
 // ====== テクスチャ番号 ======
 #define _deffuseTexture		t0
 #define _normalTexture		t1
@@ -86,6 +93,8 @@
 // wboit
 #define _accumTexture		t0
 #define _revealTexture		t1
+// radialBlur
+#define _radialBlurTexture	t0
 
 #endif
 

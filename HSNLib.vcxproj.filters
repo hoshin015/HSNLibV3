@@ -412,6 +412,9 @@
     <ClCompile Include="Source\Scene\SceneLoading.cpp">
       <Filter>2_Source\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Library\Graphics\RadialBlur.cpp">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -723,6 +726,9 @@
     <ClInclude Include="Source\Scene\SceneLoading.h">
       <Filter>2_Source\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Library\Graphics\RadialBlur.h">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">
@@ -870,6 +876,9 @@
     </FxCompile>
     <FxCompile Include="Library\Shader\WbOitStaticPhongPS.hlsl">
       <Filter>シェーダーファイル\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\RadialBlurPS.hlsl">
+      <Filter>シェーダーファイル</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

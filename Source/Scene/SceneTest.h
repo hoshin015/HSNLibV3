@@ -7,6 +7,7 @@
 #include "../../Library/Graphics/Bloom.h"
 #include "../../Library/Graphics/Shadow.h"
 #include "../../Library/Graphics/WbOitBuffer.h"
+#include "../../Library/Graphics/RadialBlur.h"
 // --- Scene ---
 #include "Scene.h"
 // --- Game ---
@@ -43,6 +44,7 @@ private:
 	std::unique_ptr<Bloom> bloom;
 	std::unique_ptr<Shadow> shadow;
 	std::unique_ptr<WbOitBuffer> wbOitBuffer;
+	std::unique_ptr<RadialBlur> radialBlur;
 
 	std::unique_ptr<TestStatic> testStatic;
 	std::unique_ptr<Sprite> sprTest;

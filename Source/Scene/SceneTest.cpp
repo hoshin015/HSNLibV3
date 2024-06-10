@@ -61,6 +61,8 @@ void SceneTest::Initialize()
 	shadow = std::make_unique<Shadow>();
 	wbOitBuffer = std::make_unique<WbOitBuffer>(Framework::Instance().GetScreenWidthF(),
 	                                            Framework::Instance().GetScreenHeightF());
+	radialBlur = std::make_unique<RadialBlur>(Framework::Instance().GetScreenWidthF(),
+	                                            Framework::Instance().GetScreenHeightF());
 
 	// --- AnimatedObject 初期化 ---
 	blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");
@@ -282,14 +284,19 @@ void SceneTest::Render()
 	}
 	frameBuffer->DeActivate();
 
+
 #if 1
 	// ====== ブルーム処理しての描画 ======
 	bloom->Make(frameBuffer->shaderResourceViews[0].Get());
-	bitBlockTransfer->blit(bloom->GetSrvAddress(), 0, 1, nullptr, nullptr);
+	//bitBlockTransfer->blit(bloom->GetSrvAddress(), 0, 1);
 #else
 	// ====== そのまま描画 ======
-	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1, nullptr, nullptr);
+	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 #endif
+
+	radialBlur->Make(bloom->GetSrv());
+	bitBlockTransfer->blit(radialBlur->GetSrvAddress(), 0, 1);
+
 
 	// ======　ブルームなしの描画　======　
 
@@ -313,6 +320,7 @@ void SceneTest::Render()
 	bloom->DrawDebugGui();
 	shadow->DrawDebugGui();
 	wbOitBuffer->DrawDebugGui();
+	radialBlur->DrawDebugGui();
 
 #if SHOW_PERFORMANCE
 	// --- パフォーマンス描画 ---

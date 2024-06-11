@@ -13,14 +13,20 @@ Bloom::Bloom(uint32_t width, uint32_t height)
 	// FullScreenQuad 作成
 	bitBlockTransfer = std::make_unique<FullScreenQuad>();
 
+	// フレームバッファの解像度をダウンサンプリング
+	uint32_t downsampledWidth = width / 2;
+	uint32_t downsampledHeight = height / 2;
+
 	// FrameBuffer 作成
-	luminanceExtractionBuffer = std::make_unique<FrameBuffer>(width, height);
+	luminanceExtractionBuffer = std::make_unique<FrameBuffer>(downsampledWidth, downsampledHeight);
 	for (size_t downSamplingIndex = 0; downSamplingIndex < GAUSSIAN_DOWNSAMPLING_COUNT; downSamplingIndex++)
 	{
-		gaussianBuffers[downSamplingIndex][0] = std::make_unique<FrameBuffer>(width / (2 * downSamplingIndex + 1), height);
-		gaussianBuffers[downSamplingIndex][1] = std::make_unique<FrameBuffer>(width / (2 * downSamplingIndex + 1), height / (2 * downSamplingIndex + 1));
+		uint32_t dsWidth = downsampledWidth / (2 * downSamplingIndex + 1);
+		uint32_t dsHeight = downsampledHeight / (2 * downSamplingIndex + 1);
+		gaussianBuffers[downSamplingIndex][0] = std::make_unique<FrameBuffer>(dsWidth, dsHeight);
+		gaussianBuffers[downSamplingIndex][1] = std::make_unique<FrameBuffer>(dsWidth, dsHeight);
 	}
-	gaussianAvgBuffer = std::make_unique<FrameBuffer>(width, height);
+	gaussianAvgBuffer = std::make_unique<FrameBuffer>(downsampledWidth, downsampledHeight);
 	finalPassBuffer = std::make_unique<FrameBuffer>(width, height);
 
 	// VertexShader 作成
@@ -84,13 +90,11 @@ void Bloom::Make(ID3D11ShaderResourceView* shaderResourceView)
 	dc->PSSetConstantBuffers(_gaussianConstant, 1, gaussianConstantBuffer.GetAddressOf());
 
 	// 横
-	//gaussianBuffers[0][0]->Clear();
 	gaussianBuffers[0][0]->Activate();
 	bitBlockTransfer->blit(luminanceExtractionBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1, gaussianBlurPixelShader.Get(), gaussianBlurVertexShaders[0].Get());
 	gaussianBuffers[0][0]->DeActivate();
 
 	// 縦
-	//gaussianBuffers[0][1]->Clear();
 	gaussianBuffers[0][1]->Activate();
 	bitBlockTransfer->blit(gaussianBuffers[0][0]->shaderResourceViews[0].GetAddressOf(), 0, 1, gaussianBlurPixelShader.Get(), gaussianBlurVertexShaders[1].Get());
 	gaussianBuffers[0][1]->DeActivate();
@@ -98,13 +102,11 @@ void Bloom::Make(ID3D11ShaderResourceView* shaderResourceView)
 	for (size_t downSamplingIndex = 1; downSamplingIndex < GAUSSIAN_DOWNSAMPLING_COUNT; downSamplingIndex++)
 	{
 		// 横
-		//gaussianBuffers[downSamplingIndex][0]->Clear();
 		gaussianBuffers[downSamplingIndex][0]->Activate();
 		bitBlockTransfer->blit(gaussianBuffers[downSamplingIndex-1][1]->shaderResourceViews[0].GetAddressOf(), 0, 1, gaussianBlurPixelShader.Get(), gaussianBlurVertexShaders[0].Get());
 		gaussianBuffers[downSamplingIndex][0]->DeActivate();
 
 		// 縦
-		//gaussianBuffers[downSamplingIndex][1]->Clear();
 		gaussianBuffers[downSamplingIndex][1]->Activate();
 		bitBlockTransfer->blit(gaussianBuffers[downSamplingIndex][0]->shaderResourceViews[0].GetAddressOf(), 0, 1, gaussianBlurPixelShader.Get(), gaussianBlurVertexShaders[1].Get());
 		gaussianBuffers[downSamplingIndex][1]->DeActivate();

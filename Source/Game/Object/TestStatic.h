@@ -11,6 +11,6 @@ public:
 	void Render(bool isShadow = false) override;
 
 private:
-	static const int instanceNum = 100;
+	static const int instanceNum = 10;
 	DirectX::XMFLOAT4X4 m[instanceNum] = {};
 };

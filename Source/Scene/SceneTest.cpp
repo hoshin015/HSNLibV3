@@ -89,13 +89,13 @@ void SceneTest::Initialize()
 	// --- Emitter 登録 ---
 	Emitter* emitter0       = new Emitter();
 	emitter0->position      = {0, 3, 3};
-	emitter0->rate          = 9999;
+	emitter0->rate          = 99;
 	emitter0->duration      = 2;
 	emitter0->looping       = false;
 	emitter0->rateOverTime  = 0.5;
 	emitter0->startKind     = 0;
 	emitter0->startLifeTime = 1.0f;
-	emitter0->startSize     = 0.1f;
+	emitter0->startSize     = 0.5f;
 	emitter0->startColor    = {1.8, 1.8, 1.8, 1};
 	EmitterManager::Instance().Register(emitter0);
 
@@ -284,18 +284,20 @@ void SceneTest::Render()
 	}
 	frameBuffer->DeActivate();
 
+	// ====== ラジアルブラー ======
+	radialBlur->Make(frameBuffer->shaderResourceViews[0].Get());
 
 #if 1
 	// ====== ブルーム処理しての描画 ======
-	bloom->Make(frameBuffer->shaderResourceViews[0].Get());
-	//bitBlockTransfer->blit(bloom->GetSrvAddress(), 0, 1);
+	bloom->Make(radialBlur->GetSrv());
+	bitBlockTransfer->blit(bloom->GetSrvAddress(), 0, 1);
 #else
 	// ====== そのまま描画 ======
 	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 #endif
 
-	radialBlur->Make(bloom->GetSrv());
-	bitBlockTransfer->blit(radialBlur->GetSrvAddress(), 0, 1);
+	
+	
 
 
 	// ======　ブルームなしの描画　======　

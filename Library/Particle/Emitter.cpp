@@ -23,7 +23,6 @@ Emitter::Emitter()
 	HRESULT hr = device->CreateBuffer(&bufferDesc, nullptr, emitterConstantBuffer.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
-
 	rate = 16;
 	duration = 5;
 	looping = true;

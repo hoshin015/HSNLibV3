@@ -15,6 +15,13 @@ cbuffer RadialBlurConstant : register(_radialBlurConstant)
     float samplingCount;    // ƒTƒ“ƒvƒŠƒ“ƒO‰ñ”
 }
 
+//float InterleavedGradientNoise(float2 pixCoord, int frameCount)
+//{
+//    const float3 magic = float3(0.06711056f, 0.00583715f, 52.9829189f);
+//    float2 frameMagicScale = float2(2.083f, 4.867f);
+//    pixCoord += frameCount * frameMagicScale;
+//    return frac(magic.z * frac(dot(pixCoord, magic.xy)));
+//}
 
 SamplerState samplerStates[_samplerNum] : register(s0);
 

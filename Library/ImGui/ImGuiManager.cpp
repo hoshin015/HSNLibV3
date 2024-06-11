@@ -51,8 +51,8 @@ void ImGuiManager::Initialize(HWND hwnd)
 	// ウィンドウの深度変更対応
 	io.ConfigViewportsNoDefaultParent = true;
 
+
 	// Font
-	io.Fonts->AddFontDefault();
 	io.Fonts->AddFontFromFileTTF("Data/Font/meiryob.ttc", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
 
 	ImGui_ImplWin32_Init(hwnd);

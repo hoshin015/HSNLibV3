@@ -98,7 +98,7 @@ void SceneTest::Initialize()
 	emitter0->rateOverTime  = 0.5;
 	emitter0->startKind     = 0;
 	emitter0->startLifeTime = 1.0f;
-	emitter0->startSize     = 0.5f;
+	emitter0->startSize = { 0.01f,0.4f };
 	emitter0->startColor    = {1.8, 1.8, 1.8, 1};
 	EmitterManager::Instance().Register(emitter0);
 
@@ -108,7 +108,7 @@ void SceneTest::Initialize()
 	emitter1->startKind     = 1;
 	emitter1->rateOverTime  = 0.25f;
 	emitter1->startLifeTime = 6.0f;
-	emitter1->startSize     = 0.05f;
+	emitter1->startSize = { 0.05f, 0.05f };
 	EmitterManager::Instance().Register(emitter1);
 
 	Emitter* emitter2       = new Emitter();
@@ -118,7 +118,7 @@ void SceneTest::Initialize()
 	emitter2->startLifeTime = 3.0f;
 	emitter2->rateOverTime  = 0.5f;
 	emitter2->startColor    = {2, 0.4, 0.4, 1};
-	emitter2->startSize     = 0.3f;
+	emitter2->startSize = { 0.3f,0.3f };
 	EmitterManager::Instance().Register(emitter2);
 
 
@@ -306,12 +306,16 @@ void SceneTest::Render()
 	sprTest2->Render();
 	sprTest3->Render();
 
-	sprText->SprTextOut("0542", { 300, 300 });
 
 	UiPause::Instance().Render();
 
 	// ここで文字描画
+
+	// テキストデータの文字描画
 	DispString::Instance().Draw(L"てすとめっせーじ", {200, 50}, 50);
+
+	// スプライトデータの文字描画　(色のついた文字を描画したい場合はこっちを使用)
+	sprText->SprTextOut("0542", { 300, 300 });
 
 #if USE_IMGUI
 	// --- デバッグGUI描画 ---

@@ -31,7 +31,7 @@ Emitter::Emitter()
 	// 生成パーティクル設定
 	startColor = { 0.5,2,2,1 };
 	startLifeTime = 0.2;
-	startSize = 0.05f;
+	startSize = { 0.05f,0.05f };
 	startKind = 0;
 	emitterConstant.particleColor = startColor;
 	emitterConstant.particleLifeTime = startLifeTime;

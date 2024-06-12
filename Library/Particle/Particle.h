@@ -26,7 +26,7 @@ public:
 		DirectX::XMFLOAT4 color = { 1,1,1,1 };
 		DirectX::XMFLOAT3 position = { 0,0,0 };
 		DirectX::XMFLOAT3 velocity = { 0,0,0 };
-		float scale = 1;
+		DirectX::XMFLOAT2 scale = { 1,1 };
 		float depth = 0.0f;
 
 		float lifeTime;				// パーティクルが生存できる時間

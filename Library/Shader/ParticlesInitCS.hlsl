@@ -10,7 +10,7 @@ void main( uint3 dTid : SV_DispatchThreadID )
     
     Particle p = particleBuffer[id];
     p.isActive = false;
-    p.scale = 0;
+    p.scale = float2(0, 0);
     particleBuffer[id] = p;
     deadList.Append(id);     // 未使用リスト (deadList) の末尾に追加
 }

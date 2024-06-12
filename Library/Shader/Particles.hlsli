@@ -17,7 +17,7 @@ struct Particle
     float4 color;
     float3 position;
     float3 velocity;
-    float scale;
+    float2 scale;
     float depth;
     float lifeTime; 
     bool isActive; 
@@ -41,10 +41,9 @@ cbuffer CameraConstant : register(_cameraConstant)
 // エミッター, パーティクル情報
 cbuffer EmitterConstant : register(_emitterConstant)
 {
-    float   particleSize;
+    float2   particleSize;
     float   particleLifeTime;
     float   particleKind;
-    float   emitPad1;
     float4  particleColor;
     float3  emitterPosition;
     float   emitPad2;

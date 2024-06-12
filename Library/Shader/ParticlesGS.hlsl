@@ -26,7 +26,7 @@ void main(
     Particle p = particleBuffer[input[0].vertexId];
 	
     const float aspectRatio = 1280.0 / 720.0;
-    float2 particleScale = float2(p.scale, p.scale * aspectRatio);
+    float2 particleScale = float2(p.scale.x, p.scale.y * aspectRatio);
 	
 	[unroll]
     for (uint vertexIndex = 0; vertexIndex < 4; vertexIndex++)
@@ -36,7 +36,8 @@ void main(
 		// Transform to clip space
         element.position = mul(float4(p.position, 1), viewProjection);
 		// Make corner position as billboard
-        element.position.xy += corners[vertexIndex] * particleScale;
+        element.position.x += corners[vertexIndex].x * particleScale.x;
+        element.position.y += corners[vertexIndex].y * particleScale.y;
 		
         element.color = p.color;
         element.texcoord = texcoords[vertexIndex];

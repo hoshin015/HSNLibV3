@@ -18,7 +18,7 @@ public:
 	bool				looping;					// duration を繰り返すかどうか
 	float				startLifeTime;				// 生成するパーティクルの寿命
 	float				startSpeed;					// 生成するパーティクルの初速	
-	float				startSize;					// 生成するパーティクルのサイズ(後々 x,y,z 独立させる)
+	DirectX::XMFLOAT2	startSize;					// 生成するパーティクルのサイズ(後々 x,y,z 独立させる)
 	DirectX::XMFLOAT4	startColor = { 1,1,1,1 };	// 生成するパーティクルのカラー
 	float				startKind;					// 生成するパーティクルのタイプ
 	
@@ -35,10 +35,9 @@ public:
 	// 定数バッファ用
 	struct EmitterConstants
 	{
-		float particleSize;
+		DirectX::XMFLOAT2 particleSize;
 		float particleLifeTime;
 		float particleKind;
-		float pad1;
 		DirectX::XMFLOAT4 particleColor;
 		DirectX::XMFLOAT3 emitterPosition;
 		float pad2;

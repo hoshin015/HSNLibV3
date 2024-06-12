@@ -61,7 +61,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
         p.position.z = pos.z + pos2.z * 30;
     
     
-        p.velocity.y = -5;
+        p.velocity.y = -20;
         break;
     case 1:
     {

@@ -98,7 +98,7 @@ void SceneTest::Initialize()
 	emitter0->rateOverTime  = 0.5;
 	emitter0->startKind     = 0;
 	emitter0->startLifeTime = 1.0f;
-	emitter0->startSize = { 0.01f,0.4f };
+	emitter0->startSize = { 0.4f,0.4f };
 	emitter0->startColor    = {1.8, 1.8, 1.8, 1};
 	EmitterManager::Instance().Register(emitter0);
 

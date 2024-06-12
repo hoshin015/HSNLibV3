@@ -21,6 +21,8 @@ public:
 	DirectX::XMFLOAT2	startSize;					// 生成するパーティクルのサイズ(後々 x,y,z 独立させる)
 	DirectX::XMFLOAT4	startColor = { 1,1,1,1 };	// 生成するパーティクルのカラー
 	float				startKind;					// 生成するパーティクルのタイプ
+
+	float				billboardType;	// billboardのタイプ
 	
 	float rateOverTime;	// パーティクルの生成間隔(s)
 	float rate;			// 一度に生成するパーティクル数
@@ -40,7 +42,7 @@ public:
 		float particleKind;
 		DirectX::XMFLOAT4 particleColor;
 		DirectX::XMFLOAT3 emitterPosition;
-		float pad2;
+		float billboardType;
 	};
 	EmitterConstants emitterConstant;
 

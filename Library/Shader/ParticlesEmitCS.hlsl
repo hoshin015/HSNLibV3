@@ -60,7 +60,6 @@ void main( uint3 DTid : SV_DispatchThreadID )
         p.position.y = pos.y + 10 * rand(f6);
         p.position.z = pos.z + pos2.z * 30;
     
-    
         p.velocity.y = -20;
         break;
     case 1:

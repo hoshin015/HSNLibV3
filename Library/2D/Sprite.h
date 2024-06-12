@@ -15,10 +15,11 @@ private:	// カプセル化
 	DirectX::XMFLOAT4	color = { 1,1,1,1 };
 	float				angle = 0;
 	DirectX::XMFLOAT2	texPos = {};
-	DirectX::XMFLOAT2	texSize = { 100,100 };
+	DirectX::XMFLOAT2	texSize = { 100,100 };		// 使ってなくね？
 	DirectX::XMFLOAT2	scale = { 1.0f, 1.0f };
 	DirectX::XMFLOAT2	pivotPoint = { 0,0 };
 
+	// 描画するかどうか
 	bool isRender = true;
 
 	// Animation
@@ -97,6 +98,9 @@ public:
 	// 描画
 	void Render();
 
+	// 文字描画
+	void SprTextOut(std::string s, DirectX::XMFLOAT2 pos);
+
 private:
 	std::shared_ptr<SpriteResource> spriteResource;
 
@@ -112,5 +116,6 @@ private:
 		DirectX::XMFLOAT2 texcoord;
 	};
 
+	// 一番手前ではなく一番奥に描画したいときに true にする
 	bool posZ1 = false;
 };

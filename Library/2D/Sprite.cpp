@@ -95,8 +95,6 @@ void Sprite::UpdateAnimation()
 		static_cast<float>(GetSpriteResource()->GetAnimations().at(GetCurrentAnimationIndex()).yPivotPoint)
 	});
 
-
-
 	animationTime += Timer::Instance().DeltaTime();
 
 	// 現在のアニメーション取得
@@ -104,6 +102,7 @@ void Sprite::UpdateAnimation()
 
 	// 現在のフレーム取得
 	int currentFrame = (animationTime / anim.secondsLength) * anim.frameNum - 1;
+
 	
 	if (animationTime >= anim.secondsLength)
 	{
@@ -252,3 +251,24 @@ void Sprite::Render()
 	//--- < プリミティブの描画 > ---
 	dc->Draw(4, 0);
 }
+
+// 文字描画
+void Sprite::SprTextOut(std::string s, DirectX::XMFLOAT2 pos)
+{
+	float carriage = 0;
+
+	position.y = pos.y;
+
+	for (const char c : s)
+	{
+		position.x = pos.x + carriage;
+		texPos.x = size.x * (c & 0x0F);
+		texPos.y = size.y * (c >> 4);
+
+		// 描画
+		Render();
+
+		carriage += size.x;
+	}
+}
+

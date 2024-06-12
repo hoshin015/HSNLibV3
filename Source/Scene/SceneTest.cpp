@@ -79,6 +79,9 @@ void SceneTest::Initialize()
 	sprTest3->SetScale({0.2, 0.2});
 	sprTest3->UpdateAnimation();
 
+	sprText = std::make_unique<Sprite>("Data/Texture/Font/font0.sprite");
+	sprText->UpdateAnimation();
+
 
 	Enemy::Instance().Initialize();
 	Player::Instance().Initialize();
@@ -296,16 +299,14 @@ void SceneTest::Render()
 	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 #endif
 
-	
-	
-
-
 	// ======　ブルームなしの描画　======　
 
 	// ここでスプライト描画
 	sprTest->Render();
 	sprTest2->Render();
 	sprTest3->Render();
+
+	sprText->SprTextOut("0542", { 300, 300 });
 
 	UiPause::Instance().Render();
 

@@ -51,6 +51,8 @@ private:
 	std::unique_ptr<Sprite> sprTest2;
 	std::unique_ptr<Sprite> sprTest3;
 
+	std::unique_ptr<Sprite> sprText;
+
 	std::unique_ptr<BlendTestPlayer> blendTestPlayer;
 
 	std::unique_ptr<LightningMainMesh> lightningEffect;

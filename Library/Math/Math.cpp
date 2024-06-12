@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include "Math.h"
+#include "../3D/Camera.h"
+#include "../Graphics/Graphics.h"
 
 //--------------------------------------------
 //	範囲指定ランダム値関数 float型
@@ -23,6 +25,49 @@ float Math::RandomRange(float min, float max)
 float Math::IRandomRange(int min, int max)
 {
 	return rand() % ((max + 1) - min) + min;
+}
+
+// ========================= 座標変換 =========================
+
+//--------------------------------------------
+//	ワールド座標からスクリーン座標への変換
+//--------------------------------------------
+// worldPosition	: 変換したいワールド座標
+DirectX::XMFLOAT2 Math::WorldToScreenPos(DirectX::XMFLOAT3 worldPosition)
+{
+	ID3D11DeviceContext* dc = Graphics::Instance().GetDeviceContext();
+
+	DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPosition);
+
+	// ビューポート
+	D3D11_VIEWPORT viewport;
+	UINT numViewports = 1;
+	dc->RSGetViewports(&numViewports, &viewport);
+
+	// 変換行列
+	DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&Camera::Instance().GetView());
+	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&Camera::Instance().GetProjection());
+	DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
+
+	// ワールド座標からスクリーン座標への変換
+	DirectX::XMVECTOR ScreenPosition = DirectX::XMVector3Project(
+		WorldPosition,
+		viewport.TopLeftX,
+		viewport.TopLeftY,
+		viewport.Width,
+		viewport.Height,
+		viewport.MinDepth,
+		viewport.MaxDepth,
+		Projection,
+		View,
+		World
+	);
+
+	// スクリーン座標
+	DirectX::XMFLOAT2 screenPosition;
+	DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
+
+	return screenPosition;
 }
 
 

@@ -25,22 +25,27 @@ void main(
 
     Particle p = particleBuffer[input[0].vertexId];
 
-    // スクリーン座標系の velocity を計算
-    float4 screenVelocity = mul(float4(p.velocity, 0.0), viewProjection);
-    screenVelocity = normalize(screenVelocity);
-
-    // スクリーン座標系の角度を計算
-    float screenAngle = atan2(screenVelocity.y, screenVelocity.x);
-
-
-
     // アスペクト比を考慮したスケーリング
     const float aspectRatio = 1280.0 / 720.0;
     float2 particleScale = float2(p.scale.x, p.scale.y);
 
+    // 角度
+    float setAngle = float2(0,0);
+
+    if (p.billboardType == 1)
+    {
+	    // スクリーン座標系の velocity を計算
+        float4 screenVelocity = mul(float4(p.velocity, 0.0), viewProjection);
+        screenVelocity = normalize(screenVelocity);
+
+		// スクリーン座標系の角度を計算
+        setAngle = atan2(screenVelocity.y, screenVelocity.x);
+    }
+
+
     // 回転行列を計算
-    float cosAngle = cos(screenAngle);
-    float sinAngle = sin(screenAngle);
+    float cosAngle = cos(setAngle);
+    float sinAngle = sin(setAngle);
 
     [unroll]
     for (uint vertexIndex = 0; vertexIndex < 4; vertexIndex++)

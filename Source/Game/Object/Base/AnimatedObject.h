@@ -34,6 +34,9 @@ protected:
 	//
 	void UpdateBlendAnimation();
 
+	// ダメージフラグのクリア
+	void ClearAnimSphereCollisionDamagedFlag();
+
 public:
 	DirectX::XMFLOAT3 GetBonePosition(std::string boneName);
 

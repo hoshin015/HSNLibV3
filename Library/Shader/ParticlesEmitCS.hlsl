@@ -61,6 +61,8 @@ void main( uint3 DTid : SV_DispatchThreadID )
         p.position.z = pos.z + pos2.z * 30;
     
         p.velocity.y = -20;
+
+    	p.billboardType = 1;
         break;
     case 1:
     {
@@ -98,9 +100,10 @@ void main( uint3 DTid : SV_DispatchThreadID )
         break;
     case 2:
         p.position = emitterPosition;
-        p.velocity.x = rand(f5) * 2 - 1;
-        p.velocity.z = rand(f6) * 2 - 1;
-        p.velocity.y = rand(f7) * 2 - 1;
+        p.velocity.x = (rand(f5) * 2 - 1) * 3;
+        p.velocity.z = (rand(f6) * 2 - 1) * 3;
+        p.velocity.y = (rand(f7) * 2 - 1) * 3;
+        p.billboardType = 1;
         break;
     }
     

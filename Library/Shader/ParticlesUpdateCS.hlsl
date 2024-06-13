@@ -19,7 +19,6 @@ void main( uint3 DTid : SV_DispatchThreadID )
             
             while (p.position.y < 0)
             {
-                //p.velocity = 0;
                 p.position.y += 10;
             }
         }
@@ -30,7 +29,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
         }
         if(p.kind == 2)
         {
-            p.velocity.y += 2 * deltaTime;
+            //p.velocity.y -= 3 * deltaTime;
             p.position += p.velocity * deltaTime;
             
             if (p.position.y < 0)

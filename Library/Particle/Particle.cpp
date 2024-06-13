@@ -83,6 +83,7 @@ void Particle::Initialize()
 	dc->CSSetUnorderedAccessViews(1, 1, particlePoolBufferUav.GetAddressOf(), nullptr);
 	dc->Dispatch(particleCount / THREAD_NUM_X, 1, 1);
 
+	// テクスチャの設定
 	dc->PSSetShaderResources(9, 1, sprParticle->GetSpriteResource()->GetSrvAddres());
 
 	// リソースの割り当てを解除
@@ -118,6 +119,7 @@ void Particle::Render()
 	dc->PSSetShader(pixelShader.Get(), NULL, 0);
 	dc->GSSetShader(geometryShader.Get(), NULL, 0);
 
+	
 	dc->GSSetShaderResources(9, 1, particleBufferSrv.GetAddressOf());
 
 	dc->IASetInputLayout(NULL);
@@ -156,8 +158,6 @@ void Particle::Emit(int num)
 	}
 
 	dc->Dispatch(num, 1, 1);
-
-
 
 	// リソースの割り当てを解除
 	ID3D11UnorderedAccessView* nullUav = {};

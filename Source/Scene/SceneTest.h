@@ -56,4 +56,6 @@ private:
 	std::unique_ptr<BlendTestPlayer> blendTestPlayer;
 
 	std::unique_ptr<LightningMainMesh> lightningEffect;
+
+	bool showCollision = false;
 };

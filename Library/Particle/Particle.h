@@ -32,6 +32,7 @@ public:
 		float lifeTime;				// パーティクルが生存できる時間
 		bool isActive = false;		// このパーティクルが使用中かどうか
 		float kind = 0;				// パーティクルの種類
+		float billboardType = 0;	// billboard のタイプ
 	};
 	
 	void Initialize();

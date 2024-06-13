@@ -27,6 +27,7 @@
 // --- UserInterface ---
 #include "../../Library/3D/DebugPrimitive.h"
 #include "../UserInterface//UiPause.h"
+#include "../../Library/ImGui/ConsoleData.h"
 
 
 void SceneTest::Initialize()
@@ -98,28 +99,19 @@ void SceneTest::Initialize()
 	emitter0->rateOverTime  = 0.5;
 	emitter0->startKind     = 0;
 	emitter0->startLifeTime = 1.0f;
-	emitter0->startSize = { 0.4f,0.4f };
+	emitter0->startSize = { 0.4f,0.1f };
 	emitter0->startColor    = {1.8, 1.8, 1.8, 1};
 	EmitterManager::Instance().Register(emitter0);
 
-	Emitter* emitter1       = new Emitter();
-	emitter1->position      = {0, 3, 0};
-	emitter1->rate          = 32;
-	emitter1->startKind     = 1;
-	emitter1->rateOverTime  = 0.25f;
-	emitter1->startLifeTime = 6.0f;
-	emitter1->startSize = { 0.05f, 0.05f };
-	EmitterManager::Instance().Register(emitter1);
+	//Emitter* emitter1       = new Emitter();
+	//emitter1->position      = {0, 3, 0};
+	//emitter1->rate          = 32;
+	//emitter1->startKind     = 1;
+	//emitter1->rateOverTime  = 0.25f;
+	//emitter1->startLifeTime = 6.0f;
+	//emitter1->startSize = { 0.05f, 0.05f };
 
-	Emitter* emitter2       = new Emitter();
-	emitter2->position      = {3, 3, 0};
-	emitter2->rate          = 5;
-	emitter2->startKind     = 2;
-	emitter2->startLifeTime = 3.0f;
-	emitter2->rateOverTime  = 0.5f;
-	emitter2->startColor    = {2, 0.4, 0.4, 1};
-	emitter2->startSize = { 0.3f,0.3f };
-	EmitterManager::Instance().Register(emitter2);
+	//EmitterManager::Instance().Register(emitter1);
 
 
 	UiPause::Instance().Initialize();
@@ -252,8 +244,11 @@ void SceneTest::Render()
 
 		Player::Instance().Render();
 
-		Enemy::Instance().DrawDebugPrimitive();
-		Player::Instance().DrawDebugPrimitive();
+		if(showCollision)
+		{
+			Enemy::Instance().DrawDebugPrimitive();
+			Player::Instance().DrawDebugPrimitive();
+		}
 		DebugPrimitive::Instance().Render();
 	}
 	frameBuffer->DeActivate();
@@ -321,6 +316,8 @@ void SceneTest::Render()
 	// --- デバッグGUI描画 ---
 	DrawDebugGUI();
 
+	ImGuiManager::Instance().Console();
+
 	Player::Instance().DrawDebugImGui(0);
 
 	LightManager::Instance().DrawDebugGui();
@@ -344,4 +341,10 @@ void SceneTest::DrawDebugGUI()
 {
 	// メニューバー描画
 	DrawMenuBar();
+
+	ImGui::Begin("TestScene");
+	{
+		ImGui::Checkbox("collision", &showCollision);
+	}
+	ImGui::End();
 }

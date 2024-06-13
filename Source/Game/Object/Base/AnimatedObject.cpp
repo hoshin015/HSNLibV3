@@ -75,6 +75,8 @@ void AnimatedObject::PlayAnimation(int index, bool loop)
 
 	animationLoopFlag = loop;
 	animationEndFlag  = false;
+
+	ClearAnimSphereCollisionDamagedFlag();
 }
 
 // アニメーション更新
@@ -104,6 +106,8 @@ void AnimatedObject::UpdateAnimation()
 			// 先頭秒数へ
 			currentKeyFrame = 0;
 			currentAnimationSeconds -= animation.secondsLength;
+
+			ClearAnimSphereCollisionDamagedFlag();
 		}
 		else
 		{
@@ -295,6 +299,15 @@ void AnimatedObject::UpdateBlendAnimation()
 			currentAnimationSeconds = animation.secondsLength;
 			animationEndFlag = true;
 		}
+	}
+}
+
+// ダメージフラグのクリア
+void AnimatedObject::ClearAnimSphereCollisionDamagedFlag()
+{
+	for (auto& playerAnimSphereCollision : model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSphereCollisions)
+	{
+		playerAnimSphereCollision.isDamaged = false;
 	}
 }
 

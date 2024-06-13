@@ -22,6 +22,7 @@ struct Particle
 	float  lifeTime;
 	bool   isActive;
 	float  kind;
+    float billboardType;
 };
 
 // タイマーの情報
@@ -46,5 +47,5 @@ cbuffer EmitterConstant : register(_emitterConstant)
 	float  particleKind;
 	float4 particleColor;
 	float3 emitterPosition;
-	float  billboardType;
+	float  emitterPad;
 };

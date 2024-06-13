@@ -9,6 +9,8 @@
 #include "../../Source/Game/Object/Stage/StageManager.h"
 #include "../../ImGui/imgui.h"
 #include "../Enemy/Enemy.h"
+#include "../../Library/ImGui/ConsoleData.h"
+#include "../../../../../Library/Particle/EmitterManager.h"
 
 Player::Player(const char* filePath) : AnimatedObject(filePath)
 {
@@ -41,6 +43,7 @@ void Player::Update()
 	// ステートマシン更新
 	stateMachine->Update();
 
+	// 敵との当たり判定
 	CollisionVsEnemy();
 
 	// アニメーション更新
@@ -183,20 +186,70 @@ void Player::Move()
 // 敵との衝突処理
 void Player::CollisionVsEnemy()
 {
-	for(auto& boneSphere : model->GetModelResource()->GetSkeletonSphereCollisions())
+	for (auto& eBoneSphere : Enemy::Instance().GetModel()->GetModelResource()->GetSkeletonSphereCollisions())
 	{
-		for(auto& eBoneSphere : Enemy::Instance().GetModel()->GetModelResource()->GetSkeletonSphereCollisions())
+		// ===== 体同士の当たり判定 =====
+		for (auto& boneSphere : model->GetModelResource()->GetSkeletonSphereCollisions())
 		{
 			// 処理する２つのボーンの座標計算
 			DirectX::XMFLOAT3 bonePos;
 			DirectX::XMFLOAT3 eBonePos;
-			if(boneSphere.name != "")
+			if (boneSphere.name != "")
 			{
 				bonePos = GetBonePosition(boneSphere.name);
 			}
 			else
 			{
 				DirectX::XMVECTOR BONE_POS = DirectX::XMLoadFloat3(&boneSphere.position);
+				DirectX::XMVECTOR POS      = DirectX::XMLoadFloat3(&position);
+				DirectX::XMStoreFloat3(&bonePos, DirectX::XMVectorAdd(BONE_POS, POS));
+			}
+			if (eBoneSphere.name != "")
+			{
+				eBonePos = Enemy::Instance().GetBonePosition(eBoneSphere.name);
+			}
+			else
+			{
+				DirectX::XMFLOAT3 ePos     = Enemy::Instance().GetPos();
+				DirectX::XMVECTOR BONE_POS = DirectX::XMLoadFloat3(&eBoneSphere.position);
+				DirectX::XMVECTOR POS      = DirectX::XMLoadFloat3(&ePos);
+				DirectX::XMStoreFloat3(&eBonePos, DirectX::XMVectorAdd(BONE_POS, POS));
+			}
+
+			// 衝突処理
+			DirectX::XMFLOAT3 outPosition;
+			if (Collision::IntersectSphereVsSphere(
+					eBonePos,
+					eBoneSphere.radius,
+					bonePos,
+					boneSphere.radius,
+					outPosition)
+			)
+			{
+				// 押し出し後の位置設定
+				outPosition.y = 0;
+				SetPos(outPosition);
+			}
+		}
+
+		// ===== 自分の攻撃と敵の体の当たり判定 =====
+		for(auto& playerAnimSphereCollision : model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSphereCollisions)
+		{
+			// 既にダメージを与えているかチェック
+			if (playerAnimSphereCollision.isDamaged) continue;
+			// フレーム範囲内かチェック
+			if (currentKeyFrame < playerAnimSphereCollision.startFrame || currentKeyFrame > playerAnimSphereCollision.endFrame) continue;
+
+			// 処理する２つのボーンの座標計算
+			DirectX::XMFLOAT3 bonePos;
+			DirectX::XMFLOAT3 eBonePos;
+			if (playerAnimSphereCollision.bindBoneName != "")
+			{
+				bonePos = GetBonePosition(playerAnimSphereCollision.bindBoneName);
+			}
+			else
+			{
+				DirectX::XMVECTOR BONE_POS = DirectX::XMLoadFloat3(&playerAnimSphereCollision.position);
 				DirectX::XMVECTOR POS = DirectX::XMLoadFloat3(&position);
 				DirectX::XMStoreFloat3(&bonePos, DirectX::XMVectorAdd(BONE_POS, POS));
 			}
@@ -218,14 +271,28 @@ void Player::CollisionVsEnemy()
 				eBonePos,
 				eBoneSphere.radius,
 				bonePos,
-				boneSphere.radius,
+				playerAnimSphereCollision.radius,
 				outPosition)
 				)
 			{
-				// 押し出し後の位置設定
-				outPosition.y = 0;
-				SetPos(outPosition);
+				playerAnimSphereCollision.isDamaged = true;
+
+				ConsoleData::Instance().logs.push_back("Damage!");
+
+				Emitter* emitter = new Emitter();
+				emitter->duration = 0.11;
+				emitter->looping = false;
+				emitter->position = outPosition;
+				emitter->rate = 80;
+				emitter->startKind = 2;
+				emitter->startLifeTime = 0.3f;
+				emitter->rateOverTime = 0.1f;
+				emitter->startColor = { 5, 0.8, 0.8, 1 };
+				emitter->startSize = { 0.3f,0.05f };
+				EmitterManager::Instance().Register(emitter);
 			}
 		}
 	}
+
+	
 }

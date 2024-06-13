@@ -74,7 +74,6 @@ void Emitter::Update()
 		dc->UpdateSubresource(emitterConstantBuffer.Get(), 0, 0, &emitterConstant, 0, 0);
 		dc->CSSetConstantBuffers(_emitterConstant, 1, emitterConstantBuffer.GetAddressOf());
 		
-
 		// パーティクルの生成
 		Particle::Instance().Instance().Emit(rate);
 

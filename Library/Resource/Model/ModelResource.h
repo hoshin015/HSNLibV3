@@ -75,6 +75,8 @@ struct AnimSphereCollision
 	DirectX::XMFLOAT3 position;     // ボーンに連動させない場合の座標
 	DirectX::XMFLOAT4 color;        // 色
 
+	bool isDamaged; // この sphere でダメージを与えたかどうか
+
 	template <class Archive>
 	void serialize(Archive& archive)
 	{
@@ -428,7 +430,6 @@ private:
 	std::unordered_map<std::string, Material> materials; // マテリアルの名前(string)でマテリアル(Material)にアクセスできる
 	std::vector<Mesh>                         meshes;
 	std::vector<Animation>                    animationClips;
-
 
 public:
 	// 独自形式で書き出し

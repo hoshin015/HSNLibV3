@@ -47,5 +47,9 @@ cbuffer EmitterConstant : register(_emitterConstant)
 	float  particleKind;
 	float4 particleColor;
 	float3 emitterPosition;
+    float particleFriction;
+    float particleAddAngle;
+    float particleGravity;
+    float particleBillboardType;
 	float  emitterPad;
 };

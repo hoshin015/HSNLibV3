@@ -1,10 +1,11 @@
 #include "Emitter.h"
+#include "EmitterManager.h"
 #include "Particle.h"
 #include "../Timer.h"
 #include "../RegisterNum.h"
 #include "../ErrorLogger.h"
 #include "../Graphics/Graphics.h"
-#include "EmitterManager.h"
+#include "../Math/Math.h"
 
 // コンストラクタ
 Emitter::Emitter()
@@ -23,28 +24,21 @@ Emitter::Emitter()
 	HRESULT hr = device->CreateBuffer(&bufferDesc, nullptr, emitterConstantBuffer.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
-	rate = 16;
-	duration = 5;
-	looping = true;
-	rateOverTime = 0.01f;
+	// emitterData 初期化 (外部から読み込めるようにしたい)
+	emitterData.duration = 5;
+	emitterData.looping = true;
+	emitterData.burstsTime = 0.01f;
+	emitterData.burstsCount = 16;
 
-	// 生成パーティクル設定
-	startColor = { 0.5,2,2,1 };
-	startLifeTime = 0.2;
-	startSize = { 0.05f,0.05f };
-	startKind = 0;
-	emitterConstant.particleColor = startColor;
-	emitterConstant.particleLifeTime = startLifeTime;
-	emitterConstant.particleSize = startSize;
-	emitterConstant.particleKind = startKind;
+	
 }
 
 // 更新
 void Emitter::Update()
 {
-	if (emitLifeTimer > duration)
+	if (emitLifeTimer > emitterData.duration)
 	{
-		if (looping)
+		if (emitterData.looping)
 		{
 			// ループ処理
 			emitLifeTimer = 0;
@@ -59,7 +53,7 @@ void Emitter::Update()
 		}
 	}
 	
-	while (emitRateTimer > rateOverTime)
+	while (emitRateTimer > emitterData.burstsTime)
 	{
 		// エミッター定数バッファ更新
 		Graphics* gfx = &Graphics::Instance();
@@ -67,17 +61,29 @@ void Emitter::Update()
 
 		// このエミッターの値をいれてあげる
 		emitterConstant.emitterPosition = position;
-		emitterConstant.particleColor = startColor;
-		emitterConstant.particleLifeTime = startLifeTime;
-		emitterConstant.particleSize = startSize;
-		emitterConstant.particleKind = startKind;
+
+		// 生成パーティクル設定
+		emitterConstant.particleColor.x = Math::RandomRange(emitterData.particleColorMin.x, emitterData.particleColorMax.x);
+		emitterConstant.particleColor.y = Math::RandomRange(emitterData.particleColorMin.y, emitterData.particleColorMax.y);
+		emitterConstant.particleColor.z = Math::RandomRange(emitterData.particleColorMin.z, emitterData.particleColorMax.z);
+		emitterConstant.particleColor.w = Math::RandomRange(emitterData.particleColorMin.w, emitterData.particleColorMax.w);
+
+		emitterConstant.particleLifeTime = Math::RandomRange(emitterData.particleLifeTimeMin, emitterData.particleLifeTimeMax);
+		emitterConstant.particleSize.x = Math::RandomRange(emitterData.particleSizeMin.x, emitterData.particleSizeMax.x);
+		emitterConstant.particleSize.y = Math::RandomRange(emitterData.particleSizeMin.y, emitterData.particleSizeMax.y);
+		emitterConstant.particleFriction = Math::RandomRange(emitterData.particleFrictionMin, emitterData.particleFrictionMax);
+		emitterConstant.particleAddAngle = emitterData.particleAddAngle;
+		emitterConstant.particleGravity = emitterData.particleGravity;
+
+		emitterConstant.particleKind = emitterData.particleStartKind;
+		emitterConstant.particleBillboardType = emitterData.particleBillboardType;
 		dc->UpdateSubresource(emitterConstantBuffer.Get(), 0, 0, &emitterConstant, 0, 0);
 		dc->CSSetConstantBuffers(_emitterConstant, 1, emitterConstantBuffer.GetAddressOf());
 		
 		// パーティクルの生成
-		Particle::Instance().Instance().Emit(rate);
+		Particle::Instance().Instance().Emit(emitterData.burstsCount);
 
-		emitRateTimer -= rateOverTime;
+		emitRateTimer -= emitterData.burstsTime;
 	}
 
 	// パーティクルの生成間隔管理タイマー加算

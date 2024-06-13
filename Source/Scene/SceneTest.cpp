@@ -63,7 +63,7 @@ void SceneTest::Initialize()
 	wbOitBuffer = std::make_unique<WbOitBuffer>(Framework::Instance().GetScreenWidthF(),
 	                                            Framework::Instance().GetScreenHeightF());
 	radialBlur = std::make_unique<RadialBlur>(Framework::Instance().GetScreenWidthF(),
-	                                            Framework::Instance().GetScreenHeightF());
+	                                          Framework::Instance().GetScreenHeightF());
 
 	// --- AnimatedObject 初期化 ---
 	blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");
@@ -91,16 +91,23 @@ void SceneTest::Initialize()
 	Particle::Instance().Initialize();
 
 	// --- Emitter 登録 ---
-	Emitter* emitter0       = new Emitter();
-	emitter0->position      = {0, 3, 3};
-	emitter0->rate          = 99;
-	emitter0->duration      = 2;
-	emitter0->looping       = false;
-	emitter0->rateOverTime  = 0.5;
-	emitter0->startKind     = 0;
-	emitter0->startLifeTime = 1.0f;
-	emitter0->startSize = { 0.4f,0.1f };
-	emitter0->startColor    = {1.8, 1.8, 1.8, 1};
+	Emitter* emitter0                           = new Emitter();
+	emitter0->position                          = {0, 3, 3};
+	emitter0->emitterData.duration              = 2;
+	emitter0->emitterData.looping               = false;
+	emitter0->emitterData.burstsTime            = 0.5;
+	emitter0->emitterData.burstsCount           = 99;
+	emitter0->emitterData.particleKind          = 0;
+	emitter0->emitterData.particleLifeTimeMin   = 1.0f;
+	emitter0->emitterData.particleLifeTimeMax   = 1.0f;
+	emitter0->emitterData.particleSizeMin       = {0.4f, 0.1f};
+	emitter0->emitterData.particleSizeMax       = {0.4f, 0.1f};
+	emitter0->emitterData.particleColorMin      = {1.8, 1.8, 1.8, 1};
+	emitter0->emitterData.particleColorMax      = {1.8, 1.8, 1.8, 1};
+	emitter0->emitterData.particleFrictionMin   = 0;
+	emitter0->emitterData.particleFrictionMax   = 1;
+	emitter0->emitterData.particleGravity       = 1;
+	emitter0->emitterData.particleBillboardType = 1;
 	EmitterManager::Instance().Register(emitter0);
 
 	//Emitter* emitter1       = new Emitter();
@@ -244,7 +251,7 @@ void SceneTest::Render()
 
 		Player::Instance().Render();
 
-		if(showCollision)
+		if (showCollision)
 		{
 			Enemy::Instance().DrawDebugPrimitive();
 			Player::Instance().DrawDebugPrimitive();
@@ -310,7 +317,7 @@ void SceneTest::Render()
 	DispString::Instance().Draw(L"てすとめっせーじ", {200, 50}, 50);
 
 	// スプライトデータの文字描画　(色のついた文字を描画したい場合はこっちを使用)
-	sprText->SprTextOut("0542", { 300, 300 });
+	sprText->SprTextOut("0542", {300, 300});
 
 #if USE_IMGUI
 	// --- デバッグGUI描画 ---

@@ -27,16 +27,19 @@ public:
 	// RWStructuredBuffer で GPU とやりとりする構造体データ(保存しておくべきデータみたいな)
 	struct ParticleData
 	{
-		DirectX::XMFLOAT3 position = {0, 0, 0};    // ポジション	
-		DirectX::XMFLOAT3 velocity = {0, 0, 0};    // 加速度
-		float             friction = 0.0f;         // 抵抗
-		float             gravity  = 0.0f;         // 重力(下方向の力の大きさ)
-		float             angle    = 0.0f;         // 角度
-		float             addAngle = 0.0f;         // １秒間に回転する角度
-		DirectX::XMFLOAT2 scale    = {1, 1};       // スケール
-		DirectX::XMFLOAT4 color    = {1, 1, 1, 1}; // 色
+		DirectX::XMFLOAT3 position      = {0, 0, 0};    // ポジション	
+		DirectX::XMFLOAT3 velocity      = {0, 0, 0};    // 加速度
+		DirectX::XMFLOAT3 startVelocity = {0, 0, 0};    // 生成時の加速度
+		float             friction      = 0.0f;         // 抵抗
+		float             gravity       = 0.0f;         // 重力(下方向の力の大きさ)
+		float             angle         = 0.0f;         // 角度
+		float             addAngle      = 0.0f;         // １秒間に回転する角度
+		DirectX::XMFLOAT2 scale         = {1, 1};       // スケール
+		DirectX::XMFLOAT2 startScale    = {1, 1};       // 生成時のスケール
+		DirectX::XMFLOAT4 color         = {1, 1, 1, 1}; // 色
 
 		float lifeTime;              // パーティクルが生存できる時間
+		float lifeTimer;             //	生存時間用タイマー	
 		bool  isActive      = false; // このパーティクルが使用中かどうか
 		float kind          = 0;     // パーティクルの種類
 		float billboardType = 0;     // billboard のタイプ

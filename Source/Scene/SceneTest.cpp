@@ -93,17 +93,19 @@ void SceneTest::Initialize()
 	// --- Emitter “o˜^ ---
 	Emitter* emitter0                           = new Emitter();
 	emitter0->position                          = {0, 3, 3};
-	emitter0->emitterData.duration              = 2;
+	emitter0->emitterData.duration              = 2.0;
 	emitter0->emitterData.looping               = false;
 	emitter0->emitterData.burstsTime            = 0.5;
 	emitter0->emitterData.burstsCount           = 99;
 	emitter0->emitterData.particleKind          = 0;
 	emitter0->emitterData.particleLifeTimeMin   = 1.0f;
 	emitter0->emitterData.particleLifeTimeMax   = 1.0f;
-	emitter0->emitterData.particleSizeMin       = {0.4f, 0.1f};
-	emitter0->emitterData.particleSizeMax       = {0.4f, 0.1f};
-	emitter0->emitterData.particleColorMin      = {1.8, 1.8, 1.8, 1};
-	emitter0->emitterData.particleColorMax      = {1.8, 1.8, 1.8, 1};
+	emitter0->emitterData.particleSpeedMin      = -5.0f;
+	emitter0->emitterData.particleSpeedMax      = 5.0f;
+	emitter0->emitterData.particleSizeMin       = {0.1f, 0.1f};
+	emitter0->emitterData.particleSizeMax       = {1.0f, 1.0f};
+	emitter0->emitterData.particleColorMin      = {0.0, 0.0, 0.0, 1};
+	emitter0->emitterData.particleColorMax      = {2.0, 2.0, 2.0, 1};
 	emitter0->emitterData.particleFrictionMin   = 0;
 	emitter0->emitterData.particleFrictionMax   = 1;
 	emitter0->emitterData.particleGravity       = 1;

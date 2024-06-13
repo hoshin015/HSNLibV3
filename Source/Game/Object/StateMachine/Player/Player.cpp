@@ -280,15 +280,24 @@ void Player::CollisionVsEnemy()
 				ConsoleData::Instance().logs.push_back("Damage!");
 
 				Emitter* emitter = new Emitter();
-				emitter->duration = 0.11;
-				emitter->looping = false;
 				emitter->position = outPosition;
-				emitter->rate = 80;
-				emitter->startKind = 2;
-				emitter->startLifeTime = 0.3f;
-				emitter->rateOverTime = 0.1f;
-				emitter->startColor = { 5, 0.8, 0.8, 1 };
-				emitter->startSize = { 0.3f,0.05f };
+				emitter->emitterData.duration = 0.2;
+				emitter->emitterData.looping = false;
+				emitter->emitterData.burstsTime = 0.1;
+				emitter->emitterData.burstsCount = 99;
+				emitter->emitterData.particleKind = 1;
+				emitter->emitterData.particleLifeTimeMin = 0.4f;
+				emitter->emitterData.particleLifeTimeMax = 0.6f;
+				emitter->emitterData.particleSpeedMin = 30.0f;
+				emitter->emitterData.particleSpeedMax = 40.0f;
+				emitter->emitterData.particleSizeMin = { 1.0f, 0.1f };
+				emitter->emitterData.particleSizeMax = { 2.0f, 0.2f };
+				emitter->emitterData.particleColorMin = { 2.5, 0.8, 0.8, 1 };
+				emitter->emitterData.particleColorMax = { 4.0, 0.8, 0.8, 1 };
+				emitter->emitterData.particleFrictionMin = 0;
+				emitter->emitterData.particleFrictionMax = 0.01;
+				emitter->emitterData.particleGravity = 1;
+				emitter->emitterData.particleBillboardType = 1;
 				EmitterManager::Instance().Register(emitter);
 			}
 		}

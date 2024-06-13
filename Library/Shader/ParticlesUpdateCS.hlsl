@@ -17,15 +17,27 @@ void main( uint3 DTid : SV_DispatchThreadID )
         {
             p.position += p.velocity * deltaTime;
             
-            while (p.position.y < 0)
+            while (p.position.y < -2)
             {
                 p.position.y += 10;
+            }
+
+            while(p.position.y > 10)
+            {
+                p.position.y -= 10;
             }
         }
         if(p.kind == 1)
         {
+            p.velocity -= (p.velocity * 0.3f * deltaTime);
+            p.velocity.y = p.gravity * deltaTime;
             p.position += p.velocity * deltaTime;
-            p.lifeTime -= deltaTime;
+
+            p.color.a = (p.lifeTimer / p.lifeTime);
+
+            p.scale = p.startScale * (length(p.velocity) / length(p.startVelocity));
+
+            p.lifeTimer -= deltaTime;
         }
         if(p.kind == 2)
         {
@@ -37,10 +49,10 @@ void main( uint3 DTid : SV_DispatchThreadID )
                 p.velocity = 0;
                 p.position.y = 0;
             }
-            p.lifeTime -= deltaTime;
+            p.lifeTimer -= deltaTime;
         }
         
-        if(p.lifeTime <= 0)
+        if(p.lifeTimer <= 0)
         {
             p.velocity = float3(0, 0, 0);
             p.isActive = false;

@@ -39,7 +39,7 @@ public:
 		float             particleGravity     = 0.0f;         // 重力(下方向の力の大きさ)
 		float             particleAddAngle    = 0.0f;         // １秒間に回転する角度
 
-		float particleStartKind;         // 生成するパーティクルのタイプ
+		float particleKind;              // 生成するパーティクルのタイプ
 		float particleBillboardType = 0; // billboardのタイプ
 	};
 
@@ -52,20 +52,30 @@ public:
 	float emitRateTimer; // パーティクルの生成間隔を管理する用のタイマー
 	float emitLifeTimer; // 生成された経過時間を持つ
 
+	float emitCount;	// 生成した回数
+
 	// 定数バッファ用
 	struct EmitterConstants
 	{
-		DirectX::XMFLOAT2 particleSize;
-		float             particleLifeTime;
+		DirectX::XMFLOAT2 particleSizeMin;
+		DirectX::XMFLOAT2 particleSizeMax;
+		DirectX::XMFLOAT4 particleColorMin;
+		DirectX::XMFLOAT4 particleColorMax;
+		float             particleSpeedMin;
+		float             particleSpeedMax;
+		float             particleLifeTimeMin;
+		float             particleLifeTimeMax;
 		float             particleKind;
-		DirectX::XMFLOAT4 particleColor;
-		DirectX::XMFLOAT3 emitterPosition;
-		float             particleFriction;
+		float             particleFrictionMin;
+		float             particleFrictionMax;
 		float             particleAddAngle;
 		float             particleGravity;
 		float             particleBillboardType;
-		float             emitterPad;
+		DirectX::XMFLOAT2 emitterPad1;
+		DirectX::XMFLOAT3 emitterPosition;
+		float             emitCount;
 	};
+
 	EmitterConstants emitterConstant;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> emitterConstantBuffer;

@@ -1,5 +1,6 @@
 #include "Particle.h"
 #include "../ErrorLogger.h"
+#include "../RegisterNum.h"
 #include "../Graphics/Graphics.h"
 #include "../Graphics/Shader.h"
 
@@ -68,7 +69,7 @@ Particle::Particle()
 	CreateCsFromCso("Data/Shader/ParticlesUpdateCS.cso", updateCs.ReleaseAndGetAddressOf());
 	CreateCsFromCso("Data/Shader/ParticlesEmitCS.cso", emitCs.ReleaseAndGetAddressOf());
 
-	sprParticle = std::make_unique<Sprite>("Data/Texture/particle1.png");
+	sprParticles = std::make_unique<Sprite>("Data/Texture/Effect/particle0.png");
 
 	freeParticleCount = MAX_PARTICLE;
 }
@@ -84,7 +85,7 @@ void Particle::Initialize()
 	dc->Dispatch(particleCount / THREAD_NUM_X, 1, 1);
 
 	// テクスチャの設定
-	dc->PSSetShaderResources(9, 1, sprParticle->GetSpriteResource()->GetSrvAddres());
+	dc->PSSetShaderResources(_particlesTexture, 1, sprParticles->GetSpriteResource()->GetSrvAddres());
 
 	// リソースの割り当てを解除
 	ID3D11UnorderedAccessView* nullUav = {};

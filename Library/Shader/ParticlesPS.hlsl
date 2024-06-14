@@ -3,7 +3,7 @@
 
 SamplerState samplerStates[_samplerNum] : register(s0);
 
-Texture2D particleTexture : register(t9);
+Texture2D particlesTexture : register(_particlesTexture);
 
 struct PSOUT
 {
@@ -12,7 +12,7 @@ struct PSOUT
 };
 PSOUT main(GS_OUT pin)
 {
-    float4 textureColor = particleTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
+    float4 textureColor = particlesTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
     float4 finalColor = textureColor * pin.color;
 
     // ------------ wboit ------------

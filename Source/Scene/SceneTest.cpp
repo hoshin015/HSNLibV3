@@ -179,6 +179,31 @@ void SceneTest::Update()
 	EmitterManager::Instance().Update();
 	Particle::Instance().Update();
 
+	// テストエミッター
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F1))
+	{
+		Emitter* emitter = new Emitter();
+		emitter->position = {3,3,0};
+		emitter->emitterData.duration = 0.2;
+		emitter->emitterData.looping = false;
+		emitter->emitterData.burstsTime = 0.1;
+		emitter->emitterData.burstsCount = 99;
+		emitter->emitterData.particleKind = 2;
+		emitter->emitterData.particleLifeTimeMin = 0.6f;
+		emitter->emitterData.particleLifeTimeMax = 0.8f;
+		emitter->emitterData.particleSpeedMin = 50.0f;
+		emitter->emitterData.particleSpeedMax = 100.0f;
+		emitter->emitterData.particleSizeMin = { 1.0f, 0.1f };
+		emitter->emitterData.particleSizeMax = { 2.0f, 0.2f };
+		emitter->emitterData.particleColorMin = { 0.8, 0.8, 2.0, 1 };
+		emitter->emitterData.particleColorMax = { 0.8, 0.8, 2.5, 1 };
+		emitter->emitterData.particleFrictionMin = 0;
+		emitter->emitterData.particleFrictionMax = 0.01;
+		emitter->emitterData.particleGravity = 20;
+		emitter->emitterData.particleBillboardType = 2;
+		EmitterManager::Instance().Register(emitter);
+	}
+
 	if (InputManager::Instance().GetKeyPressed(Keyboard::F2))
 	{
 		lightningEffect->Initialize();

@@ -80,5 +80,5 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ComputeShader>  emitCs;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>         constantBuffer;
 
-	std::unique_ptr<Sprite> sprParticle;
+	std::unique_ptr<Sprite> sprParticles;
 };

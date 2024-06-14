@@ -11,19 +11,19 @@ void main(uint3 DTid : SV_DispatchThreadID)
 	uint id = particlePool.Consume();
 
 	const float noise_scale = 1.0;
-	float       f0          = rand(id * noise_scale * emitCount);
+	float       f0          = rand(id * noise_scale * emitCount * deltaTime);
 	float       f1          = rand(f0 * noise_scale);
 	float       f2          = rand(f1 * noise_scale);
+	float       f3          = rand(f2 * noise_scale);
+	float       f4          = rand(f3 * noise_scale);
+	float       f5          = rand(f4 * noise_scale);
+	float       f6          = rand(f5 * noise_scale);
+	float       f7          = rand(f6 * noise_scale);
+	float       seed        = random(float2(f2, deltaTime));
+
 
 	Particle p = particleBuffer[id];
 	p.isActive = true;
-
-
-	float seed = random(float2(f2, deltaTime));
-	float f4   = f0;
-	float f5   = rand(f4);
-	float f6   = rand(f5);
-	float f7   = rand(f6);
 
 	switch (particleKind)
 	{
@@ -80,35 +80,39 @@ void main(uint3 DTid : SV_DispatchThreadID)
 		}
 		break;
 	case 2:
-		p.position = emitterPosition;
-		p.velocity.x    = (rand(f5) * 2 - 1) * 3;
-		p.velocity.z    = (rand(f6) * 2 - 1) * 3;
-		p.velocity.y    = (rand(f7) * 2 - 1) * 3;
-		p.billboardType = 1;
+		{
+			p.position = emitterPosition;
+
+			
+			float particleSpeed = RandomRange(particleSpeedMin.x, particleSpeedMax.x, seed);
+			seed                = random(float2(seed, deltaTime));
+			if (f0 > 0.5)
+				particleSpeed *= -1;
+			p.velocity.x = seed * particleSpeed;
+			seed         = random(float2(seed, deltaTime));
+			if (f1 > 0.5)
+				particleSpeed *= -1;
+			p.velocity.y = seed * particleSpeed;
+			seed         = random(float2(seed, deltaTime));
+			p.velocity.z = 0;
+		}
 		break;
 	}
 
 
 	// ‹¤’Ê
-	p.color.x = RandomRange(particleColorMin.x, particleColorMax.x, seed);
-	seed      = rand(seed);
-	p.color.y = RandomRange(particleColorMin.y, particleColorMax.y, seed);
-	seed      = rand(seed);
-	p.color.z = RandomRange(particleColorMin.z, particleColorMax.z, seed);
-	seed      = rand(seed);
-	p.color.w = RandomRange(particleColorMin.w, particleColorMax.w, seed);
-	seed      = rand(seed);
+	p.color.x = RandomRange(particleColorMin.x, particleColorMax.x, f0);
+	p.color.y = RandomRange(particleColorMin.y, particleColorMax.y, f1);
+	p.color.z = RandomRange(particleColorMin.z, particleColorMax.z, f2);
+	p.color.w = RandomRange(particleColorMin.w, particleColorMax.w, f3);
 
-	p.scale.x = RandomRange(particleSizeMin.x, particleSizeMax.x, seed);
-	seed      = rand(seed);
-	p.scale.y = RandomRange(particleSizeMin.y, particleSizeMax.y, seed);
-	seed      = rand(seed);
+	p.scale.x = RandomRange(particleSizeMin.x, particleSizeMax.x, f4);
+	p.scale.y = RandomRange(particleSizeMin.y, particleSizeMax.y, f5);
 
 
-	p.lifeTime      = RandomRange(particleLifeTimeMin, particleLifeTimeMax, seed);
+	p.lifeTime      = RandomRange(particleLifeTimeMin, particleLifeTimeMax, f6);
 	p.lifeTimer     = p.lifeTime;
-	seed            = rand(seed);
-	p.friction      = RandomRange(particleFrictionMin, particleFrictionMax, seed);
+	p.friction      = RandomRange(particleFrictionMin, particleFrictionMax, f7);
 	p.addAngle      = particleAddAngle;
 	p.gravity       = particleGravity;
 	p.kind          = particleKind;

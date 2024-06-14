@@ -28,20 +28,19 @@ void main(
     // アスペクト比を考慮したスケーリング
     const float aspectRatio = 1280.0 / 720.0;
     float2 particleScale = float2(p.scale.x, p.scale.y);
-
+    
     // 角度
     float setAngle = float2(0,0);
 
-    if (p.billboardType == 1)
+    if (p.billboardType == 1 || p.billboardType == 2)
     {
-	    // スクリーン座標系の velocity を計算
-        float4 screenVelocity = mul(float4(p.velocity, 0.0), viewProjection);
-        screenVelocity = normalize(screenVelocity);
+	    // ndc 座標系の velocity を計算
+        float4 ndcVelocity = mul(float4(p.velocity, 0.0), viewProjection);
+        ndcVelocity = normalize(ndcVelocity);
 
-		// スクリーン座標系の角度を計算
-        setAngle = atan2(screenVelocity.y, screenVelocity.x);
+		// ndc 座標系の角度を計算
+        setAngle = atan2(ndcVelocity.y, ndcVelocity.x);
     }
-
 
     // 回転行列を計算
     float cosAngle = cos(setAngle);

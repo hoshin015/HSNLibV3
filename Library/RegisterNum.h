@@ -10,7 +10,6 @@
 #define USE_LinearWorkflow				0
 
 
-
 // ====== 定数 ======
 #define MAX_INSTANCE					512
 #define GAUSSIAN_DOWNSAMPLING_COUNT		4
@@ -63,6 +62,9 @@
 // radialBlur
 #define _radialBlurTexture	0
 
+// Gpu Particle (ここは別のテクスチャで更新しないようにする)
+#define _particlesTexture	9
+
 
 // --- hlsl ---
 #else
@@ -97,6 +99,9 @@
 #define _revealTexture		t1
 // radialBlur
 #define _radialBlurTexture	t0
+
+// Gpu Particle (ここは別のテクスチャで更新しないようにする)
+#define _particlesTexture	t9
 
 #endif
 

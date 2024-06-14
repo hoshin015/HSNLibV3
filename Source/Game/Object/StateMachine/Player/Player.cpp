@@ -288,20 +288,18 @@ void Player::CollisionVsEnemy()
 				emitter->emitterData.particleKind = 1;
 				emitter->emitterData.particleLifeTimeMin = 0.4f;
 				emitter->emitterData.particleLifeTimeMax = 0.6f;
-				emitter->emitterData.particleSpeedMin = 30.0f;
-				emitter->emitterData.particleSpeedMax = 40.0f;
-				emitter->emitterData.particleSizeMin = { 1.0f, 0.1f };
-				emitter->emitterData.particleSizeMax = { 2.0f, 0.2f };
+				emitter->emitterData.particleSpeedMin = 15.0f;
+				emitter->emitterData.particleSpeedMax = 30.0f;
+				emitter->emitterData.particleSizeMin = { 0.25f, 0.005f };
+				emitter->emitterData.particleSizeMax = { 2.0f, 0.1f };
 				emitter->emitterData.particleColorMin = { 2.5, 0.8, 0.8, 1 };
 				emitter->emitterData.particleColorMax = { 4.0, 0.8, 0.8, 1 };
 				emitter->emitterData.particleFrictionMin = 0;
 				emitter->emitterData.particleFrictionMax = 0.01;
-				emitter->emitterData.particleGravity = 1;
+				emitter->emitterData.particleGravity = 20;
 				emitter->emitterData.particleBillboardType = 1;
 				EmitterManager::Instance().Register(emitter);
 			}
 		}
 	}
-
-	
 }

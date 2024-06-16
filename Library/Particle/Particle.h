@@ -43,6 +43,7 @@ public:
 		bool  isActive      = false; // このパーティクルが使用中かどうか
 		float kind          = 0;     // パーティクルの種類
 		float billboardType = 0;     // billboard のタイプ
+		float textureType   = 0;     // texture の種類
 	};
 
 	void Initialize();

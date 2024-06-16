@@ -14,6 +14,7 @@
 #include "3D/DebugPrimitive.h"
 #include "3D/LineRenderer.h"
 #include "../Source/Scene/SceneManager.h"
+#include "../Source/UserInterface/DamageTextManager.h"
 
 // ‰Šú‰»
 bool Framework::Initialize(HINSTANCE hInstance)
@@ -47,6 +48,9 @@ bool Framework::Initialize(HINSTANCE hInstance)
 
 	// --- RenderContext ‰Šú‰» ---
 	RenderContext::Instance().Initialize();
+
+	// --- DamageTextManager ‰Šú‰» ---
+	DamageTextManager::Instance().Initialize();
 
 	// --- ƒV[ƒ“‰Šú‰» ---
 	SceneManager::Instance().ChangeScene(new SceneTitle);

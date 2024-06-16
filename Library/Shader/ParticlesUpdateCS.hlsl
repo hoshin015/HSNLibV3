@@ -41,13 +41,21 @@ void main( uint3 DTid : SV_DispatchThreadID )
         }
         if(p.kind == 2)
         {
-            p.velocity.y += -p.gravity * deltaTime;
-            p.position += p.velocity * deltaTime;
-
             p.color.a = (p.lifeTimer / p.lifeTime);
 
-            //p.scale = p.startScale * (length(p.velocity) / length(p.startVelocity));
+            p.scale = p.startScale * (p.lifeTimer / p.lifeTime);
+            p.lifeTimer -= deltaTime;
+        }
+        if (p.kind == 2)
+        {
+            p.color.a = (p.lifeTimer / p.lifeTime);
 
+            p.scale = p.startScale * (p.lifeTimer / p.lifeTime);
+            p.lifeTimer -= deltaTime;
+        }
+        if (p.kind == 3)
+        {
+            p.scale = p.startScale * (1 - (p.lifeTimer / p.lifeTime));
             p.lifeTimer -= deltaTime;
         }
         

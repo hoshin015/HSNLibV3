@@ -20,10 +20,11 @@ public:
 	// エミッターの情報
 	struct EmitterData
 	{
-		float duration;    // パーティクルの生成時間(この時間だけエミッターが機能する)
-		bool  looping;     // duration を繰り返すかどうか
-		float burstsTime;  // パーティクルの生成間隔(s)
-		float burstsCount; // 一度に生成するパーティクル数
+		float duration;           // パーティクルの生成時間(この時間だけエミッターが機能する)
+		bool  looping;            // duration を繰り返すかどうか
+		float burstsTime;         // パーティクルの生成間隔(s)
+		float burstsCount;        // 一度に生成するパーティクル数
+		int burstsOneShot = -1; // oneShotで呼び出す回数
 
 		// 生成するパーティクルの情報(パーティクル初期化時に必要な情報)
 		float             particleLifeTimeMin;                // 生成するパーティクルの寿命(最小値)
@@ -37,10 +38,13 @@ public:
 		float             particleFrictionMin = 0.0f;         // 抵抗(最小値)
 		float             particleFrictionMax = 0.0f;         // 抵抗(最大値)
 		float             particleGravity     = 0.0f;         // 重力(下方向の力の大きさ)
-		float             particleAddAngle    = 0.0f;         // １秒間に回転する角度
+		float             particleAngleMin;                   // 生成するパーティクルの角度(最小値)
+		float             particleAngleMax;                   // 生成するパーティクルの角度(最大値)
+		float             particleAddAngle = 0.0f;            // １秒間に回転する角度
 
 		float particleKind;              // 生成するパーティクルのタイプ
 		float particleBillboardType = 0; // billboardのタイプ
+		float particleTextureType;
 	};
 
 	EmitterData emitterData;
@@ -52,7 +56,7 @@ public:
 	float emitRateTimer; // パーティクルの生成間隔を管理する用のタイマー
 	float emitLifeTimer; // 生成された経過時間を持つ
 
-	float emitCount;	// 生成した回数
+	float emitCount = 1; // 生成した回数
 
 	// 定数バッファ用
 	struct EmitterConstants
@@ -68,10 +72,13 @@ public:
 		float             particleKind;
 		float             particleFrictionMin;
 		float             particleFrictionMax;
+		float             particleAngleMin;
+		float             particleAngleMax;
 		float             particleAddAngle;
 		float             particleGravity;
 		float             particleBillboardType;
-		DirectX::XMFLOAT2 emitterPad1;
+		float             particleTextureType;
+		DirectX::XMFLOAT3 emitterPad1;
 		DirectX::XMFLOAT3 emitterPosition;
 		float             emitCount;
 	};

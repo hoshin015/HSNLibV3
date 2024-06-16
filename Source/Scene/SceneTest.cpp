@@ -8,10 +8,12 @@
 #include "../../Library/Graphics/Graphics.h"
 #include "../../Library/Math/OperatorXMFloat3.h"
 #include "../../Library/Timer.h"
+#include "../../Library/ImGui/ConsoleData.h"
 #include "../../Library/ImGui/ImGuiManager.h"
 #include "../../Library/Input/InputManager.h"
 #include "../../Library/Effekseer/EffectManager.h"
 #include "../../Library/3D/Camera.h"
+#include "../../Library/3D/DebugPrimitive.h"
 #include "../../Library/3D/LightManager.h"
 #include "../../Library/Particle/Particle.h"
 #include "../../Library/Particle/EmitterManager.h"
@@ -25,9 +27,8 @@
 #include "../Game/Object/StateMachine/Enemy/Enemy.h"
 #include "../Game/Object/StateMachine/Player/Player.h"
 // --- UserInterface ---
-#include "../../Library/3D/DebugPrimitive.h"
 #include "../UserInterface//UiPause.h"
-#include "../../Library/ImGui/ConsoleData.h"
+#include "../UserInterface/DamageTextManager.h"
 
 
 void SceneTest::Initialize()
@@ -80,9 +81,6 @@ void SceneTest::Initialize()
 	sprTest3->SetScale({0.2, 0.2});
 	sprTest3->UpdateAnimation();
 
-	sprText = std::make_unique<Sprite>("Data/Texture/Font/font0.sprite");
-	sprText->UpdateAnimation();
-
 
 	Enemy::Instance().Initialize();
 	Player::Instance().Initialize();
@@ -91,37 +89,27 @@ void SceneTest::Initialize()
 	Particle::Instance().Initialize();
 
 	// --- Emitter 登録 ---
-	Emitter* emitter0                           = new Emitter();
-	emitter0->position                          = {0, 3, 3};
-	emitter0->emitterData.duration              = 2.0;
-	emitter0->emitterData.looping               = false;
-	emitter0->emitterData.burstsTime            = 0.5;
-	emitter0->emitterData.burstsCount           = 99;
-	emitter0->emitterData.particleKind          = 0;
-	emitter0->emitterData.particleLifeTimeMin   = 1.0f;
-	emitter0->emitterData.particleLifeTimeMax   = 1.0f;
-	emitter0->emitterData.particleSpeedMin      = -5.0f;
-	emitter0->emitterData.particleSpeedMax      = 5.0f;
-	emitter0->emitterData.particleSizeMin       = {0.1f, 0.1f};
-	emitter0->emitterData.particleSizeMax       = {1.0f, 1.0f};
-	emitter0->emitterData.particleColorMin      = {0.0, 0.0, 0.0, 1};
-	emitter0->emitterData.particleColorMax      = {2.0, 2.0, 2.0, 1};
-	emitter0->emitterData.particleFrictionMin   = 0;
-	emitter0->emitterData.particleFrictionMax   = 1;
-	emitter0->emitterData.particleGravity       = 1;
-	emitter0->emitterData.particleBillboardType = 1;
-	EmitterManager::Instance().Register(emitter0);
-
-	//Emitter* emitter1       = new Emitter();
-	//emitter1->position      = {0, 3, 0};
-	//emitter1->rate          = 32;
-	//emitter1->startKind     = 1;
-	//emitter1->rateOverTime  = 0.25f;
-	//emitter1->startLifeTime = 6.0f;
-	//emitter1->startSize = { 0.05f, 0.05f };
-
-	//EmitterManager::Instance().Register(emitter1);
-
+	//Emitter* emitter0                           = new Emitter();
+	//emitter0->position                          = {0, 3, 3};
+	//emitter0->emitterData.duration              = 2.0;
+	//emitter0->emitterData.looping               = false;
+	//emitter0->emitterData.burstsTime            = 0.5;
+	//emitter0->emitterData.burstsCount           = 99;
+	//emitter0->emitterData.particleKind          = 0;
+	//emitter0->emitterData.particleLifeTimeMin   = 1.0f;
+	//emitter0->emitterData.particleLifeTimeMax   = 1.0f;
+	//emitter0->emitterData.particleSpeedMin      = -5.0f;
+	//emitter0->emitterData.particleSpeedMax      = 5.0f;
+	//emitter0->emitterData.particleSizeMin       = {0.1f, 0.1f};
+	//emitter0->emitterData.particleSizeMax       = {1.0f, 1.0f};
+	//emitter0->emitterData.particleColorMin      = {0.0, 0.0, 0.0, 1};
+	//emitter0->emitterData.particleColorMax      = {2.0, 2.0, 2.0, 1};
+	//emitter0->emitterData.particleFrictionMin   = 0;
+	//emitter0->emitterData.particleFrictionMax   = 1;
+	//emitter0->emitterData.particleGravity       = 1;
+	//emitter0->emitterData.particleBillboardType = 0;
+	//emitter0->emitterData.particleTextureType   = 0;
+	//EmitterManager::Instance().Register(emitter0);
 
 	UiPause::Instance().Initialize();
 
@@ -175,6 +163,7 @@ void SceneTest::Update()
 
 	sprTest3->SetAngle(sprTest->GetAngle() + 180 * Timer::Instance().DeltaTime());
 
+	DamageTextManager::Instance().Update();
 
 	EmitterManager::Instance().Update();
 	Particle::Instance().Update();
@@ -182,24 +171,24 @@ void SceneTest::Update()
 	// テストエミッター
 	if (InputManager::Instance().GetKeyPressed(Keyboard::F1))
 	{
-		Emitter* emitter = new Emitter();
-		emitter->position = {3,3,0};
-		emitter->emitterData.duration = 0.2;
-		emitter->emitterData.looping = false;
-		emitter->emitterData.burstsTime = 0.1;
-		emitter->emitterData.burstsCount = 99;
-		emitter->emitterData.particleKind = 2;
-		emitter->emitterData.particleLifeTimeMin = 0.6f;
-		emitter->emitterData.particleLifeTimeMax = 0.8f;
-		emitter->emitterData.particleSpeedMin = 50.0f;
-		emitter->emitterData.particleSpeedMax = 100.0f;
-		emitter->emitterData.particleSizeMin = { 1.0f, 0.1f };
-		emitter->emitterData.particleSizeMax = { 2.0f, 0.2f };
-		emitter->emitterData.particleColorMin = { 0.8, 0.8, 2.0, 1 };
-		emitter->emitterData.particleColorMax = { 0.8, 0.8, 2.5, 1 };
-		emitter->emitterData.particleFrictionMin = 0;
-		emitter->emitterData.particleFrictionMax = 0.01;
-		emitter->emitterData.particleGravity = 20;
+		Emitter* emitter                           = new Emitter();
+		emitter->position                          = {3, 3, 0};
+		emitter->emitterData.duration              = 0.2;
+		emitter->emitterData.looping               = false;
+		emitter->emitterData.burstsTime            = 0.1;
+		emitter->emitterData.burstsCount           = 99;
+		emitter->emitterData.particleKind          = 2;
+		emitter->emitterData.particleLifeTimeMin   = 0.6f;
+		emitter->emitterData.particleLifeTimeMax   = 0.8f;
+		emitter->emitterData.particleSpeedMin      = 50.0f;
+		emitter->emitterData.particleSpeedMax      = 100.0f;
+		emitter->emitterData.particleSizeMin       = {1.0f, 0.1f};
+		emitter->emitterData.particleSizeMax       = {2.0f, 0.2f};
+		emitter->emitterData.particleColorMin      = {0.8, 0.8, 2.0, 1};
+		emitter->emitterData.particleColorMax      = {0.8, 0.8, 2.5, 1};
+		emitter->emitterData.particleFrictionMin   = 0;
+		emitter->emitterData.particleFrictionMax   = 0.01;
+		emitter->emitterData.particleGravity       = 20;
 		emitter->emitterData.particleBillboardType = 2;
 		EmitterManager::Instance().Register(emitter);
 	}
@@ -253,7 +242,7 @@ void SceneTest::Render()
 
 				// --- static object ---
 				shadow->SetStaticShader(); // static object の影描画開始
-				testStatic->Render(true);
+				//testStatic->Render(true);
 			}
 			shadow->DeActivate();
 		}
@@ -273,7 +262,7 @@ void SceneTest::Render()
 		// ここに不透明オブジェクトの描画
 		StageManager::Instance().Render();
 
-		testStatic->Render();
+		//testStatic->Render();
 		Enemy::Instance().Render();
 
 		Player::Instance().Render();
@@ -331,20 +320,19 @@ void SceneTest::Render()
 	// ======　ブルームなしの描画　======　
 
 	// ここでスプライト描画
-	sprTest->Render();
-	sprTest2->Render();
-	sprTest3->Render();
+	//sprTest->Render();
+	//sprTest2->Render();
+	//sprTest3->Render();
 
 
-	UiPause::Instance().Render();
+	//UiPause::Instance().Render();
 
 	// ここで文字描画
+	DamageTextManager::Instance().Render();
 
 	// テキストデータの文字描画
-	DispString::Instance().Draw(L"てすとめっせーじ", {200, 50}, 50);
+	//DispString::Instance().Draw(L"てすとめっせーじ", {200, 50}, 50);
 
-	// スプライトデータの文字描画　(色のついた文字を描画したい場合はこっちを使用)
-	sprText->SprTextOut("0542", {300, 300});
 
 #if USE_IMGUI
 	// --- デバッグGUI描画 ---

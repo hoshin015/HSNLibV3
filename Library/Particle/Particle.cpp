@@ -69,7 +69,7 @@ Particle::Particle()
 	CreateCsFromCso("Data/Shader/ParticlesUpdateCS.cso", updateCs.ReleaseAndGetAddressOf());
 	CreateCsFromCso("Data/Shader/ParticlesEmitCS.cso", emitCs.ReleaseAndGetAddressOf());
 
-	sprParticles = std::make_unique<Sprite>("Data/Texture/Effect/particle0.png");
+	sprParticles = std::make_unique<Sprite>("Data/Texture/Effect/particles.png");
 
 	freeParticleCount = MAX_PARTICLE;
 }

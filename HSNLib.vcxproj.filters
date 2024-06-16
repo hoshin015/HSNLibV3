@@ -415,6 +415,9 @@
     <ClCompile Include="Library\Graphics\RadialBlur.cpp">
       <Filter>1_HSNLib\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UserInterface\DamageTextManager.cpp">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -728,6 +731,9 @@
     </ClInclude>
     <ClInclude Include="Library\Graphics\RadialBlur.h">
       <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UserInterface\DamageTextManager.h">
+      <Filter>2_Source\UserInterface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

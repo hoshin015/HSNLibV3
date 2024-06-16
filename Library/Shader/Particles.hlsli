@@ -16,19 +16,20 @@ struct Particle
 {
 	float3 position;
 	float3 velocity;
-    float3 startVelocity;
+	float3 startVelocity;
 	float  friction;
 	float  gravity;
 	float  angle;
 	float  addAngle;
 	float2 scale;
-    float2 startScale;
+	float2 startScale;
 	float4 color;
 	float  lifeTime;
 	float  lifeTimer;
 	bool   isActive;
 	float  kind;
 	float  billboardType;
+	float  textureType;
 };
 
 // タイマーの情報
@@ -59,10 +60,13 @@ cbuffer EmitterConstant : register(_emitterConstant)
 	float  particleKind;
 	float  particleFrictionMin;
 	float  particleFrictionMax;
+	float  particleAngleMin;
+	float  particleAngleMax;
 	float  particleAddAngle;
 	float  particleGravity;
 	float  particleBillboardType;
-	float2 emitterPad1;
+	float  particleTextureType;
+	float3 emitterPad1;
 	float3 emitterPosition;
 	float  emitCount;
 };
@@ -83,8 +87,8 @@ float rand(float n)
 // p		: シード値
 float random(float2 p)
 {
-    const float2 r = float2(23.1406926327792690, 2.6651441426902251);
-    return frac(cos(fmod(123456789.0, 1e-7 + 256.0 * dot(p, r))));
+	const float2 r = float2(23.1406926327792690, 2.6651441426902251);
+	return frac(cos(fmod(123456789.0, 1e-7 + 256.0 * dot(p, r))));
 }
 
 //--------------------------------------------

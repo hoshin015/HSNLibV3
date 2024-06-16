@@ -11,6 +11,7 @@
 #include "../Enemy/Enemy.h"
 #include "../../Library/ImGui/ConsoleData.h"
 #include "../../../../../Library/Particle/EmitterManager.h"
+#include "../../../../UserInterface/DamageTextManager.h"
 
 Player::Player(const char* filePath) : AnimatedObject(filePath)
 {
@@ -281,10 +282,10 @@ void Player::CollisionVsEnemy()
 
 				Emitter* emitter = new Emitter();
 				emitter->position = outPosition;
-				emitter->emitterData.duration = 0.2;
+				emitter->emitterData.duration = 2.0;
 				emitter->emitterData.looping = false;
-				emitter->emitterData.burstsTime = 0.1;
-				emitter->emitterData.burstsCount = 99;
+				emitter->emitterData.burstsTime = 0.0;
+				emitter->emitterData.burstsCount = 30;
 				emitter->emitterData.particleKind = 1;
 				emitter->emitterData.particleLifeTimeMin = 0.4f;
 				emitter->emitterData.particleLifeTimeMax = 0.6f;
@@ -292,13 +293,71 @@ void Player::CollisionVsEnemy()
 				emitter->emitterData.particleSpeedMax = 30.0f;
 				emitter->emitterData.particleSizeMin = { 0.25f, 0.005f };
 				emitter->emitterData.particleSizeMax = { 2.0f, 0.1f };
-				emitter->emitterData.particleColorMin = { 2.5, 0.8, 0.8, 1 };
-				emitter->emitterData.particleColorMax = { 4.0, 0.8, 0.8, 1 };
+				emitter->emitterData.particleColorMin = { 3.5, 3.5, 0.8, 1 };
+				emitter->emitterData.particleColorMax = { 6.0, 6.0, 0.8, 1 };
 				emitter->emitterData.particleFrictionMin = 0;
 				emitter->emitterData.particleFrictionMax = 0.01;
 				emitter->emitterData.particleGravity = 20;
 				emitter->emitterData.particleBillboardType = 1;
+				emitter->emitterData.particleTextureType = 0;
+				emitter->emitterData.burstsOneShot = true;
 				EmitterManager::Instance().Register(emitter);
+
+				Emitter* emitter1 = new Emitter();
+				emitter1->position = outPosition;
+				emitter1->emitterData.duration = 2.0;
+				emitter1->emitterData.looping = false;
+				emitter1->emitterData.burstsTime = 0.03;
+				emitter1->emitterData.burstsCount = 1;
+				emitter1->emitterData.particleKind = 2;
+				emitter1->emitterData.particleLifeTimeMin = 0.1f;
+				emitter1->emitterData.particleLifeTimeMax = 0.1f;
+				emitter1->emitterData.particleSpeedMin = 0.0f;
+				emitter1->emitterData.particleSpeedMax = 0.0f;
+				emitter1->emitterData.particleSizeMin = { 50.0f, 5.0f };
+				emitter1->emitterData.particleSizeMax = { 50.0f, 5.0f };
+				emitter1->emitterData.particleColorMin = { 1.9, 1.9, 8.8, 1 };
+				emitter1->emitterData.particleColorMax = { 1.9, 1.9, 10.8, 1 };
+				emitter1->emitterData.particleFrictionMin = 0;
+				emitter1->emitterData.particleFrictionMax = 0.01;
+				emitter1->emitterData.particleAngleMin = 0;
+				emitter1->emitterData.particleAngleMax = 359;
+				emitter1->emitterData.particleGravity = 20;
+				emitter1->emitterData.particleBillboardType = 2;
+				emitter1->emitterData.particleTextureType = 1;
+				emitter1->emitterData.burstsOneShot = 2;
+
+				emitter1->emitRateTimer = emitter1->emitterData.burstsTime;	// ¶¬Žž‚É”­¶‚·‚é‚æ‚¤‚É‚·‚é
+				EmitterManager::Instance().Register(emitter1);
+
+				Emitter* emitter2 = new Emitter();
+				emitter2->position = outPosition;
+				emitter2->emitterData.duration = 2.0;
+				emitter2->emitterData.looping = false;
+				emitter2->emitterData.burstsTime = 0.0;
+				emitter2->emitterData.burstsCount = 1;
+				emitter2->emitterData.particleKind = 3;
+				emitter2->emitterData.particleLifeTimeMin = 0.05f;
+				emitter2->emitterData.particleLifeTimeMax = 0.05f;
+				emitter2->emitterData.particleSpeedMin = 0.0f;
+				emitter2->emitterData.particleSpeedMax = 0.0f;
+				emitter2->emitterData.particleSizeMin = { 5.0f, 5.0f };
+				emitter2->emitterData.particleSizeMax = { 5.0f, 5.0f };
+				emitter2->emitterData.particleColorMin = { 8.5, 3.0, 0.8, 1 };
+				emitter2->emitterData.particleColorMax = { 8.5, 3.0, 0.8, 1 };
+				emitter2->emitterData.particleFrictionMin = 0;
+				emitter2->emitterData.particleFrictionMax = 0.01;
+				emitter2->emitterData.particleAngleMin = 0;
+				emitter2->emitterData.particleAngleMax = 359;
+				emitter2->emitterData.particleGravity = 20;
+				emitter2->emitterData.particleBillboardType = 2;
+				emitter2->emitterData.particleTextureType = 2;
+				emitter2->emitterData.burstsOneShot = 1;
+				EmitterManager::Instance().Register(emitter2);
+
+				int dmg = rand() % 20 + 1;
+				std::string dmgText = std::to_string(dmg);
+				DamageTextManager::Instance().Register({ dmgText, outPosition });
 			}
 		}
 	}

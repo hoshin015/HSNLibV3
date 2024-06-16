@@ -34,7 +34,7 @@ Emitter::Emitter()
 // 更新
 void Emitter::Update()
 {
-	while (emitRateTimer > emitterData.burstsTime)
+	while (emitRateTimer >= emitterData.burstsTime)
 	{
 		// エミッター定数バッファ更新
 		Graphics* gfx = &Graphics::Instance();
@@ -54,11 +54,14 @@ void Emitter::Update()
 		emitterConstant.particleSizeMax = emitterData.particleSizeMax;
 		emitterConstant.particleFrictionMin = emitterData.particleFrictionMin;
 		emitterConstant.particleFrictionMax = emitterData.particleFrictionMax;
+		emitterConstant.particleAngleMin = emitterData.particleAngleMin;
+		emitterConstant.particleAngleMax = emitterData.particleAngleMax;
 		emitterConstant.particleAddAngle = emitterData.particleAddAngle;
 		emitterConstant.particleGravity = emitterData.particleGravity;
 
 		emitterConstant.particleKind = emitterData.particleKind;
 		emitterConstant.particleBillboardType = emitterData.particleBillboardType;
+		emitterConstant.particleTextureType = emitterData.particleTextureType;
 
 		dc->UpdateSubresource(emitterConstantBuffer.Get(), 0, 0, &emitterConstant, 0, 0);
 		dc->CSSetConstantBuffers(_emitterConstant, 1, emitterConstantBuffer.GetAddressOf());
@@ -68,6 +71,18 @@ void Emitter::Update()
 
 		emitCount += Math::RandomRange(0.01, 1.0);
 		emitRateTimer -= emitterData.burstsTime;
+
+
+		if(emitterData.burstsOneShot > 0)
+		{
+			emitterData.burstsOneShot--;
+			if (emitterData.burstsOneShot == 0)
+			{
+				// エミッター破棄処理
+				EmitterManager::Instance().Remove(this);
+				return;
+			}
+		}
 	}
 
 	if (emitLifeTimer > emitterData.duration)

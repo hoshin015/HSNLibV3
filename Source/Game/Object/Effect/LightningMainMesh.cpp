@@ -1,98 +1,133 @@
 #include "LightningMainMesh.h"
 #include "../../../../Library/Timer.h"
 
+
+
+
+void LightningData::LightningNoUpdate(){}
+
+void LightningData::LightningAreaUpdate()
+{
+	float alpha = Easing::OutBounce(lifeTimer, lifeTime, 0.7f, 0.0f);
+	DirectX::XMFLOAT4 c = GetColor();
+	c.w = alpha;
+	SetColor(c);
+}
+void LightningData::LightningMainUpdate()
+{
+	float alpha = Easing::OutBounce(lifeTimer, lifeTime, 0.7f, 0.0f);
+	DirectX::XMFLOAT4 c = GetColor();
+	c.w = alpha;
+	SetColor(c);
+}
+
+
+void LightningData::Update()
+{
+	// 関数ポインタ
+	(this->*funcs[static_cast<int>(updateType)])();
+
+	lifeTimer += Timer::Instance().DeltaTime();
+	if(lifeTimer >= lifeTime)
+	{
+		owner->Remove(this);
+	}
+
+	UpdateTransform();
+}
+
+void LightningData::UpdateTransform()
+{
+	// スケール行列を作成
+	DirectX::XMMATRIX S = DirectX::XMMatrixScaling(GetScaleX(), GetScaleY(), GetScaleZ());
+	// 回転行列を作成
+	DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(GetAngleX()), DirectX::XMConvertToRadians(GetAngleY()), DirectX::XMConvertToRadians(GetAngleZ()));
+	// 位置行列を作成
+	DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(GetPosX(), GetPosY(), GetPosZ());
+
+	// ４つの行列を組み合わせ、ワールド行列を作成
+	DirectX::XMMATRIX W = S * R * T * MSC;
+	DirectX::XMStoreFloat4x4(&transform, W);
+}
+
+void LightningData::SetMSC(DirectX::XMMATRIX MSC)
+{
+	this->MSC = MSC;
+}
+
 void LightningMainMesh::Initialize()
 {
-	lightningMainTimer = 0.0f;
-	IsLightningMainMeshChild1Generate = false;
-	IsLightningMainMeshChild2Generate = false;
-	IsLightningMainMeshChild3Generate = false;
 }
 
 void LightningMainMesh::Update()
 {
-	lightningMainTimer += Timer::Instance().DeltaTime();
-
 	int index = 0;
 
-	// lightning1 データ
-	for(auto& data : lightningData)
+	// lightning データ更新
+	for(auto& data : lightningInfo)
 	{
-		// 行列更新と寿更新
+		// --- 行列更新と寿更新 ---
+		// スケール変更
+		DirectX::XMMATRIX MS = DirectX::XMMatrixScaling(model->GetModelResource()->GetScale(), model->GetModelResource()->GetScale(), model->GetModelResource()->GetScale());
+		// 軸変換行列
+		DirectX::XMMATRIX C = DirectX::XMLoadFloat4x4(&model->GetModelResource()->GetCoordinateSystemTransform());
 		data->Update();
 
-		// 寿命を超えたら登録解除
-		if (data->GetlifeTimer() >= data->GetlifeTime())
-		{
-			delete data;
-			lightningData.erase(lightningData.begin() + index);
-			continue;
-		}
-
-		// 更新した値を配列にいれる
-		lightning1Transforms[index] = data->GetTransform();
-		lightning1Emissives[index] = data->GetEmissivePower();
+		// --- 更新した値を配列にいれる ---
+		lightningTransforms[index] = data->GetTransform();
+		lightningEmissives[index] = data->GetEmissivePower();
+		lightningColors[index] = data->GetColor();
 
 		index++;
 	}
 
-	if(!IsLightningMainMeshChild1Generate && lightningMainMeshChild1GenerateTime <= lightningMainTimer)
+	// lightning データ削除
+	for (auto& data : removes)
 	{
-		LightningMainMeshChild1* l = new LightningMainMeshChild1(path.c_str());
-		l->SetLifeTimer(0.0f);
-		l->SetPos({ 2,0,0 });
-		l->SetScale({ 1,2,1 });
-		l->SetEmissivePower(3.0);
-		lightningData.emplace_back(l);
-		IsLightningMainMeshChild1Generate = true;
+		std::vector<LightningData*>::iterator it = std::find(lightningInfo.begin(), lightningInfo.end(), data);
+
+		if(it != lightningInfo.end())
+		{
+			lightningInfo.erase(it);
+		}
+		delete data;
 	}
-	if (!IsLightningMainMeshChild2Generate && lightningMainMeshChild2GenerateTime <= lightningMainTimer)
-	{
-		LightningMainMeshChild2* l = new LightningMainMeshChild2(path.c_str());
-		l->SetLifeTimer(0.0f);
-		l->SetLifeTime(0.1f);
-		l->SetPos({ 2,0,0 });
-		l->SetScale({ 0.5,2,0.5 });
-		l->SetEmissivePower(1.0);
-		lightningData.emplace_back(l);
-		IsLightningMainMeshChild2Generate = true;
-	}
-	if (!IsLightningMainMeshChild3Generate && lightningMainMeshChild3GenerateTime <= lightningMainTimer)
-	{
-		LightningMainMeshChild2* l = new LightningMainMeshChild2(path.c_str());
-		l->SetLifeTimer(0.0f);
-		l->SetLifeTime(0.2f);
-		l->SetPos({ 2,0,0 });
-		l->SetScale({ 0.5,2,0.5 });
-		l->SetEmissivePower(1.0);
-		lightningData.emplace_back(l);
-		IsLightningMainMeshChild3Generate = true;
-	}
+	removes.clear();
 }
 
 void LightningMainMesh::Render(bool isShadow)
 {
-	if (lightningData.empty()) return;
-	model->Render(lightningData.size(), lightning1Transforms, lightning1Emissives, isShadow);
+	if (lightningInfo.empty()) return;
+	model->Render(lightningInfo.size(), lightningTransforms, lightningEmissives, lightningColors, isShadow);
 }
 
-void LightningMainMeshChild1::Update()
+
+// 登録
+void LightningMainMesh::Register(LightningData* lightningData)
 {
-	float s = Easing::GetNowParam(Easing::OutCubic<float>, lifeTimer, lightning1Scale);
-	SetScale({ s, GetScaleY(), s });
+	// スケール変更
+	DirectX::XMMATRIX MS = DirectX::XMMatrixScaling(model->GetModelResource()->GetScale(), model->GetModelResource()->GetScale(), model->GetModelResource()->GetScale());
+	// 軸変換行列
+	DirectX::XMMATRIX C = DirectX::XMLoadFloat4x4(&model->GetModelResource()->GetCoordinateSystemTransform());
 
-	lifeTimer += Timer::Instance().DeltaTime();
-	if (lifeTimer > lifeTime) lifeTimer = lifeTime;
-
-	// 姿勢行列更新
-	UpdateTransform();
+	lightningData->SetOwner(this);
+	lightningData->SetMSC(MS * C);
+	lightningInfo.emplace_back(lightningData);
 }
 
-void LightningMainMeshChild2::Update()
+// 解除
+void LightningMainMesh::Remove(LightningData* lightningData)
 {
-	lifeTimer += Timer::Instance().DeltaTime();
-	if (lifeTimer > lifeTime) lifeTimer = lifeTime;
+	// 破棄リストに追加
+	removes.insert(lightningData);
+}
 
-	// 姿勢行列更新
-	UpdateTransform();
+// 全削除
+void LightningMainMesh::Clear()
+{
+	for(auto& lightning : lightningInfo)
+	{
+		delete lightning;
+	}
+	removes.clear();
 }

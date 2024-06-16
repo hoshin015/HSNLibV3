@@ -20,7 +20,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
 	float       f6          = rand(f5 * noise_scale);
 	float       f7          = rand(f6 * noise_scale);
 	float       f8          = rand(f7 * noise_scale);
-	float       seed        = random(float2(f2, deltaTime));
+	float       seed        = random(float2(f0, deltaTime));
 
 
 	Particle p = particleBuffer[id];
@@ -28,27 +28,27 @@ void main(uint3 DTid : SV_DispatchThreadID)
 	// ã§í 
 	p.isActive = true;
 
-    p.color.x = RandomRange(particleColorMin.x, particleColorMax.x, f0);
-    p.color.y = RandomRange(particleColorMin.y, particleColorMax.y, f1);
-    p.color.z = RandomRange(particleColorMin.z, particleColorMax.z, f2);
-    p.color.w = RandomRange(particleColorMin.w, particleColorMax.w, f3);
+	p.color.x = RandomRange(particleColorMin.x, particleColorMax.x, f0);
+	p.color.y = RandomRange(particleColorMin.y, particleColorMax.y, f1);
+	p.color.z = RandomRange(particleColorMin.z, particleColorMax.z, f2);
+	p.color.w = RandomRange(particleColorMin.w, particleColorMax.w, f3);
 
-    p.scale.x = RandomRange(particleSizeMin.x, particleSizeMax.x, f4);
-    p.scale.y = RandomRange(particleSizeMin.y, particleSizeMax.y, f5);
+	p.scale.x = RandomRange(particleSizeMin.x, particleSizeMax.x, f4);
+	p.scale.y = RandomRange(particleSizeMin.y, particleSizeMax.y, f5);
 
 
-    p.lifeTime = RandomRange(particleLifeTimeMin, particleLifeTimeMax, f6);
-    p.lifeTimer = p.lifeTime;
-    p.friction = RandomRange(particleFrictionMin, particleFrictionMax, f7);
-    p.angle = RandomRange(particleAngleMin, particleAngleMax, f8);
-    p.addAngle = particleAddAngle;
-    p.gravity = particleGravity;
-    p.kind = particleKind;
-    p.billboardType = particleBillboardType;
-    p.textureType = particleTextureType;
+	p.lifeTime      = RandomRange(particleLifeTimeMin, particleLifeTimeMax, f6);
+	p.lifeTimer     = p.lifeTime;
+	p.friction      = RandomRange(particleFrictionMin, particleFrictionMax, f7);
+	p.angle         = RandomRange(particleAngleMin, particleAngleMax, f8);
+	p.addAngle      = particleAddAngle;
+	p.gravity       = particleGravity;
+	p.kind          = particleKind;
+	p.billboardType = particleBillboardType;
+	p.textureType   = particleTextureType;
 
-    p.startVelocity = p.velocity;
-    p.startScale = p.scale;
+	p.startVelocity = p.velocity;
+	p.startScale    = p.scale;
 
 	// å¬ï ÇÃê›íË
 	switch (particleKind)
@@ -114,8 +114,42 @@ void main(uint3 DTid : SV_DispatchThreadID)
 			p.velocity = float3(0, 0, 0);
 		}
 		break;
+	case 4:
+		{
+			float3 pos = emitterPosition;
+
+			float3 pos2 = float3(0, 0, 0);
+			while (1)
+			{
+				f4     = rand(seed);
+				f5     = rand(f4);
+				f6     = rand(f5);
+				f7     = rand(f6);
+				pos2.x = rand(f5) * 2 - 1;
+				pos2.y = rand(f5) * 2 - 1;
+				pos2.z = rand(f7) * 2 - 1;
+
+				if (dot(pos2, pos2) < 1.0f)
+				{
+					break;
+				}
+				seed += 1.0f;
+			}
+
+			p.position.x = pos.x + pos2.x * 1.5;
+			p.position.y = 0;
+			p.position.z = pos.z + pos2.z * 1.5;
+
+
+			float particleSpeed = RandomRange(particleSpeedMin.x, particleSpeedMax.x, seed);
+
+			p.velocity.x = 0;
+			p.velocity.y = 1 * particleSpeed;
+			p.velocity.z = 0;
+		}
+		break;
 	}
 
-	
+
 	particleBuffer[id] = p;
 }

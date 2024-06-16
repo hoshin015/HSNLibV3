@@ -21,7 +21,7 @@ VS_OUT main(VS_IN vin)
     vout.worldTangent.w = sigma;
     
     vout.texcoord = vin.texcoord;
-    vout.color = materialColorKd;
+    vout.color = colors[vin.instanceId];
 
     vout.emissivePower.x = emissivePowers[vin.instanceId].x;
     

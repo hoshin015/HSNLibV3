@@ -3,14 +3,94 @@
 #include "../Base/StaticObject.h"
 #include "../../Library/Easing.h"
 
-class LightningMainMeshChildParent;
 
-// lightning をまとめて扱うためのクラス
+class LightningMainMesh;
+
+// 1つ1つの情報
+class LightningData : public BaseObject
+{
+public:
+	LightningData()
+	{
+		funcs.push_back(&LightningData::LightningNoUpdate);
+		funcs.push_back(&LightningData::LightningAreaUpdate);
+		funcs.push_back(&LightningData::LightningMainUpdate);
+	}
+
+	~LightningData() override
+	{
+	}
+
+	void Update() override;
+
+	void Render(bool isShadow = false) override
+	{
+	};
+
+	void UpdateTransform();
+
+	// 関数ポインタを使った関数
+	enum class LightningFuncEnum
+	{
+		NO,
+		Area,
+		Main,
+		END,
+	};
+
+	typedef void (LightningData::*UpdateFunc)();
+	std::vector<UpdateFunc>       funcs;
+	void                          LightningNoUpdate();
+	void                          LightningAreaUpdate();
+	void                          LightningMainUpdate();
+
+private:
+	DirectX::XMMATRIX MSC;
+
+	float lifeTime;
+	float lifeTimer = 0.0f;
+
+	float             emissivePower = 1.0f;
+	DirectX::XMFLOAT4 color         = {1, 1, 1, 1};
+
+	LightningMainMesh* owner;
+
+	LightningFuncEnum updateType = LightningFuncEnum::NO;
+
+public:
+	// lifeTime
+	void SetLifeTime(float lt) { lifeTime = lt; }
+
+	// onwer
+	void               SetOwner(LightningMainMesh* o) { owner = o; }
+	LightningMainMesh* GetOwner() { return owner; }
+
+	// emissivePower
+	float GetEmissivePower() { return emissivePower; }
+	void  SetEmissivePower(float ep) { this->emissivePower = ep; }
+
+	// color
+	DirectX::XMFLOAT4 GetColor() { return color; }
+	void              SetColor(DirectX::XMFLOAT4 c) { color = c; }
+
+	// msc
+	void SetMSC(DirectX::XMMATRIX MSC);
+
+	// updateType
+	void SetUpdateType(LightningFuncEnum t) { updateType = t; }
+};
+
+// lightning まとめるクラス
 class LightningMainMesh : public StaticObject
 {
 public:
-	LightningMainMesh(const char* filePath) : StaticObject(filePath), path(filePath){}
-	~LightningMainMesh() override {}
+	LightningMainMesh(const char* filePath) : StaticObject(filePath)
+	{
+	}
+
+	~LightningMainMesh() override
+	{
+	}
 
 	// lightningData を生成
 	void Initialize();
@@ -20,83 +100,31 @@ public:
 	// lightningData の中身をまとめて描画
 	void Render(bool isShadow = false) override;
 
-private:
-	std::string path = "";
-
-	DirectX::XMFLOAT4X4 lightning1Transforms[MAX_INSTANCE] = {};	// 姿勢行列配列
-	float lightning1Emissives[MAX_INSTANCE] = {};					// エミッシブ力配列
-
-	std::vector<LightningMainMeshChildParent*> lightningData;
-
-
-
-	float lightningMainTimer = 0.0f;	// lightning の全体を管理するタイマー
-	float lightningMainTime = 5.0f;		// lightning の生存時間
-
-	// 各エミッタ生成時間
-	float lightningMainMeshChild1GenerateTime = 0.6f;
-	bool IsLightningMainMeshChild1Generate = true;
-
-	float lightningMainMeshChild2GenerateTime = 0.0f;
-	bool IsLightningMainMeshChild2Generate = true;
-
-	float lightningMainMeshChild3GenerateTime = 0.3f;
-	bool IsLightningMainMeshChild3Generate = true;
-};
-
-
-// lightning １つ１つの情報
-class LightningMainMeshChildParent : public StaticObject
-{
-public:
-	LightningMainMeshChildParent(const char* filePath) : StaticObject(filePath) {}
-	virtual ~LightningMainMeshChildParent() = default;
-
-	// 更新
-	void Update() = 0;
-
-	// 描画(override の必要があるからしているが使用しない)
-	void Render(bool isShadow = false) override{};
+	// 登録
+	void Register(LightningData* lightningData);
+	// 解除
+	void Remove(LightningData* lightningData);
+	// 全削除
+	void Clear();
 
 protected:
-	float lifeTimer = 0.0f;
-	float lifeTime = 2.0f;
-	float emissivePower = 1.0f;
+	std::vector<LightningData*> lightningInfo;
+	std::set<LightningData*>    removes;
 
-public:
-	float GetlifeTimer() { return lifeTimer; }
-	void SetLifeTimer(float t) { lifeTimer = t; }
-
-	float GetlifeTime() { return lifeTime; }
-	void SetLifeTime(float t) { lifeTime = t; }
-
-	float GetEmissivePower() { return emissivePower; }
-	void SetEmissivePower(float e) { emissivePower = e; }
+	DirectX::XMFLOAT4X4 lightningTransforms[MAX_INSTANCE] = {}; // 姿勢行列配列
+	float               lightningEmissives[MAX_INSTANCE]  = {}; // エミッシブ力配列
+	DirectX::XMFLOAT4   lightningColors[MAX_INSTANCE]     = {}; // カラー配列
 };
 
-class LightningMainMeshChild1 : public LightningMainMeshChildParent
+
+class LightningMesh1 : public LightningMainMesh
 {
 public:
-	LightningMainMeshChild1(const char* filePath) : LightningMainMeshChildParent(filePath){}
-	~LightningMainMeshChild1()override {}
-
-	// 更新
-	void Update() override;
-
-private:
-	Easing::EasingValue lightning1Scale =
+	LightningMesh1(const char* filePath) : LightningMainMesh(filePath)
 	{
-		0.0f, 0.5f,
-		4.0f, 0.5f,
-	};
-};
+	}
 
-class LightningMainMeshChild2 : public LightningMainMeshChildParent
-{
-public:
-	LightningMainMeshChild2(const char* filePath) : LightningMainMeshChildParent(filePath) { lifeTime = 0.2f; }
-	~LightningMainMeshChild2()override {}
-
-	// 更新
-	void Update() override;
+	~LightningMesh1() override
+	{
+	}
 };

@@ -23,10 +23,12 @@ public:
 private:
 	std::string path = "";
 
-	DirectX::XMFLOAT4X4 m[MAX_INSTANCE] = {};	// 姿勢行列配列
-	float e[MAX_INSTANCE] = {};					// エミッシブ力配列
+	DirectX::XMFLOAT4X4 lightning1Transforms[MAX_INSTANCE] = {};	// 姿勢行列配列
+	float lightning1Emissives[MAX_INSTANCE] = {};					// エミッシブ力配列
 
 	std::vector<LightningMainMeshChildParent*> lightningData;
+
+
 
 	float lightningMainTimer = 0.0f;	// lightning の全体を管理するタイマー
 	float lightningMainTime = 5.0f;		// lightning の生存時間

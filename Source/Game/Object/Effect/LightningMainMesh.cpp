@@ -14,6 +14,8 @@ void LightningMainMesh::Update()
 	lightningMainTimer += Timer::Instance().DeltaTime();
 
 	int index = 0;
+
+	// lightning1 データ
 	for(auto& data : lightningData)
 	{
 		// 行列更新と寿更新
@@ -28,8 +30,8 @@ void LightningMainMesh::Update()
 		}
 
 		// 更新した値を配列にいれる
-		m[index] = data->GetTransform();
-		e[index] = data->GetEmissivePower();
+		lightning1Transforms[index] = data->GetTransform();
+		lightning1Emissives[index] = data->GetEmissivePower();
 
 		index++;
 	}
@@ -71,7 +73,7 @@ void LightningMainMesh::Update()
 void LightningMainMesh::Render(bool isShadow)
 {
 	if (lightningData.empty()) return;
-	model->Render(lightningData.size(), m, e, isShadow);
+	model->Render(lightningData.size(), lightning1Transforms, lightning1Emissives, isShadow);
 }
 
 void LightningMainMeshChild1::Update()

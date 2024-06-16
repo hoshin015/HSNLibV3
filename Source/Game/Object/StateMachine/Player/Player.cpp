@@ -285,7 +285,7 @@ void Player::CollisionVsEnemy()
 				emitter->emitterData.duration = 2.0;
 				emitter->emitterData.looping = false;
 				emitter->emitterData.burstsTime = 0.0;
-				emitter->emitterData.burstsCount = 30;
+				emitter->emitterData.burstsCount = 50;
 				emitter->emitterData.particleKind = 1;
 				emitter->emitterData.particleLifeTimeMin = 0.4f;
 				emitter->emitterData.particleLifeTimeMax = 0.6f;

@@ -1,17 +1,18 @@
 #include "Particles.hlsli"
+#include "../RegisterNum.h"
 
 RWStructuredBuffer<Particle> particleBuffer : register(u0);
 ConsumeStructuredBuffer<uint> particlePool : register(u1);
 
 
-[numthreads(16, 1, 1)]
+[numthreads(THREAD_NUM_X, 1, 1)]
 void main(uint3 DTid : SV_DispatchThreadID)
 {
 	// 未使用リストの末尾から取り出す
     uint id = particlePool.Consume();
 
     const float noise_scale = 1.0;
-    float f0 = rand(id * noise_scale * emitCount * deltaTime);
+    float f0 = rand(id * noise_scale * emitCount * deltaTime * DTid.x);
     float f1 = rand(f0 * noise_scale);
     float f2 = rand(f1 * noise_scale);
     float f3 = rand(f2 * noise_scale);

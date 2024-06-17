@@ -11,7 +11,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
 	uint id = particlePool.Consume();
 
 	const float noise_scale = 1.0;
-	float       f0          = rand(id * noise_scale * emitCount * deltaTime);
+    float f0 = rand(id * noise_scale * emitCount * deltaTime);
 	float       f1          = rand(f0 * noise_scale);
 	float       f2          = rand(f1 * noise_scale);
 	float       f3          = rand(f2 * noise_scale);

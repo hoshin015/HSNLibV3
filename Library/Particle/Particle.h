@@ -4,6 +4,7 @@
 #include <DirectXMath.h>
 #include <memory>
 #include "../2D/Sprite.h"
+#include "../RegisterNum.h"
 
 class Particle
 {
@@ -22,7 +23,6 @@ public:
 	}
 
 	const int MAX_PARTICLE = 500000;
-	const int THREAD_NUM_X = 16;
 
 	// RWStructuredBuffer で GPU とやりとりする構造体データ(保存しておくべきデータみたいな)
 	struct ParticleData

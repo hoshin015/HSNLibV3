@@ -56,6 +56,15 @@ public:
 		int power
 	);
 
+	// ‹…‚Æ‹…‚ÌÕ“ËÀ•Wæ“¾
+	static bool SphereVsSphereCollisionPoint(
+		const DirectX::XMFLOAT3& positionA,
+		float radiusA,
+		const DirectX::XMFLOAT3& positionB,
+		float radiusB,
+		DirectX::XMFLOAT3& collisionPoint
+	);
+
 	// ‰~’Œ‚Æ‰~’Œ‚ÌŒğ·”»’è
 	static bool IntersectCylinderVsCylinder(
 		const DirectX::XMFLOAT3& positionA,

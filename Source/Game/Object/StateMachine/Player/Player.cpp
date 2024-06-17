@@ -267,13 +267,13 @@ void Player::CollisionVsEnemy()
 			}
 
 			// Õ“Ëˆ—
-			DirectX::XMFLOAT3 outPosition;
-			if (Collision::IntersectSphereVsSphere(
+			DirectX::XMFLOAT3 collisionPoint;
+			if (Collision::SphereVsSphereCollisionPoint(
 				eBonePos,
 				eBoneSphere.radius,
 				bonePos,
 				playerAnimSphereCollision.radius,
-				outPosition)
+				collisionPoint)
 				)
 			{
 				playerAnimSphereCollision.isDamaged = true;
@@ -281,11 +281,11 @@ void Player::CollisionVsEnemy()
 				ConsoleData::Instance().logs.push_back("Damage!");
 
 				Emitter* emitter = new Emitter();
-				emitter->position = outPosition;
+				emitter->position = collisionPoint;
 				emitter->emitterData.duration = 2.0;
 				emitter->emitterData.looping = false;
 				emitter->emitterData.burstsTime = 0.0;
-				emitter->emitterData.burstsCount = 50;
+				emitter->emitterData.burstsCount = 256;
 				emitter->emitterData.particleKind = 1;
 				emitter->emitterData.particleLifeTimeMin = 0.4f;
 				emitter->emitterData.particleLifeTimeMax = 0.6f;
@@ -304,7 +304,7 @@ void Player::CollisionVsEnemy()
 				EmitterManager::Instance().Register(emitter);
 
 				Emitter* emitter1 = new Emitter();
-				emitter1->position = outPosition;
+				emitter1->position = collisionPoint;
 				emitter1->emitterData.duration = 2.0;
 				emitter1->emitterData.looping = false;
 				emitter1->emitterData.burstsTime = 0.03;
@@ -331,7 +331,7 @@ void Player::CollisionVsEnemy()
 				EmitterManager::Instance().Register(emitter1);
 
 				Emitter* emitter2 = new Emitter();
-				emitter2->position = outPosition;
+				emitter2->position = collisionPoint;
 				emitter2->emitterData.duration = 2.0;
 				emitter2->emitterData.looping = false;
 				emitter2->emitterData.burstsTime = 0.0;
@@ -357,7 +357,7 @@ void Player::CollisionVsEnemy()
 
 				int dmg = rand() % 20 + 1;
 				std::string dmgText = std::to_string(dmg);
-				DamageTextManager::Instance().Register({ dmgText, outPosition });
+				DamageTextManager::Instance().Register({ dmgText, collisionPoint });
 			}
 		}
 	}

@@ -14,6 +14,7 @@
 #define MAX_INSTANCE					512
 #define GAUSSIAN_DOWNSAMPLING_COUNT		4
 #define SHADOWMAP_COUNT					4
+#define THREAD_NUM_X					256
 
 // ====== ÉTÉìÉvÉâÅ[ ======
 #define _pointSampler					0

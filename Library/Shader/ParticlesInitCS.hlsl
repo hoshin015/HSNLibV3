@@ -1,9 +1,10 @@
 #include "Particles.hlsli"
+#include "../RegisterNum.h"
 
 RWStructuredBuffer<Particle> particleBuffer : register(u0);
 AppendStructuredBuffer<uint> deadList : register(u1);
 
-[numthreads(16, 1, 1)]
+[numthreads(THREAD_NUM_X, 1, 1)]
 void main( uint3 dTid : SV_DispatchThreadID )
 {
     uint id = dTid.x;

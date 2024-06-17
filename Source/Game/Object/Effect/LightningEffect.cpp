@@ -167,7 +167,7 @@ void LightningEffect::Update()
 			emitter->emitterData.duration = 0.7;
 			emitter->emitterData.looping = false;
 			emitter->emitterData.burstsTime = 0.05;
-			emitter->emitterData.burstsCount = 100;
+			emitter->emitterData.burstsCount = 256;
 			emitter->emitterData.particleKind = 5;
 			emitter->emitterData.particleLifeTimeMin = 0.05f;
 			emitter->emitterData.particleLifeTimeMax = 2.0f;

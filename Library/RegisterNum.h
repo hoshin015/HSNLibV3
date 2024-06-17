@@ -59,6 +59,10 @@
 #define _accumTexture		0
 #define _revealTexture		1
 
+// bloom
+#define _hdrColorBufferTexture 0
+#define _downSampledTexture 0
+
 // radialBlur
 #define _radialBlurTexture	0
 
@@ -97,6 +101,11 @@
 // wboit
 #define _accumTexture		t0
 #define _revealTexture		t1
+
+// bloom
+#define _hdrColorBufferTexture t0
+#define _downSampledTexture t0
+
 // radialBlur
 #define _radialBlurTexture	t0
 

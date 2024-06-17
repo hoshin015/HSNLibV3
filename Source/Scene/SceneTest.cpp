@@ -315,13 +315,23 @@ void SceneTest::Render()
 
 		// ====== ブルーム処理しての描画 ======
 		bloom->Make(radialBlur->GetSrv());
-		bitBlockTransfer->blit(bloom->GetSrvAddress(), 0, 1);
+		ID3D11ShaderResourceView* shvs[2] =
+		{
+			radialBlur->GetSrv(),
+			bloom->GetSrv()
+		};
+		bitBlockTransfer->blit(shvs, 0, 2, bloom->GetFinalPassPs());
 	}
 	else
 	{
 		// ====== ブルーム処理しての描画 ======
 		bloom->Make(frameBuffer->shaderResourceViews[0].Get());
-		bitBlockTransfer->blit(bloom->GetSrvAddress(), 0, 1);
+		ID3D11ShaderResourceView* shvs[2] =
+		{
+			frameBuffer->shaderResourceViews[0].Get(),
+			bloom->GetSrv()
+		};
+		bitBlockTransfer->blit(shvs, 0, 2, bloom->GetFinalPassPs());
 	}
 
 	// ======　ブルームなしの描画　======　

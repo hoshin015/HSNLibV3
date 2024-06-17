@@ -892,6 +892,21 @@
     <FxCompile Include="Library\Shader\ParticlesEmitCS.hlsl">
       <Filter>シェーダーファイル\Particle</Filter>
     </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianBlurVerticalPS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianBlurHorizontalPS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianBlurUpSamplingPS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianBlurDownSamplingPS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GlowExtractionPS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\Shader\Light.hlsli">

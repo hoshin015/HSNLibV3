@@ -195,47 +195,8 @@ void SceneTest::Update()
 
 	if (InputManager::Instance().GetKeyPressed(Keyboard::F2))
 	{
-		LightningEffect::Instance().Emit();
-		//LightningData* l = new LightningData();
-		//l->SetLifeTime(1.0f);
-		//l->SetScale({ 0.5,0.5,0.5 });
-		//l->SetEmissivePower(2.0f);
-		//LightningEffect::Instance().lightningMesh1->Register(l);
-		//
-		//LightningData* l1 = new LightningData();
-		//l1->SetLifeTime(1.0f);
-		//l1->SetScale({ 1,0.5,1 });
-		//LightningEffect::Instance().lightningMesh2->Register(l1);
-		//
-		//LightningData* l2 = new LightningData();
-		//l2->SetLifeTime(1.7f);
-		//l2->SetPosY(l2->GetPosY() + 0.001);
-		//l2->SetEmissivePower(0.5f);
-		//l2->SetScale({ 4,0.5,4 });
-		//l2->SetColor({ 0.8,0.8,1.0,1 });
-		//l2->SetUpdateType(LightningData::LightningFuncEnum::Area);
-		//LightningEffect::Instance().lightningMesh3->Register(l2);
-		//
-		//Emitter* emitter = new Emitter();
-		//emitter->position = { 0, 0, 0 };
-		//emitter->emitterData.duration = 1.2;
-		//emitter->emitterData.looping = false;
-		//emitter->emitterData.burstsTime = 0.05;
-		//emitter->emitterData.burstsCount = 5;
-		//emitter->emitterData.particleKind = 4;
-		//emitter->emitterData.particleLifeTimeMin = 0.6f;
-		//emitter->emitterData.particleLifeTimeMax = 2.0f;
-		//emitter->emitterData.particleSpeedMin = 0.025f;
-		//emitter->emitterData.particleSpeedMax = 2.0f;
-		//emitter->emitterData.particleSizeMin = { 0.1f, 0.05 };
-		//emitter->emitterData.particleSizeMax = { 0.4f, 0.1f };
-		//emitter->emitterData.particleColorMin = { 2.8, 2.8, 20.0, 1 };
-		//emitter->emitterData.particleColorMax = { 2.8, 2.8, 20.5, 1 };
-		//emitter->emitterData.particleFrictionMin = 0;
-		//emitter->emitterData.particleFrictionMax = 0.01;
-		//emitter->emitterData.particleGravity = 0;
-		//emitter->emitterData.particleBillboardType = 1;
-		//EmitterManager::Instance().Register(emitter);
+		DirectX::XMFLOAT3 rPos = { (rand() % 10) - 5.0f, 0, rand() % 10 - 5.0f };
+		LightningEffect::Instance().Emit(rPos);
 	}
 	LightningEffect::Instance().Update();
 }

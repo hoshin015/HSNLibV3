@@ -886,6 +886,9 @@
     <FxCompile Include="Library\Shader\RadialBlurPS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
+    <FxCompile Include="Library\Shader\PhongPlPS.hlsl">
+      <Filter>シェーダーファイル\Phong</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\Shader\Light.hlsli">

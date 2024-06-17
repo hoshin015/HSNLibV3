@@ -66,7 +66,7 @@ void LightningData::UpdateTransform()
 	DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(GetPosX(), GetPosY(), GetPosZ());
 
 	// ４つの行列を組み合わせ、ワールド行列を作成
-	DirectX::XMMATRIX W = S * R * T * MSC;
+	DirectX::XMMATRIX W = MSC * S * R * T;
 	DirectX::XMStoreFloat4x4(&transform, W);
 }
 

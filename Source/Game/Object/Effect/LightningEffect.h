@@ -24,10 +24,11 @@ public:
 	void Render(bool isShadow = false);
 
 	// ライトニング追加
-	void Emit();
+	void Emit(DirectX::XMFLOAT3 pos);
 
 	struct LightningEmitter
 	{
+		DirectX::XMFLOAT3 position;
 		float timer = 0.0f;
 		float destoryTime = 10.0f;
 		bool addLightning0 = false;

@@ -26,6 +26,7 @@ void LightningEffect::Update()
 			while (bottomTimer > bottomTime)
 			{
 				LightningData* l = new LightningData();
+				l->SetPos(lightningEmit.position);
 				l->SetLifeTime(0.1f);
 				float s = Math::RandomRange(0.025f, 0.2f);
 				l->SetScale({ s,s,s });
@@ -50,7 +51,6 @@ void LightningEffect::Update()
 		}
 		
 
-
 		lightningEmit.timer += deltaTime;
 		if (!lightningEmit.addLightning0 && lightningEmit.timer >= lightning0GenerateTime)
 		{
@@ -61,6 +61,7 @@ void LightningEffect::Update()
 			scaleValue.endValue = 0.2f;
 
 			LightningData* l = new LightningData();
+			l->SetPos(lightningEmit.position);
 			l->SetLifeTime(0.1f);
 			l->SetScale({ 0.5,1.0,0.5 });
 			l->SetEmissivePower(2.0f);
@@ -71,6 +72,7 @@ void LightningEffect::Update()
 			l->SetColor({ 2.8, 2.8, 20.5, 1 });
 			lightningMesh1->Register(l);
 			LightningData* l2 = new LightningData();
+			l2->SetPos(lightningEmit.position);
 			l2->SetLifeTime(0.1f);
 			l2->SetScale({ 0.5,1.0,0.5 });
 			l2->SetEmissivePower(2.0f);
@@ -93,6 +95,7 @@ void LightningEffect::Update()
 			scaleValue.endValue = 0.5f;
 
 			LightningData* l = new LightningData();
+			l->SetPos(lightningEmit.position);
 			l->SetLifeTime(0.4f);
 			l->SetScale({ 0.5,1.0,0.5 });
 			l->SetEmissivePower(2.0f);
@@ -103,6 +106,7 @@ void LightningEffect::Update()
 			l->SetColor({ 2.8, 2.8, 20.5, 1 });
 			lightningMesh1->Register(l);
 			LightningData* l2 = new LightningData();
+			l2->SetPos(lightningEmit.position);
 			l2->SetLifeTime(0.4f);
 			l2->SetScale({ 0.5,0.75,0.5 });
 			l2->SetEmissivePower(2.0f);
@@ -124,6 +128,7 @@ void LightningEffect::Update()
 			scaleValue.endValue = 0.5f;
 
 			LightningData* l2 = new LightningData();
+			l2->SetPos(lightningEmit.position);
 			l2->SetLifeTime(0.5f);
 			l2->SetScale({ 0.5,0.5,0.5 });
 			l2->SetEmissivePower(2.0f);
@@ -145,6 +150,7 @@ void LightningEffect::Update()
 			scaleValue.endValue = 0.3f;
 
 			LightningData* l2 = new LightningData();
+			l2->SetPos(lightningEmit.position);
 			l2->SetLifeTime(0.3f);
 			l2->SetScale({ 0.5,1.0,0.5 });
 			l2->SetEmissivePower(2.0f);
@@ -157,7 +163,7 @@ void LightningEffect::Update()
 			lightningEmit.addLightning3 = true;
 
 			Emitter* emitter = new Emitter();
-			emitter->position = { 0, 0, 0 };
+			emitter->position = lightningEmit.position;
 			emitter->emitterData.duration = 0.7;
 			emitter->emitterData.looping = false;
 			emitter->emitterData.burstsTime = 0.05;
@@ -204,12 +210,13 @@ void LightningEffect::Render(bool isShadow)
 	lightningMesh5->Render(isShadow);
 }
 
-void LightningEffect::Emit()
+void LightningEffect::Emit(DirectX::XMFLOAT3 pos)
 {
 	int emitNum = 1;
 	for(int i = 0; i < emitNum; i++)
 	{
 		LightningData* l2 = new LightningData();
+		l2->SetPos(pos);
 		l2->SetLifeTime(1.7f);
 		l2->SetPosY(l2->GetPosY() + 0.001);
 		l2->SetEmissivePower(0.5f);
@@ -219,11 +226,11 @@ void LightningEffect::Emit()
 		lightningMesh3->Register(l2);
 
 		Emitter* emitter = new Emitter();
-		emitter->position = { 0, 0, 0 };
-		emitter->emitterData.duration = 0.7;
+		emitter->position = pos;
+		emitter->emitterData.duration = 0.9;
 		emitter->emitterData.looping = false;
-		emitter->emitterData.burstsTime = 0.05;
-		emitter->emitterData.burstsCount = 5;
+		emitter->emitterData.burstsTime = 0.1;
+		emitter->emitterData.burstsCount = 10;
 		emitter->emitterData.particleKind = 4;
 		emitter->emitterData.particleLifeTimeMin = 0.6f;
 		emitter->emitterData.particleLifeTimeMax = 1.0f;
@@ -240,6 +247,7 @@ void LightningEffect::Emit()
 		EmitterManager::Instance().Register(emitter);
 
 		LightningEmitter lightningEmitter;
+		lightningEmitter.position = pos;
 		lightningEmitters.push_back(lightningEmitter);
 	}
 }

@@ -67,6 +67,18 @@ void main( uint3 DTid : SV_DispatchThreadID )
             p.scale = p.startScale * (p.lifeTimer / p.lifeTime);
             p.lifeTimer -= deltaTime;
         }
+        if(p.kind == 5)
+        {
+            p.velocity -= (p.velocity * 0.3f * deltaTime);
+            p.velocity.y += -p.gravity * deltaTime;
+            p.position += p.velocity * deltaTime;
+
+            p.color.a = (p.lifeTimer / p.lifeTime);
+
+            p.scale = p.startScale * (p.lifeTimer / p.lifeTime);
+
+            p.lifeTimer -= deltaTime;
+        }
         
         if(p.lifeTimer <= 0)
         {

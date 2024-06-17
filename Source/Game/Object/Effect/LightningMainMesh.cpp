@@ -15,10 +15,30 @@ void LightningData::LightningAreaUpdate()
 }
 void LightningData::LightningMainUpdate()
 {
+	float scale = Easing::GetNowParam(Easing::InCubic<float>, lifeTimer, val1);
+	DirectX::XMFLOAT3 s = GetScale();
+	s.x = scale;
+	s.z = scale;
+	SetScale(s);
+
+	float ePower = 4 - Easing::InCirc(lifeTimer, lifeTime, 2.0f, 0.0f);
+	SetEmissivePower(ePower);
+
+	float alpha = 1 - Easing::OutBounce(lifeTimer, lifeTime, 1.0f, 0.0f);
+	DirectX::XMFLOAT4 c = GetColor();
+	c.w = alpha;
+	SetColor(c);
+}
+
+void LightningData::LightningBottomUpdate()
+{
 	float alpha = Easing::OutBounce(lifeTimer, lifeTime, 0.7f, 0.0f);
 	DirectX::XMFLOAT4 c = GetColor();
 	c.w = alpha;
 	SetColor(c);
+
+	float ePower = 4 - Easing::InCirc(lifeTimer, lifeTime, 2.0f, 0.0f);
+	SetEmissivePower(ePower);
 }
 
 

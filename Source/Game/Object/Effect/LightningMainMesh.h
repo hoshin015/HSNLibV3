@@ -15,6 +15,7 @@ public:
 		funcs.push_back(&LightningData::LightningNoUpdate);
 		funcs.push_back(&LightningData::LightningAreaUpdate);
 		funcs.push_back(&LightningData::LightningMainUpdate);
+		funcs.push_back(&LightningData::LightningBottomUpdate);
 	}
 
 	~LightningData() override
@@ -35,6 +36,7 @@ public:
 		NO,
 		Area,
 		Main,
+		Bottom,
 		END,
 	};
 
@@ -43,6 +45,7 @@ public:
 	void                          LightningNoUpdate();
 	void                          LightningAreaUpdate();
 	void                          LightningMainUpdate();
+	void                          LightningBottomUpdate();
 
 private:
 	DirectX::XMMATRIX MSC;
@@ -56,6 +59,8 @@ private:
 	LightningMainMesh* owner;
 
 	LightningFuncEnum updateType = LightningFuncEnum::NO;
+
+	Easing::EasingValue val1;
 
 public:
 	// lifeTime
@@ -78,6 +83,9 @@ public:
 
 	// updateType
 	void SetUpdateType(LightningFuncEnum t) { updateType = t; }
+
+	// val1
+	void SetVal1(Easing::EasingValue v) { val1 = v; }
 };
 
 // lightning ‚Ü‚Æ‚ß‚éƒNƒ‰ƒX

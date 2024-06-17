@@ -30,17 +30,28 @@ public:
 	{
 		float timer = 0.0f;
 		float destoryTime = 10.0f;
+		bool addLightning0 = false;
 		bool addLightning1 = false;
+		bool addLightning2 = false;
+		bool addLightning3 = false;
 	};
 
 
 	std::unique_ptr<LightningMesh1> lightningMesh1;
 	std::unique_ptr<LightningMesh1> lightningMesh2;
 	std::unique_ptr<LightningMesh1> lightningMesh3;
+	std::unique_ptr<LightningMesh1> lightningMesh4;
+	std::unique_ptr<LightningMesh1> lightningMesh5;
 private:
 	float lifeTime = 10.0f;
 
+	float lightning0GenerateTime = 1.15f;
 	float lightning1GenerateTime = 1.2f;
+	float lightning2GenerateTime = 1.25f;
+	float lightning3GenerateTime = 1.3f;
+
+	float bottomTime = 0.01f;
+	float bottomTimer = 0.0f;
 
 	std::vector<LightningEmitter> lightningEmitters;
 };

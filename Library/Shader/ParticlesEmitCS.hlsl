@@ -148,6 +148,27 @@ void main(uint3 DTid : SV_DispatchThreadID)
 			p.velocity.z = 0;
 		}
 		break;
+	case 5:
+		{
+			p.position   = emitterPosition;
+			float y      = rand(f8) * 10;
+			p.position.y = y;
+
+			float particleSpeed = RandomRange(particleSpeedMin.x, particleSpeedMax.x, seed);
+			p.velocity.y = 1 * particleSpeed;
+
+			seed                = random(float2(seed, deltaTime));
+			if (f7 > 0.5)
+				particleSpeed *= -1;
+			p.velocity.x = seed * particleSpeed;
+			seed         = random(float2(seed, deltaTime));
+
+
+			if (f8 > 0.5)
+				particleSpeed *= -1;
+			p.velocity.z = seed * particleSpeed;
+		}
+		break;
 	}
 
 

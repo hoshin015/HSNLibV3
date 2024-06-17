@@ -121,7 +121,7 @@ PSOUT main(VS_OUT pin)
 
     // ------------ wboit ------------
     float4 color = finalColor;
-    float weight = max(min(1.0, max(max(color.r, color.g), color.b) * color.a), color.a) * clamp(0.03 / (1e-5 + pow(pin.position.z / 10000.0, 4.0)), 1e-2, 3e3);
+    float weight = max(min(1.0, max(max(color.r, color.g), color.b) * color.a), color.a) * clamp(0.03 / (1e-5 + pow(pin.position.z / 1000.0, 4.0)), 1e-2, 3e3);
 
 	PSOUT psout;
     psout.accum = float4(color.rgb * color.a, color.a) * weight;

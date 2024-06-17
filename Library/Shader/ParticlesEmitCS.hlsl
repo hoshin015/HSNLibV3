@@ -3,6 +3,7 @@
 RWStructuredBuffer<Particle> particleBuffer : register(u0);
 ConsumeStructuredBuffer<uint> particlePool : register(u1);
 
+
 [numthreads(16, 1, 1)]
 void main(uint3 DTid : SV_DispatchThreadID)
 {
@@ -21,7 +22,6 @@ void main(uint3 DTid : SV_DispatchThreadID)
     float f8 = rand(f7 * noise_scale);
     float seed = random(float2(f0, deltaTime));
 
-
     Particle p = particleBuffer[id];
 
 	// ‹¤’Ê
@@ -34,7 +34,6 @@ void main(uint3 DTid : SV_DispatchThreadID)
 
     p.scale.x = RandomRange(particleSizeMin.x, particleSizeMax.x, f4);
     p.scale.y = RandomRange(particleSizeMin.y, particleSizeMax.y, f5);
-
 
     p.lifeTime = RandomRange(particleLifeTimeMin, particleLifeTimeMax, f6);
     p.lifeTimer = p.lifeTime;

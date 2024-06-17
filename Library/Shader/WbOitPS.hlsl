@@ -11,6 +11,8 @@ float4 main(VS_OUT pin) : SV_TARGET
 {
     float4 accum = accumTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
     float reveal = revealTexture.Sample(samplerStates[_pointSampler], pin.texcoord).r;
+
+    clip(1.0 - reveal - 0.01);
     
     // ƒJƒ‰[‚ğ³‹K‰»
     float3 normalizedColor = accum.rgb / max(accum.a, 1e-5);

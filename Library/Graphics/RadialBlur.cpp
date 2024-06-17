@@ -53,6 +53,7 @@ void RadialBlur::Make(ID3D11ShaderResourceView* shaderResourceView)
 void RadialBlur::DrawDebugGui()
 {
 	ImGui::Begin("RadialBlur");
+	ImGui::Checkbox("IsRadial", &isRadial);
 	ImGui::SliderFloat2("blurCenter", &radialBlurConstants.blurCenter.x, 0.0f, 1.0f);
 	ImGui::DragFloat("blurPower", &radialBlurConstants.blurPower, 0.01f, 0.0f, 0.2f);
 	ImGui::DragFloat("samplingCount", &radialBlurConstants.samplingCount, 1, 1.0f, 12.0f);

@@ -11,6 +11,8 @@ Texture2D bloomMap : register(t1);
 float4 main(VS_OUT pin) : SV_TARGET
 {
     float4 color = textureMap.Sample(samplerStates[POINT], pin.texcoord);
+
+    clip(color.a);
     
     // ブルームテクスチャを加算する
     color.rgb += bloomMap.Sample(samplerStates[POINT], pin.texcoord).rgb;

@@ -309,16 +309,20 @@ void SceneTest::Render()
 	frameBuffer->DeActivate();
 
 	// ====== ラジアルブラー ======
-	radialBlur->Make(frameBuffer->shaderResourceViews[0].Get());
+	if(radialBlur->GetIsRadial())
+	{
+		radialBlur->Make(frameBuffer->shaderResourceViews[0].Get());
 
-#if 1
-	// ====== ブルーム処理しての描画 ======
-	bloom->Make(radialBlur->GetSrv());
-	bitBlockTransfer->blit(bloom->GetSrvAddress(), 0, 1);
-#else
-	// ====== そのまま描画 ======
-	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
-#endif
+		// ====== ブルーム処理しての描画 ======
+		bloom->Make(radialBlur->GetSrv());
+		bitBlockTransfer->blit(bloom->GetSrvAddress(), 0, 1);
+	}
+	else
+	{
+		// ====== ブルーム処理しての描画 ======
+		bloom->Make(frameBuffer->shaderResourceViews[0].Get());
+		bitBlockTransfer->blit(bloom->GetSrvAddress(), 0, 1);
+	}
 
 	// ======　ブルームなしの描画　======　
 

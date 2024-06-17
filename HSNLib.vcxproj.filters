@@ -868,7 +868,7 @@
     <FxCompile Include="Library\Shader\ParticlesPS.hlsl">
       <Filter>シェーダーファイル\Particle</Filter>
     </FxCompile>
-    <FxCompile Include="Library\Shader\ParticlesEmitCS.hlsl">
+    <FxCompile Include="Library\Shader\ParticlesSingleEmitCS.hlsl">
       <Filter>シェーダーファイル\Particle</Filter>
     </FxCompile>
     <FxCompile Include="Library\Shader\WaterPS.hlsl">
@@ -888,6 +888,9 @@
     </FxCompile>
     <FxCompile Include="Library\Shader\PhongPlPS.hlsl">
       <Filter>シェーダーファイル\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ParticlesEmitCS.hlsl">
+      <Filter>シェーダーファイル\Particle</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

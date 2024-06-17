@@ -36,8 +36,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 Kd = float3(0.8, 0.8, 0.8);
     float3 Ks = float3(1, 1, 1);
     float3 Ka = float3(1, 1, 1);
-
-
+    
 	// ------ ディレクションライト ------
     float3 L = normalize(directionalLightData.direction.xyz);
 
@@ -50,8 +49,6 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 directionSpecular = CalcPhongSpecular(N, L, directionalLightData.color.rgb, ToCamera, 128.0f, Ks);
 
 
-    
-    
 
 	// 平行光源の影なので、平行光源に対して影を適応
     float3 shadow = CalcCascadedShadowColorPCFFilter(shadowTexture, samplerStates[_shadowSampler], pin.shadowTexcoord,
@@ -129,7 +126,7 @@ float4 main(VS_OUT pin) : SV_TARGET
 
 
     float3 spec = CalcPhongSpecular(N, ToCamera, directionalLightData.color.rgb, ToCamera, 1.0f, Ks);
-    float ePower = smoothstep(0.4, 0.6, spec.z);
+    float ePower = smoothstep(0.1, 0.9, spec.z);
     finalColor.rgb += float3(1, 1, 1) * (ePower * 1.0);
 	
     return finalColor;

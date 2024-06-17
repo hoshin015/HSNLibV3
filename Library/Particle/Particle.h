@@ -78,6 +78,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>    inputLayout;
 	Microsoft::WRL::ComPtr<ID3D11ComputeShader>  initCs;
 	Microsoft::WRL::ComPtr<ID3D11ComputeShader>  updateCs;
+	Microsoft::WRL::ComPtr<ID3D11ComputeShader>  emitSingleCs;
 	Microsoft::WRL::ComPtr<ID3D11ComputeShader>  emitCs;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>         constantBuffer;
 

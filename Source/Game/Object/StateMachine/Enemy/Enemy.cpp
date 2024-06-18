@@ -2,7 +2,7 @@
 
 void Enemy::Initialize()
 {
-	PlayAnimation(6, true);
+	PlayAnimation(10, true);
 }
 
 void Enemy::Update()

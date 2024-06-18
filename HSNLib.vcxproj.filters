@@ -86,9 +86,6 @@
     <Filter Include="1_HSNLib\Particle">
       <UniqueIdentifier>{3794878a-d848-4ebc-9325-c394c153a4ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="シェーダーファイル\Phong">
-      <UniqueIdentifier>{a8cf39ef-27ea-4d1d-bedc-82baf9d95c28}</UniqueIdentifier>
-    </Filter>
     <Filter Include="シェーダーファイル\SkinnedMesh">
       <UniqueIdentifier>{289c68e9-53d2-4644-bcc7-03f397d53d09}</UniqueIdentifier>
     </Filter>
@@ -130,6 +127,9 @@
     </Filter>
     <Filter Include="2_Source\Game\Object\Base">
       <UniqueIdentifier>{a8ee7d03-722d-464d-8e30-c7bee80e6b5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\PhongPbr">
+      <UniqueIdentifier>{a8cf39ef-27ea-4d1d-bedc-82baf9d95c28}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -782,16 +782,16 @@
       <Filter>シェーダーファイル\Shadow</Filter>
     </FxCompile>
     <FxCompile Include="Library\Shader\PhongPS.hlsl">
-      <Filter>シェーダーファイル\Phong</Filter>
+      <Filter>シェーダーファイル\PhongPbr</Filter>
     </FxCompile>
     <FxCompile Include="Library\Shader\PhongVS.hlsl">
-      <Filter>シェーダーファイル\Phong</Filter>
+      <Filter>シェーダーファイル\PhongPbr</Filter>
     </FxCompile>
     <FxCompile Include="Library\Shader\StaticPhongPS.hlsl">
-      <Filter>シェーダーファイル\Phong</Filter>
+      <Filter>シェーダーファイル\PhongPbr</Filter>
     </FxCompile>
     <FxCompile Include="Library\Shader\StaticPhongVS.hlsl">
-      <Filter>シェーダーファイル\Phong</Filter>
+      <Filter>シェーダーファイル\PhongPbr</Filter>
     </FxCompile>
     <FxCompile Include="Library\Shader\SkinnedMesh_PS.hlsl">
       <Filter>シェーダーファイル\SkinnedMesh</Filter>
@@ -878,16 +878,16 @@
       <Filter>シェーダーファイル\WbOit</Filter>
     </FxCompile>
     <FxCompile Include="Library\Shader\WbOitPhongPS.hlsl">
-      <Filter>シェーダーファイル\Phong</Filter>
+      <Filter>シェーダーファイル\PhongPbr</Filter>
     </FxCompile>
     <FxCompile Include="Library\Shader\WbOitStaticPhongPS.hlsl">
-      <Filter>シェーダーファイル\Phong</Filter>
+      <Filter>シェーダーファイル\PhongPbr</Filter>
     </FxCompile>
     <FxCompile Include="Library\Shader\RadialBlurPS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
     <FxCompile Include="Library\Shader\PhongPlPS.hlsl">
-      <Filter>シェーダーファイル\Phong</Filter>
+      <Filter>シェーダーファイル\PhongPbr</Filter>
     </FxCompile>
     <FxCompile Include="Library\Shader\ParticlesEmitCS.hlsl">
       <Filter>シェーダーファイル\Particle</Filter>
@@ -906,6 +906,12 @@
     </FxCompile>
     <FxCompile Include="Library\Shader\GlowExtractionPS.hlsl">
       <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\PbrPS.hlsl">
+      <Filter>シェーダーファイル\PhongPbr</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\UnityPbrPS.hlsl">
+      <Filter>シェーダーファイル\PhongPbr</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -934,10 +940,10 @@
       <Filter>シェーダーファイル\Shadow</Filter>
     </None>
     <None Include="Library\Shader\Phong.hlsli">
-      <Filter>シェーダーファイル\Phong</Filter>
+      <Filter>シェーダーファイル\PhongPbr</Filter>
     </None>
     <None Include="Library\Shader\StaticPhong.hlsli">
-      <Filter>シェーダーファイル\Phong</Filter>
+      <Filter>シェーダーファイル\PhongPbr</Filter>
     </None>
     <None Include="Library\Shader\SkinnedMesh.hlsli">
       <Filter>シェーダーファイル\SkinnedMesh</Filter>
@@ -971,6 +977,9 @@
     </None>
     <None Include="Library\Shader\Particles.hlsli">
       <Filter>シェーダーファイル\Particle</Filter>
+    </None>
+    <None Include="Library\Shader\BidirectionalReflectanceDistributionFunction.hlsli">
+      <Filter>シェーダーファイル\PhongPbr</Filter>
     </None>
   </ItemGroup>
 </Project>

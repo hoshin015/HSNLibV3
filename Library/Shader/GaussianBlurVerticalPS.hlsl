@@ -18,8 +18,8 @@ float4 main(float4 position : SV_POSITION, float2 texcoord : TEXCOORD) : SV_TARG
     float4 sampledColor = hdrColorBufferTexture.Sample(samplerStates[_linearBorderBlackSampler], texcoord) * weight[0];
     for (int i = 1; i < 3; i++)
     {
-        sampledColor += hdrColorBufferTexture.Sample(samplerStates[_linearBorderBlackSampler], texcoord + float2(offset[i] / width, 0.0)) * weight[i];
-        sampledColor += hdrColorBufferTexture.Sample(samplerStates[_linearBorderBlackSampler], texcoord - float2(offset[i] / width, 0.0)) * weight[i];
+        sampledColor += hdrColorBufferTexture.Sample(samplerStates[_linearBorderBlackSampler], texcoord + float2(0.0, offset[i] / height)) * weight[i];
+        sampledColor += hdrColorBufferTexture.Sample(samplerStates[_linearBorderBlackSampler], texcoord - float2(0.0, offset[i] / height)) * weight[i];
     }
 #else
 	//https://software.intel.com/en-us/blogs/2014/07/15/an-investigation-of-fast-real-time-gpu-based-image-blur-algorithms
@@ -28,8 +28,8 @@ float4 main(float4 position : SV_POSITION, float2 texcoord : TEXCOORD) : SV_TARG
 	float4 sampledColor = 0;
 	for (int i = 0; i < 2; i++)
 	{
-		sampledColor += hdrColorBufferTexture.Sample(samplerStates[_linearBorderBlackSampler], texcoord + float2(offset[i], 0.0) / width) * weight[i];
-		sampledColor += hdrColorBufferTexture.Sample(samplerStates[_linearBorderBlackSampler], texcoord - float2(offset[i], 0.0) / width) * weight[i];
+		sampledColor += hdrColorBufferTexture.Sample(samplerStates[_linearBorderBlackSampler], texcoord + float2(0.0, offset[i]) / height) * weight[i];
+		sampledColor += hdrColorBufferTexture.Sample(samplerStates[_linearBorderBlackSampler], texcoord - float2(0.0, offset[i]) / height) * weight[i];
 	}
 #endif
     return sampledColor;

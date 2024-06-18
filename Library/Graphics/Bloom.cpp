@@ -14,8 +14,8 @@ Bloom::Bloom(uint32_t width, uint32_t height)
 	bitBlockTransfer = std::make_unique<FullScreenQuad>();
 
 	// フレームバッファの解像度をダウンサンプリング
-	uint32_t downsampledWidth = width / 2;
-	uint32_t downsampledHeight = height / 2;
+	uint32_t downsampledWidth = width / 4;
+	uint32_t downsampledHeight = height / 4;
 
 	// FrameBuffer 作成
 	glowExtractionBuffer = std::make_unique<FrameBuffer>(downsampledWidth, downsampledHeight);
@@ -46,14 +46,6 @@ Bloom::Bloom(uint32_t width, uint32_t height)
 	bufferDesc.StructureByteStride = 0;
 	HRESULT hr = device->CreateBuffer(&bufferDesc, nullptr, luminanceExtractionConstantBuffer.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
-	
-
-	bufferDesc.ByteWidth = sizeof(GaussianConstants);
-	hr = device->CreateBuffer(&bufferDesc, nullptr, gaussianConstantBuffer.GetAddressOf());
-	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
-
-	// 重みテーブルを作成してガウシアンフィルタの定数バッファに入れておく
-	CalcWeightsTableFromGaussian(2.0f);
 }
 
 void Bloom::Make(ID3D11ShaderResourceView* shaderResourceView)
@@ -77,9 +69,6 @@ void Bloom::Make(ID3D11ShaderResourceView* shaderResourceView)
 	glowExtractionBuffer->DeActivate();
 
 	// ===== ガウシアンフィルタ =====
-	CalcWeightsTableFromGaussian(gaussianPower);
-	dc->UpdateSubresource(gaussianConstantBuffer.Get(), 0, 0, &gaussianConstants, 0, 0);
-	dc->PSSetConstantBuffers(_gaussianConstant, 1, gaussianConstantBuffer.GetAddressOf());
 
 	// ダウンサンプリング
 	gaussianBuffers[0][0]->Activate();
@@ -131,8 +120,7 @@ void Bloom::DrawDebugGui()
 {
 	ImGui::Begin("Bloom");
 	ImGui::SliderFloat("threshould", &luminanceExtractionConstants.threshould, 0.0f, 1.0f);
-	ImGui::SliderFloat("intensity", &luminanceExtractionConstants.intensity, 0.0f, 10.0f);
-	ImGui::DragFloat("gaussianPower", &gaussianPower, 0.1f, 0.1f, 16.0f);
+	ImGui::SliderFloat("intensity", &luminanceExtractionConstants.intensity, 0.0f, 2.0f);
 
 	float imgSize = 200;
 	ImGui::Image(glowExtractionBuffer->shaderResourceViews[0].Get(), { imgSize, imgSize });
@@ -142,23 +130,4 @@ void Bloom::DrawDebugGui()
 		ImGui::Image(gaussianBuffers[i][1]->shaderResourceViews[0].Get(), { imgSize, imgSize });
 	}
 	ImGui::End();
-}
-
-
-/// <summary>
-/// ガウシアン関数を利用して重みテーブルを計算する
-/// </summary>
-/// <param name="blurPower">分散具合。この数値が大きくなると分散具合が強くなる</param>
-void  Bloom::CalcWeightsTableFromGaussian(float blurPower)
-{
-	float total = 0;
-	for (int i = 0; i < NUM_WEIGHTS; i++) {
-		gaussianConstants.weights[i] = expf(-0.5f * (float)(i * i) / blurPower);
-		total += 2.0f * gaussianConstants.weights[i];
-
-	}
-	// 規格化
-	for (int i = 0; i < NUM_WEIGHTS; i++) {
-		gaussianConstants.weights[i] /= total;
-	}
 }

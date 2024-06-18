@@ -12,7 +12,7 @@
 
 // ====== íËêî ======
 #define MAX_INSTANCE					512
-#define GAUSSIAN_DOWNSAMPLING_COUNT		4
+#define GAUSSIAN_DOWNSAMPLING_COUNT		6
 #define SHADOWMAP_COUNT					4
 #define THREAD_NUM_X					256
 

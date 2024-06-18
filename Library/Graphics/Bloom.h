@@ -41,22 +41,9 @@ private:
 	struct LuminanceExtractionConstants
 	{
 		float threshould = 1.0f;
-		float intensity = 2.0f;
+		float intensity = 0.08f;
 		DirectX::XMFLOAT2 lumiPad;
 	};
 	LuminanceExtractionConstants luminanceExtractionConstants;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> luminanceExtractionConstantBuffer;
-
-	// ガウシアンフィルタ用定数バッファ
-	static const int NUM_WEIGHTS = 8;
-	struct GaussianConstants
-	{
-		float weights[NUM_WEIGHTS];
-	};
-	GaussianConstants gaussianConstants;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> gaussianConstantBuffer;
-
-	// ガウシアン関数を利用して重みテーブルを計算する
-	float gaussianPower = 16.0f;
-	void CalcWeightsTableFromGaussian(float blurPower);
 };

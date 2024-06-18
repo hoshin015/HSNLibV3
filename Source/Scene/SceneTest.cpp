@@ -104,7 +104,7 @@ void SceneTest::Initialize()
 	emitter0->emitterData.particleSizeMin       = {0.1f, 0.1f};
 	emitter0->emitterData.particleSizeMax       = {1.0f, 1.0f};
 	emitter0->emitterData.particleColorMin      = {0.0, 0.0, 0.0, 1};
-	emitter0->emitterData.particleColorMax      = {2.0, 2.0, 2.0, 1};
+	emitter0->emitterData.particleColorMax      = {1.2, 1.2, 1.2, 1};
 	emitter0->emitterData.particleFrictionMin   = 0;
 	emitter0->emitterData.particleFrictionMax   = 1;
 	emitter0->emitterData.particleGravity       = 1;

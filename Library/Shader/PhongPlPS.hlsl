@@ -127,7 +127,7 @@ float4 main(VS_OUT pin) : SV_TARGET
 
     float3 spec = CalcPhongSpecular(N, ToCamera, directionalLightData.color.rgb, ToCamera, 1.0f, Ks);
     float ePower = smoothstep(0.1, 0.9, spec.z);
-    finalColor.rgb += float3(1, 1, 1) * (ePower * 2.0);
+    finalColor.rgb += float3(1, 1, 1) * (ePower * 1.0);
 	
     return finalColor;
 }

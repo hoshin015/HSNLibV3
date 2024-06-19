@@ -28,8 +28,10 @@
 #include "../Game/Object/StateMachine/Player/Player.h"
 // --- UserInterface ---
 #include "../Game/Object/Effect/LightningEffect.h"
+#include "../Game/Object/Effect/RockEffect.h"
 #include "../UserInterface//UiPause.h"
 #include "../UserInterface/DamageTextManager.h"
+#include "../../Library/Math/Math.h"
 
 
 void SceneTest::Initialize()
@@ -115,6 +117,7 @@ void SceneTest::Initialize()
 	UiPause::Instance().Initialize();
 
 	LightningEffect::Instance().Initialize();
+	RockEffect::Instance().Initialize();
 }
 
 void SceneTest::Finalize()
@@ -171,34 +174,44 @@ void SceneTest::Update()
 	// テストエミッター
 	if (InputManager::Instance().GetKeyPressed(Keyboard::F1))
 	{
-		Emitter* emitter = new Emitter();
-		emitter->position = { 0, 0, 0 };
-		emitter->emitterData.duration = 1.2;
-		emitter->emitterData.looping = false;
-		emitter->emitterData.burstsTime = 0.05;
-		emitter->emitterData.burstsCount = 5;
-		emitter->emitterData.particleKind = 4;
-		emitter->emitterData.particleLifeTimeMin =0.6f;
-		emitter->emitterData.particleLifeTimeMax = 2.0f;
-		emitter->emitterData.particleSpeedMin = 0.025f;
-		emitter->emitterData.particleSpeedMax = 2.0f;
-		emitter->emitterData.particleSizeMin = { 0.1f, 0.05 };
-		emitter->emitterData.particleSizeMax = { 0.4f, 0.1f };
-		emitter->emitterData.particleColorMin = { 2.8, 2.8, 20.0, 1 };
-		emitter->emitterData.particleColorMax = { 2.8, 2.8, 20.5, 1 };
-		emitter->emitterData.particleFrictionMin = 0;
-		emitter->emitterData.particleFrictionMax = 0.01;
-		emitter->emitterData.particleGravity = 0;
-		emitter->emitterData.particleBillboardType = 1;
-		EmitterManager::Instance().Register(emitter);
+		for(int i = 0; i < 10; i++)
+		{
+			DirectX::XMFLOAT3 rPos = { (rand() % 10) - 5.0f, 0, rand() % 10 - 5.0f };
+			DirectX::XMFLOAT3 rVec = { (rand() % 10) - 5.0f, 5, rand() % 10 - 5.0f };
+			RockEffect::Instance().Emit(rPos, rVec,{0.1, 1});
+		}
+	}
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F2))
+	{
+		for (int i = 0; i < 10; i++)
+		{
+			DirectX::XMFLOAT3 rPos = { (rand() % 10) - 5.0f, 0, rand() % 10 - 5.0f };
+			DirectX::XMFLOAT3 rVec = { (rand() % 10) - 5.0f, 5, rand() % 10 - 5.0f };
+
+			RockData* rock = new RockData();
+			rock->SetPos(rPos);
+			rock->SetVeloicty(rVec);
+			rock->SetLifeTime(10.0f);
+			rock->SetEmissivePower(0.0f);
+			float rScale = Math::RandomRange(0.25, 0.5);
+			rock->SetScale({ rScale, rScale, rScale });
+			float rX = rand() % 360;
+			float rY = rand() % 360;
+			float rZ = rand() % 360;
+			rock->SetAngle({ rX, rY, rZ });
+			rock->SetColor({ 1.0, 1.0, 1.0, 1 });
+			rock->SetUpdateType(RockData::RockFuncEnum::Up);
+			RockEffect::Instance().rockMesh1->Register(rock);
+		}
 	}
 
-	if (InputManager::Instance().GetKeyPressed(Keyboard::F2))
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F3))
 	{
 		DirectX::XMFLOAT3 rPos = { (rand() % 10) - 5.0f, 0, rand() % 10 - 5.0f };
 		LightningEffect::Instance().Emit(rPos);
 	}
 	LightningEffect::Instance().Update();
+	RockEffect::Instance().Update();
 }
 
 void SceneTest::Render()
@@ -243,6 +256,8 @@ void SceneTest::Render()
 
 				// --- static object ---
 				shadow->SetStaticShader(); // static object の影描画開始
+
+				RockEffect::Instance().Render(true);
 				//testStatic->Render(true);
 			}
 			shadow->DeActivate();
@@ -268,6 +283,7 @@ void SceneTest::Render()
 
 		Player::Instance().Render();
 
+		RockEffect::Instance().Render();
 
 		if (showCollision)
 		{

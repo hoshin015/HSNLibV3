@@ -131,6 +131,12 @@
     <Filter Include="シェーダーファイル\PhongPbr">
       <UniqueIdentifier>{a8cf39ef-27ea-4d1d-bedc-82baf9d95c28}</UniqueIdentifier>
     </Filter>
+    <Filter Include="2_Source\Game\Object\Effect\Lightning">
+      <UniqueIdentifier>{27affd33-7f73-491b-88ef-3901d778dfc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\Game\Object\Effect\Rock">
+      <UniqueIdentifier>{24ffbe2e-4685-49c0-8166-984572292d7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -400,12 +406,6 @@
     <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyState.cpp">
       <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Object\Effect\LightningEffect.cpp">
-      <Filter>2_Source\Game\Object\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\Object\Effect\LightningMainMesh.cpp">
-      <Filter>2_Source\Game\Object\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="Library\Graphics\WbOitBuffer.cpp">
       <Filter>1_HSNLib\Graphics</Filter>
     </ClCompile>
@@ -417,6 +417,18 @@
     </ClCompile>
     <ClCompile Include="Source\UserInterface\DamageTextManager.cpp">
       <Filter>2_Source\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\RockEffect.cpp">
+      <Filter>2_Source\Game\Object\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\LightningEffect.cpp">
+      <Filter>2_Source\Game\Object\Effect\Lightning</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\LightningMainMesh.cpp">
+      <Filter>2_Source\Game\Object\Effect\Lightning</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\RockMainMesh.cpp">
+      <Filter>2_Source\Game\Object\Effect\Rock</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -714,12 +726,6 @@
     <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyState.h">
       <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Object\Effect\LightningEffect.h">
-      <Filter>2_Source\Game\Object\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\Object\Effect\LightningMainMesh.h">
-      <Filter>2_Source\Game\Object\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="Library\Graphics\WbOitBuffer.h">
       <Filter>1_HSNLib\Graphics</Filter>
     </ClInclude>
@@ -734,6 +740,18 @@
     </ClInclude>
     <ClInclude Include="Source\UserInterface\DamageTextManager.h">
       <Filter>2_Source\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\LightningEffect.h">
+      <Filter>2_Source\Game\Object\Effect\Lightning</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\LightningMainMesh.h">
+      <Filter>2_Source\Game\Object\Effect\Lightning</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\RockEffect.h">
+      <Filter>2_Source\Game\Object\Effect\Rock</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\RockMainMesh.h">
+      <Filter>2_Source\Game\Object\Effect\Rock</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

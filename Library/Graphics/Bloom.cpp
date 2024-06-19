@@ -14,8 +14,8 @@ Bloom::Bloom(uint32_t width, uint32_t height)
 	bitBlockTransfer = std::make_unique<FullScreenQuad>();
 
 	// フレームバッファの解像度をダウンサンプリング
-	uint32_t downsampledWidth = width / 2;
-	uint32_t downsampledHeight = height / 2;
+	uint32_t downsampledWidth = width / 4;
+	uint32_t downsampledHeight = height / 4;
 
 	// FrameBuffer 作成
 	glowExtractionBuffer = std::make_unique<FrameBuffer>(downsampledWidth, downsampledHeight);

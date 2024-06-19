@@ -171,6 +171,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Object\Effect\RockEffect.cpp" />
+    <ClCompile Include="Source\Game\Object\Effect\RockMainMesh.cpp" />
     <ClCompile Include="Source\UserInterface\DamageTextManager.cpp" />
     <ClCompile Include="Library\Graphics\RadialBlur.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\LightningMainMesh.cpp" />
@@ -268,6 +270,8 @@
     <ClCompile Include="Library\Graphics\WbOitBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Object\Effect\RockEffect.h" />
+    <ClInclude Include="Source\Game\Object\Effect\RockMainMesh.h" />
     <ClInclude Include="Source\UserInterface\DamageTextManager.h" />
     <ClInclude Include="External\ImGui\IconFontCppHeaders-main\IconsFontAwesome5.h" />
     <ClInclude Include="Library\Graphics\RadialBlur.h" />

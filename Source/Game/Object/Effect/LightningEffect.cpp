@@ -1,4 +1,6 @@
 #include "LightningEffect.h"
+
+#include "RockEffect.h"
 #include "../../../../Library/Timer.h"
 #include "../../../../Library/Math/Math.h"
 #include "../../../../Library/Particle/EmitterManager.h"
@@ -161,6 +163,15 @@ void LightningEffect::Update()
 			lightningMesh2->Register(l2);
 
 			lightningEmit.addLightning3 = true;
+
+			// rock
+			DirectX::XMFLOAT3 rPos = lightningEmit.position;
+			int rockNum = rand() % 15 + 5;
+			for (int i = 0; i < rockNum; i++)
+			{
+				DirectX::XMFLOAT3 rVec = { (rand() % 6) - 3.0f, rand()%8+0.5f, rand() % 6 - 3.0f};
+				RockEffect::Instance().Emit(rPos, rVec, { 0.05, 0.1});
+			}
 
 			Emitter* emitter = new Emitter();
 			emitter->position = lightningEmit.position;

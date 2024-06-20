@@ -175,6 +175,7 @@
     <ClCompile Include="Source\Game\Object\Effect\LightningMainMesh.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\LightningEffect.cpp" />
     <ClCompile Include="Source\Game\Object\StateMachine\Enemy\Enemy.cpp" />
+    <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyBehavior.cpp" />
     <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyState.cpp" />
     <ClCompile Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayer.cpp" />
     <ClCompile Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayerState.cpp" />
@@ -269,9 +270,11 @@
   <ItemGroup>
     <ClInclude Include="External\ImGui\IconFontCppHeaders-main\IconsFontAwesome5.h" />
     <ClInclude Include="Library\Graphics\RadialBlur.h" />
+    <ClInclude Include="Source\Game\AI\BehaviorTree.h" />
     <ClInclude Include="Source\Game\Object\Effect\LightningMainMesh.h" />
     <ClInclude Include="Source\Game\Object\Effect\LightningEffect.h" />
     <ClInclude Include="Source\Game\Object\StateMachine\Enemy\Enemy.h" />
+    <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyBehavior.h" />
     <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyState.h" />
     <ClInclude Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayer.h" />
     <ClInclude Include="Source\Game\Object\StateMachine\BlendTestPlayer\BlendTestPlayerState.h" />

@@ -250,6 +250,7 @@ void SceneTest::Render()
 		Player::Instance().Render();
 
 		Enemy::Instance().DrawDebugPrimitive();
+		Enemy::Instance().DrawDebug();
 		Player::Instance().DrawDebugPrimitive();
 		DebugPrimitive::Instance().Render();
 	}
@@ -317,6 +318,7 @@ void SceneTest::Render()
 	DrawDebugGUI();
 
 	Player::Instance().DrawDebugImGui(0);
+	Enemy::Instance().DrawDebugGui();
 
 	LightManager::Instance().DrawDebugGui();
 	bloom->DrawDebugGui();

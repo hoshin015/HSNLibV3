@@ -131,6 +131,9 @@
     <Filter Include="2_Source\Game\Object\Base">
       <UniqueIdentifier>{a8ee7d03-722d-464d-8e30-c7bee80e6b5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="2_Source\Game\AI">
+      <UniqueIdentifier>{03d267c9-1cd1-4934-a4b3-88c90c77b9bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -414,6 +417,9 @@
     </ClCompile>
     <ClCompile Include="Library\Graphics\RadialBlur.cpp">
       <Filter>1_HSNLib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyBehavior.cpp">
+      <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -728,6 +734,12 @@
     </ClInclude>
     <ClInclude Include="Library\Graphics\RadialBlur.h">
       <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\AI\BehaviorTree.h">
+      <Filter>2_Source\Game\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyBehavior.h">
+      <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

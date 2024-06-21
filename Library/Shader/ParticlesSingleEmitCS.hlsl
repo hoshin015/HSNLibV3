@@ -11,7 +11,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
 	uint id = particlePool.Consume();
 
 	const float noise_scale = 1.0;
-    float f0 = rand(id * noise_scale * emitCount * deltaTime);
+	float       f0          = rand(id * noise_scale * emitCount * deltaTime * DTid.x);
 	float       f1          = rand(f0 * noise_scale);
 	float       f2          = rand(f1 * noise_scale);
 	float       f3          = rand(f2 * noise_scale);
@@ -21,7 +21,6 @@ void main(uint3 DTid : SV_DispatchThreadID)
 	float       f7          = rand(f6 * noise_scale);
 	float       f8          = rand(f7 * noise_scale);
 	float       seed        = random(float2(f0, deltaTime));
-
 
 	Particle p = particleBuffer[id];
 
@@ -35,7 +34,6 @@ void main(uint3 DTid : SV_DispatchThreadID)
 
 	p.scale.x = RandomRange(particleSizeMin.x, particleSizeMax.x, f4);
 	p.scale.y = RandomRange(particleSizeMin.y, particleSizeMax.y, f5);
-
 
 	p.lifeTime      = RandomRange(particleLifeTimeMin, particleLifeTimeMax, f6);
 	p.lifeTimer     = p.lifeTime;
@@ -155,9 +153,9 @@ void main(uint3 DTid : SV_DispatchThreadID)
 			p.position.y = y;
 
 			float particleSpeed = RandomRange(particleSpeedMin.x, particleSpeedMax.x, seed);
-			p.velocity.y = 1 * particleSpeed;
+			p.velocity.y        = 1 * particleSpeed;
 
-			seed                = random(float2(seed, deltaTime));
+			seed = random(float2(seed, deltaTime));
 			if (f7 > 0.5)
 				particleSpeed *= -1;
 			p.velocity.x = seed * particleSpeed;
@@ -167,6 +165,22 @@ void main(uint3 DTid : SV_DispatchThreadID)
 			if (f8 > 0.5)
 				particleSpeed *= -1;
 			p.velocity.z = seed * particleSpeed;
+		}
+		break;
+	case 6:
+		{
+			p.position = emitterPosition;
+
+			float particleSpeed = RandomRange(particleSpeedMin.x, particleSpeedMax.x, seed);
+			seed                = random(float2(seed, deltaTime));
+
+			float r = seed * 360;
+
+			// x •ûŒü
+			p.velocity.x = cos(r) * particleSpeed;
+
+			// z •ûŒü
+			p.velocity.z = -sin(r) * particleSpeed;
 		}
 		break;
 	}

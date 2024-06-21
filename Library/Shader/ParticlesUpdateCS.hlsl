@@ -81,6 +81,24 @@ void main(uint3 DTid : SV_DispatchThreadID)
 				p.lifeTimer -= deltaTime;
 			}
 			break;
+		case 6:
+			{
+				p.position += p.velocity * deltaTime;
+
+				if ((p.lifeTimer / p.lifeTime) > 0.2)
+				{
+					p.color.a = 1.0f - (p.lifeTimer / p.lifeTime);
+				}
+				else
+				{
+					p.color.a -= 1 * deltaTime;
+				}
+
+				p.scale = p.startScale * (1.0f - (p.lifeTimer / p.lifeTime));
+
+				p.lifeTimer -= deltaTime;
+			}
+			break;
 		default:
 			break;
 		}

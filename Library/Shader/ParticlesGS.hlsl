@@ -60,10 +60,19 @@ void main(
 		break;
 	case 3:
 		{
-			texcoords[0] = float2(TEX_P_HALF_SIZE * 0.0f / TEX_W_SIZE, TEX_P_HALF_SIZE * 5.0f / TEX_H_SIZE);
-			texcoords[1] = float2(TEX_P_HALF_SIZE * 0.0f / TEX_W_SIZE, TEX_P_HALF_SIZE * 4.0f / TEX_H_SIZE);
-			texcoords[2] = float2(TEX_P_HALF_SIZE * 1.0f / TEX_W_SIZE, TEX_P_HALF_SIZE * 5.0f / TEX_H_SIZE);
-			texcoords[3] = float2(TEX_P_HALF_SIZE * 1.0f / TEX_W_SIZE, TEX_P_HALF_SIZE * 4.0f / TEX_H_SIZE);
+			// 現在何フレーム目かを計算
+			float animIndex = (p.lifeTimer / p.lifeTime) * 25.0;
+
+			int _x = animIndex % 6;
+			int _y = animIndex / 6;
+
+			_y += 2; // そもそも１段(512*2 px)だけ下だからその分
+
+
+			texcoords[0] = float2(TEX_P_HALF_SIZE * _x / TEX_W_SIZE, TEX_P_HALF_SIZE * (_y + 1) / TEX_H_SIZE);
+			texcoords[1] = float2(TEX_P_HALF_SIZE * _x / TEX_W_SIZE, TEX_P_HALF_SIZE * _y / TEX_H_SIZE);
+			texcoords[2] = float2(TEX_P_HALF_SIZE * (_x + 1) / TEX_W_SIZE, TEX_P_HALF_SIZE * (_y + 1) / TEX_H_SIZE);
+			texcoords[3] = float2(TEX_P_HALF_SIZE * (_x + 1) / TEX_W_SIZE, TEX_P_HALF_SIZE * _y / TEX_H_SIZE);
 		}
 		break;
 	}

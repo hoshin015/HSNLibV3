@@ -103,16 +103,15 @@ void SceneTest::Initialize()
 	emitter0->emitterData.particleLifeTimeMax   = 1.0f;
 	emitter0->emitterData.particleSpeedMin      = -5.0f;
 	emitter0->emitterData.particleSpeedMax      = 5.0f;
-	emitter0->emitterData.particleSizeMin       = {3.0f, 3.0f};
-	emitter0->emitterData.particleSizeMax       = {3.0f, 3.0f};
+	emitter0->emitterData.particleSizeMin       = {0.1f, 0.1f};
+	emitter0->emitterData.particleSizeMax       = {1.0f, 1.0f};
 	emitter0->emitterData.particleColorMin      = {0.0, 0.0, 0.0, 1};
 	emitter0->emitterData.particleColorMax      = {1.2, 1.2, 1.2, 1};
 	emitter0->emitterData.particleFrictionMin   = 0;
 	emitter0->emitterData.particleFrictionMax   = 1;
 	emitter0->emitterData.particleGravity       = 1;
 	emitter0->emitterData.particleBillboardType = 0;
-	emitter0->emitterData.particleTextureType   = 3;
-	emitter0->emitterData.burstsOneShot   = 1;
+	emitter0->emitterData.particleTextureType   = 0;
 	EmitterManager::Instance().Register(emitter0);
 
 	UiPause::Instance().Initialize();
@@ -205,12 +204,36 @@ void SceneTest::Update()
 			RockEffect::Instance().rockMesh1->Register(rock);
 		}
 	}
-
 	if (InputManager::Instance().GetKeyPressed(Keyboard::F3))
 	{
 		DirectX::XMFLOAT3 rPos = { (rand() % 10) - 5.0f, 0, rand() % 10 - 5.0f };
 		LightningEffect::Instance().Emit(rPos);
 	}
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F4))
+	{
+		Emitter* emitter0 = new Emitter();
+		emitter0->position = { 0, 1.5, 0 };
+		emitter0->emitterData.duration = 3.0;
+		emitter0->emitterData.looping = false;
+		emitter0->emitterData.burstsTime = 0.5;
+		emitter0->emitterData.burstsCount = 6;
+		emitter0->emitterData.particleKind = 6;
+		emitter0->emitterData.particleLifeTimeMin = 1.0f;
+		emitter0->emitterData.particleLifeTimeMax = 3.0f;
+		emitter0->emitterData.particleSpeedMin = 30.0f;
+		emitter0->emitterData.particleSpeedMax = 60.0f;
+		emitter0->emitterData.particleSizeMin = { 30.0f, 30.0f };
+		emitter0->emitterData.particleSizeMax = { 40.0f, 40.0f };
+		emitter0->emitterData.particleColorMin = { 1.0, 1.0, 1.0, 1 };
+		emitter0->emitterData.particleColorMax = { 1.0, 1.0, 1.0, 1 };
+		emitter0->emitterData.particleFrictionMin = 0;
+		emitter0->emitterData.particleFrictionMax = 1;
+		emitter0->emitterData.particleGravity = 1;
+		emitter0->emitterData.particleBillboardType = 0;
+		emitter0->emitterData.particleTextureType = 3;
+		EmitterManager::Instance().Register(emitter0);
+	}
+
 	LightningEffect::Instance().Update();
 	RockEffect::Instance().Update();
 }

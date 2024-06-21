@@ -10,7 +10,7 @@ private:
 public:
 	static Enemy& Instance()
 	{
-		static Enemy instance("Data/Fbx/Red/Red.model");
+		static Enemy instance("Data/Fbx/Albino/Albino.model");
 		return instance;
 	}
 

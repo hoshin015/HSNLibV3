@@ -70,7 +70,8 @@ Particle::Particle()
 	CreateCsFromCso("Data/Shader/ParticlesSingleEmitCS.cso", emitSingleCs.ReleaseAndGetAddressOf());
 	CreateCsFromCso("Data/Shader/ParticlesEmitCS.cso", emitCs.ReleaseAndGetAddressOf());
 
-	sprParticles = std::make_unique<Sprite>("Data/Texture/Effect/particles.png");
+	sprParticles = std::make_unique<Sprite>("Data/Texture/Effect/smoke1.png");
+	sprSmoke = std::make_unique<Sprite>("Data/Texture/Effect/smoke1.png");
 
 	freeParticleCount = MAX_PARTICLE;
 }
@@ -86,6 +87,7 @@ void Particle::Initialize()
 	dc->Dispatch(particleCount / THREAD_NUM_X, 1, 1);
 
 	// テクスチャの設定
+	dc->PSSetShaderResources(_particlesTexture, 1, sprParticles->GetSpriteResource()->GetSrvAddres());
 	dc->PSSetShaderResources(_particlesTexture, 1, sprParticles->GetSpriteResource()->GetSrvAddres());
 
 	// リソースの割り当てを解除

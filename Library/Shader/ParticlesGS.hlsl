@@ -1,5 +1,11 @@
 #include "Particles.hlsli"
 
+#define TEX_W_SIZE 3072.0f
+#define TEX_H_SIZE 4096.0f
+#define TEX_P_SIZE 1024.0f
+#define TEX_P_HALF_SIZE 512.0f
+
+
 StructuredBuffer<Particle> particleBuffer : register(t9);
 
 [maxvertexcount(4)]
@@ -22,7 +28,7 @@ void main(
 	//	float2(1.0f, 1.0f),
 	//	float2(1.0f, 0.0f),
 	//};
-    float2 texcoords[4];
+	float2 texcoords[4];
 
 	Particle p = particleBuffer[input[0].vertexId];
 
@@ -30,26 +36,34 @@ void main(
 	{
 	case 0:
 		{
-                texcoords[0] = float2(0.0f, 1.0 / 3.0);
-			texcoords[1] = float2(0.0f, 0.0f);
-			texcoords[2] = float2(1.0 / 3.0, 1.0 / 3.0);
-			texcoords[3] = float2(1.0 / 3.0, 0.0f);
+			texcoords[0] = float2(TEX_P_SIZE * 0.0f / TEX_W_SIZE, TEX_P_SIZE * 1.0f / TEX_H_SIZE);
+			texcoords[1] = float2(TEX_P_SIZE * 0.0f / TEX_W_SIZE, TEX_P_SIZE * 0.0f / TEX_H_SIZE);
+			texcoords[2] = float2(TEX_P_SIZE * 1.0f / TEX_W_SIZE, TEX_P_SIZE * 1.0f / TEX_H_SIZE);
+			texcoords[3] = float2(TEX_P_SIZE * 1.0f / TEX_W_SIZE, TEX_P_SIZE * 0.0f / TEX_H_SIZE);
 		}
 		break;
 	case 1:
 		{
-			texcoords[0] = float2(1.0 / 3.0, 1.0 / 3.0);
-			texcoords[1] = float2(1.0 / 3.0, 0.0f);
-			texcoords[2] = float2(2.0 / 3.0, 1.0 / 3.0);
-			texcoords[3] = float2(2.0 / 3.0, 0.0f);
+			texcoords[0] = float2(TEX_P_SIZE * 1.0f / TEX_W_SIZE, TEX_P_SIZE * 1.0f / TEX_H_SIZE);
+			texcoords[1] = float2(TEX_P_SIZE * 1.0f / TEX_W_SIZE, TEX_P_SIZE * 0.0f / TEX_H_SIZE);
+			texcoords[2] = float2(TEX_P_SIZE * 2.0f / TEX_W_SIZE, TEX_P_SIZE * 1.0f / TEX_H_SIZE);
+			texcoords[3] = float2(TEX_P_SIZE * 2.0f / TEX_W_SIZE, TEX_P_SIZE * 0.0f / TEX_H_SIZE);
 		}
 		break;
 	case 2:
 		{
-			texcoords[0] = float2(2.0 / 3.0, 1.0 / 3.0);
-			texcoords[1] = float2(2.0 / 3.0, 0.0f);
-			texcoords[2] = float2(1.0, 1.0 / 3.0);
-			texcoords[3] = float2(1.0, 0.0f);
+			texcoords[0] = float2(TEX_P_SIZE * 2.0f / TEX_W_SIZE, TEX_P_SIZE * 1.0f / TEX_H_SIZE);
+			texcoords[1] = float2(TEX_P_SIZE * 2.0f / TEX_W_SIZE, TEX_P_SIZE * 0.0f / TEX_H_SIZE);
+			texcoords[2] = float2(TEX_P_SIZE * 3.0f / TEX_W_SIZE, TEX_P_SIZE * 1.0f / TEX_H_SIZE);
+			texcoords[3] = float2(TEX_P_SIZE * 3.0f / TEX_W_SIZE, TEX_P_SIZE * 0.0f / TEX_H_SIZE);
+		}
+		break;
+	case 3:
+		{
+			texcoords[0] = float2(TEX_P_HALF_SIZE * 0.0f / TEX_W_SIZE, TEX_P_HALF_SIZE * 5.0f / TEX_H_SIZE);
+			texcoords[1] = float2(TEX_P_HALF_SIZE * 0.0f / TEX_W_SIZE, TEX_P_HALF_SIZE * 4.0f / TEX_H_SIZE);
+			texcoords[2] = float2(TEX_P_HALF_SIZE * 1.0f / TEX_W_SIZE, TEX_P_HALF_SIZE * 5.0f / TEX_H_SIZE);
+			texcoords[3] = float2(TEX_P_HALF_SIZE * 1.0f / TEX_W_SIZE, TEX_P_HALF_SIZE * 4.0f / TEX_H_SIZE);
 		}
 		break;
 	}

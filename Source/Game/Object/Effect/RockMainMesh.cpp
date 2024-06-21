@@ -5,14 +5,13 @@ void RockData::Update()
 {
 	// 関数ポインタ
 	(this->*funcs[static_cast<int>(updateType)])();
+	UpdateTransform();
 
 	lifeTimer += Timer::Instance().DeltaTime();
 	if (lifeTimer >= lifeTime)
 	{
 		owner->Remove(this);
 	}
-
-	UpdateTransform();
 }
 
 void RockData::UpdateTransform()
@@ -40,10 +39,10 @@ void RockData::RockDefaultUpdate()
 	position.y += velocity.y * deltaTime;
 	position.z += velocity.z * deltaTime;
 
-	// 地面よりしたならライフタイムを加算しまくって削除
-	if(position.y <= 0)
+	// 地面よりしたなら削除
+	if(position.y <= -1)
 	{
-		lifeTimer = 9999;
+		owner->Remove(this);
 	}
 }
 
@@ -58,10 +57,10 @@ void RockData::RockUpUpdate()
 	position.y += velocity.y * deltaTime;
 	position.z += velocity.z * deltaTime;
 
-	// 地面よりしたならライフタイムを加算しまくって削除
+	// 地面よりしたなら削除
 	if (position.y >= 20)
 	{
-		lifeTimer = 9999;
+		owner->Remove(this);
 	}
 }
 
@@ -92,7 +91,7 @@ void RockMainMesh::Update()
 		index++;
 	}
 
-	// lightning データ削除
+	// rock データ削除
 	for (auto& data : removes)
 	{
 		std::vector<RockData*>::iterator it = std::find(rockInfo.begin(), rockInfo.end(), data);

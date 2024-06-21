@@ -69,6 +69,7 @@
 
 // Gpu Particle (ここは別のテクスチャで更新しないようにする)
 #define _particlesTexture	9
+#define _smokeTexture		10
 
 
 // --- hlsl ---
@@ -112,6 +113,7 @@
 
 // Gpu Particle (ここは別のテクスチャで更新しないようにする)
 #define _particlesTexture	t9
+#define _smokeTexture		t10
 
 #endif
 

@@ -83,4 +83,5 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer>         constantBuffer;
 
 	std::unique_ptr<Sprite> sprParticles;
+	std::unique_ptr<Sprite> sprSmoke;
 };

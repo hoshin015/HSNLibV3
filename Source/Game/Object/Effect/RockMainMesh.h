@@ -50,7 +50,7 @@ private:
 	DirectX::XMFLOAT4 color         = {1, 1, 1, 1};
 
 	DirectX::XMFLOAT3 velocity = { 0,0,0 };
-	float gravity = 10.0f;
+	float gravity = 15.0f;
 
 	RockMainMesh* owner;
 

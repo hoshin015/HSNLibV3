@@ -45,12 +45,21 @@
 #define _radialBlurConstant		5	// ラジアルブラー用
 
 // ====== テクスチャ番号 ======
+
+// phong
 #define _deffuseTexture		0
 #define _normalTexture		1
 #define _specularTexture	2
 #define _emissiveTexture	3
 
-#define _shadowTexture		4	// ここから SHADOWMAP_COUNT 分のサイズを使用
+// pbr
+#define _baseTexture				0
+#define _normalTexture				1
+#define _metallicRoughnessTexture	2
+#define _emissiveTexture			3
+#define _occlusionTexture			4
+
+#define _shadowTexture		5	// ここから SHADOWMAP_COUNT 分のサイズを使用
 
 // sprite
 #define _spriteTexture		0
@@ -90,11 +99,22 @@
 #define _radialBlurConstant		b5	// ラジアルブラー用
 
 // ====== テクスチャ番号 ======
+
+// phong
 #define _deffuseTexture		t0
 #define _normalTexture		t1
 #define _specularTexture	t2
 #define _emissiveTexture	t3
-#define _shadowTexture		t4		// ここから SHADOWMAP_COUNT 分のサイズを使用
+
+// pbr
+#define _baseTexture				t0
+#define _normalTexture				t1
+#define _metallicRoughnessTexture	t2
+#define _emissiveTexture			t3
+#define _occlusionTexture			t4
+
+
+#define _shadowTexture		t5		// ここから SHADOWMAP_COUNT 分のサイズを使用
 
 // sprite
 #define _spriteTexture		t0

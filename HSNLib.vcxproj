@@ -404,6 +404,7 @@
     <None Include="Library\Shader\Phong.hlsli" />
     <None Include="Library\Shader\ShadowmapCasterStatic.hlsli" />
     <None Include="Library\Shader\Particles.hlsli" />
+    <None Include="Library\Shader\PbrFunctions.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Library\Shader\GlowExtractionPS.hlsl">

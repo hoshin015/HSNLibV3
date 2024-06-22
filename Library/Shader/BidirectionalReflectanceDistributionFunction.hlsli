@@ -17,6 +17,7 @@ float vGgx(float NoL, float NoV, float alphaRoughness)
     return (ggx > 0.0) ? 0.5 / ggx : 0.0;
 }
 
+// specular D
 float dGgx(float NoH, float alphaRoughness)
 {
     const float PI = 3.14159265358979;

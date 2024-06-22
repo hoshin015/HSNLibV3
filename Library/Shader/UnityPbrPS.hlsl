@@ -11,7 +11,7 @@ Texture2D normalTexture : register(t1);
 Texture2D metallicRoughnessTexture : register(t2);
 Texture2D emissiveTexture : register(t3);
 
-Texture2D shadowTexture[SHADOWMAP_COUNT] : register(t4);
+Texture2D shadowTexture[SHADOWMAP_COUNT] : register(_shadowTexture);
 
 inline half Fd_Burley(half ndotv, half ndotl, half ldoth, half roughness)
 {

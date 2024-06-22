@@ -999,5 +999,8 @@
     <None Include="Library\Shader\BidirectionalReflectanceDistributionFunction.hlsli">
       <Filter>シェーダーファイル\PhongPbr</Filter>
     </None>
+    <None Include="Library\Shader\PbrFunctions.hlsli">
+      <Filter>シェーダーファイル\PhongPbr</Filter>
+    </None>
   </ItemGroup>
 </Project>

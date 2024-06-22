@@ -1,71 +1,83 @@
 #include "Phong.hlsli"
-#include "BidirectionalReflectanceDistributionFunction.hlsli"
+#include "PbrFunctions.hlsli"
 
 SamplerState samplerStates[_samplerNum] : register(s0);
 
-Texture2D diffuseTexture : register(t0);
-Texture2D normalTexture : register(t1);
-Texture2D metallicRoughnessTexture : register(t2);
-Texture2D emissiveTexture : register(t3);
+Texture2D baseTexture : register(_baseTexture);
+Texture2D normalTexture : register(_normalTexture);
+Texture2D metallicRoughnessTexture : register(_metallicRoughnessTexture);
+Texture2D emissiveTexture : register(_emissiveTexture);
+Texture2D occlusionTexture : register(_occlusionTexture);
 
-Texture2D shadowTexture[SHADOWMAP_COUNT] : register(t4);
+Texture2D shadowTexture[SHADOWMAP_COUNT] : register(_shadowTexture);
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
     const float GAMMA = 2.2f;
 
-    float4 albedoColor = diffuseTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
-    albedoColor.rgb = pow(albedoColor.rgb, GAMMA);
-    float4 normalColor = normalTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
-    float4 metallicRoughnessColor = metallicRoughnessTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
-    float4 emissiveColor = emissiveTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
-    emissiveColor.rgb = pow(emissiveColor.rgb, GAMMA);
+    // ベースカラー
+    float4 baseColor = baseTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
 
-    float4 baseColorFactor = albedoColor;
-    float4 emissiveFactor = emissiveColor;
-    float roughnessFactor = 1.0 - metallicRoughnessColor.a;
-    float metallicFactor = metallicRoughnessColor.r;
+    // エミッシブ
+	float4 emissiveColor = emissiveTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
 
-    const float3 f0 = lerp(0.04, baseColorFactor.rgb, metallicFactor);
-    const float3 f90 = float3(1.0, 1.0, 1.0);
-    const float alphaRoughness = roughnessFactor * roughnessFactor;
-    const float3 cDiff = lerp(baseColorFactor.rgb, float3(0.0, 0.0, 0.0), metallicFactor);
-
-    const float3 P = pin.worldPosition.xyz;
-    const float3 V = normalize(cameraPosition.xyz - pin.worldPosition.xyz);
-
-    float3 N = normalize(pin.worldNormal.xyz);
-    float3 T = normalize(pin.worldTangent.xyz);
+    // 法線/従法線/接線
+    float4 normal = normalTexture.Sample(samplerStates[_anisotropicSampler], pin.texcoord);
+    normal = (normal * 2.0) - 1.0;
+    float3 n = normalize(pin.worldNormal.xyz);
+    float3 t = normalize(pin.worldTangent.xyz);
     float sigma = pin.worldTangent.w;
-    T = normalize(T - N * dot(N, T));
-    float3 B = normalize(cross(N, T) * sigma);
+    float3 b = normalize(cross(n, t) * sigma);
+    float3 N = normalize((normal.x * t) + (normal.y * b) + (normal.z * n));
 
-    float3 normalFactor = normalColor.xyz;
-    normalFactor = (normalFactor * 2.0) - 1.0f;
-    N = normalize((normalFactor.x * T) + (normalFactor.y * B) + (normalFactor.z * N));
+    // 金属質/粗さ
+    float4 metallicRoughnessColor = metallicRoughnessTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
+    float roughness = metallicRoughnessColor.g;
+    float metalness = metallicRoughnessColor.b;
 
-    float3 diffuse = float3(0.0, 0.0, 0.0);
-    float3 specular = float3(0.0, 0.0, 0.0);
+#if 01	//	確認用のコードなので本来は不要
+    //roughness = saturate(roughness + adjust_roughness);
+    //metalness = saturate(metalness + adjust_metalness);
+#endif
 
-    float3 L = normalize(-directionalLightData.direction.xyz);
-    float3 Li = float3(1.0, 1.0, 1.0);
-    const float NoL = max(0.0, dot(N, L));
-    const float NoV = max(0.0, dot(N, V));
 
-    if (NoL > 0.0 || NoV > 0.0)
+    // 光の遮蔽率
+    float4 occlusionColor = occlusionTexture.Sample(samplerStates[_anisotropicSampler], pin.texcoord);
+    float occlusionFactor = occlusionColor.r;
+    const float occlusionStrength = 1.0f;
+
+
+    // アルベド(非金属部分)
+    float4 albedo = baseColor;
+
+    // 入射光のうち拡散反射になる割合
+    float3 diffuseReflectance = lerp(albedo.rgb, 0.0f, metalness);
+
+    // 垂直反射時のフレネル反射率(非金属でも最低4%は鏡面反射する)
+    float3 F0 = lerp(0.04f, albedo.rgb, metalness);
+
+    // 視線ベクトル
+    float3 V = normalize(pin.worldPosition.xyz - cameraPosition.xyz);
+
+    // 直接光のシェーディング
+    float3 totalDiffuse = (float3) 0;
+    float3 totalSpecular = (float3) 0;
     {
-        const float3 R = reflect(-L, N);
-        const float3 H = normalize(V + L);
+		// 平行光源の処理
+        float3 diffuse = (float3) 0;
+        float3 specular = (float3) 0;
 
-        const float NoH = max(0.0, dot(N, H));
-        const float HoV = max(0.0, dot(H, V));
-
-        diffuse += Li * NoL * brdfLambertion(f0, f90, cDiff, HoV);
-        specular += Li * NoL * brdfSpecularGgx(f0, f90, alphaRoughness, HoV, NoL, NoV, NoH);
+        float3 L = normalize(directionalLightData.direction.xyz);
+        DirectBDRF(diffuseReflectance, F0, N, V, L, directionalLightData.color.rgb, roughness, diffuse, specular);
+        totalDiffuse += diffuse;
+        totalSpecular += specular;
     }
 
-    float3 emissive = emissiveFactor.rgb * 1.2;
+    // 遮蔽処理
+    totalDiffuse = lerp(totalDiffuse, totalDiffuse * occlusionFactor, occlusionStrength);
+    totalSpecular = lerp(totalSpecular, totalSpecular * occlusionFactor, occlusionStrength);
 
-    float3 Lo = diffuse + specular + emissive;
-    return float4(Lo, baseColorFactor.a);
+    // 色生成(エミッシブもここで追加)
+    float3 finalColor = totalDiffuse + totalSpecular + emissiveColor;
+    return float4(finalColor, baseColor.a);
 }

@@ -70,7 +70,7 @@ void SceneTest::Initialize()
 	                                          Framework::Instance().GetScreenHeightF());
 
 	// --- AnimatedObject ‰Šú‰» ---
-	blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");
+	//blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");
 
 	// --- StaticObject ‰Šú‰» ---
 	testStatic = std::make_unique<TestStatic>("Data/Fbx/StaticAlbino/StaticAlbino.model");

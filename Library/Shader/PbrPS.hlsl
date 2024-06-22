@@ -13,13 +13,17 @@ Texture2D shadowTexture[SHADOWMAP_COUNT] : register(_shadowTexture);
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
-    const float GAMMA = 2.2f;
+    //	ガンマ係数
+    static const float GammaFactor = 2.2f;
 
     // ベースカラー
     float4 baseColor = baseTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
+    baseColor.rgb = pow(baseColor.rgb, GammaFactor);
 
     // エミッシブ
-	float4 emissiveColor = emissiveTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
+    float4 emissiveColor = emissiveTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
+    emissiveColor.rgb = pow(emissiveColor.rgb, GammaFactor);
+
 
     // 法線/従法線/接線
     float4 normal = normalTexture.Sample(samplerStates[_anisotropicSampler], pin.texcoord);
@@ -32,8 +36,8 @@ float4 main(VS_OUT pin) : SV_TARGET
 
     // 金属質/粗さ
     float4 metallicRoughnessColor = metallicRoughnessTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
-    float roughness = metallicRoughnessColor.g;
-    float metalness = metallicRoughnessColor.b;
+    float roughness = 1.0f - metallicRoughnessColor.a;
+    float metalness = metallicRoughnessColor.r;
 
 #if 01	//	確認用のコードなので本来は不要
     //roughness = saturate(roughness + adjust_roughness);
@@ -44,7 +48,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     // 光の遮蔽率
     float4 occlusionColor = occlusionTexture.Sample(samplerStates[_anisotropicSampler], pin.texcoord);
     float occlusionFactor = occlusionColor.r;
-    const float occlusionStrength = 1.0f;
+    const float occlusionStrength = 0.0f;
 
 
     // アルベド(非金属部分)
@@ -79,5 +83,6 @@ float4 main(VS_OUT pin) : SV_TARGET
 
     // 色生成(エミッシブもここで追加)
     float3 finalColor = totalDiffuse + totalSpecular + emissiveColor;
+    finalColor = pow(finalColor, 1.0f / GammaFactor);
     return float4(finalColor, baseColor.a);
 }

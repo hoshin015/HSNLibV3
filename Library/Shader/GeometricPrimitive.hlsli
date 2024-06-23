@@ -12,6 +12,7 @@ cbuffer CameraConstant : register(_cameraConstant)
 {
     row_major float4x4 viewProjection;
     float4 cameraPosition;
+    row_major float4x4 inverseViewProjection;
 }
 
 // 3d ‹óŠÔ‚Éo‚·‘S‚Ä‚Ìƒ‚ƒfƒ‹‚ª‚Â

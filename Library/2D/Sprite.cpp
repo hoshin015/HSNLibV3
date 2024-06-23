@@ -22,7 +22,7 @@ inline void  Rotate(float& x, float& y, float cx, float cy, float cos, float sin
 	y += cy;
 };
 
-Sprite::Sprite(const char* filename, const char* pixelShaderPath, bool posZ1)
+Sprite::Sprite(const char* filename, const char* pixelShaderPath, const char* vertexShaderPath, bool posZ1)
 {
 	Graphics* gfx = &Graphics::Instance();
 	ID3D11Device* device = gfx->GetDevice();
@@ -53,7 +53,9 @@ Sprite::Sprite(const char* filename, const char* pixelShaderPath, bool posZ1)
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
 	//--- < 頂点シェーダーオブジェクトと入力レイアウトオブジェクトの生成 > ---
-	const char* csoName{ "./Data/Shader/SpriteVS.cso" };
+	const char* csoName;
+	if (vertexShaderPath == nullptr) vertexShaderPath = "./Data/Shader/SpriteVS.cso";
+	csoName = { vertexShaderPath };
 
 	D3D11_INPUT_ELEMENT_DESC inputElementDesc[]
 	{

@@ -6,7 +6,7 @@
 class Sprite
 {
 public:
-	Sprite(const char* filename, const char* pixelShaderPath = nullptr, bool posZ1 = false);
+	Sprite(const char* filename, const char* pixelShaderPath = nullptr, const char* vertexShaderPath = nullptr, bool posZ1 = false);
 	~Sprite();
 
 private:	// ƒJƒvƒZƒ‹‰»

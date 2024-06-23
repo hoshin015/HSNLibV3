@@ -69,6 +69,9 @@ void SceneTest::Initialize()
 	radialBlur = std::make_unique<RadialBlur>(Framework::Instance().GetScreenWidthF(),
 	                                          Framework::Instance().GetScreenHeightF());
 
+	// --- skyMap ‰Šú‰» ---
+	skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
+
 	// --- AnimatedObject ‰Šú‰» ---
 	//blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");
 
@@ -315,6 +318,9 @@ void SceneTest::Render()
 			Player::Instance().DrawDebugPrimitive();
 		}
 		DebugPrimitive::Instance().Render();
+
+
+		skyMap->Render();
 	}
 	frameBuffer->DeActivate();
 
@@ -380,7 +386,6 @@ void SceneTest::Render()
 	//sprTest->Render();
 	//sprTest2->Render();
 	//sprTest3->Render();
-
 
 	//UiPause::Instance().Render();
 

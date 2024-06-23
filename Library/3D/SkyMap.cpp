@@ -4,7 +4,7 @@
 #include "../ErrorLogger.h"
 #include "../Graphics/Texture.h"
 #include "Camera.h"
-#include <vector>
+#include "../RegisterNum.h"
 
 SkyMap::SkyMap(const wchar_t* filename)
 {
@@ -22,9 +22,9 @@ SkyMap::SkyMap(const wchar_t* filename)
     LoadTextureFromFile(L"Data/Texture/skymap/country_club_4k/specular_pmrem.dds", specularPmermSrv.GetAddressOf(), &texture2dDesc);
     LoadTextureFromFile(L"Data/Texture/skymap/lut_ggx.dds", lutGgxSrv.GetAddressOf(), &texture2dDesc);
 
-    dc->PSSetShaderResources(33, 1, diffuseIemSrv.GetAddressOf());
-    dc->PSSetShaderResources(34, 1, specularPmermSrv.GetAddressOf());
-    dc->PSSetShaderResources(35, 1, lutGgxSrv.GetAddressOf());
+    dc->PSSetShaderResources(_IEM, 1, diffuseIemSrv.GetAddressOf());
+    dc->PSSetShaderResources(_PMREM, 1, specularPmermSrv.GetAddressOf());
+    dc->PSSetShaderResources(_LutGgx, 1, lutGgxSrv.GetAddressOf());
 }
 
 SkyMap::~SkyMap()

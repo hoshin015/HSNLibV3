@@ -59,7 +59,12 @@
 #define _emissiveTexture			3
 #define _occlusionTexture			4
 
+#define  _IEM	33		// Pre-filtered Irradiance Environment Map (IEM)
+#define _PMREM	34		// Pre-filtered Mipmapped Radiance Environment Map (PMREM)
+#define _LutGgx 35		// Look-Up Table と GGX分布 のテクスチャ
+
 #define _shadowTexture		5	// ここから SHADOWMAP_COUNT 分のサイズを使用
+
 
 // sprite
 #define _spriteTexture		0
@@ -113,6 +118,9 @@
 #define _emissiveTexture			t3
 #define _occlusionTexture			t4
 
+#define  _IEM	t33		// Pre-filtered Irradiance Environment Map (IEM)
+#define _PMREM	t34		// Pre-filtered Mipmapped Radiance Environment Map (PMREM)
+#define _LutGgx t35		// Look-Up Table と GGX分布 のテクスチャ
 
 #define _shadowTexture		t5		// ここから SHADOWMAP_COUNT 分のサイズを使用
 

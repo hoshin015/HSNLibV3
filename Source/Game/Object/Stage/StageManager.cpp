@@ -1,6 +1,8 @@
 // --- Game ---
 #include "StageManager.h"
 
+#include "../../../../External/ImGui/imgui.h"
+
 // XVˆ—
 void StageManager::Update()
 {
@@ -51,5 +53,26 @@ bool StageManager::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOA
 	}
 
 	return result;
+}
+
+void StageManager::DrawDebugImGui()
+{
+	ImGui::Begin("Stage");
+	{
+		if (ImGui::TreeNode("Infor"))
+		{
+			int nodeId = 0;
+			for (Stage* stage : stages)
+			{
+				ImGui::PushID(nodeId++);
+				ImGui::DragFloat("emissive", &stage->GetModel()->data.emissivePower, 0.01f);
+				ImGui::SliderFloat("roughness", &stage->GetModel()->data.roughnessPower, -1.0f, 1.0f);
+				ImGui::SliderFloat("metalness", &stage->GetModel()->data.metalnessPower, -1.0f, 1.0f);
+				ImGui::PopID();
+			}
+			ImGui::TreePop();
+		}
+	}
+	ImGui::End();
 }
 

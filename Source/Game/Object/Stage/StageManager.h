@@ -33,6 +33,9 @@ public:
 	// レイキャスト
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 
+	// デバッグGUI描画
+	void DrawDebugImGui();
+
 private:
 	std::vector<Stage*> stages;
 };

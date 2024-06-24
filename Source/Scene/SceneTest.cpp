@@ -239,6 +239,10 @@ void SceneTest::Update()
 
 	LightningEffect::Instance().Update();
 	RockEffect::Instance().Update();
+
+
+
+	int* b = new int();
 }
 
 void SceneTest::Render()

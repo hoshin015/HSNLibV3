@@ -10,6 +10,8 @@
 // コンストラクタ
 Emitter::Emitter()
 {
+	std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex()); // 排他制御
+
 	Graphics* gfx = &Graphics::Instance();
 	ID3D11Device* device = gfx->GetDevice();
 

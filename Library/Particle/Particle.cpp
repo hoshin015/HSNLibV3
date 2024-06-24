@@ -25,6 +25,8 @@ Particle::Particle()
 	hr = device->CreateBuffer(&bufferDesc, NULL, particleBuffer.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 	// particlePoolBuffer
+	bufferDesc.ByteWidth = static_cast<UINT>(sizeof(unsigned int) * particleCount);
+	bufferDesc.StructureByteStride = sizeof(unsigned int);
 	hr = device->CreateBuffer(&bufferDesc, NULL, particlePoolBuffer.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
@@ -78,6 +80,8 @@ Particle::Particle()
 
 void Particle::Initialize()
 {
+	std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex()); // ”r‘¼§Œä
+
 	Graphics* gfx = &Graphics::Instance();
 	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
 
@@ -119,11 +123,12 @@ void Particle::Render()
 	Graphics* gfx = &Graphics::Instance();
 	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
 
+	// nullptr Š„‚è“–‚Ä
+	ID3D11ShaderResourceView* nullSrv = {};
 	dc->VSSetShader(vertexShader.Get(), NULL, 0);
 	dc->PSSetShader(pixelShader.Get(), NULL, 0);
 	dc->GSSetShader(geometryShader.Get(), NULL, 0);
 
-	
 	dc->GSSetShaderResources(9, 1, particleBufferSrv.GetAddressOf());
 
 	dc->IASetInputLayout(NULL);
@@ -132,7 +137,7 @@ void Particle::Render()
 	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	dc->Draw(static_cast<UINT>(particleCount), 0);
 
-	ID3D11ShaderResourceView* nullSrv = {};
+	//ID3D11ShaderResourceView* nullSrv = {};
 	dc->GSSetShaderResources(9, 1, &nullSrv);
 	dc->VSSetShader(NULL, NULL, 0);
 	dc->PSSetShader(NULL, NULL, 0);

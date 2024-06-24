@@ -121,6 +121,13 @@ void Shadow::Activate(int index)
 	Graphics* gfx = &Graphics::Instance();
 	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
 
+	// shaderResouceView として使ってるshadowMapのテクスチャを解除しておく
+	ID3D11ShaderResourceView* nullSrv = {};
+	for (int i = 0; i < SHADOWMAP_COUNT; i++)
+	{
+		dc->PSSetShaderResources(_shadowTexture + i, 1, &nullSrv);
+	}
+
 	viewportCount = D3D10_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE;
 	dc->RSGetViewports(&viewportCount, cachedViewports);
 	dc->OMGetRenderTargets(1, cachedRenderTargetView.ReleaseAndGetAddressOf(), cachedDepthStencilView.ReleaseAndGetAddressOf());

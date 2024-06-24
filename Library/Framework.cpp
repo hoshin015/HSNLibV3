@@ -104,7 +104,6 @@ void Framework::Update()
 #endif
 
 			// --- シーン描画 ---
-			std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex()); // 排他制御
 #if USE_IMGUI
 #if SHOW_PERFORMANCE
 			// --- RenderTimer開始 ---

@@ -56,12 +56,18 @@ void Graphics::Initialize(HWND hwnd, int windowWidth, int windowHeight)
 	scd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;	// Presentを呼び出した後にバックバッファーを破棄する設定
 	scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;	// ウィンドウモードから全画面モードに切り替えた時に表示モード(または解像度)を変更する
 
+	// デバッグ用フラグ用意
+	UINT createDeviceFlags = {};
+#if _DEBUG
+	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
 	HRESULT hr;
 	hr = D3D11CreateDeviceAndSwapChain(
 		adapter.pAdapter,		// IDXGI Adapter
 		D3D_DRIVER_TYPE_UNKNOWN,
 		NULL,
-		NULL,
+		createDeviceFlags,
 		NULL,
 		0,
 		D3D11_SDK_VERSION,					// SDKのバージョン。この値固定

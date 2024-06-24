@@ -14,6 +14,10 @@ int APIENTRY wWinMain(
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//_CrtSetBreakAlloc(237);	// 引数で指定した回数メモリが確保されたらプログラムを止める
 
+
+
+	int* a = new int();
+
 	Framework& framework = Framework::Instance();
 	// 初期化
 	if (framework.Initialize(hInstance))

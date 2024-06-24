@@ -3,6 +3,7 @@
 
 SamplerState samplerStates[_samplerNum] : register(s0);
 
+// PBR
 Texture2D baseTexture : register(_baseTexture);
 Texture2D normalTexture : register(_normalTexture);
 Texture2D metallicRoughnessTexture : register(_metallicRoughnessTexture);
@@ -41,6 +42,7 @@ float4 main(VS_OUT pin) : SV_TARGET
 
 	// --- 金属質/粗さ ---
 	float4 metallicRoughnessColor = metallicRoughnessTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
+	//float  roughness              = metallicRoughnessColor.a;
 	float  roughness              = 1.0f - metallicRoughnessColor.a; // テクスチャに入っている情報が roughness ではなく smooth だから変換している
 	float  metalness              = metallicRoughnessColor.r;
 
@@ -61,7 +63,7 @@ float4 main(VS_OUT pin) : SV_TARGET
 	// 入射光のうち拡散反射になる割合
 	float3 diffuseReflectance = lerp(albedoColor.rgb, 0.0f, metalness);
 
-	// 垂直反射時のフレネル反射率(非金属でも最低4%は鏡面反射する)
+	// 垂直反射時のフレネル反射率(どんな物質でも最低4%は鏡面反射する)
 	float3 F0 = lerp(0.04f, albedoColor.rgb, metalness);
 
 	// 視線ベクトル

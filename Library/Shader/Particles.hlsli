@@ -35,8 +35,8 @@ struct Particle
 // タイマーの情報
 cbuffer TimerConstant : register(_timerConstant)
 {
-    float deltaTime;
-    float nowTime;
+	float  deltaTime;
+	float  nowTime;
 	float2 pad;
 };
 

@@ -43,7 +43,9 @@ cbuffer ObjectConstant : register(_objectConstant)
     float4 materialColorKa;
     row_major float4x4 boneTransforms[MAX_BONES];
     float emissivePower;
-    float3 objPad;
+    float metalnessPower;
+    float roughnessPower;
+    float objPad;
 }
 
 // ƒ‰ƒCƒg‚Ìî•ñ

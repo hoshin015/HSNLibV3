@@ -37,9 +37,11 @@ public:
 			}
 		};
 		float emissivePower = 1.0f;
-		DirectX::XMFLOAT3 pad;
+		float metalnessPower = -1.0f;
+		float roughnessPower = 1.0f;
+		float pad;
 	};
+	Constants data;
 
 private:
-	Constants data;
 };

@@ -61,6 +61,13 @@ void Player::Render(bool isShadow)
 
 void Player::DrawDebugImGui(int number)
 {
+	ImGui::Begin("Player");
+	{
+		ImGui::DragFloat("emissive", &GetModel()->data.emissivePower, 0.01f);
+		ImGui::SliderFloat("roughness", &GetModel()->data.roughnessPower, -1.0f, 1.0f);
+		ImGui::SliderFloat("metalness", &GetModel()->data.metalnessPower, -1.0f, 1.0f);
+	}
+	ImGui::End();
 }
 
 // “ü—Íƒf[ƒ^æ“¾

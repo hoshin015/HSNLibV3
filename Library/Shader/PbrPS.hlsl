@@ -47,8 +47,8 @@ float4 main(VS_OUT pin) : SV_TARGET
 	float  metalness              = metallicRoughnessColor.r;
 
 #if 01	//	確認用のコードなので本来は不要
-	//roughness = saturate(roughness + adjust_roughness);
-	//metalness = saturate(metalness + adjust_metalness);
+	roughness = saturate(roughness + roughnessPower);
+    metalness = saturate(metalness + metalnessPower);
 #endif
 
 

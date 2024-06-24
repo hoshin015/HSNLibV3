@@ -407,6 +407,7 @@ void SceneTest::Render()
 	ImGuiManager::Instance().Console();
 
 	Player::Instance().DrawDebugImGui(0);
+	Enemy::Instance().DrawDebugImGui(0);
 
 	LightManager::Instance().DrawDebugGui();
 	bloom->DrawDebugGui();

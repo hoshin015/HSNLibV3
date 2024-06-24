@@ -17,4 +17,6 @@ public:
 	void Initialize();
 	void Update() override;
 	void Render(bool isShadow = false) override;
+
+	void DrawDebugImGui(int number);
 };

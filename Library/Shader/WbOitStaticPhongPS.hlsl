@@ -20,6 +20,10 @@ PSOUT main(VS_OUT pin)
     diffuseColor.rgb = pow(diffuseColor.rgb, 2.2f);
 #endif
 
+
+    clip(diffuseColor.a - 0.001);
+
+
 	// ノーマルマップの取得
     float4 normal = normalTexture.Sample(samplerStates[_anisotropicSampler], pin.texcoord);
     normal = (normal * 2.0) - 1.0;

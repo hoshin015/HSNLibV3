@@ -91,16 +91,17 @@ void DirectBDRF(float3     diffuseReflectance,
                 out float3 outDiffuse,
                 out float3 outSpecular)
 {
-	float3 N = normal;
-	float3 L = -lightVector;
-	float3 V = -eyeVector;
-	float3 H = normalize(L + V);
+	float3 N = normal;           // 法線ベクトル
+	float3 L = -lightVector;     // 光源への正規化済みベクトル
+	float3 V = -eyeVector;       // 視線への正規化済みベクトル
+	float3 H = normalize(L + V); // 光源へのベクトルと視線へのベクトルのハーフベクトル
 
-	float NdotV = max(0.0001f, dot(N, V));
-	float NdotL = max(0.0001f, dot(N, L));
-	float NdotH = max(0.0001f, dot(N, H));
-	float VdotH = max(0.0001f, dot(V, H));
+	float NdotV = max(0.0001f, dot(N, V)); // 法線ベクトルと視線へのベクトルとの内積
+	float NdotL = max(0.0001f, dot(N, L)); // 法線ベクトルと光源へのベクトルとの内積
+	float NdotH = max(0.0001f, dot(N, H)); // 法線ベクトルとハーフベクトルとの内積
+	float VdotH = max(0.0001f, dot(V, H)); // 視線ベクトルとハーフベクトルとの内積
 
+	// 照度(入射光)
 	float3 irradiance = lightColor * NdotL;
 
 	//	拡散反射BRDF
@@ -138,7 +139,7 @@ float4 SampleDiffuseIEM(float3 v, TextureCube diffuseIemCubeMap, SamplerState st
 //--------------------------------------------
 //v	                        : サンプリング方向
 //roughness                 : 粗さ
-//specularPmremCubeMap   : 事前計算鏡面反射IBLキューブマップ
+//specularPmremCubeMap		: 事前計算鏡面反射IBLキューブマップ
 //state                     : 参照時のサンプラーステート
 float4 SampleSpecularPMREM(float3 v, float roughness, TextureCube specularPmremCubeMap, SamplerState state)
 {
@@ -180,6 +181,7 @@ float3 DiffuseIBL(float3      normal, float3 eyeVector, float roughness, float3 
 	float  NdotV = max(0.0001f, dot(N, V));
 	float3 kD    = 1.0f - CalcFresnelRoughness(f0, NdotV, roughness);
 
+	// 事前計算部分(積分部分は計算に時間がかかるため事前にテクスチャに書きこんでいる)
 	float3 irradiance = SampleDiffuseIEM(normal, diffuseIemCubeMap, state).rgb;
 	return diffuseReflectance * irradiance * kD;
 }
@@ -200,11 +202,11 @@ float3 SpecularIBL(float3      normal, float3 eyeVector, float roughness, float3
 	float3 N = normal;
 	float3 V = -eyeVector;
 
-	float  NdotV          = max(0.0001f, dot(N, V));
-	float3 R              = normalize(reflect(-V, N));
+	float  NdotV         = max(0.0001f, dot(N, V));
+	float3 R             = normalize(reflect(-V, N));
 	float3 specularLight = SampleSpecularPMREM(R, roughness, specularPmremCubeMap, state).rgb;
 
 	float2 brdfSamplePoint = saturate(float2(NdotV, roughness));
-    float2 envBrdf = SampleLutGGX(brdfSamplePoint, lutGgxMap, state).rg;
-    return specularLight * (f0 * envBrdf.x + envBrdf.y);
+	float2 envBrdf         = SampleLutGGX(brdfSamplePoint, lutGgxMap, state).rg;
+	return specularLight * (f0 * envBrdf.x + envBrdf.y);
 }

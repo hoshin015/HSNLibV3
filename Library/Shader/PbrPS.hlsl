@@ -46,21 +46,22 @@ float4 main(VS_OUT pin) : SV_TARGET
 	float  roughness              = 1.0f - metallicRoughnessColor.a; // テクスチャに入っている情報が roughness ではなく smooth だから変換している
 	float  metalness              = metallicRoughnessColor.r;
 
-#if 01	//	確認用のコードなので本来は不要
+
+	// オブジェクトパラメータによる調整
 	roughness = saturate(roughness + roughnessPower);
     metalness = saturate(metalness + metalnessPower);
-#endif
+    emissiveColor *= emissivePower;
 
 
 	// --- 光の遮蔽率 ---
 	float4      occlusionColor    = occlusionTexture.Sample(samplerStates[_anisotropicSampler], pin.texcoord);
 	float       occlusionFactor   = occlusionColor.r;
-	const float occlusionStrength = 0.0f;
+	const float occlusionStrength = 1.0f;
 
 
 	// ====== PBR IBL 計算 ======
 
-	// 入射光のうち拡散反射になる割合
+	// 入射光のうち拡散反射になる割合(metalness で反射率が決まる)
 	float3 diffuseReflectance = lerp(albedoColor.rgb, 0.0f, metalness);
 
 	// 垂直反射時のフレネル反射率(どんな物質でも最低4%は鏡面反射する)
@@ -73,7 +74,6 @@ float4 main(VS_OUT pin) : SV_TARGET
 	float3 directionDiffuse  = (float3)0;
 	float3 directionSpecular = (float3)0;
 	{
-		// 平行光源の処理
 		float3 L = normalize(directionalLightData.direction.xyz);
 		DirectBDRF(diffuseReflectance, F0, N, E, L, directionalLightData.color.rgb, roughness, directionDiffuse,
 		           directionSpecular);
@@ -87,15 +87,15 @@ float4 main(VS_OUT pin) : SV_TARGET
 	}
 
 	// 遮蔽処理
-	//directionDiffuse  = lerp(directionDiffuse, directionDiffuse * occlusionFactor, occlusionStrength);
-	//directionSpecular = lerp(directionSpecular, directionSpecular * occlusionFactor, occlusionStrength);
+	directionDiffuse  = lerp(directionDiffuse, directionDiffuse * occlusionFactor, occlusionStrength);
+	directionSpecular = lerp(directionSpecular, directionSpecular * occlusionFactor, occlusionStrength);
 
 	// IBL 処理
 	directionDiffuse += DiffuseIBL(N, E, roughness, diffuseReflectance, F0, diffuseIem, samplerStates[_linearSampler]);
 	directionSpecular += SpecularIBL(N, E, roughness, F0, lutGgx, specularPmrem, samplerStates[_linearSampler]);
 
 	// 色生成(エミッシブもここで追加)
-    float3 finalColor = directionDiffuse + directionSpecular + (emissiveColor * emissivePower);
+    float3 finalColor = directionDiffuse + directionSpecular + emissiveColor;
 	finalColor        = pow(finalColor, 1.0f / GammaFactor);
 	return float4(finalColor, albedoColor.a);
 }

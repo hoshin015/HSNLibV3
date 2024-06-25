@@ -66,9 +66,9 @@ void LightningEffect::Update()
 			l->SetPos(lightningEmit.position);
 			l->SetLifeTime(0.1f);
 			l->SetScale({ 0.5,1.0,0.5 });
-			l->SetEmissivePower(2.0f);
+			l->SetEmissivePower(4.0f);
 			l->SetVal1(scaleValue);
-			l->SetEmissivePower(3.0f);
+			l->SetEmissivePower(4.0f);
 			l->SetAngleY(rand() % 360);
 			l->SetUpdateType(LightningData::LightningFuncEnum::Main);
 			l->SetColor({ 2.8, 2.8, 20.5, 1 });
@@ -79,7 +79,7 @@ void LightningEffect::Update()
 			l2->SetScale({ 0.5,1.0,0.5 });
 			l2->SetEmissivePower(2.0f);
 			l2->SetVal1(scaleValue);
-			l2->SetEmissivePower(3.0f);
+			l2->SetEmissivePower(4.0f);
 			l2->SetAngleY(rand() % 360);
 			l2->SetUpdateType(LightningData::LightningFuncEnum::Main);
 			l2->SetColor({ 2.8, 2.8, 20.5, 1 });
@@ -100,9 +100,9 @@ void LightningEffect::Update()
 			l->SetPos(lightningEmit.position);
 			l->SetLifeTime(0.4f);
 			l->SetScale({ 0.5,1.0,0.5 });
-			l->SetEmissivePower(2.0f);
+			l->SetEmissivePower(4.0f);
 			l->SetVal1(scaleValue);
-			l->SetEmissivePower(3.0f);
+			l->SetEmissivePower(4.0f);
 			l->SetAngleY(rand() % 360);
 			l->SetUpdateType(LightningData::LightningFuncEnum::Main);
 			l->SetColor({ 2.8, 2.8, 20.5, 1 });
@@ -111,9 +111,9 @@ void LightningEffect::Update()
 			l2->SetPos(lightningEmit.position);
 			l2->SetLifeTime(0.4f);
 			l2->SetScale({ 0.5,0.75,0.5 });
-			l2->SetEmissivePower(2.0f);
+			l2->SetEmissivePower(4.0f);
 			l2->SetVal1(scaleValue);
-			l2->SetEmissivePower(3.0f);
+			l2->SetEmissivePower(4.0f);
 			l2->SetAngleY(rand()%360);
 			l2->SetColor({ 2.8, 2.8, 20.5, 1 });
 			lightningMesh1->Register(l2);
@@ -133,7 +133,7 @@ void LightningEffect::Update()
 			l2->SetPos(lightningEmit.position);
 			l2->SetLifeTime(0.5f);
 			l2->SetScale({ 0.5,0.5,0.5 });
-			l2->SetEmissivePower(2.0f);
+			l2->SetEmissivePower(4.0f);
 			l2->SetVal1(scaleValue);
 			l2->SetAngleY(rand() % 360);
 			l2->SetUpdateType(LightningData::LightningFuncEnum::Main);
@@ -155,7 +155,7 @@ void LightningEffect::Update()
 			l2->SetPos(lightningEmit.position);
 			l2->SetLifeTime(0.3f);
 			l2->SetScale({ 0.5,1.0,0.5 });
-			l2->SetEmissivePower(2.0f);
+			l2->SetEmissivePower(4.0f);
 			l2->SetVal1(scaleValue);
 			l2->SetUpdateType(LightningData::LightningFuncEnum::Main);
 			l2->SetAngleY(rand()%360);

@@ -3,6 +3,7 @@
 // --- Library ---
 #include "../../Library/2D/Sprite.h"
 #include "../../Library/3D/SkyMap.h"
+#include "../../Library/3D/CameraBase.h"
 #include "../../Library/Graphics/FrameBuffer.h"
 #include "../../Library/Graphics/FullScreenQuad.h"
 #include "../../Library/Graphics/Bloom.h"
@@ -57,4 +58,6 @@ private:
 	std::unique_ptr<BlendTestPlayer> blendTestPlayer;
 
 	bool showCollision = false;
+
+	CameraBase camera;
 };

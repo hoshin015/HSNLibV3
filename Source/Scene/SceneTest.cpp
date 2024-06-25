@@ -146,9 +146,13 @@ void SceneTest::Update()
 	EffectManager::Instance().Update();
 
 	// --- カメラ処理 ---
+#if 0
 	Camera::Instance().SetTarget(Player::Instance().GetPos());
 	//Camera::Instance().SetTarget(blendTestPlayer->GetPos());
 	Camera::Instance().Update();
+#else
+	camera.Update();
+#endif
 
 
 	// タイマーの定数バッファの更新
@@ -263,7 +267,11 @@ void SceneTest::Render()
 	}
 
 	// カメラの定数バッファの更新
+#if 0
 	Camera::Instance().UpdateCameraConstant();
+#else
+	camera.UpdateConstants();
+#endif
 	// ライトの定数バッファの更新
 	LightManager::Instance().UpdateConstants();
 

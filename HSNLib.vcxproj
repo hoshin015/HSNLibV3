@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Library\3D\CameraBase.cpp" />
     <ClCompile Include="Library\Math\Matrix.cpp" />
     <ClCompile Include="Library\Math\Vector.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\RockEffect.cpp" />
@@ -273,6 +274,7 @@
     <ClCompile Include="Library\Graphics\WbOitBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Library\3D\CameraBase.h" />
     <ClInclude Include="Library\Math\Matrix.h" />
     <ClInclude Include="Library\Math\Vector.h" />
     <ClInclude Include="Source\Game\Object\Effect\RockEffect.h" />

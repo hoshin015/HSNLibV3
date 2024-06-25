@@ -143,6 +143,9 @@
     <Filter Include="シェーダーファイル\PbrIbl">
       <UniqueIdentifier>{b719491b-61a4-432a-ab0c-ddbfceabaaf0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="2_Source\Camera">
+      <UniqueIdentifier>{2fc77480-982a-477c-bfc0-e2fdd720dacc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -447,6 +450,9 @@
     </ClCompile>
     <ClCompile Include="Library\3D\CameraBase.cpp">
       <Filter>1_HSNLib\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Camera\CameraDerived.cpp">
+      <Filter>2_Source\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -785,6 +791,9 @@
     </ClInclude>
     <ClInclude Include="Library\3D\CameraBase.h">
       <Filter>1_HSNLib\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Camera\CameraDerived.h">
+      <Filter>2_Source\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

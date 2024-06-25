@@ -17,6 +17,8 @@ CameraBase::CameraBase()
 	dc->RSGetViewports(&numViewports, &viewport);
 
 	aspect = viewport.Width / viewport.Height;
+
+	Update();
 }
 
 

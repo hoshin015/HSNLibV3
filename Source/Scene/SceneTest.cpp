@@ -37,6 +37,7 @@
 void SceneTest::Initialize()
 {
 	// --- カメラ初期設定 ---
+#if 0
 	Camera::Instance().SetLookAt(
 		DirectX::XMFLOAT3(0, 20, 20), // カメラ座標
 		DirectX::XMFLOAT3(0, 0, 0),   // ターゲット(設定しても意味ない)
@@ -44,6 +45,9 @@ void SceneTest::Initialize()
 	);
 	Camera::Instance().SetAngle({DirectX::XMConvertToRadians(45), DirectX::XMConvertToRadians(180), 0});
 	Camera::Instance().cameraType = Camera::CAMERA::TARGET_PLAYER;
+#else
+	camera = &playerCamera;
+#endif
 
 	// --- ライト初期設定 ---
 	Light* directionLight = new Light(LightType::Directional);
@@ -151,7 +155,7 @@ void SceneTest::Update()
 	//Camera::Instance().SetTarget(blendTestPlayer->GetPos());
 	Camera::Instance().Update();
 #else
-	camera.Update();
+	camera->Update();
 #endif
 
 
@@ -270,7 +274,7 @@ void SceneTest::Render()
 #if 0
 	Camera::Instance().UpdateCameraConstant();
 #else
-	camera.UpdateConstants();
+	camera->UpdateConstants();
 #endif
 	// ライトの定数バッファの更新
 	LightManager::Instance().UpdateConstants();

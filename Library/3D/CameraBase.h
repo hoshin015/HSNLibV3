@@ -37,7 +37,7 @@ public:
 	void SetAspect(float aspect) { this->aspect = aspect; }
 
 	// --- カメラ行列の更新 ---
-	void Update();
+	virtual void Update();
 
 	// --- カメラ定数の更新 ---
 	void UpdateConstants();

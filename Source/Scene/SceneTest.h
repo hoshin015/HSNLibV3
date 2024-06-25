@@ -3,7 +3,6 @@
 // --- Library ---
 #include "../../Library/2D/Sprite.h"
 #include "../../Library/3D/SkyMap.h"
-#include "../../Library/3D/CameraBase.h"
 #include "../../Library/Graphics/FrameBuffer.h"
 #include "../../Library/Graphics/FullScreenQuad.h"
 #include "../../Library/Graphics/Bloom.h"
@@ -16,6 +15,8 @@
 #include "../Game/Object/TestStatic.h"
 #include "../Game/Object/StateMachine/BlendTestPlayer/BlendTestPlayer.h"
 #include "../Game/Object/Effect/LightningMainMesh.h"
+// --- Camera ---
+#include "../Camera/CameraDerived.h"
 
 
 // テストシーン
@@ -59,5 +60,6 @@ private:
 
 	bool showCollision = false;
 
-	CameraBase camera;
+	CameraBase* camera;
+	PlayerCamera playerCamera;
 };

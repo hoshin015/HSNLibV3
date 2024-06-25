@@ -31,6 +31,7 @@ cbuffer CameraConstant : register(_cameraConstant)
 {
     row_major float4x4 viewProjection;
     float4 cameraPosition;
+    row_major float4x4 inverseViewProjection;
 }
 
 // 3d 空間に出す全てのモデルが持つ
@@ -42,7 +43,9 @@ cbuffer ObjectConstant : register(_objectConstant)
     float4 materialColorKa;
     row_major float4x4 boneTransforms[MAX_BONES];
     float emissivePower;
-    float3 objPad;
+    float metalnessPower;
+    float roughnessPower;
+    float objPad;
 }
 
 // ライトの情報

@@ -28,6 +28,13 @@ void FullScreenQuad::blit(ID3D11ShaderResourceView** shaderResourceView, uint32_
 	dc->PSSetShaderResources(startSlot, numViews, shaderResourceView);
 	dc->VSSetShaderResources(startSlot, numViews, shaderResourceView);
 	dc->Draw(4, 0);
+
+	ID3D11ShaderResourceView* nullSrv = {};
+	for (int i = 0; i < numViews; i++)
+	{
+		dc->PSSetShaderResources(i, 1, &nullSrv);
+		dc->VSSetShaderResources(i, 1, &nullSrv);
+	}
 }
 
 void FullScreenQuad::blit(ID3D11ShaderResourceView** shaderResourceView, ID3D11ShaderResourceView** bloomFilterViews,
@@ -50,4 +57,11 @@ void FullScreenQuad::blit(ID3D11ShaderResourceView** shaderResourceView, ID3D11S
 	dc->VSSetShaderResources(startSlot, numViews, shaderResourceView);
 
 	dc->Draw(4, 0);
+
+	ID3D11ShaderResourceView* nullSrv = {};
+	for(int i = 0; i < numViews; i++)
+	{
+		dc->PSSetShaderResources(i, 1, &nullSrv);
+		dc->VSSetShaderResources(i, 1, &nullSrv);
+	}
 }

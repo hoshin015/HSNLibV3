@@ -1,5 +1,6 @@
 #include "Particle.h"
 #include "../ErrorLogger.h"
+#include "../RegisterNum.h"
 #include "../Graphics/Graphics.h"
 #include "../Graphics/Shader.h"
 
@@ -24,6 +25,8 @@ Particle::Particle()
 	hr = device->CreateBuffer(&bufferDesc, NULL, particleBuffer.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 	// particlePoolBuffer
+	bufferDesc.ByteWidth = static_cast<UINT>(sizeof(unsigned int) * particleCount);
+	bufferDesc.StructureByteStride = sizeof(unsigned int);
 	hr = device->CreateBuffer(&bufferDesc, NULL, particlePoolBuffer.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
@@ -66,15 +69,19 @@ Particle::Particle()
 	CreateGsFromCso("Data/Shader/ParticlesGS.cso", geometryShader.ReleaseAndGetAddressOf());
 	CreateCsFromCso("Data/Shader/ParticlesInitCS.cso", initCs.ReleaseAndGetAddressOf());
 	CreateCsFromCso("Data/Shader/ParticlesUpdateCS.cso", updateCs.ReleaseAndGetAddressOf());
+	CreateCsFromCso("Data/Shader/ParticlesSingleEmitCS.cso", emitSingleCs.ReleaseAndGetAddressOf());
 	CreateCsFromCso("Data/Shader/ParticlesEmitCS.cso", emitCs.ReleaseAndGetAddressOf());
 
-	sprParticle = std::make_unique<Sprite>("Data/Texture/particle1.png");
+	sprParticles = std::make_unique<Sprite>("Data/Texture/Effect/smoke1.png");
+	sprSmoke = std::make_unique<Sprite>("Data/Texture/Effect/smoke1.png");
 
 	freeParticleCount = MAX_PARTICLE;
 }
 
 void Particle::Initialize()
 {
+	std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex()); // 排他制御
+
 	Graphics* gfx = &Graphics::Instance();
 	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
 
@@ -83,7 +90,9 @@ void Particle::Initialize()
 	dc->CSSetUnorderedAccessViews(1, 1, particlePoolBufferUav.GetAddressOf(), nullptr);
 	dc->Dispatch(particleCount / THREAD_NUM_X, 1, 1);
 
-	dc->PSSetShaderResources(9, 1, sprParticle->GetSpriteResource()->GetSrvAddres());
+	// テクスチャの設定
+	dc->PSSetShaderResources(_particlesTexture, 1, sprParticles->GetSpriteResource()->GetSrvAddres());
+	dc->PSSetShaderResources(_particlesTexture, 1, sprParticles->GetSpriteResource()->GetSrvAddres());
 
 	// リソースの割り当てを解除
 	ID3D11UnorderedAccessView* nullUav = {};
@@ -114,6 +123,8 @@ void Particle::Render()
 	Graphics* gfx = &Graphics::Instance();
 	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
 
+	// nullptr 割り当て
+	ID3D11ShaderResourceView* nullSrv = {};
 	dc->VSSetShader(vertexShader.Get(), NULL, 0);
 	dc->PSSetShader(pixelShader.Get(), NULL, 0);
 	dc->GSSetShader(geometryShader.Get(), NULL, 0);
@@ -126,7 +137,7 @@ void Particle::Render()
 	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	dc->Draw(static_cast<UINT>(particleCount), 0);
 
-	ID3D11ShaderResourceView* nullSrv = {};
+	//ID3D11ShaderResourceView* nullSrv = {};
 	dc->GSSetShaderResources(9, 1, &nullSrv);
 	dc->VSSetShader(NULL, NULL, 0);
 	dc->PSSetShader(NULL, NULL, 0);
@@ -137,32 +148,63 @@ void Particle::Emit(int num)
 {
 	Graphics* gfx = &Graphics::Instance();
 	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
+	
+	int threadNum = num / THREAD_NUM_X;
+	int signleThreadNum = num % THREAD_NUM_X;
 
-	// シェーダーセット
-	dc->CSSetShader(emitCs.Get(), NULL, 0);
-	// リソース割り当て
-	dc->CSSetUnorderedAccessViews(0, 1, particleBufferUav.GetAddressOf(), nullptr);
-	dc->CSSetUnorderedAccessViews(1, 1, particlePoolBufferUav.GetAddressOf(), nullptr);
-
-
-	// 非アクティブなパーティクルがアクティブにするパーティクルより少ないなら dispatch しない
-	if (GetPoolBufferCount() < num)
+	if(threadNum > 0)
 	{
+		// リソース割り当て
+		dc->CSSetUnorderedAccessViews(0, 1, particleBufferUav.GetAddressOf(), nullptr);
+		dc->CSSetUnorderedAccessViews(1, 1, particlePoolBufferUav.GetAddressOf(), nullptr);
+
+		// シェーダーセット
+		dc->CSSetShader(emitCs.Get(), NULL, 0);
+
+		// 非アクティブなパーティクルがアクティブにするパーティクルより少ないなら dispatch しない
+		if (GetPoolBufferCount() < num)
+		{
+			// リソースの割り当てを解除
+			ID3D11UnorderedAccessView* nullUav = {};
+			dc->CSSetUnorderedAccessViews(0, 1, &nullUav, nullptr);
+			dc->CSSetUnorderedAccessViews(1, 1, &nullUav, nullptr);
+			return;
+		}
+
+		dc->Dispatch(threadNum, 1, 1);
+
 		// リソースの割り当てを解除
 		ID3D11UnorderedAccessView* nullUav = {};
 		dc->CSSetUnorderedAccessViews(0, 1, &nullUav, nullptr);
 		dc->CSSetUnorderedAccessViews(1, 1, &nullUav, nullptr);
-		return;
 	}
 
-	dc->Dispatch(num, 1, 1);
+	if(signleThreadNum)
+	{
+		// リソース割り当て
+		dc->CSSetUnorderedAccessViews(0, 1, particleBufferUav.GetAddressOf(), nullptr);
+		dc->CSSetUnorderedAccessViews(1, 1, particlePoolBufferUav.GetAddressOf(), nullptr);
 
+		// シェーダーセット
+		dc->CSSetShader(emitSingleCs.Get(), NULL, 0);
 
+		// 非アクティブなパーティクルがアクティブにするパーティクルより少ないなら dispatch しない
+		if (GetPoolBufferCount() < num)
+		{
+			// リソースの割り当てを解除
+			ID3D11UnorderedAccessView* nullUav = {};
+			dc->CSSetUnorderedAccessViews(0, 1, &nullUav, nullptr);
+			dc->CSSetUnorderedAccessViews(1, 1, &nullUav, nullptr);
+			return;
+		}
 
-	// リソースの割り当てを解除
-	ID3D11UnorderedAccessView* nullUav = {};
-	dc->CSSetUnorderedAccessViews(0, 1, &nullUav, nullptr);
-	dc->CSSetUnorderedAccessViews(1, 1, &nullUav, nullptr);
+		dc->Dispatch(signleThreadNum, 1, 1);
+
+		// リソースの割り当てを解除
+		ID3D11UnorderedAccessView* nullUav = {};
+		dc->CSSetUnorderedAccessViews(0, 1, &nullUav, nullptr);
+		dc->CSSetUnorderedAccessViews(1, 1, &nullUav, nullptr);
+	}
 }
 
 int Particle::GetPoolBufferCount()

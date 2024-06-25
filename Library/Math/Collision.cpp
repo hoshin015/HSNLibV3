@@ -1,5 +1,27 @@
 #include "Collision.h"
 
+// 球と球の判定
+bool Collision::CollisionSphereVsSphere(const DirectX::XMFLOAT3& positionA, float radiusA,
+	const DirectX::XMFLOAT3& positionB, float radiusB)
+{
+    // A → Bのベクトルを算出
+    DirectX::XMVECTOR PositionA = DirectX::XMLoadFloat3(&positionA);
+    DirectX::XMVECTOR PositionB = DirectX::XMLoadFloat3(&positionB);
+    DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(PositionB, PositionA);
+    // 取得したベクトルの長さの２乗取得
+    DirectX::XMVECTOR LengthSq = DirectX::XMVector3LengthSq(Vec);
+    float lengthSq;
+    DirectX::XMStoreFloat(&lengthSq, LengthSq);
+
+    //  距離判定
+    float range = radiusA + radiusB;
+    if (range * range < lengthSq)
+    {
+        return false;
+    }
+    return true;
+}
+
 // 球と球の交差判定
 bool Collision::IntersectSphereVsSphere(const DirectX::XMFLOAT3& positionA, float radiusA, const DirectX::XMFLOAT3& positionB, float radiusB, DirectX::XMFLOAT3& outPositionB)
 {
@@ -96,6 +118,34 @@ bool Collision::StaticRepulsionSphereVsSphere(const DirectX::XMFLOAT3& positionA
     }
 
     return false;
+}
+
+bool Collision::SphereVsSphereCollisionPoint(const DirectX::XMFLOAT3& positionA, float radiusA,
+	const DirectX::XMFLOAT3& positionB, float radiusB, DirectX::XMFLOAT3& collisionPoint)
+{
+    // A → Bのベクトルを算出
+    DirectX::XMVECTOR PositionA = DirectX::XMLoadFloat3(&positionA);
+    DirectX::XMVECTOR PositionB = DirectX::XMLoadFloat3(&positionB);
+    DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(PositionB, PositionA);
+    // 取得したベクトルの長さの２乗取得
+    DirectX::XMVECTOR LengthSq = DirectX::XMVector3LengthSq(Vec);
+    float lengthSq;
+    DirectX::XMStoreFloat(&lengthSq, LengthSq);
+
+    //  距離判定
+    float range = radiusA + radiusB;
+    if (range * range < lengthSq)
+    {
+        return false;
+    }
+
+    // 衝突ポイント算出
+    Vec = DirectX::XMVector3Normalize(Vec);     // 正規化して
+    Vec = DirectX::XMVectorScale(Vec, radiusA);   // スケーリング
+    DirectX::XMVECTOR CollisiontPoint = DirectX::XMVectorAdd(PositionA, Vec);
+    DirectX::XMStoreFloat3(&collisionPoint, CollisiontPoint);
+
+    return true;
 }
 
 // 円柱と円柱の交差判定

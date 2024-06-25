@@ -232,8 +232,8 @@ void SceneModelEditor::DrawDebugGUI()
 							ImGuiManager::Instance().InputText("vertexShader", material.vertexShaderName);
 							ImGuiManager::Instance().InputText("pixelShader", material.pixelShaderName);
 
-							const char* textureLabelNames[4] = {"Diffuse", "Normal", "Specular", "Emissive"};
-							for (int textureIndex = 0; textureIndex < 4; textureIndex++)
+							const char* textureLabelNames[5] = {"Diffuse", "Normal", "Specular", "Emissive", "Occlusion"};
+							for (int textureIndex = 0; textureIndex < 5; textureIndex++)
 							{
 								ImGuiManager::Instance().InputText(textureLabelNames[textureIndex], material.textureFilenames[textureIndex]);
 								ImGui::Image(material.shaderResourceViews[textureIndex].Get(), {64, 64});
@@ -283,7 +283,7 @@ void SceneModelEditor::DrawDebugGUI()
 										for (auto& [name, material] : modelObject->GetModel()->GetModelResource()->
 										     GetMaterials()) // ç\ë¢âªë©îõ
 										{
-											for (int textureIndex = 0; textureIndex < 4; textureIndex++)
+											for (int textureIndex = 0; textureIndex < 5; textureIndex++)
 											{
 												if (material.textureFilenames[textureIndex].size() > 0)
 												{

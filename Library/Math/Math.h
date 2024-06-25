@@ -9,6 +9,12 @@ public:
 	// 範囲指定ランダム値 int 型
 	static float IRandomRange(int min, int max);
 
+	// ========================= 座標変換 =========================
+
+	// ワールド座標からスクリーン座標への変換
+	static DirectX::XMFLOAT2 WorldToScreenPos(DirectX::XMFLOAT3 worldPosition);
+
+
 
 	// ========================= XMFloat3 =========================
 	

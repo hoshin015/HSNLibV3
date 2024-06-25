@@ -480,7 +480,9 @@ void Camera::UpdateCameraConstant()
 	RenderContext* rc = &RenderContext::Instance();
 
 	DirectX::XMMATRIX ViewProjection = DirectX::XMLoadFloat4x4(&view) * DirectX::XMLoadFloat4x4(&projection);
+	DirectX::XMMATRIX InverseViewProjection = DirectX::XMMatrixInverse(nullptr, ViewProjection);
 	DirectX::XMStoreFloat4x4(&rc->cameraConstant.viewProjection, ViewProjection);
+	DirectX::XMStoreFloat4x4(&rc->cameraConstant.inverseViewProjection, InverseViewProjection);
 
 	rc->cameraConstant.cameraPosition = { eye.x, eye.y, eye.z, 0 };
 

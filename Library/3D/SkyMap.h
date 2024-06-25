@@ -2,6 +2,7 @@
 #include <d3d11.h>
 #include <wrl.h>
 #include <DirectXMath.h>
+#include "../2D/Sprite.h"
 
 
 class SkyMap
@@ -13,13 +14,9 @@ public:
 	void Render();
 
 private:
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceView;
+	std::unique_ptr<Sprite> sprSky;
 
-	struct Constants
-	{
-		DirectX::XMFLOAT4X4 inverseViewProjection;
-	};
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> diffuseIemSrv;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> specularPmermSrv;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> lutGgxSrv;
 };

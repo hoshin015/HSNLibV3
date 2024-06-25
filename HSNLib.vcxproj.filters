@@ -86,9 +86,6 @@
     <Filter Include="1_HSNLib\Particle">
       <UniqueIdentifier>{3794878a-d848-4ebc-9325-c394c153a4ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="シェーダーファイル\Phong">
-      <UniqueIdentifier>{a8cf39ef-27ea-4d1d-bedc-82baf9d95c28}</UniqueIdentifier>
-    </Filter>
     <Filter Include="シェーダーファイル\SkinnedMesh">
       <UniqueIdentifier>{289c68e9-53d2-4644-bcc7-03f397d53d09}</UniqueIdentifier>
     </Filter>
@@ -133,6 +130,18 @@
     </Filter>
     <Filter Include="2_Source\Game\AI">
       <UniqueIdentifier>{03d267c9-1cd1-4934-a4b3-88c90c77b9bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\Game\Object\Effect\Lightning">
+      <UniqueIdentifier>{27affd33-7f73-491b-88ef-3901d778dfc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\Game\Object\Effect\Rock">
+      <UniqueIdentifier>{24ffbe2e-4685-49c0-8166-984572292d7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\Phong">
+      <UniqueIdentifier>{a8cf39ef-27ea-4d1d-bedc-82baf9d95c28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\PbrIbl">
+      <UniqueIdentifier>{b719491b-61a4-432a-ab0c-ddbfceabaaf0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -403,12 +412,6 @@
     <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyState.cpp">
       <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Object\Effect\LightningEffect.cpp">
-      <Filter>2_Source\Game\Object\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\Object\Effect\LightningMainMesh.cpp">
-      <Filter>2_Source\Game\Object\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="Library\Graphics\WbOitBuffer.cpp">
       <Filter>1_HSNLib\Graphics</Filter>
     </ClCompile>
@@ -420,6 +423,21 @@
     </ClCompile>
     <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyBehavior.cpp">
       <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UserInterface\DamageTextManager.cpp">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\RockEffect.cpp">
+      <Filter>2_Source\Game\Object\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\LightningEffect.cpp">
+      <Filter>2_Source\Game\Object\Effect\Lightning</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\LightningMainMesh.cpp">
+      <Filter>2_Source\Game\Object\Effect\Lightning</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\RockMainMesh.cpp">
+      <Filter>2_Source\Game\Object\Effect\Rock</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -717,12 +735,6 @@
     <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyState.h">
       <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Object\Effect\LightningEffect.h">
-      <Filter>2_Source\Game\Object\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\Object\Effect\LightningMainMesh.h">
-      <Filter>2_Source\Game\Object\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="Library\Graphics\WbOitBuffer.h">
       <Filter>1_HSNLib\Graphics</Filter>
     </ClInclude>
@@ -734,6 +746,21 @@
     </ClInclude>
     <ClInclude Include="Library\Graphics\RadialBlur.h">
       <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UserInterface\DamageTextManager.h">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\LightningEffect.h">
+      <Filter>2_Source\Game\Object\Effect\Lightning</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\LightningMainMesh.h">
+      <Filter>2_Source\Game\Object\Effect\Lightning</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\RockEffect.h">
+      <Filter>2_Source\Game\Object\Effect\Rock</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\RockMainMesh.h">
+      <Filter>2_Source\Game\Object\Effect\Rock</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\AI\BehaviorTree.h">
       <Filter>2_Source\Game\AI</Filter>
@@ -874,7 +901,7 @@
     <FxCompile Include="Library\Shader\ParticlesPS.hlsl">
       <Filter>シェーダーファイル\Particle</Filter>
     </FxCompile>
-    <FxCompile Include="Library\Shader\ParticlesEmitCS.hlsl">
+    <FxCompile Include="Library\Shader\ParticlesSingleEmitCS.hlsl">
       <Filter>シェーダーファイル\Particle</Filter>
     </FxCompile>
     <FxCompile Include="Library\Shader\WaterPS.hlsl">
@@ -891,6 +918,33 @@
     </FxCompile>
     <FxCompile Include="Library\Shader\RadialBlurPS.hlsl">
       <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\PhongPlPS.hlsl">
+      <Filter>シェーダーファイル\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\ParticlesEmitCS.hlsl">
+      <Filter>シェーダーファイル\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianBlurVerticalPS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianBlurHorizontalPS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianBlurUpSamplingPS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GaussianBlurDownSamplingPS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\GlowExtractionPS.hlsl">
+      <Filter>シェーダーファイル\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\PbrPS.hlsl">
+      <Filter>シェーダーファイル\PbrIbl</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\UnityPbrPS.hlsl">
+      <Filter>シェーダーファイル\PbrIbl</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -956,6 +1010,12 @@
     </None>
     <None Include="Library\Shader\Particles.hlsli">
       <Filter>シェーダーファイル\Particle</Filter>
+    </None>
+    <None Include="Library\Shader\BidirectionalReflectanceDistributionFunction.hlsli">
+      <Filter>シェーダーファイル\PbrIbl</Filter>
+    </None>
+    <None Include="Library\Shader\PbrFunctions.hlsli">
+      <Filter>シェーダーファイル\PbrIbl</Filter>
     </None>
   </ItemGroup>
 </Project>

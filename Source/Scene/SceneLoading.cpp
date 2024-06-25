@@ -11,6 +11,9 @@ void SceneLoading::Initialize()
 
 	// スレッド開始
 	thread = new std::thread(LoadingThread, this);
+
+	// スレッドの管理を放棄
+	thread->detach();
 }
 
 void SceneLoading::Finalize()
@@ -34,6 +37,8 @@ void SceneLoading::Update()
 
 void SceneLoading::Render()
 {
+	std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex()); // 排他制御
+
 	// 必要なポインタ取得
 	Graphics* gfx = &Graphics::Instance();
 	ID3D11DeviceContext* dc = gfx->GetDeviceContext();

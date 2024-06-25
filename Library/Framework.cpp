@@ -14,6 +14,7 @@
 #include "3D/DebugPrimitive.h"
 #include "3D/LineRenderer.h"
 #include "../Source/Scene/SceneManager.h"
+#include "../Source/UserInterface/DamageTextManager.h"
 
 // 初期化
 bool Framework::Initialize(HINSTANCE hInstance)
@@ -47,6 +48,9 @@ bool Framework::Initialize(HINSTANCE hInstance)
 
 	// --- RenderContext 初期化 ---
 	RenderContext::Instance().Initialize();
+
+	// --- DamageTextManager 初期化 ---
+	DamageTextManager::Instance().Initialize();
 
 	// --- シーン初期化 ---
 	SceneManager::Instance().ChangeScene(new SceneTitle);
@@ -100,7 +104,6 @@ void Framework::Update()
 #endif
 
 			// --- シーン描画 ---
-			std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex()); // 排他制御
 #if USE_IMGUI
 #if SHOW_PERFORMANCE
 			// --- RenderTimer開始 ---

@@ -1,10 +1,17 @@
+#include "../RegisterNum.h"
+
 struct VS_OUT
 {
     float4 position : SV_POSITION;
-    float2 texcoord : TEXCOORD;
+    float4 color : COLOR;
+    float4 worldPosition : WORLD_POSITION;
 };
 
-cbuffer OBJECT_CONSTANT_BUFFER : register(b0)
+
+// ÉJÉÅÉâÇÃèÓïÒ
+cbuffer CameraConstant : register(_cameraConstant)
 {
+    row_major float4x4 viewProjection;
+    float4 cameraPosition;
     row_major float4x4 inverseViewProjection;
-};
+}

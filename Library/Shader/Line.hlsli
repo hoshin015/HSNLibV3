@@ -10,4 +10,5 @@ cbuffer SCENE_CONSTANT_BUFFER : register(_cameraConstant)
 {
     row_major float4x4 viewProjection;
     float4 lightDirection;
+    row_major float4x4 inverseViewProjection;
 };

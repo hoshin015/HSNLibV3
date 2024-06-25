@@ -31,8 +31,6 @@ void AnimatedModel::Render(DirectX::XMFLOAT4X4 world, ModelResource::KeyFrame* k
 		dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		dc->IASetInputLayout(inputLayout.Get());
 
-		Constants data;
-
 		// アニメーション
 		if (keyFrame && keyFrame->nodes.size() > 0)
 		{
@@ -81,6 +79,7 @@ void AnimatedModel::Render(DirectX::XMFLOAT4X4 world, ModelResource::KeyFrame* k
 
 			dc->UpdateSubresource(constantBuffer.Get(), 0, 0, &data, 0, 0);
 			dc->VSSetConstantBuffers(_objectConstant, 1, constantBuffer.GetAddressOf());
+			dc->PSSetConstantBuffers(_objectConstant, 1, constantBuffer.GetAddressOf());
 
 			dc->PSSetShaderResources(_deffuseTexture, 1, material.shaderResourceViews[_deffuseTexture].GetAddressOf());
 			dc->PSSetShaderResources(_normalTexture, 1, material.shaderResourceViews[_normalTexture].GetAddressOf());

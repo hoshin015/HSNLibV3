@@ -19,3 +19,10 @@ cbuffer CBFilter : register(_gaussianConstant)
 };
 
 Texture2D textureMap : register(t0);
+
+cbuffer LuminanceExtractionConstant : register(_luminanceExtractionConstant)
+{
+    float threshould; // 高輝度抽出のための閾値
+    float intensity; // ブルームの強度
+    float2 lumiPad;
+}

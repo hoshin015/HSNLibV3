@@ -19,8 +19,11 @@ public:
 	ID3D11ShaderResourceView* GetSrv() const { return radialBuffer->shaderResourceViews[0].Get(); }
 	ID3D11ShaderResourceView** GetSrvAddress() const { return radialBuffer->shaderResourceViews[0].GetAddressOf(); }
 
-
+	void SetIsRadial(bool isRadial) { this->isRadial = isRadial; }
+	bool GetIsRadial() { return isRadial; }
 private:
+	bool isRadial = false;
+
 	// FullScreenQuad
 	std::unique_ptr<FullScreenQuad> bitBlockTransfer;
 

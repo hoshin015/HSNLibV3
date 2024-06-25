@@ -9,6 +9,9 @@
 #include "../../Source/Game/Object/Stage/StageManager.h"
 #include "../../ImGui/imgui.h"
 #include "../Enemy/Enemy.h"
+#include "../../Library/ImGui/ConsoleData.h"
+#include "../../../../../Library/Particle/EmitterManager.h"
+#include "../../../../UserInterface/DamageTextManager.h"
 
 Player::Player(const char* filePath) : AnimatedObject(filePath)
 {
@@ -41,6 +44,7 @@ void Player::Update()
 	// ステートマシン更新
 	stateMachine->Update();
 
+	// 敵との当たり判定
 	CollisionVsEnemy();
 
 	// アニメーション更新
@@ -57,6 +61,13 @@ void Player::Render(bool isShadow)
 
 void Player::DrawDebugImGui(int number)
 {
+	ImGui::Begin("Player");
+	{
+		ImGui::DragFloat("emissive", &GetModel()->data.emissivePower, 0.01f);
+		ImGui::SliderFloat("roughness", &GetModel()->data.roughnessPower, -1.0f, 1.0f);
+		ImGui::SliderFloat("metalness", &GetModel()->data.metalnessPower, -1.0f, 1.0f);
+	}
+	ImGui::End();
 }
 
 // 入力データ取得
@@ -183,20 +194,70 @@ void Player::Move()
 // 敵との衝突処理
 void Player::CollisionVsEnemy()
 {
-	for(auto& boneSphere : model->GetModelResource()->GetSkeletonSphereCollisions())
+	for (auto& eBoneSphere : Enemy::Instance().GetModel()->GetModelResource()->GetSkeletonSphereCollisions())
 	{
-		for(auto& eBoneSphere : Enemy::Instance().GetModel()->GetModelResource()->GetSkeletonSphereCollisions())
+		// ===== 体同士の当たり判定 =====
+		for (auto& boneSphere : model->GetModelResource()->GetSkeletonSphereCollisions())
 		{
 			// 処理する２つのボーンの座標計算
 			DirectX::XMFLOAT3 bonePos;
 			DirectX::XMFLOAT3 eBonePos;
-			if(boneSphere.name != "")
+			if (boneSphere.name != "")
 			{
 				bonePos = GetBonePosition(boneSphere.name);
 			}
 			else
 			{
 				DirectX::XMVECTOR BONE_POS = DirectX::XMLoadFloat3(&boneSphere.position);
+				DirectX::XMVECTOR POS      = DirectX::XMLoadFloat3(&position);
+				DirectX::XMStoreFloat3(&bonePos, DirectX::XMVectorAdd(BONE_POS, POS));
+			}
+			if (eBoneSphere.name != "")
+			{
+				eBonePos = Enemy::Instance().GetBonePosition(eBoneSphere.name);
+			}
+			else
+			{
+				DirectX::XMFLOAT3 ePos     = Enemy::Instance().GetPos();
+				DirectX::XMVECTOR BONE_POS = DirectX::XMLoadFloat3(&eBoneSphere.position);
+				DirectX::XMVECTOR POS      = DirectX::XMLoadFloat3(&ePos);
+				DirectX::XMStoreFloat3(&eBonePos, DirectX::XMVectorAdd(BONE_POS, POS));
+			}
+
+			// 衝突処理
+			DirectX::XMFLOAT3 outPosition;
+			if (Collision::IntersectSphereVsSphere(
+					eBonePos,
+					eBoneSphere.radius,
+					bonePos,
+					boneSphere.radius,
+					outPosition)
+			)
+			{
+				// 押し出し後の位置設定
+				outPosition.y = 0;
+				SetPos(outPosition);
+			}
+		}
+
+		// ===== 自分の攻撃と敵の体の当たり判定 =====
+		for(auto& playerAnimSphereCollision : model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSphereCollisions)
+		{
+			// 既にダメージを与えているかチェック
+			if (playerAnimSphereCollision.isDamaged) continue;
+			// フレーム範囲内かチェック
+			if (currentKeyFrame < playerAnimSphereCollision.startFrame || currentKeyFrame > playerAnimSphereCollision.endFrame) continue;
+
+			// 処理する２つのボーンの座標計算
+			DirectX::XMFLOAT3 bonePos;
+			DirectX::XMFLOAT3 eBonePos;
+			if (playerAnimSphereCollision.bindBoneName != "")
+			{
+				bonePos = GetBonePosition(playerAnimSphereCollision.bindBoneName);
+			}
+			else
+			{
+				DirectX::XMVECTOR BONE_POS = DirectX::XMLoadFloat3(&playerAnimSphereCollision.position);
 				DirectX::XMVECTOR POS = DirectX::XMLoadFloat3(&position);
 				DirectX::XMStoreFloat3(&bonePos, DirectX::XMVectorAdd(BONE_POS, POS));
 			}
@@ -213,18 +274,97 @@ void Player::CollisionVsEnemy()
 			}
 
 			// 衝突処理
-			DirectX::XMFLOAT3 outPosition;
-			if (Collision::IntersectSphereVsSphere(
+			DirectX::XMFLOAT3 collisionPoint;
+			if (Collision::SphereVsSphereCollisionPoint(
 				eBonePos,
 				eBoneSphere.radius,
 				bonePos,
-				boneSphere.radius,
-				outPosition)
+				playerAnimSphereCollision.radius,
+				collisionPoint)
 				)
 			{
-				// 押し出し後の位置設定
-				outPosition.y = 0;
-				SetPos(outPosition);
+				playerAnimSphereCollision.isDamaged = true;
+
+				ConsoleData::Instance().logs.push_back("Damage!");
+
+				Emitter* emitter = new Emitter();
+				emitter->position = collisionPoint;
+				emitter->emitterData.duration = 2.0;
+				emitter->emitterData.looping = false;
+				emitter->emitterData.burstsTime = 0.0;
+				emitter->emitterData.burstsCount = 256;
+				emitter->emitterData.particleKind = 1;
+				emitter->emitterData.particleLifeTimeMin = 0.4f;
+				emitter->emitterData.particleLifeTimeMax = 0.6f;
+				emitter->emitterData.particleSpeedMin = 15.0f;
+				emitter->emitterData.particleSpeedMax = 30.0f;
+				emitter->emitterData.particleSizeMin = { 0.25f, 0.005f };
+				emitter->emitterData.particleSizeMax = { 2.0f, 0.1f };
+				emitter->emitterData.particleColorMin = { 3.5, 3.5, 0.8, 1 };
+				emitter->emitterData.particleColorMax = { 6.0, 6.0, 0.8, 1 };
+				emitter->emitterData.particleFrictionMin = 0;
+				emitter->emitterData.particleFrictionMax = 0.01;
+				emitter->emitterData.particleGravity = 20;
+				emitter->emitterData.particleBillboardType = 1;
+				emitter->emitterData.particleTextureType = 0;
+				emitter->emitterData.burstsOneShot = true;
+				EmitterManager::Instance().Register(emitter);
+
+				Emitter* emitter1 = new Emitter();
+				emitter1->position = collisionPoint;
+				emitter1->emitterData.duration = 2.0;
+				emitter1->emitterData.looping = false;
+				emitter1->emitterData.burstsTime = 0.03;
+				emitter1->emitterData.burstsCount = 1;
+				emitter1->emitterData.particleKind = 2;
+				emitter1->emitterData.particleLifeTimeMin = 0.1f;
+				emitter1->emitterData.particleLifeTimeMax = 0.1f;
+				emitter1->emitterData.particleSpeedMin = 0.0f;
+				emitter1->emitterData.particleSpeedMax = 0.0f;
+				emitter1->emitterData.particleSizeMin = { 50.0f, 5.0f };
+				emitter1->emitterData.particleSizeMax = { 50.0f, 5.0f };
+				emitter1->emitterData.particleColorMin = { 1.9, 1.9, 8.8, 1 };
+				emitter1->emitterData.particleColorMax = { 1.9, 1.9, 10.8, 1 };
+				emitter1->emitterData.particleFrictionMin = 0;
+				emitter1->emitterData.particleFrictionMax = 0.01;
+				emitter1->emitterData.particleAngleMin = 0;
+				emitter1->emitterData.particleAngleMax = 359;
+				emitter1->emitterData.particleGravity = 20;
+				emitter1->emitterData.particleBillboardType = 2;
+				emitter1->emitterData.particleTextureType = 1;
+				emitter1->emitterData.burstsOneShot = 2;
+
+				emitter1->emitRateTimer = emitter1->emitterData.burstsTime;	// 生成時に発生するようにする
+				EmitterManager::Instance().Register(emitter1);
+
+				Emitter* emitter2 = new Emitter();
+				emitter2->position = collisionPoint;
+				emitter2->emitterData.duration = 2.0;
+				emitter2->emitterData.looping = false;
+				emitter2->emitterData.burstsTime = 0.0;
+				emitter2->emitterData.burstsCount = 1;
+				emitter2->emitterData.particleKind = 3;
+				emitter2->emitterData.particleLifeTimeMin = 0.05f;
+				emitter2->emitterData.particleLifeTimeMax = 0.05f;
+				emitter2->emitterData.particleSpeedMin = 0.0f;
+				emitter2->emitterData.particleSpeedMax = 0.0f;
+				emitter2->emitterData.particleSizeMin = { 5.0f, 5.0f };
+				emitter2->emitterData.particleSizeMax = { 5.0f, 5.0f };
+				emitter2->emitterData.particleColorMin = { 8.5, 3.0, 0.8, 1 };
+				emitter2->emitterData.particleColorMax = { 8.5, 3.0, 0.8, 1 };
+				emitter2->emitterData.particleFrictionMin = 0;
+				emitter2->emitterData.particleFrictionMax = 0.01;
+				emitter2->emitterData.particleAngleMin = 0;
+				emitter2->emitterData.particleAngleMax = 359;
+				emitter2->emitterData.particleGravity = 20;
+				emitter2->emitterData.particleBillboardType = 2;
+				emitter2->emitterData.particleTextureType = 2;
+				emitter2->emitterData.burstsOneShot = 1;
+				EmitterManager::Instance().Register(emitter2);
+
+				int dmg = rand() % 20 + 1;
+				std::string dmgText = std::to_string(dmg);
+				DamageTextManager::Instance().Register({ dmgText, collisionPoint });
 			}
 		}
 	}

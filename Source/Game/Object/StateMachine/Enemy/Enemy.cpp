@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "../../../../../External/ImGui/imgui.h"
 
 #include "../../External/ImGui/imgui.h"
 
@@ -274,4 +275,15 @@ void Enemy::UpdateBehaviorTree(float elapsedTime)
 	{
 		activeNode_ = aiTree_->Run(activeNode_, behaviorData_, elapsedTime);
 	}
+}
+
+void Enemy::DrawDebugImGui(int number)
+{
+	ImGui::Begin("Enemy");
+	{
+		ImGui::DragFloat("emissive", &GetModel()->data.emissivePower, 0.01f);
+		ImGui::SliderFloat("roughness", &GetModel()->data.roughnessPower, -1.0f, 1.0f);
+		ImGui::SliderFloat("metalness", &GetModel()->data.metalnessPower, -1.0f, 1.0f);
+	}
+	ImGui::End();
 }

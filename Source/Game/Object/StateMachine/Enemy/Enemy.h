@@ -18,7 +18,7 @@ private:
 public:
 	static Enemy& Instance()
 	{
-		static Enemy instance("Data/Fbx/Monster/walk.fbx");
+		static Enemy instance("Data/Fbx/Red/Red.model");
 		return instance;
 	}
 
@@ -50,4 +50,6 @@ public:
 
 	float walkSpeed_ = 3.0f;
 	float runSpeed_ = 10.0f;
+
+	void DrawDebugImGui(int number);
 };

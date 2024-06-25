@@ -2,6 +2,7 @@
 #include <memory>
 // --- Library ---
 #include "../../Library/2D/Sprite.h"
+#include "../../Library/3D/SkyMap.h"
 #include "../../Library/Graphics/FrameBuffer.h"
 #include "../../Library/Graphics/FullScreenQuad.h"
 #include "../../Library/Graphics/Bloom.h"
@@ -46,6 +47,8 @@ private:
 	std::unique_ptr<WbOitBuffer> wbOitBuffer;
 	std::unique_ptr<RadialBlur> radialBlur;
 
+	std::unique_ptr<SkyMap> skyMap;
+
 	std::unique_ptr<TestStatic> testStatic;
 	std::unique_ptr<Sprite> sprTest;
 	std::unique_ptr<Sprite> sprTest2;
@@ -53,5 +56,5 @@ private:
 
 	std::unique_ptr<BlendTestPlayer> blendTestPlayer;
 
-	std::unique_ptr<LightningMainMesh> lightningEffect;
+	bool showCollision = false;
 };

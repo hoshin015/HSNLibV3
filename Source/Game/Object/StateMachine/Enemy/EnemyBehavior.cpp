@@ -35,7 +35,8 @@ BT_ActionState EnemyPursuitAction::Run(float elapsedTime)
 		// --- 初期設定 ---
 	case 0:
 
-		owner_->PlayAnimation(9/*Run*/, true);	// アニメーションの設定
+		//owner_->PlayAnimation(9/*Run*/, true);	// アニメーションの設定
+		owner_->PlayAnimation(0/*Run*/, true);	// アニメーションの設定
 
 		step++;
 		break;
@@ -112,6 +113,7 @@ BT_ActionState EnemyAttackAction::Run(float elapsedTime)
 		// --- 初期設定 ---
 	case 0:
 
+		//owner_->PlayAnimation(0/*Attack*/, false);	// アニメーションの設定
 		owner_->PlayAnimation(0/*Attack*/, false);	// アニメーションの設定
 		owner_->SetCurrentAnimationSeconds(0.0f);
 		owner_->SetAnimationEndFlag(false);
@@ -144,7 +146,8 @@ BT_ActionState EnemyAttackAction2::Run(float elapsedTime)
 		// --- 初期設定 ---
 	case 0:
 
-		owner_->PlayAnimation(1/*Attack2*/, false);	// アニメーションの設定
+		//owner_->PlayAnimation(1/*Attack2*/, false);	// アニメーションの設定
+		owner_->PlayAnimation(0/*Attack2*/, false);	// アニメーションの設定
 		owner_->SetCurrentAnimationSeconds(0.0f);
 		owner_->SetAnimationEndFlag(false);
 
@@ -200,7 +203,8 @@ BT_ActionState EnemyWanderAction::Run(float elapsedTime)
 		// --- 初期設定 ---
 	case 0:
 
-		owner_->PlayAnimation(12/*Walk*/, true);
+		//owner_->PlayAnimation(12/*Walk*/, true);
+		owner_->PlayAnimation(0/*Walk*/, true);
 		step++;
 		break;
 
@@ -251,7 +255,8 @@ BT_ActionState EnemyIdleAction::Run(float elapsedTime)
 	case 0:
 
 		owner_->runTimer_ = (rand() / FLT_MAX) * 2.0f + 3.0f;	// 3.0 ~ 5.0
-		owner_->PlayAnimation(6/*Idle*/, true);
+		//owner_->PlayAnimation(6/*Idle*/, true);
+		owner_->PlayAnimation(0/*Idle*/, true);
 
 			step++;
 		break;

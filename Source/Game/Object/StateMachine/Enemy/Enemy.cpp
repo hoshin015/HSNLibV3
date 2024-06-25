@@ -26,7 +26,8 @@ void Enemy::Initialize()
 
 	position = { 0, 0, -15 };
 
-	PlayAnimation(12/*Walk*/, true);
+	//PlayAnimation(12/*Walk*/, true);
+	PlayAnimation(0/*Walk*/, true);
 }
 
 
@@ -128,7 +129,7 @@ void Enemy::DrawDebugGui()
 	ImGui::DragFloat(u8"索敵距離", &searchRange_);
 	bool IsSearch = SearchPlayer();
 	ImGui::Checkbox(u8"発見", &IsSearch);
-	ImGui::DragFloat4(u8"クォータニオン", &quaternion_.x);
+	ImGui::DragFloat3(u8"スケール", &scale.x);
 	ImGui::DragFloat(u8"歩く速度", &walkSpeed_, 0.01f);
 	ImGui::DragFloat(u8"走る速度", &runSpeed_, 0.01f);
 

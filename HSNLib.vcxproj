@@ -171,6 +171,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Library\Math\Matrix.cpp" />
+    <ClCompile Include="Library\Math\Vector.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\RockEffect.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\RockMainMesh.cpp" />
     <ClCompile Include="Source\UserInterface\DamageTextManager.cpp" />
@@ -271,6 +273,8 @@
     <ClCompile Include="Library\Graphics\WbOitBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Library\Math\Matrix.h" />
+    <ClInclude Include="Library\Math\Vector.h" />
     <ClInclude Include="Source\Game\Object\Effect\RockEffect.h" />
     <ClInclude Include="Source\Game\Object\Effect\RockMainMesh.h" />
     <ClInclude Include="Source\UserInterface\DamageTextManager.h" />

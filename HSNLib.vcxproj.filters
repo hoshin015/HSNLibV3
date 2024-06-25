@@ -439,6 +439,12 @@
     <ClCompile Include="Source\Game\Object\Effect\RockMainMesh.cpp">
       <Filter>2_Source\Game\Object\Effect\Rock</Filter>
     </ClCompile>
+    <ClCompile Include="Library\Math\Matrix.cpp">
+      <Filter>1_HSNLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Math\Vector.cpp">
+      <Filter>1_HSNLib\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -767,6 +773,12 @@
     </ClInclude>
     <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyBehavior.h">
       <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Math\Matrix.h">
+      <Filter>1_HSNLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Math\Vector.h">
+      <Filter>1_HSNLib\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

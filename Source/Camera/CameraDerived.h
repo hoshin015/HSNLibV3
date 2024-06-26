@@ -6,6 +6,23 @@
 class PlayerCamera : public CameraBase
 {
 public:
+	void Initialize() override;
+
 	void Update() override;
+	void UpdateConstants() override;
+
+	void DrawDebugGui() override;
+
+
+private:
+	float horizontalAngle = 0.0f;
+	float verticalAngle = 0.0f;
+	float sensitivity = 1.0f;	// Š´“x
+	float range = 10.0f;
+	bool  fixedCursor = true;
+	float t;
+	float positionComplementAmount;	// ˆÊ’u‚Ì•âŠ®—Ê
+
+	Vector3 currentPosition;
 };
 

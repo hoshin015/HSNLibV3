@@ -25,6 +25,12 @@ CameraBase::CameraBase()
 // --- カメラ行列の更新 ---
 void CameraBase::Update()
 {
+	Update(position, target, up, fov, nearZ, farZ, aspect);
+}
+
+
+void CameraBase::Update(const Vector3& position, const Vector3& target, const Vector3& up, const float fov, const float nearZ, const float farZ, const float aspect)
+{	
 	// --- 行列の計算 ---
 	view.MakeLookAt(position, target, up);
 	projection.MakePerspective(fov, aspect, nearZ, farZ);
@@ -34,13 +40,20 @@ void CameraBase::Update()
 
 	// --- 行列から方向ベクトルを取り出す ---
 	frontVec = Vector3::Normalize(world.v_[2].xyz());
-	upVec	 = Vector3::Normalize(world.v_[1].xyz());
+	upVec = Vector3::Normalize(world.v_[1].xyz());
 	rightVec = Vector3::Normalize(world.v_[0].xyz());
+
 }
 
 
 // --- 定数バッファの更新 ---
 void CameraBase::UpdateConstants()
+{
+	UpdateConstants(position);
+}
+
+
+void CameraBase::UpdateConstants(const Vector3& position)
 {
 	Graphics* gfx = &Graphics::Instance();
 	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
@@ -60,4 +73,5 @@ void CameraBase::UpdateConstants()
 	dc->PSSetConstantBuffers(_cameraConstant, 1, rc->cameraConstantBuffer.GetAddressOf());
 	dc->GSSetConstantBuffers(_cameraConstant, 1, rc->cameraConstantBuffer.GetAddressOf());
 	//dc->CSSetConstantBuffers(_cameraConstant, 1, rc->cameraConstantBuffer.GetAddressOf());
+
 }

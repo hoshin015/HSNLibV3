@@ -47,6 +47,7 @@ void SceneTest::Initialize()
 	Camera::Instance().cameraType = Camera::CAMERA::TARGET_PLAYER;
 #else
 	camera = &playerCamera;
+	camera->Initialize();
 #endif
 
 	// --- ライト初期設定 ---
@@ -94,6 +95,7 @@ void SceneTest::Initialize()
 
 	Enemy::Instance().Initialize();
 	Player::Instance().Initialize();
+	Player::Instance().SetCamera(camera);	// 今のカメラを設定
 
 
 	Particle::Instance().Initialize();
@@ -432,6 +434,8 @@ void SceneTest::Render()
 	shadow->DrawDebugGui();
 	wbOitBuffer->DrawDebugGui();
 	radialBlur->DrawDebugGui();
+
+	camera->DrawDebugGui();
 
 #if SHOW_PERFORMANCE
 	// --- パフォーマンス描画 ---

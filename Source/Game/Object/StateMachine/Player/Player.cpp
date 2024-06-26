@@ -127,11 +127,20 @@ void Player::CalcWalkVelocity()
 {
 	// ƒJƒƒ‰‚Ì•ûŒü‚É‘Î‰‚·‚éˆÚ“®
 	float deltaTime = Timer::Instance().DeltaTime();
+
+#if 0
 	velocity.x += Camera::Instance().GetFront().x * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * deltaTime;
 	velocity.z += Camera::Instance().GetFront().z * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * deltaTime;
 
 	velocity.x += Camera::Instance().GetRight().x * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * deltaTime;
 	velocity.z += Camera::Instance().GetRight().z * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * deltaTime;
+#else
+	velocity.x += camera->GetFrontVec().x * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * deltaTime;
+	velocity.z += camera->GetFrontVec().z * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * deltaTime;
+
+	velocity.x += camera->GetRightVec().x * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * deltaTime;
+	velocity.z += camera->GetRightVec().z * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * deltaTime;
+#endif
 }
 
 // ‘–‚èˆÚ“®—ÊŒvZ
@@ -141,6 +150,7 @@ void Player::CalcRunVelocity()
 
 	// ƒJƒƒ‰‚Ì•ûŒü‚É‘Î‰‚·‚éˆÚ“®
 	float deltaTime = Timer::Instance().DeltaTime();
+#if 0
 	velocity.x += Camera::Instance().GetFront().x * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * runPower *
 		deltaTime;
 	velocity.z += Camera::Instance().GetFront().z * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * runPower *
@@ -150,6 +160,14 @@ void Player::CalcRunVelocity()
 		deltaTime;
 	velocity.z += Camera::Instance().GetRight().z * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * runPower *
 		deltaTime;
+
+#else
+	velocity.x += camera->GetFrontVec().x * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * runPower * deltaTime;
+	velocity.z += camera->GetFrontVec().z * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * runPower * deltaTime;
+
+	velocity.x += camera->GetRightVec().x * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * runPower * deltaTime;
+	velocity.z += camera->GetRightVec().z * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * runPower * deltaTime;
+#endif
 }
 
 // ˆÚ“®‚µ‚Ä‚¢‚é•ûŒü‚ÉŒü‚­

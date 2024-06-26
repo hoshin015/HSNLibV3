@@ -36,11 +36,21 @@ public:
 	void SetFarZ(float farZ) { this->farZ = farZ; }
 	void SetAspect(float aspect) { this->aspect = aspect; }
 
+	virtual void Initialize() {};
+
 	// --- カメラ行列の更新 ---
 	virtual void Update();
+	virtual void Update(
+		const Vector3& position, const Vector3& target, const Vector3& up,
+		const float fov, const float nearZ, const float farZ, const float aspect
+	);
 
 	// --- カメラ定数の更新 ---
-	void UpdateConstants();
+	virtual void UpdateConstants();
+	virtual void UpdateConstants(const Vector3& position);
+
+	// --- デバッグ描画 ---
+	virtual void DrawDebugGui() {};
 
 protected:
 	Matrix view;		// ビュー行列

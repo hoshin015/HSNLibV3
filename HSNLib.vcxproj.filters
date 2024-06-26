@@ -445,7 +445,9 @@
     <ClCompile Include="Library\Math\Vector.cpp">
       <Filter>1_HSNLib\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Library\Resource\Model\Animator.cpp" />
+    <ClCompile Include="Library\Resource\Model\Animator.cpp">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">

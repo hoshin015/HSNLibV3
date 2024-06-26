@@ -19,6 +19,7 @@
 #include "../../Library/3D/LineRenderer.h"
 #include "../../Library/3D/LightManager.h"
 #include "../../Library/Graphics/Texture.h"
+#include "../../Library/Resource/Model/Animator.h"
 
 void SceneModelEditor::Initialize()
 {
@@ -422,6 +423,11 @@ void SceneModelEditor::DrawDebugGUI()
 
 			ModelResource::Animation& animationClip = modelObject->GetModel()->GetModelResource()->GetAnimationClips().
 			                                                       at(animationClipIndex);
+
+			Animator animator;
+			auto& animations = modelObject->GetModel()->GetModelResource()->GetAnimationClips();
+			animator.AddBlendAnimation("aaa", {&animations[0],&animations[1],&animations[2] });
+			animator.PlayAnimation("aaa", Timer::Instance().DeltaTime());
 
 			if (ImGui::Button("DoubleAnimationPlay"))
 			{

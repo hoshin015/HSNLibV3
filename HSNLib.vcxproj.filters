@@ -445,6 +445,7 @@
     <ClCompile Include="Library\Math\Vector.cpp">
       <Filter>1_HSNLib\Math</Filter>
     </ClCompile>
+    <ClCompile Include="Library\Resource\Model\Animator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -779,6 +780,9 @@
     </ClInclude>
     <ClInclude Include="Library\Math\Vector.h">
       <Filter>1_HSNLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Resource\Model\Animator.h">
+      <Filter>1_HSNLib\Resource\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

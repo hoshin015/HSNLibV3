@@ -37,7 +37,7 @@ void LightningEffect::Update()
 				l->SetAngleX(-(rand() % 90));
 				l->SetAngleZ(-(rand() % 90));
 				l->SetUpdateType(LightningData::LightningFuncEnum::Bottom);
-				l->SetColor({ 2.8, 2.8, 20.5, 1 });
+				l->SetColor({ 20.8, 2.8, 2.5, 1 });
 
 				if (rand() % 2)
 				{
@@ -71,7 +71,7 @@ void LightningEffect::Update()
 			l->SetEmissivePower(4.0f);
 			l->SetAngleY(rand() % 360);
 			l->SetUpdateType(LightningData::LightningFuncEnum::Main);
-			l->SetColor({ 2.8, 2.8, 20.5, 1 });
+			l->SetColor({ 20.8, 2.8, 2.5, 1 });
 			lightningMesh1->Register(l);
 			LightningData* l2 = new LightningData();
 			l2->SetPos(lightningEmit.position);
@@ -82,7 +82,7 @@ void LightningEffect::Update()
 			l2->SetEmissivePower(4.0f);
 			l2->SetAngleY(rand() % 360);
 			l2->SetUpdateType(LightningData::LightningFuncEnum::Main);
-			l2->SetColor({ 2.8, 2.8, 20.5, 1 });
+			l2->SetColor({ 20.8, 2.8, 2.5, 1 });
 			lightningMesh2->Register(l2);
 
 			lightningEmit.addLightning0 = true;
@@ -105,7 +105,7 @@ void LightningEffect::Update()
 			l->SetEmissivePower(4.0f);
 			l->SetAngleY(rand() % 360);
 			l->SetUpdateType(LightningData::LightningFuncEnum::Main);
-			l->SetColor({ 2.8, 2.8, 20.5, 1 });
+			l->SetColor({ 20.8, 2.8, 2.5, 1 });
 			lightningMesh1->Register(l);
 			LightningData* l2 = new LightningData();
 			l2->SetPos(lightningEmit.position);
@@ -115,7 +115,7 @@ void LightningEffect::Update()
 			l2->SetVal1(scaleValue);
 			l2->SetEmissivePower(4.0f);
 			l2->SetAngleY(rand()%360);
-			l2->SetColor({ 2.8, 2.8, 20.5, 1 });
+			l2->SetColor({ 20.8, 2.8, 2.5, 1 });
 			lightningMesh1->Register(l2);
 
 			lightningEmit.addLightning1 = true;
@@ -137,7 +137,7 @@ void LightningEffect::Update()
 			l2->SetVal1(scaleValue);
 			l2->SetAngleY(rand() % 360);
 			l2->SetUpdateType(LightningData::LightningFuncEnum::Main);
-			l2->SetColor({ 2.8, 2.8, 20.5, 1 });
+			l2->SetColor({ 20.8, 2.8, 2.5, 1 });
 			lightningMesh2->Register(l2);
 
 			lightningEmit.addLightning2 = true;
@@ -159,7 +159,7 @@ void LightningEffect::Update()
 			l2->SetVal1(scaleValue);
 			l2->SetUpdateType(LightningData::LightningFuncEnum::Main);
 			l2->SetAngleY(rand()%360);
-			l2->SetColor({ 2.8, 2.8, 20.5, 1 });
+			l2->SetColor({ 20.8, 2.8, 2.5, 1 });
 			lightningMesh2->Register(l2);
 
 			lightningEmit.addLightning3 = true;
@@ -186,8 +186,8 @@ void LightningEffect::Update()
 			emitter->emitterData.particleSpeedMax = 4.0f;
 			emitter->emitterData.particleSizeMin = { 0.1f, 0.05 };
 			emitter->emitterData.particleSizeMax = { 0.4f, 0.1f };
-			emitter->emitterData.particleColorMin = { 2.8, 2.8, 20.0, 1 };
-			emitter->emitterData.particleColorMax = { 2.8, 2.8, 20.5, 1 };
+			emitter->emitterData.particleColorMin = { 20.8, 2.8, 2.5, 1 };
+			emitter->emitterData.particleColorMax = { 20.8, 2.8, 2.5, 1 };
 			emitter->emitterData.particleFrictionMin = 0;
 			emitter->emitterData.particleFrictionMax = 0.01;
 			emitter->emitterData.particleGravity = 4;
@@ -232,7 +232,7 @@ void LightningEffect::Emit(DirectX::XMFLOAT3 pos)
 		l2->SetPosY(l2->GetPosY() + 0.001);
 		l2->SetEmissivePower(0.5f);
 		l2->SetScale({ 4,0.5,4 });
-		l2->SetColor({ 0.8,0.8,1.0,1 });
+		l2->SetColor({ 1.5,0.8,0.8,1 });
 		l2->SetUpdateType(LightningData::LightningFuncEnum::Area);
 		lightningMesh3->Register(l2);
 
@@ -249,8 +249,8 @@ void LightningEffect::Emit(DirectX::XMFLOAT3 pos)
 		emitter->emitterData.particleSpeedMax = 2.0f;
 		emitter->emitterData.particleSizeMin = { 0.1f, 0.05 };
 		emitter->emitterData.particleSizeMax = { 0.4f, 0.1f };
-		emitter->emitterData.particleColorMin = { 2.8, 2.8, 20.0, 1 };
-		emitter->emitterData.particleColorMax = { 2.8, 2.8, 20.5, 1 };
+		emitter->emitterData.particleColorMin = { 20.8, 2.8, 2.5, 1 };
+		emitter->emitterData.particleColorMax = { 20.8, 2.8, 2.5, 1 };
 		emitter->emitterData.particleFrictionMin = 0;
 		emitter->emitterData.particleFrictionMax = 0.01;
 		emitter->emitterData.particleGravity = 0;

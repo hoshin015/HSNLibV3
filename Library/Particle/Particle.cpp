@@ -72,8 +72,8 @@ Particle::Particle()
 	CreateCsFromCso("Data/Shader/ParticlesSingleEmitCS.cso", emitSingleCs.ReleaseAndGetAddressOf());
 	CreateCsFromCso("Data/Shader/ParticlesEmitCS.cso", emitCs.ReleaseAndGetAddressOf());
 
-	sprParticles = std::make_unique<Sprite>("Data/Texture/Effect/smoke1.png");
-	sprSmoke = std::make_unique<Sprite>("Data/Texture/Effect/smoke1.png");
+	sprParticles = std::make_unique<Sprite>("Data/Texture/Effect/smoke2.png");
+	sprSmoke = std::make_unique<Sprite>("Data/Texture/Effect/smoke2normal.png");
 
 	freeParticleCount = MAX_PARTICLE;
 }

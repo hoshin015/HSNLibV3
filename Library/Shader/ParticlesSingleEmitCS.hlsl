@@ -171,6 +171,8 @@ void main(uint3 DTid : SV_DispatchThreadID)
 		{
 			p.position = emitterPosition;
 
+			p.velocity.y = 0.0;
+
 			float particleSpeed = RandomRange(particleSpeedMin.x, particleSpeedMax.x, seed);
 			seed                = random(float2(seed, deltaTime));
 

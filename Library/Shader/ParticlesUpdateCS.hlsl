@@ -94,7 +94,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
 					p.color.a -= 1 * deltaTime;
 				}
 
-				p.scale = p.startScale * (1.0f - (p.lifeTimer / p.lifeTime));
+				//p.scale = p.startScale * (p.lifeTimer / p.lifeTime);
 
 				p.lifeTimer -= deltaTime;
 			}

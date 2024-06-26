@@ -37,13 +37,16 @@
 void SceneTest::Initialize()
 {
 	// --- カメラ初期設定 ---
-	Camera::Instance().SetLookAt(
-		DirectX::XMFLOAT3(0, 20, 20), // カメラ座標
-		DirectX::XMFLOAT3(0, 0, 0),   // ターゲット(設定しても意味ない)
-		DirectX::XMFLOAT3(0, 1, 0)    // 上方向ベクトル
-	);
-	Camera::Instance().SetAngle({DirectX::XMConvertToRadians(45), DirectX::XMConvertToRadians(180), 0});
-	Camera::Instance().cameraType = Camera::CAMERA::TARGET_PLAYER;
+	{
+		std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex()); // 排他制御
+		Camera::Instance().SetLookAt(
+			DirectX::XMFLOAT3(0, 20, 20), // カメラ座標
+			DirectX::XMFLOAT3(0, 0, 0),   // ターゲット(設定しても意味ない)
+			DirectX::XMFLOAT3(0, 1, 0)    // 上方向ベクトル
+		);
+		Camera::Instance().SetAngle({DirectX::XMConvertToRadians(45), DirectX::XMConvertToRadians(180), 0});
+		Camera::Instance().cameraType = Camera::CAMERA::TARGET_PLAYER;
+	}
 
 	// --- ライト初期設定 ---
 	Light* directionLight = new Light(LightType::Directional);
@@ -215,23 +218,23 @@ void SceneTest::Update()
 	if (InputManager::Instance().GetKeyPressed(Keyboard::F4))
 	{
 		Emitter* emitter0 = new Emitter();
-		emitter0->position = { 0, 1.5, 0 };
+		emitter0->position = { 0, 0, 0 };
 		emitter0->emitterData.duration = 3.0;
 		emitter0->emitterData.looping = false;
-		emitter0->emitterData.burstsTime = 0.5;
-		emitter0->emitterData.burstsCount = 6;
+		emitter0->emitterData.burstsTime = 0.3;
+		emitter0->emitterData.burstsCount = 3;
 		emitter0->emitterData.particleKind = 6;
 		emitter0->emitterData.particleLifeTimeMin = 1.0f;
-		emitter0->emitterData.particleLifeTimeMax = 3.0f;
-		emitter0->emitterData.particleSpeedMin = 30.0f;
-		emitter0->emitterData.particleSpeedMax = 60.0f;
-		emitter0->emitterData.particleSizeMin = { 30.0f, 30.0f };
-		emitter0->emitterData.particleSizeMax = { 40.0f, 40.0f };
+		emitter0->emitterData.particleLifeTimeMax = 2.0f;
+		emitter0->emitterData.particleSpeedMin = 20.0f;
+		emitter0->emitterData.particleSpeedMax = 30.0f;
+		emitter0->emitterData.particleSizeMin = { 20.0f, 40.0f };
+		emitter0->emitterData.particleSizeMax = { 40.0f, 60.0f };
 		emitter0->emitterData.particleColorMin = { 1.0, 1.0, 1.0, 1 };
 		emitter0->emitterData.particleColorMax = { 1.0, 1.0, 1.0, 1 };
 		emitter0->emitterData.particleFrictionMin = 0;
 		emitter0->emitterData.particleFrictionMax = 1;
-		emitter0->emitterData.particleGravity = 1;
+		emitter0->emitterData.particleGravity = 0;
 		emitter0->emitterData.particleBillboardType = 0;
 		emitter0->emitterData.particleTextureType = 3;
 		EmitterManager::Instance().Register(emitter0);
@@ -268,35 +271,35 @@ void SceneTest::Render()
 	LightManager::Instance().UpdateConstants();
 
 	// ====== shadowMap ======
-	//{
-	//	shadow->Clear();                   // シャドウマップクリア
-	//	shadow->UpdateShadowCasterBegin(); // シャドウマップ描画準備
+	{
+		shadow->Clear();                   // シャドウマップクリア
+		shadow->UpdateShadowCasterBegin(); // シャドウマップ描画準備
 
-	//	for (int i = 0; i < SHADOWMAP_COUNT; i++)
-	//	{
-	//		shadow->Activate(i);
-	//		// 影を付けたいモデルはここで描画を行う(Render の引数に true をいれる)
-	//		{
-	//			// --- animated object ---
-	//			shadow->SetAnimatedShader(); // animated object の影描画開始
-	//			StageManager::Instance().Render(true);
-	//			Enemy::Instance().Render(true);
+		for (int i = 0; i < SHADOWMAP_COUNT; i++)
+		{
+			shadow->Activate(i);
+			// 影を付けたいモデルはここで描画を行う(Render の引数に true をいれる)
+			{
+				// --- animated object ---
+				shadow->SetAnimatedShader(); // animated object の影描画開始
+				StageManager::Instance().Render(true);
+				Enemy::Instance().Render(true);
 
-	//			Player::Instance().Render(true);
-	//			//blendTestPlayer->Render(true);
+				Player::Instance().Render(true);
+				//blendTestPlayer->Render(true);
 
-	//			// --- static object ---
-	//			shadow->SetStaticShader(); // static object の影描画開始
+				// --- static object ---
+				shadow->SetStaticShader(); // static object の影描画開始
 
-	//			RockEffect::Instance().Render(true);
-	//			//testStatic->Render(true);
-	//		}
-	//		shadow->DeActivate();
-	//	}
+				RockEffect::Instance().Render(true);
+				//testStatic->Render(true);
+			}
+			shadow->DeActivate();
+		}
 
-	//	// 通常描画用にテクスチャと定数バッファ更新
-	//	shadow->SetShadowTextureAndConstants();
-	//}
+		// 通常描画用にテクスチャと定数バッファ更新
+		shadow->SetShadowTextureAndConstants();
+	}
 
 	// ====== 不透明描画 ======
 	frameBuffer->Clear(gfx->GetBgColor());

@@ -19,7 +19,6 @@ struct Particle
 	float3 startVelocity;
 	float  gravity;
 	float  angle;
-	float  addAngle;
 	float2 scale;
 	float2 startScale;
 	float4 color;
@@ -30,6 +29,7 @@ struct Particle
 	float  billboardType;
 	float  textureType;
 };
+
 
 // タイマーの情報
 cbuffer TimerConstant : register(_timerConstant)
@@ -58,13 +58,9 @@ cbuffer EmitterConstant : register(_emitterConstant)
 	float  particleLifeTimeMin;
 	float  particleLifeTimeMax;
 	float  particleKind;
-	float  particleAngleMin;
-	float  particleAngleMax;
-	float  particleAddAngle;
 	float  particleGravity;
 	float  particleBillboardType;
 	float  particleTextureType;
-	float  emitterPad1;
 	float3 emitterPosition;
 	float  emitCount;
 };
@@ -105,8 +101,6 @@ void spawn(uint id, inout Particle p)
 
 	p.lifeTime      = lerp(particleLifeTimeMin, particleLifeTimeMax, rand(seed));
 	p.lifeTimer     = p.lifeTime;
-	p.angle         = lerp(particleAngleMin, particleAngleMax, rand(seed));
-	p.addAngle      = particleAddAngle;
 	p.gravity       = particleGravity;
 	p.kind          = particleKind;
 	p.billboardType = particleBillboardType;

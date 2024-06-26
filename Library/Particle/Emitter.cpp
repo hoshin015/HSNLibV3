@@ -54,9 +54,6 @@ void Emitter::Update()
 		emitterConstant.particleLifeTimeMax = emitterData.particleLifeTimeMax;
 		emitterConstant.particleSizeMin = emitterData.particleSizeMin;
 		emitterConstant.particleSizeMax = emitterData.particleSizeMax;
-		emitterConstant.particleAngleMin = emitterData.particleAngleMin;
-		emitterConstant.particleAngleMax = emitterData.particleAngleMax;
-		emitterConstant.particleAddAngle = emitterData.particleAddAngle;
 		emitterConstant.particleGravity = emitterData.particleGravity;
 
 		emitterConstant.particleKind = emitterData.particleKind;
@@ -85,6 +82,7 @@ void Emitter::Update()
 		}
 	}
 
+	// --- エミッターの生存時間を超えた場合の処理 ---
 	if (emitLifeTimer > emitterData.duration)
 	{
 		if (emitterData.looping)

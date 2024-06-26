@@ -38,13 +38,11 @@ public:
 		float             particleGravity  = 0.0f;         // 重力(下方向の力の大きさ)
 		float             particleAngleMin;                // 生成するパーティクルの角度(最小値)
 		float             particleAngleMax;                // 生成するパーティクルの角度(最大値)
-		float             particleAddAngle = 0.0f;         // １秒間に回転する角度
 
 		float particleKind;              // 生成するパーティクルのタイプ
 		float particleBillboardType = 0; // billboardのタイプ
 		float particleTextureType;
 	};
-
 	EmitterData emitterData;
 
 
@@ -70,14 +68,9 @@ public:
 		float             particleLifeTimeMax;
 
 		float             particleKind;
-		float             particleAngleMin;
-		float             particleAngleMax;
-		float             particleAddAngle;
-
 		float             particleGravity;
 		float             particleBillboardType;
 		float             particleTextureType;
-		float             emitterPad1;
 
 		DirectX::XMFLOAT3 emitterPosition;
 		float             emitCount;

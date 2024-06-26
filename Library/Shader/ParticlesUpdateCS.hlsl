@@ -20,6 +20,17 @@ void main(uint3 DTid : SV_DispatchThreadID)
 			{
 				p.position += p.velocity * deltaTime;
 
+				// x
+				while (p.position.x > 30)
+				{
+					p.position.x -= 30;
+				}
+				while (p.position.x < -30)
+				{
+					p.position.x += 30;
+				}
+
+				// y
 				while (p.position.y < -2)
 				{
 					p.position.y += 10;
@@ -28,6 +39,16 @@ void main(uint3 DTid : SV_DispatchThreadID)
 				while (p.position.y > 10)
 				{
 					p.position.y -= 10;
+				}
+
+				// x
+				while (p.position.z > 30)
+				{
+					p.position.z -= 30;
+				}
+				while (p.position.z < -30)
+				{
+					p.position.z += 30;
 				}
 			}
 			break;
@@ -60,8 +81,8 @@ void main(uint3 DTid : SV_DispatchThreadID)
 			break;
 		case 4:
 			{
-				p.velocity.x += (RandomRange(0, 10) - 5) * deltaTime;
-				p.velocity.z += (RandomRange(0, 10) - 5) * deltaTime;
+				//p.velocity.x += (RandomRange(0, 10) - 5) * deltaTime;
+				//p.velocity.z += (RandomRange(0, 10) - 5) * deltaTime;
 				p.position += p.velocity * deltaTime;
 				p.color.a = (p.lifeTimer / p.lifeTime);
 				p.scale   = p.startScale * (p.lifeTimer / p.lifeTime);

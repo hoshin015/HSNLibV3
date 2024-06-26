@@ -188,8 +188,6 @@ void LightningEffect::Update()
 			emitter->emitterData.particleSizeMax = { 0.4f, 0.1f };
 			emitter->emitterData.particleColorMin = { 20.8, 2.8, 2.5, 1 };
 			emitter->emitterData.particleColorMax = { 20.8, 2.8, 2.5, 1 };
-			emitter->emitterData.particleFrictionMin = 0;
-			emitter->emitterData.particleFrictionMax = 0.01;
 			emitter->emitterData.particleGravity = 4;
 			emitter->emitterData.particleBillboardType = 1;
 			emitter->emitterData.burstsOneShot = 1;
@@ -251,8 +249,6 @@ void LightningEffect::Emit(DirectX::XMFLOAT3 pos)
 		emitter->emitterData.particleSizeMax = { 0.4f, 0.1f };
 		emitter->emitterData.particleColorMin = { 20.8, 2.8, 2.5, 1 };
 		emitter->emitterData.particleColorMax = { 20.8, 2.8, 2.5, 1 };
-		emitter->emitterData.particleFrictionMin = 0;
-		emitter->emitterData.particleFrictionMax = 0.01;
 		emitter->emitterData.particleGravity = 0;
 		emitter->emitterData.particleBillboardType = 1;
 		EmitterManager::Instance().Register(emitter);

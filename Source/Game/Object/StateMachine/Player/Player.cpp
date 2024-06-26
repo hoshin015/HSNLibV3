@@ -302,8 +302,6 @@ void Player::CollisionVsEnemy()
 				emitter->emitterData.particleSizeMax = { 2.0f, 0.1f };
 				emitter->emitterData.particleColorMin = { 3.5, 3.5, 0.8, 1 };
 				emitter->emitterData.particleColorMax = { 6.0, 6.0, 0.8, 1 };
-				emitter->emitterData.particleFrictionMin = 0;
-				emitter->emitterData.particleFrictionMax = 0.01;
 				emitter->emitterData.particleGravity = 20;
 				emitter->emitterData.particleBillboardType = 1;
 				emitter->emitterData.particleTextureType = 0;
@@ -325,8 +323,6 @@ void Player::CollisionVsEnemy()
 				emitter1->emitterData.particleSizeMax = { 50.0f, 5.0f };
 				emitter1->emitterData.particleColorMin = { 1.9, 1.9, 8.8, 1 };
 				emitter1->emitterData.particleColorMax = { 1.9, 1.9, 10.8, 1 };
-				emitter1->emitterData.particleFrictionMin = 0;
-				emitter1->emitterData.particleFrictionMax = 0.01;
 				emitter1->emitterData.particleAngleMin = 0;
 				emitter1->emitterData.particleAngleMax = 359;
 				emitter1->emitterData.particleGravity = 20;
@@ -352,8 +348,6 @@ void Player::CollisionVsEnemy()
 				emitter2->emitterData.particleSizeMax = { 5.0f, 5.0f };
 				emitter2->emitterData.particleColorMin = { 8.5, 3.0, 0.8, 1 };
 				emitter2->emitterData.particleColorMax = { 8.5, 3.0, 0.8, 1 };
-				emitter2->emitterData.particleFrictionMin = 0;
-				emitter2->emitterData.particleFrictionMax = 0.01;
 				emitter2->emitterData.particleAngleMin = 0;
 				emitter2->emitterData.particleAngleMax = 359;
 				emitter2->emitterData.particleGravity = 20;

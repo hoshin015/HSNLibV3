@@ -1,7 +1,7 @@
 #include "Particles.hlsli"
 
 #define TEX_W_SIZE 3072.0f
-#define TEX_H_SIZE 7680.0f
+#define TEX_H_SIZE 8704.0f
 #define TEX_P_SIZE 1024.0f
 #define TEX_P_HALF_SIZE 512.0f
 
@@ -60,19 +60,43 @@ void main(
 		break;
 	case 3:
 		{
+			texcoords[0] = float2(TEX_P_SIZE * 0.0f / TEX_W_SIZE, TEX_P_SIZE * 2.0f / TEX_H_SIZE);
+			texcoords[1] = float2(TEX_P_SIZE * 0.0f / TEX_W_SIZE, TEX_P_SIZE * 1.0f / TEX_H_SIZE);
+			texcoords[2] = float2(TEX_P_SIZE * 1.0f / TEX_W_SIZE, TEX_P_SIZE * 2.0f / TEX_H_SIZE);
+			texcoords[3] = float2(TEX_P_SIZE * 1.0f / TEX_W_SIZE, TEX_P_SIZE * 1.0f / TEX_H_SIZE);
+		}
+		break;
+	case 4:
+		{
+			texcoords[0] = float2(TEX_P_SIZE * 1.0f / TEX_W_SIZE, TEX_P_SIZE * 2.0f / TEX_H_SIZE);
+			texcoords[1] = float2(TEX_P_SIZE * 1.0f / TEX_W_SIZE, TEX_P_SIZE * 1.0f / TEX_H_SIZE);
+			texcoords[2] = float2(TEX_P_SIZE * 2.0f / TEX_W_SIZE, TEX_P_SIZE * 2.0f / TEX_H_SIZE);
+			texcoords[3] = float2(TEX_P_SIZE * 2.0f / TEX_W_SIZE, TEX_P_SIZE * 1.0f / TEX_H_SIZE);
+		}
+		break;
+	case 5:
+		{
+			texcoords[0] = float2(TEX_P_SIZE * 2.0f / TEX_W_SIZE, TEX_P_SIZE * 2.0f / TEX_H_SIZE);
+			texcoords[1] = float2(TEX_P_SIZE * 2.0f / TEX_W_SIZE, TEX_P_SIZE * 1.0f / TEX_H_SIZE);
+			texcoords[2] = float2(TEX_P_SIZE * 3.0f / TEX_W_SIZE, TEX_P_SIZE * 2.0f / TEX_H_SIZE);
+			texcoords[3] = float2(TEX_P_SIZE * 3.0f / TEX_W_SIZE, TEX_P_SIZE * 1.0f / TEX_H_SIZE);
+		}
+		break;
+	case 6:
+		{
 			// 現在何フレーム目かを計算
-                float animIndex = (1.0 - (p.lifeTimer / p.lifeTime)) * 78.0;
+			float animIndex = (1.0 - (p.lifeTimer / p.lifeTime)) * 78.0;
 
 			int _x = animIndex % 6;
 			int _y = animIndex / 6;
 
-			_y += 2; // そもそも１段(512*2 px)だけ下だからその分
+			_y += 4; // そもそも2段(512*4 px)だけ下だからその分
 
 
-			texcoords[0] = float2(TEX_P_HALF_SIZE * _x / TEX_W_SIZE,		TEX_P_HALF_SIZE * (_y + 1) / TEX_H_SIZE);
-			texcoords[1] = float2(TEX_P_HALF_SIZE * _x / TEX_W_SIZE,		TEX_P_HALF_SIZE * _y / TEX_H_SIZE);
-			texcoords[2] = float2(TEX_P_HALF_SIZE * (_x + 1) / TEX_W_SIZE,	TEX_P_HALF_SIZE * (_y + 1) / TEX_H_SIZE);
-			texcoords[3] = float2(TEX_P_HALF_SIZE * (_x + 1) / TEX_W_SIZE,	TEX_P_HALF_SIZE * _y / TEX_H_SIZE);
+			texcoords[0] = float2(TEX_P_HALF_SIZE * _x / TEX_W_SIZE, TEX_P_HALF_SIZE * (_y + 1) / TEX_H_SIZE);
+			texcoords[1] = float2(TEX_P_HALF_SIZE * _x / TEX_W_SIZE, TEX_P_HALF_SIZE * _y / TEX_H_SIZE);
+			texcoords[2] = float2(TEX_P_HALF_SIZE * (_x + 1) / TEX_W_SIZE, TEX_P_HALF_SIZE * (_y + 1) / TEX_H_SIZE);
+			texcoords[3] = float2(TEX_P_HALF_SIZE * (_x + 1) / TEX_W_SIZE, TEX_P_HALF_SIZE * _y / TEX_H_SIZE);
 		}
 		break;
 	}

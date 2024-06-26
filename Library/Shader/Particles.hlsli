@@ -17,7 +17,6 @@ struct Particle
 	float3 position;
 	float3 velocity;
 	float3 startVelocity;
-	float  friction;
 	float  gravity;
 	float  angle;
 	float  addAngle;
@@ -59,66 +58,187 @@ cbuffer EmitterConstant : register(_emitterConstant)
 	float  particleLifeTimeMin;
 	float  particleLifeTimeMax;
 	float  particleKind;
-	float  particleFrictionMin;
-	float  particleFrictionMax;
 	float  particleAngleMin;
 	float  particleAngleMax;
 	float  particleAddAngle;
 	float  particleGravity;
 	float  particleBillboardType;
 	float  particleTextureType;
-	float3 emitterPad1;
+	float  emitterPad1;
 	float3 emitterPosition;
 	float  emitCount;
 };
 
 
 //--------------------------------------------
-//	範囲指定ランダム値関数 float型
+//	ランダム値関数 float型
 //--------------------------------------------
 // n		: シード値
-float rand(float n)
+float rand(inout float seed)
 {
-	return frac(sin(n) * 43758.5453123);
+	seed *= deltaTime;
+	seed = frac(sin(seed) * 43758.5453123);
+	return seed;
 }
 
 //--------------------------------------------
-//	範囲指定ランダム値関数 float型
+//	スポーン関数
 //--------------------------------------------
-// p		: シード値
-float random(float2 p)
+void spawn(uint id, inout Particle p)
 {
-	const float2 r = float2(23.1406926327792690, 2.6651441426902251);
-	return frac(cos(fmod(123456789.0, 1e-7 + 256.0 * dot(p, r))));
-}
+	float _id  = float(id);
+	float seed = _id;
 
-//--------------------------------------------
-//	範囲指定ランダム値関数 float型
-//--------------------------------------------
-// min		: 最小値
-// max		: 最大値
-float RandomRange(float min, float max)
-{
-	float f1 = rand(deltaTime);
+	// 共通
+	p.isActive = true;
 
-	// 0.0～1.0の間のランダム値
-	float value = rand(f1);
+	// カラー
+	p.color.x = lerp(particleColorMin.x, particleColorMax.x, rand(seed));
+	p.color.y = lerp(particleColorMin.y, particleColorMax.y, rand(seed));
+	p.color.z = lerp(particleColorMin.z, particleColorMax.z, rand(seed));
+	p.color.w = lerp(particleColorMin.w, particleColorMax.w, rand(seed));
 
-	// min～maxまでのランダム値に変換
-	return min + (max - min) * value;
-}
+	// スケール
+	p.scale.x = lerp(particleSizeMin.x, particleSizeMax.x, rand(seed));
+	p.scale.y = lerp(particleSizeMin.y, particleSizeMax.y, rand(seed));
 
-//--------------------------------------------
-//	範囲指定ランダム値関数 float型
-//--------------------------------------------
-// min		: 最小値
-// max		: 最大値
-// seed		: シード値
-float RandomRange(float min, float max, float seed)
-{
-	// 0.0～1.0の間のランダム値
-	float value = rand(seed);
 
-	// min～maxまでのランダム値に変換
-	return min + (max - min) * value;
+	p.lifeTime      = lerp(particleLifeTimeMin, particleLifeTimeMax, rand(seed));
+	p.lifeTimer     = p.lifeTime;
+	p.angle         = lerp(particleAngleMin, particleAngleMax, rand(seed));
+	p.addAngle      = particleAddAngle;
+	p.gravity       = particleGravity;
+	p.kind          = particleKind;
+	p.billboardType = particleBillboardType;
+	p.textureType   = particleTextureType;
+
+	p.startVelocity = p.velocity;
+	p.startScale    = p.scale;
+
+	// 個別の設定
+	switch (particleKind)
+	{
+	case pk_Dust:
+		{
+			float3 pos = emitterPosition;
+
+			float3 pos2 = float3(0, 0, 0);
+
+			pos2.x = rand(seed) * 2 - 1;
+			pos2.y = rand(seed) * 2 - 1;
+			pos2.z = rand(seed) * 2 - 1;
+
+			pos2 = normalize(pos2) * pow(rand(seed), 1.0 / 3.0);
+
+			p.position.x = pos.x + pos2.x * 30;
+			p.position.y = pos.y + 5 * rand(seed);
+			p.position.z = pos.z + pos2.z * 30;
+
+
+			float r = rand(seed) * 360;
+
+			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+			p.velocity.y        = -1 * particleSpeed;
+			// x 方向
+			particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+			p.velocity.x  = cos(r) * particleSpeed;
+
+			// z 方向
+			particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+			p.velocity.z  = -sin(r) * particleSpeed;
+
+
+			p.textureType = 3;
+			if (rand(seed) > 0.66)
+				p.textureType = 4;
+			if (rand(seed) > 0.66)
+				p.textureType = 5;
+		}
+
+		break;
+	case 1:
+		{
+			p.position = emitterPosition;
+
+			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+			if (rand(seed) > 0.5)
+				particleSpeed *= -1;
+			p.velocity.x = seed * particleSpeed;
+			if (rand(seed) > 0.5)
+				particleSpeed *= -1;
+			p.velocity.y = seed * particleSpeed;
+			if (rand(seed) > 0.5)
+				particleSpeed *= -1;
+			p.velocity.z = seed * particleSpeed;
+		}
+		break;
+	case 2:
+	case 3:
+		{
+			p.position = emitterPosition;
+			p.velocity = float3(0, 0, 0);
+		}
+		break;
+	case 4:
+		{
+			float3 pos = emitterPosition;
+
+			float3 pos2 = float3(0, 0, 0);
+
+			pos2.x = rand(seed) * 2 - 1;
+			pos2.y = rand(seed) * 2 - 1;
+			pos2.z = rand(seed) * 2 - 1;
+
+			pos2 = normalize(pos2) * pow(rand(seed), 1.0 / 3.0);
+
+
+			p.position.x = pos.x + pos2.x * 1.5;
+			p.position.y = 0;
+			p.position.z = pos.z + pos2.z * 1.5;
+
+
+			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+
+			p.velocity.x = 0;
+			p.velocity.y = 1 * particleSpeed;
+			p.velocity.z = 0;
+		}
+		break;
+	case 5:
+		{
+			p.position   = emitterPosition;
+			float y      = rand(seed) * 10;
+			p.position.y = y;
+
+			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+			p.velocity.y        = 1 * particleSpeed;
+
+			if (rand(seed) > 0.5)
+				particleSpeed *= -1;
+			p.velocity.x = rand(seed) * particleSpeed;
+
+
+			if (rand(seed) > 0.5)
+				particleSpeed *= -1;
+			p.velocity.z = rand(seed) * particleSpeed;
+		}
+		break;
+	case 6:
+		{
+			p.position = emitterPosition;
+
+			p.velocity.y = 0.0;
+
+			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+
+			float r = rand(seed) * 360;
+
+			// x 方向
+			p.velocity.x = cos(r) * particleSpeed;
+
+			// z 方向
+			p.velocity.z = -sin(r) * particleSpeed;
+		}
+		break;
+	}
 }

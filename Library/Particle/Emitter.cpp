@@ -54,8 +54,6 @@ void Emitter::Update()
 		emitterConstant.particleLifeTimeMax = emitterData.particleLifeTimeMax;
 		emitterConstant.particleSizeMin = emitterData.particleSizeMin;
 		emitterConstant.particleSizeMax = emitterData.particleSizeMax;
-		emitterConstant.particleFrictionMin = emitterData.particleFrictionMin;
-		emitterConstant.particleFrictionMax = emitterData.particleFrictionMax;
 		emitterConstant.particleAngleMin = emitterData.particleAngleMin;
 		emitterConstant.particleAngleMax = emitterData.particleAngleMax;
 		emitterConstant.particleAddAngle = emitterData.particleAddAngle;

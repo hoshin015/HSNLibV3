@@ -30,7 +30,6 @@ public:
 		DirectX::XMFLOAT3 position      = {0, 0, 0};    // ポジション	
 		DirectX::XMFLOAT3 velocity      = {0, 0, 0};    // 加速度
 		DirectX::XMFLOAT3 startVelocity = {0, 0, 0};    // 生成時の加速度
-		float             friction      = 0.0f;         // 抵抗
 		float             gravity       = 0.0f;         // 重力(下方向の力の大きさ)
 		float             angle         = 0.0f;         // 角度
 		float             addAngle      = 0.0f;         // １秒間に回転する角度

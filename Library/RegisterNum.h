@@ -27,6 +27,10 @@
 #define _shadowSampler					7
 #define _samplerNum						8
 
+// ===== GpuParticle ======
+#define pk_Dust 0
+
+
 // --- c++ ---
 #ifdef __cplusplus
 

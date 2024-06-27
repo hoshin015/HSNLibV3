@@ -62,4 +62,5 @@ private:
 
 	CameraBase* camera;
 	PlayerCamera playerCamera;
+	LockOnCamera lockOnCamera;
 };

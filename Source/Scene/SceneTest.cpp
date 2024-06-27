@@ -47,7 +47,7 @@ void SceneTest::Initialize()
 	Camera::Instance().cameraType = Camera::CAMERA::TARGET_PLAYER;
 #else
 	camera = &playerCamera;
-	camera->Initialize();
+	//camera = &lockOnCamera;
 #endif
 
 	// --- ライト初期設定 ---
@@ -456,6 +456,48 @@ void SceneTest::DrawDebugGUI()
 	ImGui::Begin("TestScene");
 	{
 		ImGui::Checkbox("collision", &showCollision);
+
+
+		// --- カメラ関連 ---
+		static bool cameraFlag = false;
+		InputManager& input = InputManager::Instance();
+		if (input.GetKeyPressed(DirectX::Keyboard::Keys::L))
+		{
+			if (!cameraFlag)
+			{
+				Vector3 position = camera->GetCurrentPosition();
+				Vector3 target = camera->GetTarget();
+				camera = &playerCamera;
+				camera->Initialize();
+
+				camera->SetCurrentPosition(position);
+				camera->SetTarget(target);
+				Player::Instance().SetCamera(camera);
+
+				cameraFlag = !cameraFlag;
+			}
+
+			else
+			{
+				Vector3 position = camera->GetCurrentPosition();
+				Vector3 target = camera->GetTarget();
+				camera = &lockOnCamera;
+				camera->Initialize();
+
+				camera->SetCurrentPosition(position);
+				camera->SetTarget(target);
+				Player::Instance().SetCamera(camera);
+
+				cameraFlag = !cameraFlag;
+			}
+		}
+
+		Vector3 enemyPos = Enemy::Instance().GetPos();
+		Vector3 playerPos = Player::Instance().GetPos();
+		Vector2 vec = enemyPos.xz() - playerPos.xz();
+		float atan = atan2(vec.y, vec.x);
+		atan = DirectX::XMConvertToDegrees(atan);
+		ImGui::Text("Theta : %f", atan);
 	}
 	ImGui::End();
 }

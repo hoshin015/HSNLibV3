@@ -7,68 +7,64 @@
 #include "../../Library/Input/InputManager.h"
 
 #include "../Game/Object/StateMachine/Player/Player.h"
+#include "../Game/Object/StateMachine/Enemy/Enemy.h"
 
 
+// ===== プレイヤーのカメラ ======================================================================================================================================================
 void PlayerCamera::Initialize()
 {
 	verticalAngle = 45.0f;
 	horizontalAngle = 0.0f;
 	range = 13.0f;
+	height = 3.0f;
 	fixedCursor = true;
 	
 	// --- カメラ位置と目標の設定 ---
 	currentPosition = position = Player::Instance().GetPos();
 	Vector3 playerVelocity = Vector3::Normalize(Player::Instance().GetVelocity());	// プレイヤーの移動ベクトル
-	Vector3 offset = { playerVelocity.x, 5.0f, playerVelocity.z };
+	Vector3 offset = { playerVelocity.x, height, playerVelocity.z };
 	target = position + offset;
-
-	positionComplementAmount = 0.3f;
 }
 
 
 void PlayerCamera::Update()
 {
-	float deltaTime = Timer::Instance().DeltaTime();
-
-	Vector3 playerPos = Player::Instance().GetPos();	// プレイヤーの座標
-	Vector3 offset = { 0.0f, 5.0f, 0.0f };
-	target =  playerPos + offset;
-
-
-	InputManager& input = InputManager::Instance();
-	Vector2 curCursorPos;
-
-	// --- カーソルを固定するか ---
-	if (fixedCursor)
+	switch (state)
 	{
-		// --- 中央に固定 ---
-		// Todo : 位置がモニターの左上の座標なのでどうにかする
-		SetCursorPos(640, 360);
+	case 0:
+		Initialize();
+		state++;
+		[[fallthrough]];
 
-		// --- カーソルの座標を取得して中央との差分をとる ---
-		curCursorPos = { input.GetCursorPosXFloat(), input.GetCursorPosYFloat() };
-		const Vector2 cursorDelta = curCursorPos - Vector2{ 320.0f, 180.0f };
+	case 1:
+	{
+		float deltaTime = Timer::Instance().DeltaTime();
 
-		// --- 縦の角度をクランプ ---
-		verticalAngle = (std::max)(-90.0f, (std::min)(verticalAngle, 90.0f));
+		Vector3 playerPos = Player::Instance().GetPos();	// プレイヤーの座標
+		Vector3 offset = { 0.0f, height, 0.0f };
+		target = playerPos + offset;
 
-		// --- カーソルの差分だけ角度を加算 ---
-		horizontalAngle += -cursorDelta.x * deltaTime * sensitivity;		// 右側がプラスなので符号を反転させる
-		verticalAngle += cursorDelta.y * deltaTime * sensitivity * 2.0f;	// 画面比率を考慮して2倍
+
+		// --- カーソルを固定するか ---
+		if (fixedCursor)
+		{
+			OnFixedCursor(deltaTime);
+		}
+
+		// --- 角度でベクトルを作ってカメラの位置を決める ---
+		CalcPositionFromAngle(playerPos);
+
+		// --- 今の位置を本来あるべき位置へ補完し続ける ---
+		currentPosition = Vector3::Lerp(currentPosition, position, t);
+
+
+		// --- カメラ情報の更新 ---
+		CameraBase::Update(currentPosition, target, up, fov, nearZ, farZ, aspect);
+
+		break;
 	}
 
-	// --- 角度でベクトルを作ってカメラの位置を決める ---
-	float horizontalTheta = DirectX::XMConvertToRadians(horizontalAngle);
-	float verticalTheta = DirectX::XMConvertToRadians(verticalAngle);
-	Vector3 cameraVec = { cosf(horizontalTheta), sinf(verticalTheta), sinf(horizontalTheta) };
-	position = playerPos + cameraVec * range;
-
-
-	currentPosition = Vector3::Lerp(currentPosition, position, positionComplementAmount);
-
-
-	// --- カメラ情報の更新 ---
-	CameraBase::Update(currentPosition, target, up, fov, nearZ, farZ, aspect);
+	}
 }
 
 
@@ -80,7 +76,7 @@ void PlayerCamera::UpdateConstants()
 
 void PlayerCamera::DrawDebugGui()
 {
-	ImGui::Begin(u8"カメラ");
+	ImGui::Begin(u8"プレイヤーカメラ");
 
 	InputManager& input = InputManager::Instance();
 
@@ -97,12 +93,108 @@ void PlayerCamera::DrawDebugGui()
 
 	ImGui::DragFloat(u8"感度", &sensitivity, 0.1f, 0.1f);
 	ImGui::DragFloat(u8"目標からの距離", &range, 0.1f, 0.1f);
+	ImGui::DragFloat(u8"目標の高さ", &height, 0.1f, 0.1f);
 
 	ImGui::DragFloat3(u8"位置", &position.x);
 	ImGui::DragFloat3(u8"今の位置", &currentPosition.x);
-	ImGui::DragFloat(u8"位置の補完量", &positionComplementAmount, 0.01f);
+	ImGui::DragFloat(u8"補完量", &t, 0.01f);
 
 	ImGui::DragFloat3(u8"目標", &target.x);
+
+	ImGui::End();
+}
+
+
+// --- カーソルを固定しているときに呼ばれる ---
+void PlayerCamera::OnFixedCursor(float deltaTime)
+{	
+	InputManager& input = InputManager::Instance();
+	Vector2 curCursorPos;
+
+	// --- 中央に固定 ---
+		// Todo : 位置がモニターの左上の座標なのでどうにかする
+	SetCursorPos(640, 360);
+
+	// --- カーソルの座標を取得して中央との差分をとる ---
+	curCursorPos = { input.GetCursorPosXFloat(), input.GetCursorPosYFloat() };
+	const Vector2 cursorDelta = curCursorPos - Vector2{ 320.0f, 180.0f };
+
+	// --- 縦の角度をクランプ ---
+	verticalAngle = (std::max)(-90.0f, (std::min)(verticalAngle, 90.0f));
+
+	// --- カーソルの差分だけ角度を加算 ---
+	horizontalAngle += -cursorDelta.x * deltaTime * sensitivity;		// 右側がプラスなので符号を反転させる
+	verticalAngle += cursorDelta.y * deltaTime * sensitivity * 2.0f;	// 画面比率を考慮して2倍
+
+}
+
+
+// --- 角度から位置を計算 ---
+void PlayerCamera::CalcPositionFromAngle(const Vector3& position)
+{
+	float horizontalTheta = DirectX::XMConvertToRadians(horizontalAngle);
+	float verticalTheta = DirectX::XMConvertToRadians(verticalAngle);
+	Vector3 cameraVec = { cosf(horizontalTheta), sinf(verticalTheta), sinf(horizontalTheta) };
+	this->position = position + cameraVec * range;
+}
+
+
+
+// ===== ロックオンカメラ ======================================================================================================================================================
+void LockOnCamera::Initialize()
+{
+	height = 7.0f;
+	range = 15.5f;
+}
+
+void LockOnCamera::Update()
+{
+	switch (state)
+	{
+	case 0:
+		Initialize();
+		state++;
+		[[fallthrough]];
+
+		
+	case 1:
+	{
+		Vector3 playerPos = Player::Instance().GetPos();	// プレイヤーの位置
+		Vector3 enemyPos = Enemy::Instance().GetPos();		// 目標の位置
+
+		target = enemyPos;	// 目標
+
+		// 敵とプレイヤーとカメラを一直線に並べる
+		Vector3 vec = playerPos - enemyPos;	// 敵からプレイヤーへのベクトル
+		float length = vec.Length();		// 敵とプレイヤーの距離
+		vec.Normalize();
+
+		Vector3 offset = { 0.0f, height, 0.0f };
+		position = target + offset + vec * (length + range);
+
+
+		// --- 今の位置を本来あるべき位置へ補完し続ける ---
+		currentPosition = Vector3::Lerp(currentPosition, position, t);
+
+		CameraBase::Update();
+
+		break;
+	}
+
+	}
+}
+
+void LockOnCamera::UpdateConstants()
+{
+	CameraBase::UpdateConstants();
+}
+
+void LockOnCamera::DrawDebugGui()
+{
+	ImGui::Begin(u8"ロックオンカメラ");
+
+	ImGui::DragFloat(u8"高さ", &height, 0.1f);
+	ImGui::DragFloat(u8"距離", &range, 0.1f);
 
 	ImGui::End();
 }

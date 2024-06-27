@@ -24,6 +24,7 @@ public:
 	const Vector3& GetFrontVec()   const { return frontVec; }
 	const Vector3& GetUpVec()	   const { return upVec; }
 	const Vector3& GetRightVec()   const { return rightVec; }
+	const Vector3& GetCurrentPosition() const { return currentPosition; }
 
 	// --- セッター ---
 	void SetView(const Matrix& view) { this->view = view; }
@@ -35,6 +36,7 @@ public:
 	void SetNearZ(float nearZ) { this->nearZ = nearZ; }
 	void SetFarZ(float farZ) { this->farZ = farZ; }
 	void SetAspect(float aspect) { this->aspect = aspect; }
+	void SetCurrentPosition(const Vector3& currentPosition) { this->currentPosition = currentPosition; }
 
 	virtual void Initialize() {};
 
@@ -71,5 +73,8 @@ protected:
 	Vector3 frontVec;	// 正面
 	Vector3 upVec;		// 上
 	Vector3 rightVec;	// 右
+
+	// --- Lerp減衰用 ---
+	Vector3 currentPosition;
 };
 

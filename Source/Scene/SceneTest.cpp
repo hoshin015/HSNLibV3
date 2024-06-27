@@ -250,7 +250,7 @@ void SceneTest::Update()
 	{
 		Emitter* emitter0 = new Emitter();
 		emitter0->position = { 0, 0, 0 };
-		emitter0->emitterData.duration = 3.0;
+		emitter0->emitterData.duration = 10.0;
 		emitter0->emitterData.looping = false;
 		emitter0->emitterData.burstsTime = 0.05;
 		emitter0->emitterData.burstsCount = 1;
@@ -259,10 +259,10 @@ void SceneTest::Update()
 		emitter0->emitterData.particleLifeTimeMax = 1.0f;
 		emitter0->emitterData.particleSpeedMin = 1.0f;
 		emitter0->emitterData.particleSpeedMax = 1.0f;
-		emitter0->emitterData.particleSizeMin = { 3.0f, 3.0f };
-		emitter0->emitterData.particleSizeMax = { 5.0f, 5.0f };
-		emitter0->emitterData.particleColorMin = { 3.0, 3.0, 3.0, 1 };
-		emitter0->emitterData.particleColorMax = { 3.0, 3.0, 3.0, 1 };
+		emitter0->emitterData.particleSizeMin = { 2.0f, 2.0f };
+		emitter0->emitterData.particleSizeMax = { 2.0f, 2.0f };
+		emitter0->emitterData.particleColorMin = { 30.0, 3.0, 3.0, 1 };
+		emitter0->emitterData.particleColorMax = { 30.0, 3.0, 3.0, 1 };
 		emitter0->emitterData.particleGravity = 0;
 		emitter0->emitterData.particleBillboardType = 0;
 		emitter0->emitterData.particleTextureType = 7;
@@ -276,14 +276,14 @@ void SceneTest::Update()
 		emitter0->emitterData.duration = 3.0;
 		emitter0->emitterData.looping = false;
 		emitter0->emitterData.burstsTime = 0.05;
-		emitter0->emitterData.burstsCount = 12;
+		emitter0->emitterData.burstsCount = 24;
 		emitter0->emitterData.particleKind = pk_novaBurst;
 		emitter0->emitterData.particleLifeTimeMin = 2.0f;
 		emitter0->emitterData.particleLifeTimeMax = 2.0f;
 		emitter0->emitterData.particleSpeedMin = 24.0f;
 		emitter0->emitterData.particleSpeedMax = 36.0f;
-		emitter0->emitterData.particleSizeMin = { 0.3f, 0.3f };
-		emitter0->emitterData.particleSizeMax = { 0.5f, 0.5f };
+		emitter0->emitterData.particleSizeMin = { 0.1f, 0.1f };
+		emitter0->emitterData.particleSizeMax = { 0.3f, 0.3f };
 		emitter0->emitterData.particleColorMin = { 6.0, 0.8, 0.8, 1 };
 		emitter0->emitterData.particleColorMax = { 10.0, 0.8, 0.8, 1 };
 		emitter0->emitterData.particleGravity = 0;
@@ -293,6 +293,49 @@ void SceneTest::Update()
 		EmitterManager::Instance().Register(emitter0);
 	}
 
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F7))
+	{
+		Emitter* emitter0 = new Emitter();
+		emitter0->position = { 0, 0, 0 };
+		emitter0->emitterData.duration = 3.0;
+		emitter0->emitterData.looping = false;
+		emitter0->emitterData.burstsTime = 0.1;
+		emitter0->emitterData.burstsCount = 36;
+		emitter0->emitterData.particleKind = pk_novaStartFire;
+		emitter0->emitterData.particleLifeTimeMin = 0.7f;
+		emitter0->emitterData.particleLifeTimeMax = 0.9f;
+		emitter0->emitterData.particleSpeedMin = 70.0f;
+		emitter0->emitterData.particleSpeedMax = 80.0f;
+		emitter0->emitterData.particleSizeMin = { 30.0f, 30.0f };
+		emitter0->emitterData.particleSizeMax = { 30.0f, 30.0f };
+		emitter0->emitterData.particleColorMin = { 30.0, 0.9, 0.9, 1 };
+		emitter0->emitterData.particleColorMax = { 30.0, 1.0, 1.0, 1 };
+		emitter0->emitterData.particleGravity = 0;
+		emitter0->emitterData.particleBillboardType = 0;
+		emitter0->emitterData.particleTextureType = 9;
+		emitter0->emitterData.burstsOneShot = 1;
+		EmitterManager::Instance().Register(emitter0);
+		//Emitter* emitter0 = new Emitter();
+		//emitter0->position = { 0, 0, 0 };
+		//emitter0->emitterData.duration = 3.0;
+		//emitter0->emitterData.looping = false;
+		//emitter0->emitterData.burstsTime = 0.1;
+		//emitter0->emitterData.burstsCount = 20;
+		//emitter0->emitterData.particleKind = pk_novaStartFire;
+		//emitter0->emitterData.particleLifeTimeMin = 0.5f;
+		//emitter0->emitterData.particleLifeTimeMax = 1.0f;
+		//emitter0->emitterData.particleSpeedMin = 40.0f;
+		//emitter0->emitterData.particleSpeedMax = 60.0f;
+		//emitter0->emitterData.particleSizeMin = { 10.0f, 10.0f };
+		//emitter0->emitterData.particleSizeMax = { 10.0f, 10.0f };
+		//emitter0->emitterData.particleColorMin = { 1.0, 1.0, 1.0, 1 };
+		//emitter0->emitterData.particleColorMax = { 1.0, 1.0, 1.0, 1 };
+		//emitter0->emitterData.particleGravity = 0;
+		//emitter0->emitterData.particleBillboardType = 0;
+		//emitter0->emitterData.particleTextureType = 9;
+		//emitter0->emitterData.burstsOneShot = 2;
+		//EmitterManager::Instance().Register(emitter0);
+	}
 
 	LightningEffect::Instance().Update();
 	RockEffect::Instance().Update();

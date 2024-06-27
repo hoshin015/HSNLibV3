@@ -36,6 +36,7 @@
 #define pk_smoke				6
 #define pk_simpleFire			7
 #define pk_novaBurst			8
+#define pk_novaStartFire		9
 
 // billboardType
 #define bt_View		0

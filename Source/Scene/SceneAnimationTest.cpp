@@ -5,7 +5,6 @@
 #include "../../Library/3D/ResourceManager.h"
 #include "../../Library/ImGui/ImGuiManager.h"
 #include "../../Library/Graphics/Graphics.h"
-#include "../../Library/3D/LineRenderer.h"
 #include "../../Library/3D/LightManager.h"
 #include "../../Library/Input/InputManager.h"
 
@@ -13,13 +12,31 @@ using namespace DirectX;
 
 void SceneAnimationTest::DrawDebugGUI() {
 	DrawMenuBar();
+	ImGuiManager::Instance().DisplayPerformanceStats();
+
+	//_animator.AnimationEditor("move");
+
+	Camera::Instance().DrawDebugGui();
+	_transform.Debug();
 }
 
 void SceneAnimationTest::Initialize() {
 	_model = std::make_shared<AnimatedModel>("Data/Fbx/Albino/Albino.model");
 	std::vector<ModelResource::Animation>& animations = _model->GetModelResource()->GetAnimationClips();
+//,{ &animations.at(6),&animations.at(12),&animations.at(9) }
+	Animator::BlendTree blendTree;
+	blendTree.motions.emplace_back(&animations[6],{},1);
+	blendTree.motions.emplace_back(&animations[12],{0.5f},1);
+	blendTree.motions.emplace_back(&animations[9],{1},2);
+	blendTree.timer = 0;
+	blendTree.maxSeconds = 1.33333f;
 
-	_animator.AddBlendAnimation("move",&_model->GetModelResource()->GetSceneView() ,{ &animations.at(6),&animations.at(12),&animations.at(9) });
+	Animator::Motion motion;
+	motion.motion = &animations[1];
+	motion.threshold = {};
+	motion.animationSpeed = 1;
+
+	_animator.AddAnimation(&_model->GetModelResource()->GetSceneView() ,blendTree,motion);
 
 	Camera::Instance().SetLookAt(
 		DirectX::XMFLOAT3(-7.5f, 8, 12.5f), 
@@ -86,14 +103,10 @@ void SceneAnimationTest::Render() {
 
 #if USE_IMGUI
 	DrawDebugGUI();
-	if(ImGui::Begin("Animator")) {
-		ImGui::DragFloat("rate", &rate, 0.001f,0,1);
+	if (ImGui::Begin("Animator")) {
+		ImGui::DragFloat("rate", &rate, 0.001f, 0, 1);
 	}
 	ImGui::End();
-	_animator.AnimationEditor("move");
-
-	Camera::Instance().DrawDebugGui();
-	_transform.Debug();
 
 	ImGuiManager::Instance().Render();
 #endif

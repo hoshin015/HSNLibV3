@@ -1,32 +1,58 @@
 #pragma once
 #include "ModelResource.h"
 
-class Animator{
+class Animator {
 public:
 	struct Motion {
 		ModelResource::Animation* motion;
 
-		float threshold;
-		float animationSpeed;
+		DirectX::XMFLOAT2 threshold;
+		float             animationSpeed;
 	};
 
-	struct BlendState {
+	struct BlendTree {
 		std::vector<Motion> motions;
-		ModelResource::SceneView* sceneView;
-		float blendRate;
-		float timer;
-		float maxSeconds;
+
+		DirectX::XMFLOAT2 parameter;
+		float             timer;
+		float             maxSeconds;
+	};
+
+	struct State {
+		enum class ObjectType {
+			MOTION,
+			BLEND_TREE,
+		};
+
+		std::vector<void*> object;
+		ObjectType         type;
+
+		float speed;
 	};
 
 private:
-	std::unordered_map<std::string , BlendState> _state;
+	std::vector<State>        _states;
+	ModelResource::SceneView* _sceneView;
 
 public:
 	Animator() = default;
 
-	void AddBlendAnimation(const std::string& name, ModelResource::SceneView* sceneView, std::initializer_list<ModelResource::Animation*> animations);
+	template <typename T>
+	void AddAnimation(T& obj) {
+		if constexpr (std::is_same_v<T, Motion>) _states.emplace_back(&obj, State::ObjectType::MOTION);
+		if constexpr (std::is_same_v<T, BlendTree>) _states.emplace_back(&obj, State::ObjectType::BLEND_TREE);
+	}
 
-	ModelResource::KeyFrame PlayAnimation(const std::string& name,float elapsedTime,float rate);
+	template<typename... Any>
+	void AddAnimation(
+		ModelResource::SceneView* sceneView,
+		Any&... any
+	) {
+		_sceneView = sceneView;
+		AddAnimation(any...);
+	}
+
+	ModelResource::KeyFrame PlayAnimation(const std::string& name, float elapsedTime, float rate);
 
 	void AnimationEditor(const std::string& name);
 };

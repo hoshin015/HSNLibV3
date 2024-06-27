@@ -4,67 +4,69 @@
 #include "../../../External/ImGui/imgui_internal.h"
 using namespace DirectX;
 
-void Animator::AddBlendAnimation(
-	const std::string&                               name, ModelResource::SceneView* sceneView,
-	std::initializer_list<ModelResource::Animation*> animations
-) {
-	BlendState state;
-	state.blendRate = 0;
-	state.timer     = 0;
-	state.sceneView = sceneView;
-
-	int   count      = 0;
-	int   size       = animations.size() - 1;
-	float maxSeconds = 0;
-	for (ModelResource::Animation* animation: animations) {
-		Motion motion = {animation, count / static_cast<float>(size), 1};
-		state.motions.push_back(motion);
-		count++;
-		if (maxSeconds < animation->secondsLength) maxSeconds = animation->secondsLength;
-	}
-
-	state.maxSeconds = maxSeconds;
-	_state[name]     = state;
-}
+// void Animator::AddBlendAnimation(
+// 	const std::string&                               name,
+// 	ModelResource::SceneView*                        sceneView,
+// 	std::initializer_list<ModelResource::Animation*> animations
+// ) {
+// 	BlendTree state;
+// 	state.parameter = {};
+// 	state.timer     = 0;
+// 	_sceneView      = sceneView;
+//
+// 	int   count      = 0;
+// 	int   size       = animations.size() - 1;
+// 	float maxSeconds = 0;
+// 	for (ModelResource::Animation* animation: animations) {
+// 		Motion motion = {animation, count / static_cast<float>(size), 1};
+// 		state.motions.push_back(motion);
+// 		count++;
+// 		if (maxSeconds < animation->secondsLength) maxSeconds = animation->secondsLength;
+// 	}
+//
+// 	state.maxSeconds = maxSeconds;
+// 	_state[name]     = state;
+// }
 
 ModelResource::KeyFrame Animator::PlayAnimation(const std::string& name, float elapsedTime, float rate) {
-	BlendState& state = _state[name];
-	state.blendRate   = rate;
+	BlendTree& state = _state[name];
+	state.blendRate  = rate;
 
 	const Motion* first  = nullptr;
 	const Motion* second = nullptr;
 
-	std::sort(state.motions.begin(), state.motions.end(), [](const Motion& a, const Motion& b) {return a.threshold < b.threshold; });
 	for (auto&& motion: state.motions) {
 		if (state.blendRate >= motion.threshold) first = &motion;
 		if (!second && state.blendRate < motion.threshold) second = &motion;
 	}
 	if (!second) second = first;
+	if (!first) first = second;
 
 	const float animationRate = state.timer / state.maxSeconds;
 	const float leapRate      = second == first ?
-		                            1:
+		                            1 :
 		                            (state.blendRate - first->threshold) / (second->threshold - first->threshold);
 
-	float seq                = first->motion->sequence.size() * std::fmodf(animationRate * first->animationSpeed, 1.f);
+	float seq = first->motion->sequence.size() * std::fmodf(animationRate * first->animationSpeed, 1.f);
+	//float seq = first->motion->sequence.size() * animationRate;
 	int   firstKeyFrameIndex = static_cast<int>(seq);
-	float firstLeapRate      = (seq - static_cast<float>(firstKeyFrameIndex));
+	float firstLeapRate      = seq - static_cast<float>(firstKeyFrameIndex);
 
 	const ModelResource::KeyFrame* firstKeyFrames[2] = {
 		&first->motion->sequence.at(firstKeyFrameIndex),
 		&first->motion->sequence.at(
-			firstKeyFrameIndex == first->motion->sequence.size() - 1 ? 0: firstKeyFrameIndex + 1
+			firstKeyFrameIndex >= first->motion->sequence.size() - 1 ? 0 : firstKeyFrameIndex + 1
 		)
 	};
 
 	seq = second->motion->sequence.size() * std::fmodf(animationRate * second->animationSpeed, 1.f);
 	int   secondKeyFrameIndex = static_cast<int>(seq);
-	float secondLeapRate = (seq - static_cast<float>(secondKeyFrameIndex));
+	float secondLeapRate = seq - static_cast<float>(secondKeyFrameIndex);
 
 	const ModelResource::KeyFrame* secondKeyFrames[2] = {
 		&second->motion->sequence.at(secondKeyFrameIndex),
 		&second->motion->sequence.at(
-			secondKeyFrameIndex == second->motion->sequence.size() - 1 ? 0: secondKeyFrameIndex + 1
+			secondKeyFrameIndex >= second->motion->sequence.size() - 1 ? 0 : secondKeyFrameIndex + 1
 		)
 	};
 
@@ -119,9 +121,9 @@ ModelResource::KeyFrame Animator::PlayAnimation(const std::string& name, float e
 		XMStoreFloat4(&node.rotation, rotateVec);
 		XMStoreFloat3(&node.translation, translationVec);
 
-		int64_t  parentID = state.sceneView->nodes.at(state.sceneView->GetIndex(node.uniqueId)).parentIndex;
+		int64_t  parentID = _sceneView->nodes.at(_sceneView->GetIndex(node.uniqueId)).parentIndex;
 		XMMATRIX GT       = parentID < 0 ?
-			                    XMMatrixIdentity():
+			                    XMMatrixIdentity() :
 			                    XMMatrixScalingFromVector(scaleVec) *
 			                    XMMatrixRotationQuaternion(rotateVec) *
 			                    XMMatrixTranslationFromVector(translationVec) * XMLoadFloat4x4(
@@ -129,9 +131,6 @@ ModelResource::KeyFrame Animator::PlayAnimation(const std::string& name, float e
 			                    );
 
 		XMStoreFloat4x4(&node.globalTransform, GT);
-
-		//node.globalTransform = firstKeyFrame.nodes[count].globalTransform;
-
 		resultKeyFrame.nodes[count] = node;
 	}
 
@@ -142,8 +141,8 @@ ModelResource::KeyFrame Animator::PlayAnimation(const std::string& name, float e
 }
 
 void Animator::AnimationEditor(const std::string& name) {
-	if(ImGui::Begin("AnimationEditor")) {
-		BlendState& state = _state[name];
+	if (ImGui::Begin("AnimationEditor")) {
+		BlendTree& state = _state[name];
 
 		if (ImGui::CollapsingHeader("State")) {
 			ImGui::Text("BlendRate: %f", state.blendRate);
@@ -152,19 +151,21 @@ void Animator::AnimationEditor(const std::string& name) {
 		}
 
 		if (ImGui::CollapsingHeader("Motion")) {
-			for (auto&& motion : state.motions) {
+			bool changed = false;
+			for (auto&& motion: state.motions) {
 				if (ImGui::TreeNode(motion.motion->name.c_str())) {
-					//ImGui::PushID(ImHashStr(motion.motion->name.c_str()));
-
-					ImGui::DragFloat("AnimationSpeed", &motion.animationSpeed,0.01f,0);
-					if (motion.animationSpeed < 0)motion.animationSpeed = 0;
-					ImGui::DragFloat("Threshold", &motion.threshold,0.01f);
-
-					//ImGui::PopID();
+					ImGui::DragFloat("AnimationSpeed", &motion.animationSpeed, 0.01f, 0);
+					if (motion.animationSpeed < 0) motion.animationSpeed = 0;
+					if (ImGui::DragFloat("Threshold", &motion.threshold, 0.01f)) changed = true;
 
 					ImGui::TreePop();
 				}
 			}
+			if (changed) std::sort(
+				state.motions.begin(), state.motions.end(), [](const Motion& a, const Motion& b) {
+					return a.threshold < b.threshold;
+				}
+			);
 		}
 	}
 	ImGui::End();

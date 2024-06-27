@@ -37,16 +37,18 @@
 void SceneTest::Initialize()
 {
 	// --- カメラ初期設定 ---
-	{
-		std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex()); // 排他制御
-		Camera::Instance().SetLookAt(
-			DirectX::XMFLOAT3(0, 20, 20), // カメラ座標
-			DirectX::XMFLOAT3(0, 0, 0),   // ターゲット(設定しても意味ない)
-			DirectX::XMFLOAT3(0, 1, 0)    // 上方向ベクトル
-		);
-		Camera::Instance().SetAngle({DirectX::XMConvertToRadians(45), DirectX::XMConvertToRadians(180), 0});
-		Camera::Instance().cameraType = Camera::CAMERA::TARGET_PLAYER;
-	}
+#if 0
+	Camera::Instance().SetLookAt(
+		DirectX::XMFLOAT3(0, 20, 20), // カメラ座標
+		DirectX::XMFLOAT3(0, 0, 0),   // ターゲット(設定しても意味ない)
+		DirectX::XMFLOAT3(0, 1, 0)    // 上方向ベクトル
+	);
+	Camera::Instance().SetAngle({DirectX::XMConvertToRadians(45), DirectX::XMConvertToRadians(180), 0});
+	Camera::Instance().cameraType = Camera::CAMERA::TARGET_PLAYER;
+#else
+	camera = &playerCamera;
+	//camera = &lockOnCamera;
+#endif
 
 	// --- ライト初期設定 ---
 	Light* directionLight = new Light(LightType::Directional);
@@ -93,6 +95,7 @@ void SceneTest::Initialize()
 
 	Enemy::Instance().Initialize();
 	Player::Instance().Initialize();
+	Player::Instance().SetCamera(camera);	// 今のカメラを設定
 
 
 	Particle::Instance().Initialize();
@@ -148,9 +151,13 @@ void SceneTest::Update()
 	EffectManager::Instance().Update();
 
 	// --- カメラ処理 ---
+#if 0
 	Camera::Instance().SetTarget(Player::Instance().GetPos());
 	//Camera::Instance().SetTarget(blendTestPlayer->GetPos());
 	Camera::Instance().Update();
+#else
+	camera->Update();
+#endif
 
 
 	// タイマーの定数バッファの更新
@@ -313,7 +320,11 @@ void SceneTest::Render()
 	}
 
 	// カメラの定数バッファの更新
+#if 0
 	Camera::Instance().UpdateCameraConstant();
+#else
+	camera->UpdateConstants();
+#endif
 	// ライトの定数バッファの更新
 	LightManager::Instance().UpdateConstants();
 
@@ -471,6 +482,8 @@ void SceneTest::Render()
 	wbOitBuffer->DrawDebugGui();
 	radialBlur->DrawDebugGui();
 
+	camera->DrawDebugGui();
+
 #if SHOW_PERFORMANCE
 	// --- パフォーマンス描画 ---
 	ImGuiManager::Instance().DisplayPerformanceStats();
@@ -490,6 +503,48 @@ void SceneTest::DrawDebugGUI()
 	ImGui::Begin("TestScene");
 	{
 		ImGui::Checkbox("collision", &showCollision);
+
+
+		// --- カメラ関連 ---
+		static bool cameraFlag = false;
+		InputManager& input = InputManager::Instance();
+		if (input.GetKeyPressed(DirectX::Keyboard::Keys::L))
+		{
+			if (!cameraFlag)
+			{
+				Vector3 position = camera->GetCurrentPosition();
+				Vector3 target = camera->GetTarget();
+				camera = &playerCamera;
+				camera->Initialize();
+
+				camera->SetCurrentPosition(position);
+				camera->SetTarget(target);
+				Player::Instance().SetCamera(camera);
+
+				cameraFlag = !cameraFlag;
+			}
+
+			else
+			{
+				Vector3 position = camera->GetCurrentPosition();
+				Vector3 target = camera->GetTarget();
+				camera = &lockOnCamera;
+				camera->Initialize();
+
+				camera->SetCurrentPosition(position);
+				camera->SetTarget(target);
+				Player::Instance().SetCamera(camera);
+
+				cameraFlag = !cameraFlag;
+			}
+		}
+
+		Vector3 enemyPos = Enemy::Instance().GetPos();
+		Vector3 playerPos = Player::Instance().GetPos();
+		Vector2 vec = enemyPos.xz() - playerPos.xz();
+		float atan = atan2(vec.y, vec.x);
+		atan = DirectX::XMConvertToDegrees(atan);
+		ImGui::Text("Theta : %f", atan);
 	}
 	ImGui::End();
 }

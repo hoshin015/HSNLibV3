@@ -4,6 +4,8 @@
 #include "../StateMachine.h"
 #include "../../Source/Game/Object/Base/AnimatedObject.h"
 
+#include "../../Library/3D/CameraBase.h"
+
 
 enum class PlayerAnimNum
 {
@@ -48,6 +50,8 @@ public:
 	// 敵との衝突処理
 	void CollisionVsEnemy();
 
+	void SetCamera(CameraBase* camera) { this->camera = camera; }
+
 public:
 	enum class State
 	{
@@ -73,6 +77,9 @@ private:
 	// 入力データ保管用
 	using inputData = std::variant<bool, int, float, DirectX::XMFLOAT2>;
 	std::map<std::string, inputData> inputMap;
+
+	// --- カメラのポインタ ---
+	CameraBase* camera;
 
 public:
 	StateMachine<Player>* GetStateMachine() { return stateMachine.get(); }

@@ -15,6 +15,8 @@
 #include "../Game/Object/TestStatic.h"
 #include "../Game/Object/StateMachine/BlendTestPlayer/BlendTestPlayer.h"
 #include "../Game/Object/Effect/LightningMainMesh.h"
+// --- Camera ---
+#include "../Camera/CameraDerived.h"
 
 
 // テストシーン
@@ -57,4 +59,8 @@ private:
 	std::unique_ptr<BlendTestPlayer> blendTestPlayer;
 
 	bool showCollision = false;
+
+	CameraBase* camera;
+	PlayerCamera playerCamera;
+	LockOnCamera lockOnCamera;
 };

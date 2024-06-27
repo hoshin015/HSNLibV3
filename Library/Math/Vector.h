@@ -128,9 +128,10 @@ public:
 		return *this;
 	}
 
-	Vector2 operator/=(float d)
+	Vector2& operator/=(float d)
 	{
-		return *this * (1.0f / d);
+		*this = *this * (1.0f / d);
+		return *this;
 	}
 
 
@@ -299,9 +300,10 @@ public:
 		return *this;
 	}
 
-	Vector3 operator/=(float d)
+	Vector3& operator/=(float d)
 	{
-		return *this * (1.0f / d);
+		*this = *this * (1.0f / d);
+		return *this;
 	}
 
 
@@ -548,9 +550,10 @@ public:
 		return *this;
 	}
 
-	Vector4 operator/=(float d)
+	Vector4& operator/=(float d)
 	{
-		return *this * (1.0f / d);
+		*this = *this * (1.0f / d);
+		return *this;
 	}
 
 

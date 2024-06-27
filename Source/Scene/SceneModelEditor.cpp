@@ -424,11 +424,6 @@ void SceneModelEditor::DrawDebugGUI()
 			ModelResource::Animation& animationClip = modelObject->GetModel()->GetModelResource()->GetAnimationClips().
 			                                                       at(animationClipIndex);
 
-			Animator animator;
-			auto& animations = modelObject->GetModel()->GetModelResource()->GetAnimationClips();
-			animator.AddBlendAnimation("aaa", {&animations[0],&animations[1],&animations[2] });
-			animator.PlayAnimation("aaa", Timer::Instance().DeltaTime());
-
 			if (ImGui::Button("DoubleAnimationPlay"))
 			{
 				modelObject->SetDoubleCurrentAnimationIndex(1);

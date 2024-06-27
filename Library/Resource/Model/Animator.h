@@ -12,6 +12,7 @@ public:
 
 	struct BlendState {
 		std::vector<Motion> motions;
+		ModelResource::SceneView* sceneView;
 		float blendRate;
 		float timer;
 		float maxSeconds;
@@ -23,7 +24,9 @@ private:
 public:
 	Animator() = default;
 
-	void AddBlendAnimation(const std::string& name, std::initializer_list<ModelResource::Animation*> animations);
+	void AddBlendAnimation(const std::string& name, ModelResource::SceneView* sceneView, std::initializer_list<ModelResource::Animation*> animations);
 
-	ModelResource::KeyFrame PlayAnimation(const std::string& name,float elapsedTime);
+	ModelResource::KeyFrame PlayAnimation(const std::string& name,float elapsedTime,float rate);
+
+	void AnimationEditor(const std::string& name);
 };

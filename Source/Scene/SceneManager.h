@@ -6,8 +6,9 @@
 #include "SceneModelEditor.h"
 #include "SceneSpriteEditor.h"
 #include "SceneLoading.h"
+#include "SceneAnimationTest.h"
 
-// ƒV[ƒ“ƒ}ƒl[ƒWƒƒ[
+// ã‚·ãƒ¼ãƒ³ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼
 class SceneManager
 {
 private:
@@ -20,23 +21,23 @@ private:
 	}
 
 public:
-	// —Bˆê‚ÌƒCƒ“ƒXƒ^ƒ“ƒXæ“¾
+	// å”¯ä¸€ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å–å¾—
 	static SceneManager& Instance()
 	{
 		static SceneManager instance;
 		return instance;
 	}
 
-	// XVˆ—
+	// æ›´æ–°å‡¦ç†
 	void Update();
 
-	// •`‰æˆ—
+	// æç”»å‡¦ç†
 	void Render();
 
-	// ƒV[ƒ“ƒNƒŠƒA
+	// ã‚·ãƒ¼ãƒ³ã‚¯ãƒªã‚¢
 	void Clear();
 
-	// ƒV[ƒ“Ø‚è‘Ö‚¦
+	// ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆ
 	void ChangeScene(Scene* scene);
 
 private:

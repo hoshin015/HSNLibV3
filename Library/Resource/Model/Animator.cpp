@@ -1,79 +1,171 @@
 #include "Animator.h"
+
+#include "../../../External/ImGui/imgui.h"
+#include "../../../External/ImGui/imgui_internal.h"
 using namespace DirectX;
 
-void Animator::AddBlendAnimation(const std::string& name, std::initializer_list<ModelResource::Animation*> animations) {
-  BlendState state;
-  state.blendRate = 0;
-  state.timer     = 0;
+void Animator::AddBlendAnimation(
+	const std::string&                               name, ModelResource::SceneView* sceneView,
+	std::initializer_list<ModelResource::Animation*> animations
+) {
+	BlendState state;
+	state.blendRate = 0;
+	state.timer     = 0;
+	state.sceneView = sceneView;
 
-  int   count      = 0;
-  int   size       = animations.size() - 1;
-  float maxSeconds = 0;
-  for (ModelResource::Animation* animation: animations) {
-    Motion motion = {animation, count / static_cast<float>(size), 1};
-    state.motions.push_back(motion);
-    count++;
-    if (maxSeconds < animation->secondsLength) maxSeconds = animation->samplingRate;
-  }
+	int   count      = 0;
+	int   size       = animations.size() - 1;
+	float maxSeconds = 0;
+	for (ModelResource::Animation* animation: animations) {
+		Motion motion = {animation, count / static_cast<float>(size), 1};
+		state.motions.push_back(motion);
+		count++;
+		if (maxSeconds < animation->secondsLength) maxSeconds = animation->secondsLength;
+	}
 
-  state.maxSeconds = maxSeconds;
-  _state[name]     = state;
+	state.maxSeconds = maxSeconds;
+	_state[name]     = state;
 }
 
-ModelResource::KeyFrame Animator::PlayAnimation(const std::string& name, float elapsedTime) {
-  BlendState& state = _state[name];
-  state.blendRate   = 0.52f;
+ModelResource::KeyFrame Animator::PlayAnimation(const std::string& name, float elapsedTime, float rate) {
+	BlendState& state = _state[name];
+	state.blendRate   = rate;
 
-  state.timer += elapsedTime;
+	const Motion* first  = nullptr;
+	const Motion* second = nullptr;
 
-  const Motion* first  = nullptr;
-  const Motion* second = nullptr;
+	std::sort(state.motions.begin(), state.motions.end(), [](const Motion& a, const Motion& b) {return a.threshold < b.threshold; });
+	for (auto&& motion: state.motions) {
+		if (state.blendRate >= motion.threshold) first = &motion;
+		if (!second && state.blendRate < motion.threshold) second = &motion;
+	}
+	if (!second) second = first;
 
-  for (auto&& motion: state.motions) {
-    if (state.blendRate >= motion.threshold) first = &motion;
-    if (!second && state.blendRate < motion.threshold) second = &motion;
-  }
+	const float animationRate = state.timer / state.maxSeconds;
+	const float leapRate      = second == first ?
+		                            1:
+		                            (state.blendRate - first->threshold) / (second->threshold - first->threshold);
 
-  const float animationRate = state.timer / state.maxSeconds;
-  const float leapRate      = (state.blendRate - first->threshold) / (second->threshold - first->threshold);
+	float seq                = first->motion->sequence.size() * std::fmodf(animationRate * first->animationSpeed, 1.f);
+	int   firstKeyFrameIndex = static_cast<int>(seq);
+	float firstLeapRate      = (seq - static_cast<float>(firstKeyFrameIndex));
 
-  const ModelResource::KeyFrame& firstKeyFrame = first->motion->sequence.at(
-    first->motion->sequence.size() * animationRate
-  );
-  const ModelResource::KeyFrame& secondKeyFrame = second->motion->sequence.at(
-    second->motion->sequence.size() * animationRate
-  );
+	const ModelResource::KeyFrame* firstKeyFrames[2] = {
+		&first->motion->sequence.at(firstKeyFrameIndex),
+		&first->motion->sequence.at(
+			firstKeyFrameIndex == first->motion->sequence.size() - 1 ? 0: firstKeyFrameIndex + 1
+		)
+	};
 
-  ModelResource::KeyFrame resultKeyFrame;
-  resultKeyFrame.nodes.resize(firstKeyFrame.nodes.size());
-  for (int count = 0; count < firstKeyFrame.nodes.size(); ++count) {
-      ModelResource::KeyFrame::Node node;
-    XMVECTOR S = XMVectorLerp(
-      XMLoadFloat3(&firstKeyFrame.nodes[count].scaling), XMLoadFloat3(&secondKeyFrame.nodes[count].scaling), leapRate
-    );
-    XMVECTOR R = XMQuaternionSlerp(
-      XMLoadFloat4(&firstKeyFrame.nodes[count].rotation), XMLoadFloat4(&secondKeyFrame.nodes[count].rotation), leapRate
-    );
-    XMVECTOR T = XMVectorLerp(
-      XMLoadFloat3(&firstKeyFrame.nodes[count].translation), XMLoadFloat3(&secondKeyFrame.nodes[count].translation),
-      leapRate
-    );
+	seq = second->motion->sequence.size() * std::fmodf(animationRate * second->animationSpeed, 1.f);
+	int   secondKeyFrameIndex = static_cast<int>(seq);
+	float secondLeapRate = (seq - static_cast<float>(secondKeyFrameIndex));
 
-    XMFLOAT3 scale, transform;
-    XMFLOAT4 rotation;
+	const ModelResource::KeyFrame* secondKeyFrames[2] = {
+		&second->motion->sequence.at(secondKeyFrameIndex),
+		&second->motion->sequence.at(
+			secondKeyFrameIndex == second->motion->sequence.size() - 1 ? 0: secondKeyFrameIndex + 1
+		)
+	};
 
-    XMStoreFloat3(&scale, S);
-    XMStoreFloat4(&rotation, R);
-    XMStoreFloat3(&transform, T);
+	ModelResource::KeyFrame resultKeyFrame;
+	resultKeyFrame.nodes.resize(firstKeyFrames[0]->nodes.size());
+	for (int count = 0; count < resultKeyFrame.nodes.size(); ++count) {
+		ModelResource::KeyFrame::Node node;
+		XMVECTOR                      scaleVec = XMVectorLerp(
+			XMVectorLerp(
+				XMLoadFloat3(&firstKeyFrames[0]->nodes[count].scaling),
+				XMLoadFloat3(&firstKeyFrames[1]->nodes[count].scaling),
+				firstLeapRate
+			),
+			XMVectorLerp(
+				XMLoadFloat3(&secondKeyFrames[0]->nodes[count].scaling),
+				XMLoadFloat3(&secondKeyFrames[1]->nodes[count].scaling),
+				secondLeapRate
+			),
+			leapRate
+		);
+		XMVECTOR rotateVec = XMQuaternionSlerp(
+			XMQuaternionSlerp(
+				XMLoadFloat4(&firstKeyFrames[0]->nodes[count].rotation),
+				XMLoadFloat4(&firstKeyFrames[1]->nodes[count].rotation),
+				firstLeapRate
+			),
+			XMQuaternionSlerp(
+				XMLoadFloat4(&secondKeyFrames[0]->nodes[count].rotation),
+				XMLoadFloat4(&secondKeyFrames[1]->nodes[count].rotation),
+				secondLeapRate
+			),
+			leapRate
+		);
+		XMVECTOR translationVec = XMVectorLerp(
+			XMVectorLerp(
+				XMLoadFloat3(&firstKeyFrames[0]->nodes[count].translation),
+				XMLoadFloat3(&firstKeyFrames[1]->nodes[count].translation),
+				firstLeapRate
+			),
+			XMVectorLerp(
+				XMLoadFloat3(&secondKeyFrames[0]->nodes[count].translation),
+				XMLoadFloat3(&secondKeyFrames[1]->nodes[count].translation),
+				secondLeapRate
+			),
+			leapRate
+		);
 
-    node.scaling = scale;
-    node.rotation = rotation;
-    node.translation = transform;
-    node.globalTransform = firstKeyFrame.nodes[count].globalTransform;
-    node.name = firstKeyFrame.nodes[count].name;
-    node.uniqueId = firstKeyFrame.nodes[count].uniqueId;
-    resultKeyFrame.nodes[count] = node;
-  }
+		node.name     = firstKeyFrames[0]->nodes[count].name;
+		node.uniqueId = firstKeyFrames[0]->nodes[count].uniqueId;
 
-  return resultKeyFrame;
+		XMStoreFloat3(&node.scaling, scaleVec);
+		XMStoreFloat4(&node.rotation, rotateVec);
+		XMStoreFloat3(&node.translation, translationVec);
+
+		int64_t  parentID = state.sceneView->nodes.at(state.sceneView->GetIndex(node.uniqueId)).parentIndex;
+		XMMATRIX GT       = parentID < 0 ?
+			                    XMMatrixIdentity():
+			                    XMMatrixScalingFromVector(scaleVec) *
+			                    XMMatrixRotationQuaternion(rotateVec) *
+			                    XMMatrixTranslationFromVector(translationVec) * XMLoadFloat4x4(
+				                    &resultKeyFrame.nodes[parentID].globalTransform
+			                    );
+
+		XMStoreFloat4x4(&node.globalTransform, GT);
+
+		//node.globalTransform = firstKeyFrame.nodes[count].globalTransform;
+
+		resultKeyFrame.nodes[count] = node;
+	}
+
+	state.timer += elapsedTime;
+	//if (state.timer >= state.maxSeconds) state.timer = 0;
+
+	return resultKeyFrame;
+}
+
+void Animator::AnimationEditor(const std::string& name) {
+	if(ImGui::Begin("AnimationEditor")) {
+		BlendState& state = _state[name];
+
+		if (ImGui::CollapsingHeader("State")) {
+			ImGui::Text("BlendRate: %f", state.blendRate);
+			ImGui::Text("MaxSeconds: %f", state.maxSeconds);
+			ImGui::Text("Timer: %f", state.timer);
+		}
+
+		if (ImGui::CollapsingHeader("Motion")) {
+			for (auto&& motion : state.motions) {
+				if (ImGui::TreeNode(motion.motion->name.c_str())) {
+					//ImGui::PushID(ImHashStr(motion.motion->name.c_str()));
+
+					ImGui::DragFloat("AnimationSpeed", &motion.animationSpeed,0.01f,0);
+					if (motion.animationSpeed < 0)motion.animationSpeed = 0;
+					ImGui::DragFloat("Threshold", &motion.threshold,0.01f);
+
+					//ImGui::PopID();
+
+					ImGui::TreePop();
+				}
+			}
+		}
+	}
+	ImGui::End();
 }

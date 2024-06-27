@@ -448,6 +448,9 @@
     <ClCompile Include="Library\Resource\Model\Animator.cpp">
       <Filter>1_HSNLib\Resource\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scene\SceneAnimationTest.cpp">
+      <Filter>2_Source\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -785,6 +788,9 @@
     </ClInclude>
     <ClInclude Include="Library\Resource\Model\Animator.h">
       <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneAnimationTest.h">
+      <Filter>2_Source\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

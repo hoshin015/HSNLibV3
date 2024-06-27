@@ -23,20 +23,22 @@ void SceneAnimationTest::DrawDebugGUI() {
 void SceneAnimationTest::Initialize() {
 	_model = std::make_shared<AnimatedModel>("Data/Fbx/Albino/Albino.model");
 	std::vector<ModelResource::Animation>& animations = _model->GetModelResource()->GetAnimationClips();
-//,{ &animations.at(6),&animations.at(12),&animations.at(9) }
+
 	Animator::BlendTree blendTree;
-	blendTree.motions.emplace_back(&animations[6],{},1);
-	blendTree.motions.emplace_back(&animations[12],{0.5f},1);
-	blendTree.motions.emplace_back(&animations[9],{1},2);
+	//blendTree.motions.push_back(&animations[6],XMFLOAT2(1,1), 1.f);
+	blendTree.motions.emplace_back(Animator::Motion{&animations[6],{1,1}, 1.f });
+	blendTree.motions.emplace_back(Animator::Motion{&animations[12],{0.5f,0},1});
+	blendTree.motions.emplace_back(Animator::Motion{&animations[9],{1,0},2});
 	blendTree.timer = 0;
 	blendTree.maxSeconds = 1.33333f;
+	blendTree.parameter = { 0,0};
 
 	Animator::Motion motion;
 	motion.motion = &animations[1];
 	motion.threshold = {};
 	motion.animationSpeed = 1;
 
-	_animator.AddAnimation(&_model->GetModelResource()->GetSceneView() ,blendTree,motion);
+	_animator.AddAnimation(&_model->GetModelResource()->GetSceneView(), blendTree, motion);
 
 	Camera::Instance().SetLookAt(
 		DirectX::XMFLOAT3(-7.5f, 8, 12.5f), 
@@ -98,8 +100,8 @@ void SceneAnimationTest::Render() {
 	LightManager::Instance().UpdateConstants();
 
 	static float rate = 0;
-	ModelResource::KeyFrame keyFrame = _animator.PlayAnimation("move", Timer::Instance().DeltaTime(),rate);
-	_model->Render(_transform.world, &keyFrame, false);
+	//ModelResource::KeyFrame keyFrame = _animator.PlayAnimation("move", Timer::Instance().DeltaTime(),rate);
+	_model->Render(_transform.world, nullptr , false);
 
 #if USE_IMGUI
 	DrawDebugGUI();

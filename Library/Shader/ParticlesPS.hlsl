@@ -4,7 +4,7 @@
 SamplerState samplerStates[_samplerNum] : register(s0);
 
 Texture2D particlesTexture : register(_particlesTexture);
-Texture2D smokeTexture : register(_smokeTexture);
+Texture2D perlinNoiseTexture : register(_perlinNoiseTexture);
 
 struct PSOUT
 {

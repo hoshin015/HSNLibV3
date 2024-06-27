@@ -72,8 +72,8 @@ Particle::Particle()
 	CreateCsFromCso("Data/Shader/ParticlesSingleEmitCS.cso", emitSingleCs.ReleaseAndGetAddressOf());
 	CreateCsFromCso("Data/Shader/ParticlesEmitCS.cso", emitCs.ReleaseAndGetAddressOf());
 
-	sprParticles = std::make_unique<Sprite>("Data/Texture/Effect/smoke2.png");
-	sprSmoke = std::make_unique<Sprite>("Data/Texture/Effect/smoke2normal.png");
+	sprParticles = std::make_unique<Sprite>("Data/Texture/Effect/gpuParticles.png");
+	sprPerlinNoise = std::make_unique<Sprite>("Data/Texture/Effect/smoke2normal.png");
 
 	freeParticleCount = MAX_PARTICLE;
 }
@@ -92,7 +92,9 @@ void Particle::Initialize()
 
 	// テクスチャの設定
 	dc->PSSetShaderResources(_particlesTexture, 1, sprParticles->GetSpriteResource()->GetSrvAddres());
-	dc->PSSetShaderResources(_particlesTexture, 1, sprParticles->GetSpriteResource()->GetSrvAddres());
+
+	dc->PSSetShaderResources(_perlinNoiseTexture, 1, sprPerlinNoise->GetSpriteResource()->GetSrvAddres());
+	dc->CSSetShaderResources(_perlinNoiseTexture, 1, sprPerlinNoise->GetSpriteResource()->GetSrvAddres());
 
 	// リソースの割り当てを解除
 	ID3D11UnorderedAccessView* nullUav = {};

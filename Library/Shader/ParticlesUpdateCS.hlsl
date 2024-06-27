@@ -4,6 +4,9 @@
 RWStructuredBuffer<Particle> particleBuffer : register(u0);
 AppendStructuredBuffer<uint> deadList : register(u1);
 
+SamplerState samplerStates[_samplerNum] : register(s0);
+Texture2D    perlinNoiseTexture : register(_perlinNoiseTexture);
+
 [numthreads(THREAD_NUM_X, 1, 1)]
 void main(uint3 DTid : SV_DispatchThreadID)
 {
@@ -16,18 +19,40 @@ void main(uint3 DTid : SV_DispatchThreadID)
 	{
 		switch (p.kind)
 		{
-		case 0:
+		case pk_Dust:
 			{
+				// TODO: perlinNoise で滑らかに動かす
+#if 0
+				// パーリンノイズのテクスチャから値を取得するためのUV座標
+				float2 uv = frac(float2(p.position.x, p.position.z) * 0.01 + float2(random(id) * 0.01, random(id) * 0.01));
+				// IDで調整して正規化
+
+				// パーリンノイズの値を取得
+				float noiseX = perlinNoiseTexture.SampleLevel(samplerStates[_pointSampler], uv, 0).r;
+				float noiseY = perlinNoiseTexture.SampleLevel(samplerStates[_pointSampler], uv + float2(0.1, 0.1), 0).r;
+				float noiseZ = perlinNoiseTexture.SampleLevel(samplerStates[_pointSampler], uv + float2(0.2, 0.2), 0).r;
+				float noiseA = perlinNoiseTexture.SampleLevel(samplerStates[_pointSampler], uv + float2(0.3, 0.3), 0).r;
+
+				// パーティクルの速度を更新
+				p.velocity.x += (noiseX - 0.5) * p.speed; // ノイズ値を中心に移動
+				p.velocity.y += (noiseY - 0.5) * p.speed;
+				p.velocity.z += (noiseZ - 0.5) * p.speed;
+
+				p.angle += (noiseA - 0.5) * 0.1;
+
+				// パーティクルの位置を更新
+				//p.position += p.velocity * 0.1; // 移動速度を調整
+#endif
 				p.position += p.velocity * deltaTime;
 
 				// x
 				while (p.position.x > 30)
 				{
-					p.position.x -= 30;
+					p.position.x -= 60;
 				}
 				while (p.position.x < -30)
 				{
-					p.position.x += 30;
+					p.position.x += 60;
 				}
 
 				// y
@@ -44,15 +69,15 @@ void main(uint3 DTid : SV_DispatchThreadID)
 				// x
 				while (p.position.z > 30)
 				{
-					p.position.z -= 30;
+					p.position.z -= 60;
 				}
 				while (p.position.z < -30)
 				{
-					p.position.z += 30;
+					p.position.z += 60;
 				}
 			}
 			break;
-		case 1:
+		case pk_PlayerAttackSpark:
 			{
 				p.velocity -= (p.velocity * 0.3f * deltaTime);
 				p.velocity.y += -p.gravity * deltaTime;
@@ -102,21 +127,42 @@ void main(uint3 DTid : SV_DispatchThreadID)
 				p.lifeTimer -= deltaTime;
 			}
 			break;
-		case 6:
+		case pk_smoke:
 			{
 				p.position += p.velocity * deltaTime;
 
-				if ((p.lifeTimer / p.lifeTime) > 0.2)
+				if ((p.lifeTimer / p.lifeTime) > 0.5)
 				{
 					p.color.a = 1.0f - (p.lifeTimer / p.lifeTime);
 				}
 				else
 				{
-					p.color.a -= 1 * deltaTime;
+					p.color.a -= 3 * deltaTime;
 				}
 
 				//p.scale = p.startScale * (p.lifeTimer / p.lifeTime);
 
+				p.lifeTimer -= deltaTime;
+			}
+			break;
+		case pk_simpleFire:
+			{
+				p.color.a = (p.lifeTimer / p.lifeTime);
+
+				//p.scale = p.startScale * (p.lifeTimer / p.lifeTime);
+				p.lifeTimer -= deltaTime;
+			}
+			break;
+		case pk_novaBurst:
+			{
+				p.position += p.velocity * deltaTime;
+
+				if ((p.lifeTimer / p.lifeTime) < 0.8)
+				{
+					p.velocity.y += 8 * deltaTime;
+					p.velocity.x -= (p.velocity.x * 0.66 * deltaTime);
+					p.velocity.z -= (p.velocity.z * 0.66 * deltaTime);
+				}
 				p.lifeTimer -= deltaTime;
 			}
 			break;

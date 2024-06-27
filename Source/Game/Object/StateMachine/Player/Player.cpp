@@ -293,7 +293,7 @@ void Player::CollisionVsEnemy()
 				emitter->emitterData.looping = false;
 				emitter->emitterData.burstsTime = 0.0;
 				emitter->emitterData.burstsCount = 256;
-				emitter->emitterData.particleKind = 1;
+				emitter->emitterData.particleKind = pk_PlayerAttackSpark;
 				emitter->emitterData.particleLifeTimeMin = 0.4f;
 				emitter->emitterData.particleLifeTimeMax = 0.6f;
 				emitter->emitterData.particleSpeedMin = 15.0f;
@@ -314,7 +314,7 @@ void Player::CollisionVsEnemy()
 				emitter1->emitterData.looping = false;
 				emitter1->emitterData.burstsTime = 0.03;
 				emitter1->emitterData.burstsCount = 1;
-				emitter1->emitterData.particleKind = 2;
+				emitter1->emitterData.particleKind = pk_PlayerAttackHit;
 				emitter1->emitterData.particleLifeTimeMin = 0.1f;
 				emitter1->emitterData.particleLifeTimeMax = 0.1f;
 				emitter1->emitterData.particleSpeedMin = 0.0f;

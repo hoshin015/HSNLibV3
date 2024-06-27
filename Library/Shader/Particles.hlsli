@@ -15,6 +15,7 @@ struct GS_OUT
 struct Particle
 {
 	float3 position;
+	float  speed;
 	float3 velocity;
 	float3 startVelocity;
 	float  gravity;
@@ -70,6 +71,18 @@ cbuffer EmitterConstant : register(_emitterConstant)
 //	ランダム値関数 float型
 //--------------------------------------------
 // n		: シード値
+float random(float seed)
+{
+	seed *= deltaTime;
+	seed = frac(sin(seed) * 43758.5453123);
+	return seed;
+}
+
+
+//--------------------------------------------
+//	ランダム値関数 float型
+//--------------------------------------------
+// n		: シード値
 float rand(inout float seed)
 {
 	seed *= deltaTime;
@@ -98,6 +111,7 @@ void spawn(uint id, inout Particle p)
 	p.scale.x = lerp(particleSizeMin.x, particleSizeMax.x, rand(seed));
 	p.scale.y = lerp(particleSizeMin.y, particleSizeMax.y, rand(seed));
 
+	p.speed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
 
 	p.lifeTime      = lerp(particleLifeTimeMin, particleLifeTimeMax, rand(seed));
 	p.lifeTimer     = p.lifeTime;
@@ -150,7 +164,7 @@ void spawn(uint id, inout Particle p)
 		}
 
 		break;
-	case 1:
+	case pk_PlayerAttackSpark:
 		{
 			p.position = emitterPosition;
 
@@ -217,7 +231,7 @@ void spawn(uint id, inout Particle p)
 			p.velocity.z = rand(seed) * particleSpeed;
 		}
 		break;
-	case 6:
+	case pk_smoke:
 		{
 			p.position = emitterPosition;
 
@@ -232,6 +246,56 @@ void spawn(uint id, inout Particle p)
 
 			// z 方向
 			p.velocity.z = -sin(r) * particleSpeed;
+
+			p.angle = 0;
+		}
+		break;
+	case pk_simpleFire:
+		{
+			float3 pos = emitterPosition;
+
+			float3 pos2 = float3(0, 0, 0);
+
+			p.angle = rand(seed) * 360;
+
+			pos2.x = rand(seed) * 2 - 1;
+			pos2.y = rand(seed) * 2 - 1;
+			pos2.z = rand(seed) * 2 - 1;
+
+			pos2 = normalize(pos2) * pow(rand(seed), 1.0 / 3.0);
+
+			p.position.x = pos.x + pos2.x * 10;
+			p.position.y = pos.y + 5 * rand(seed);
+			p.position.z = pos.z + pos2.z * 10;
+
+			p.textureType = 7;
+			if (rand(seed) > 0.5)
+				p.textureType = 8;
+		}
+		break;
+	case pk_novaBurst:
+		{
+			p.position   = emitterPosition;
+			p.position.y = emitterPosition.y + rand(seed) * 1.5;
+
+
+			p.velocity.y = rand(seed) * 6 + 0.5;
+
+			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+
+			float r = rand(seed) * 360;
+
+			// x 方向
+			p.velocity.x = cos(r) * particleSpeed;
+
+			// z 方向
+			p.velocity.z = -sin(r) * particleSpeed;
+
+			p.textureType = 3;
+			if (rand(seed) > 0.66)
+				p.textureType = 4;
+			if (rand(seed) > 0.66)
+				p.textureType = 5;
 		}
 		break;
 	}

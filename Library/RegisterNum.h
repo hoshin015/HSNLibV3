@@ -28,7 +28,18 @@
 #define _samplerNum						8
 
 // ===== GpuParticle ======
-#define pk_Dust 0
+
+// particleType
+#define pk_Dust					0
+#define pk_PlayerAttackSpark	1
+#define pk_PlayerAttackHit		2
+#define pk_smoke				6
+#define pk_simpleFire			7
+#define pk_novaBurst			8
+
+// billboardType
+#define bt_View		0
+#define bt_Velocity 1
 
 
 // --- c++ ---
@@ -63,6 +74,7 @@
 #define _emissiveTexture			3
 #define _occlusionTexture			4
 
+// ibl (事前計算テクスチャ)
 #define  _IEM	33		// Pre-filtered Irradiance Environment Map (IEM)
 #define _PMREM	34		// Pre-filtered Mipmapped Radiance Environment Map (PMREM)
 #define _LutGgx 35		// Look-Up Table と GGX分布 のテクスチャ
@@ -86,8 +98,8 @@
 #define _radialBlurTexture	0
 
 // Gpu Particle (ここは別のテクスチャで更新しないようにする)
-#define _particlesTexture	9
-#define _smokeTexture		10
+#define _particlesTexture		9
+#define _perlinNoiseTexture		10
 
 
 // --- hlsl ---
@@ -122,6 +134,7 @@
 #define _emissiveTexture			t3
 #define _occlusionTexture			t4
 
+// ibl (事前計算テクスチャ)
 #define  _IEM	t33		// Pre-filtered Irradiance Environment Map (IEM)
 #define _PMREM	t34		// Pre-filtered Mipmapped Radiance Environment Map (PMREM)
 #define _LutGgx t35		// Look-Up Table と GGX分布 のテクスチャ
@@ -144,8 +157,8 @@
 #define _radialBlurTexture	t0
 
 // Gpu Particle (ここは別のテクスチャで更新しないようにする)
-#define _particlesTexture	t9
-#define _smokeTexture		t10
+#define _particlesTexture		t9
+#define _perlinNoiseTexture		t10
 
 #endif
 

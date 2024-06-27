@@ -27,7 +27,8 @@ public:
 	// RWStructuredBuffer で GPU とやりとりする構造体データ(保存しておくべきデータみたいな)
 	struct ParticleData
 	{
-		DirectX::XMFLOAT3 position      = {0, 0, 0};    // ポジション	
+		DirectX::XMFLOAT3 position = {0, 0, 0};         // ポジション
+		float             speed;                        // 移動速度
 		DirectX::XMFLOAT3 velocity      = {0, 0, 0};    // 加速度
 		DirectX::XMFLOAT3 startVelocity = {0, 0, 0};    // 生成時の加速度
 		float             gravity       = 0.0f;         // 重力(下方向の力の大きさ)
@@ -80,5 +81,5 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer>         constantBuffer;
 
 	std::unique_ptr<Sprite> sprParticles;
-	std::unique_ptr<Sprite> sprSmoke;
+	std::unique_ptr<Sprite> sprPerlinNoise;
 };

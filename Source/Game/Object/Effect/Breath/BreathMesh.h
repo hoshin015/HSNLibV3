@@ -14,9 +14,7 @@ public:
 
 	void Update() override;
 	void Render(bool isShadow) override;
-
 private:
-	
 };
 
 

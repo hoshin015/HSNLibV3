@@ -171,16 +171,18 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Object\Effect\Breath\BreathEffect.cpp" />
     <ClCompile Include="Library\3D\CameraBase.cpp" />
     <ClCompile Include="Library\Math\Matrix.cpp" />
     <ClCompile Include="Library\Math\Vector.cpp" />
     <ClCompile Include="Source\Camera\CameraDerived.cpp" />
-    <ClCompile Include="Source\Game\Object\Effect\RockEffect.cpp" />
-    <ClCompile Include="Source\Game\Object\Effect\RockMainMesh.cpp" />
+    <ClCompile Include="Source\Game\Object\Effect\Breath\BreathMesh.cpp" />
+    <ClCompile Include="Source\Game\Object\Effect\Rock\RockEffect.cpp" />
+    <ClCompile Include="Source\Game\Object\Effect\Rock\RockMainMesh.cpp" />
     <ClCompile Include="Source\UserInterface\DamageTextManager.cpp" />
     <ClCompile Include="Library\Graphics\RadialBlur.cpp" />
-    <ClCompile Include="Source\Game\Object\Effect\LightningMainMesh.cpp" />
-    <ClCompile Include="Source\Game\Object\Effect\LightningEffect.cpp" />
+    <ClCompile Include="Source\Game\Object\Effect\Lightning\LightningMainMesh.cpp" />
+    <ClCompile Include="Source\Game\Object\Effect\Lightning\LightningEffect.cpp" />
     <ClCompile Include="Source\Game\Object\StateMachine\Enemy\Enemy.cpp" />
     <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyBehavior.cpp" />
     <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyState.cpp" />
@@ -275,18 +277,20 @@
     <ClCompile Include="Library\Graphics\WbOitBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Object\Effect\Breath\BreathEffect.h" />
     <ClInclude Include="Library\3D\CameraBase.h" />
     <ClInclude Include="Library\Math\Matrix.h" />
     <ClInclude Include="Library\Math\Vector.h" />
     <ClInclude Include="Source\Camera\CameraDerived.h" />
-    <ClInclude Include="Source\Game\Object\Effect\RockEffect.h" />
-    <ClInclude Include="Source\Game\Object\Effect\RockMainMesh.h" />
+    <ClInclude Include="Source\Game\Object\Effect\Breath\BreathMesh.h" />
+    <ClInclude Include="Source\Game\Object\Effect\Rock\RockEffect.h" />
+    <ClInclude Include="Source\Game\Object\Effect\Rock\RockMainMesh.h" />
     <ClInclude Include="Source\UserInterface\DamageTextManager.h" />
     <ClInclude Include="External\ImGui\IconFontCppHeaders-main\IconsFontAwesome5.h" />
     <ClInclude Include="Library\Graphics\RadialBlur.h" />
     <ClInclude Include="Source\Game\AI\BehaviorTree.h" />
-    <ClInclude Include="Source\Game\Object\Effect\LightningMainMesh.h" />
-    <ClInclude Include="Source\Game\Object\Effect\LightningEffect.h" />
+    <ClInclude Include="Source\Game\Object\Effect\Lightning\LightningMainMesh.h" />
+    <ClInclude Include="Source\Game\Object\Effect\Lightning\LightningEffect.h" />
     <ClInclude Include="Source\Game\Object\StateMachine\Enemy\Enemy.h" />
     <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyBehavior.h" />
     <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyState.h" />

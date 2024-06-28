@@ -68,3 +68,10 @@ cbuffer ShadowConstant : register(_shadowConstant)
     float3 shadowColor;     // ‰e‚ÌF
     float pad;
 }
+
+// uvScroll
+cbuffer UvScrollConstant : register(_uvScrollConstant)
+{
+    float2 uvScrollValue;
+    float2 uvScrollPad;
+}

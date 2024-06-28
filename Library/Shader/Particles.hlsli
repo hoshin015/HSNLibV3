@@ -315,5 +315,27 @@ void spawn(uint id, inout Particle p)
 			p.velocity.z = -sin(r) * particleSpeed;
 		}
 		break;
+	case pk_fireBreath:
+		{
+			p.position = emitterPosition;
+			p.position.y += 3;
+
+			p.angle = rand(seed) * 360;
+
+
+			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+
+			float r = rand(seed) / 3.14 * 0.1;
+
+			// x •ûŒü
+			p.velocity.x = 1 * particleSpeed;
+
+			// y •ûŒü
+			p.velocity.y = 0;
+
+			// z •ûŒü
+			p.velocity.z = 0;
+		}
+		break;
 	}
 }

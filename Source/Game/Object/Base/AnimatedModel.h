@@ -21,6 +21,7 @@ public:
 	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11PixelShader>>  pixelShaderMap;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>                                   inputLayout;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>                                        constantBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer>                                        uvScrollConstantBuffer;
 
 	struct Constants
 	{
@@ -42,6 +43,14 @@ public:
 		float pad;
 	};
 	Constants data;
+
+	// uvスクロール用定数バッファ
+	struct UvScrollConstant
+	{
+		DirectX::XMFLOAT2 uvScrollValue = {0,0};
+		DirectX::XMFLOAT2 pad;
+	};
+	UvScrollConstant uvScrollConstant;
 
 private:
 };

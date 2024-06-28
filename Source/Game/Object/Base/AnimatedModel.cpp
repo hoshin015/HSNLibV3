@@ -20,6 +20,9 @@ void AnimatedModel::Render(DirectX::XMFLOAT4X4 world, ModelResource::KeyFrame* k
 	Graphics* gfx = &Graphics::Instance();
 	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
 
+	dc->UpdateSubresource(uvScrollConstantBuffer.Get(), 0, 0, &uvScrollConstant, 0, 0);
+	dc->VSSetConstantBuffers(_uvScrollConstant, 1, uvScrollConstantBuffer.GetAddressOf());
+
 	// --- mesh ごとの描画 ---
 	for (const ModelResource::Mesh& mesh : modelResource->GetMeshes())
 	{
@@ -165,6 +168,11 @@ void AnimatedModel::CreateComObject()
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	hr = device->CreateBuffer(&bufferDesc, nullptr, constantBuffer.ReleaseAndGetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
+
+	// uvScroll
+	bufferDesc.ByteWidth = sizeof(UvScrollConstant);
+	hr = device->CreateBuffer(&bufferDesc, nullptr, uvScrollConstantBuffer.ReleaseAndGetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
 	// material の名前に対応する テクスチャからshaderResourceViewの生成

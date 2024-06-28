@@ -172,6 +172,12 @@ void main(uint3 DTid : SV_DispatchThreadID)
 				p.lifeTimer -= deltaTime;
 			}
 			break;
+		case pk_fireBreath:
+			{
+				p.position += p.velocity * deltaTime;
+				p.lifeTimer -= deltaTime;
+			}
+			break;
 		default:
 			break;
 		}

@@ -38,6 +38,8 @@
 #define pk_novaBurst			8
 #define pk_novaStartFire		9
 
+#define pk_fireBreath			10
+
 // billboardType
 #define bt_View		0
 #define bt_Velocity 1
@@ -53,6 +55,7 @@
 #define _timerConstant		3		// タイマーのデータ
 #define _shadowConstant		6		// 影のデータ
 #define _emitterConstant	7		// エミッターのデータ
+#define _uvScrollConstant	8		// uvスクロールのデータ
 
 #define _luminanceExtractionConstant	5	// 高輝度抽出用
 #define _gaussianConstant				5	// ガウシアンフィルタ用
@@ -113,6 +116,7 @@
 #define _timerConstant		b3		// タイマーのデータ
 #define _shadowConstant		b6		// 影のデータ
 #define _emitterConstant	b7		// エミッターのデータ
+#define _uvScrollConstant	b8		// uvスクロールのデータ
 
 #define _luminanceExtractionConstant	b5	// 高輝度抽出用
 #define _gaussianConstant				b5	// ガウシアンフィルタ用

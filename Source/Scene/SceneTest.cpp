@@ -27,11 +27,12 @@
 #include "../Game/Object/StateMachine/Enemy/Enemy.h"
 #include "../Game/Object/StateMachine/Player/Player.h"
 // --- UserInterface ---
-#include "../Game/Object/Effect/LightningEffect.h"
-#include "../Game/Object/Effect/RockEffect.h"
+#include "../Game/Object/Effect/Lightning/LightningEffect.h"
+#include "../Game/Object/Effect/Rock/RockEffect.h"
 #include "../UserInterface//UiPause.h"
 #include "../UserInterface/DamageTextManager.h"
 #include "../../Library/Math/Math.h"
+#include "../Game/Object/Effect/Breath/BreathEffect.h"
 
 
 void SceneTest::Initialize()
@@ -126,6 +127,7 @@ void SceneTest::Initialize()
 
 	LightningEffect::Instance().Initialize();
 	RockEffect::Instance().Initialize();
+	BreathEffect::Instance().Initialize();
 }
 
 void SceneTest::Finalize()
@@ -304,42 +306,45 @@ void SceneTest::Update()
 		emitter0->emitterData.particleKind = pk_novaStartFire;
 		emitter0->emitterData.particleLifeTimeMin = 0.7f;
 		emitter0->emitterData.particleLifeTimeMax = 0.9f;
-		emitter0->emitterData.particleSpeedMin = 70.0f;
-		emitter0->emitterData.particleSpeedMax = 80.0f;
-		emitter0->emitterData.particleSizeMin = { 30.0f, 30.0f };
-		emitter0->emitterData.particleSizeMax = { 30.0f, 30.0f };
-		emitter0->emitterData.particleColorMin = { 30.0, 0.9, 0.9, 1 };
-		emitter0->emitterData.particleColorMax = { 30.0, 1.0, 1.0, 1 };
+		emitter0->emitterData.particleSpeedMin = 50.0f;
+		emitter0->emitterData.particleSpeedMax = 60.0f;
+		emitter0->emitterData.particleSizeMin = { 17.0f, 17.0f };
+		emitter0->emitterData.particleSizeMax = { 18.0f, 18.0f };
+		emitter0->emitterData.particleColorMin = { 5.0, 0.9, 0.9, 1 };
+		emitter0->emitterData.particleColorMax = { 5.0, 1.0, 1.0, 1 };
 		emitter0->emitterData.particleGravity = 0;
 		emitter0->emitterData.particleBillboardType = 0;
 		emitter0->emitterData.particleTextureType = 9;
 		emitter0->emitterData.burstsOneShot = 1;
 		EmitterManager::Instance().Register(emitter0);
-		//Emitter* emitter0 = new Emitter();
-		//emitter0->position = { 0, 0, 0 };
-		//emitter0->emitterData.duration = 3.0;
-		//emitter0->emitterData.looping = false;
-		//emitter0->emitterData.burstsTime = 0.1;
-		//emitter0->emitterData.burstsCount = 20;
-		//emitter0->emitterData.particleKind = pk_novaStartFire;
-		//emitter0->emitterData.particleLifeTimeMin = 0.5f;
-		//emitter0->emitterData.particleLifeTimeMax = 1.0f;
-		//emitter0->emitterData.particleSpeedMin = 40.0f;
-		//emitter0->emitterData.particleSpeedMax = 60.0f;
-		//emitter0->emitterData.particleSizeMin = { 10.0f, 10.0f };
-		//emitter0->emitterData.particleSizeMax = { 10.0f, 10.0f };
-		//emitter0->emitterData.particleColorMin = { 1.0, 1.0, 1.0, 1 };
-		//emitter0->emitterData.particleColorMax = { 1.0, 1.0, 1.0, 1 };
-		//emitter0->emitterData.particleGravity = 0;
-		//emitter0->emitterData.particleBillboardType = 0;
-		//emitter0->emitterData.particleTextureType = 9;
-		//emitter0->emitterData.burstsOneShot = 2;
-		//EmitterManager::Instance().Register(emitter0);
+	}
+
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F8))
+	{
+		Emitter* emitter0 = new Emitter();
+		emitter0->position = { 0, 0, 0 };
+		emitter0->emitterData.duration = 3.0;
+		emitter0->emitterData.looping = false;
+		emitter0->emitterData.burstsTime = 0.025;
+		emitter0->emitterData.burstsCount = 5;
+		emitter0->emitterData.particleKind = pk_fireBreath;
+		emitter0->emitterData.particleLifeTimeMin = 2.0f;
+		emitter0->emitterData.particleLifeTimeMax = 4.0f;
+		emitter0->emitterData.particleSpeedMin = 10.0f;
+		emitter0->emitterData.particleSpeedMax = 15.0f;
+		emitter0->emitterData.particleSizeMin = { 2.0f, 2.0f };
+		emitter0->emitterData.particleSizeMax = { 3.0f, 3.0f };
+		emitter0->emitterData.particleColorMin = { 3.0, 1.0, 1.0, 1 };
+		emitter0->emitterData.particleColorMax = { 3.0, 1.0, 1.0, 1 };
+		emitter0->emitterData.particleGravity = 0;
+		emitter0->emitterData.particleBillboardType = 0;
+		emitter0->emitterData.particleTextureType = 10;
+		EmitterManager::Instance().Register(emitter0);
 	}
 
 	LightningEffect::Instance().Update();
 	RockEffect::Instance().Update();
-
+	BreathEffect::Instance().Update();
 
 
 	int* b = new int();
@@ -372,35 +377,35 @@ void SceneTest::Render()
 	LightManager::Instance().UpdateConstants();
 
 	// ====== shadowMap ======
-	{
-		shadow->Clear();                   // シャドウマップクリア
-		shadow->UpdateShadowCasterBegin(); // シャドウマップ描画準備
+	//{
+	//	shadow->Clear();                   // シャドウマップクリア
+	//	shadow->UpdateShadowCasterBegin(); // シャドウマップ描画準備
 
-		for (int i = 0; i < SHADOWMAP_COUNT; i++)
-		{
-			shadow->Activate(i);
-			// 影を付けたいモデルはここで描画を行う(Render の引数に true をいれる)
-			{
-				// --- animated object ---
-				shadow->SetAnimatedShader(); // animated object の影描画開始
-				StageManager::Instance().Render(true);
-				Enemy::Instance().Render(true);
+	//	for (int i = 0; i < SHADOWMAP_COUNT; i++)
+	//	{
+	//		shadow->Activate(i);
+	//		// 影を付けたいモデルはここで描画を行う(Render の引数に true をいれる)
+	//		{
+	//			// --- animated object ---
+	//			shadow->SetAnimatedShader(); // animated object の影描画開始
+	//			StageManager::Instance().Render(true);
+	//			Enemy::Instance().Render(true);
 
-				Player::Instance().Render(true);
-				//blendTestPlayer->Render(true);
+	//			Player::Instance().Render(true);
+	//			//blendTestPlayer->Render(true);
 
-				// --- static object ---
-				shadow->SetStaticShader(); // static object の影描画開始
+	//			// --- static object ---
+	//			shadow->SetStaticShader(); // static object の影描画開始
 
-				RockEffect::Instance().Render(true);
-				//testStatic->Render(true);
-			}
-			shadow->DeActivate();
-		}
+	//			RockEffect::Instance().Render(true);
+	//			//testStatic->Render(true);
+	//		}
+	//		shadow->DeActivate();
+	//	}
 
-		// 通常描画用にテクスチャと定数バッファ更新
-		shadow->SetShadowTextureAndConstants();
-	}
+	//	// 通常描画用にテクスチャと定数バッファ更新
+	//	shadow->SetShadowTextureAndConstants();
+	//}
 
 	// ====== 不透明描画 ======
 	frameBuffer->Clear(gfx->GetBgColor());
@@ -430,7 +435,6 @@ void SceneTest::Render()
 		Player::Instance().DrawDebugPrimitive();
 		DebugPrimitive::Instance().Render();
 
-
 		skyMap->Render();
 	}
 	frameBuffer->DeActivate();
@@ -446,6 +450,7 @@ void SceneTest::Render()
 
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
 		LightningEffect::Instance().Render();
+		BreathEffect::Instance().Render();
 	}
 	wbOitBuffer->DeActivate();
 

@@ -22,6 +22,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>                                   inputLayout;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>                                        constantBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>                                        uvScrollConstantBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer>                                        dissolveConstantBuffer;
 
 	struct Constants
 	{
@@ -37,7 +38,7 @@ public:
 				0, 0, 0, 1
 			}
 		};
-		float emissivePower = 1.0f;
+		float emissivePower  = 1.0f;
 		float metalnessPower = 1.0f;
 		float roughnessPower = -1.0f;
 		float pad;
@@ -47,10 +48,20 @@ public:
 	// uvスクロール用定数バッファ
 	struct UvScrollConstant
 	{
-		DirectX::XMFLOAT2 uvScrollValue = {0,0};
+		DirectX::XMFLOAT2 uvScrollValue = {0, 0};
 		DirectX::XMFLOAT2 pad;
 	};
 	UvScrollConstant uvScrollConstant;
+
+	// ディゾルブ用定数バッファ
+	struct DissolveConstant
+	{
+		float             dissolveThreshold; // ディゾルブ量
+		float             edgeThreshold;     // 緑の閾値
+		DirectX::XMFLOAT2 pad;
+		DirectX::XMFLOAT4 edgeColor; // 緑の色
+	};
+	DissolveConstant dissolveConstant;
 
 private:
 };

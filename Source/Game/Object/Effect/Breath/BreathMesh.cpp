@@ -4,7 +4,7 @@
 void BreathCrossPlane::Update()
 {
 	position = { 0,1,0 };
-	scale = { 5, 15, 5 };
+	scale = { 2, 15, 2 };
 	angle = { 90,0,0 };
 
 	float detaTime = Timer::Instance().DeltaTime();
@@ -26,7 +26,7 @@ void BreathCrossPlane::Render(bool isShadow)
 void BreathCylinder::Update()
 {
 	position = { 0,1,0 };
-	scale = { 5, 15, 5 };
+	scale = { 2, 15, 2 };
 	angle = { 90,0,0 };
 
 	float detaTime = Timer::Instance().DeltaTime();

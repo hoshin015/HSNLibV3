@@ -460,7 +460,9 @@
     <ClCompile Include="Source\Game\Object\Effect\Breath\BreathEffect.cpp">
       <Filter>2_Source\Game\Object\Effect\Breath</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Object\Effect\Breath\BreathMesh.cpp" />
+    <ClCompile Include="Source\Game\Object\Effect\Breath\BreathMesh.cpp">
+      <Filter>2_Source\Game\Object\Effect\Breath</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -805,7 +807,9 @@
     <ClInclude Include="Source\Game\Object\Effect\Breath\BreathEffect.h">
       <Filter>2_Source\Game\Object\Effect\Breath</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Object\Effect\Breath\BreathMesh.h" />
+    <ClInclude Include="Source\Game\Object\Effect\Breath\BreathMesh.h">
+      <Filter>2_Source\Game\Object\Effect\Breath</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">

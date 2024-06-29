@@ -41,6 +41,12 @@ void LightningData::LightningBottomUpdate()
 	SetEmissivePower(ePower);
 }
 
+void LightningData::LightningBreathCylinderUpdate()
+{
+	float deltaTime = Timer::Instance().DeltaTime();
+	//position.z += 10 * deltaTime;
+}
+
 
 void LightningData::Update()
 {

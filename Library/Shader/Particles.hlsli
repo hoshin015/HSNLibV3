@@ -313,6 +313,8 @@ void spawn(uint id, inout Particle p)
 
 			// z •ûŒü
 			p.velocity.z = -sin(r) * particleSpeed;
+
+			p.angle = 0;
 		}
 		break;
 	case pk_fireBreath:
@@ -328,13 +330,38 @@ void spawn(uint id, inout Particle p)
 			float r = rand(seed) / 3.14 * 0.1;
 
 			// x •ûŒü
-			p.velocity.x = 1 * particleSpeed;
+			p.velocity.x = 0;
 
 			// y •ûŒü
 			p.velocity.y = 0;
 
 			// z •ûŒü
-			p.velocity.z = 0;
+			p.velocity.z = 1 * particleSpeed;
+		}
+		break;
+	case pk_beamCylinder:
+		{
+			p.position = emitterPosition;
+			float r    = rand(seed) * 360 / 3.14;
+
+
+			// x •ûŒü
+			p.position.x = p.position.x + cos(r) * 0.8f;
+
+			// y •ûŒü
+			p.position.y = p.position.y - sin(r) * 0.8f;
+			
+
+			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+			
+			// x •ûŒü
+			p.velocity.x = 0;
+
+			// y •ûŒü
+			p.velocity.y = 0;
+
+			// z •ûŒü
+			p.velocity.z = 1 * particleSpeed;
 		}
 		break;
 	}

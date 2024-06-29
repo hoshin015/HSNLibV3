@@ -16,6 +16,7 @@ public:
 		funcs.push_back(&LightningData::LightningAreaUpdate);
 		funcs.push_back(&LightningData::LightningMainUpdate);
 		funcs.push_back(&LightningData::LightningBottomUpdate);
+		funcs.push_back(&LightningData::LightningBreathCylinderUpdate);
 	}
 
 	~LightningData() override
@@ -37,6 +38,7 @@ public:
 		Area,
 		Main,
 		Bottom,
+		BreathCylinder,
 		END,
 	};
 
@@ -46,6 +48,7 @@ public:
 	void                          LightningAreaUpdate();
 	void                          LightningMainUpdate();
 	void                          LightningBottomUpdate();
+	void                          LightningBreathCylinderUpdate();
 
 private:
 	DirectX::XMMATRIX MSC;

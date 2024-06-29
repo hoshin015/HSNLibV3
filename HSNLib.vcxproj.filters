@@ -1059,5 +1059,8 @@
     <None Include="Library\Shader\PbrFunctions.hlsli">
       <Filter>シェーダーファイル\PbrIbl</Filter>
     </None>
+    <None Include="Library\Shader\ShaderFunctions.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
   </ItemGroup>
 </Project>

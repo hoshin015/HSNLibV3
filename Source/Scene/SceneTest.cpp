@@ -377,35 +377,35 @@ void SceneTest::Render()
 	LightManager::Instance().UpdateConstants();
 
 	// ====== shadowMap ======
-	//{
-	//	shadow->Clear();                   // シャドウマップクリア
-	//	shadow->UpdateShadowCasterBegin(); // シャドウマップ描画準備
+	{
+		shadow->Clear();                   // シャドウマップクリア
+		shadow->UpdateShadowCasterBegin(); // シャドウマップ描画準備
 
-	//	for (int i = 0; i < SHADOWMAP_COUNT; i++)
-	//	{
-	//		shadow->Activate(i);
-	//		// 影を付けたいモデルはここで描画を行う(Render の引数に true をいれる)
-	//		{
-	//			// --- animated object ---
-	//			shadow->SetAnimatedShader(); // animated object の影描画開始
-	//			StageManager::Instance().Render(true);
-	//			Enemy::Instance().Render(true);
+		for (int i = 0; i < SHADOWMAP_COUNT; i++)
+		{
+			shadow->Activate(i, camera);
+			// 影を付けたいモデルはここで描画を行う(Render の引数に true をいれる)
+			{
+				// --- animated object ---
+				shadow->SetAnimatedShader(); // animated object の影描画開始
+				StageManager::Instance().Render(true);
+				Enemy::Instance().Render(true);
 
-	//			Player::Instance().Render(true);
-	//			//blendTestPlayer->Render(true);
+				Player::Instance().Render(true);
+				//blendTestPlayer->Render(true);
 
-	//			// --- static object ---
-	//			shadow->SetStaticShader(); // static object の影描画開始
+				// --- static object ---
+				shadow->SetStaticShader(); // static object の影描画開始
 
-	//			RockEffect::Instance().Render(true);
-	//			//testStatic->Render(true);
-	//		}
-	//		shadow->DeActivate();
-	//	}
+				RockEffect::Instance().Render(true);
+				//testStatic->Render(true);
+			}
+			shadow->DeActivate();
+		}
 
-	//	// 通常描画用にテクスチャと定数バッファ更新
-	//	shadow->SetShadowTextureAndConstants();
-	//}
+		// 通常描画用にテクスチャと定数バッファ更新
+		shadow->SetShadowTextureAndConstants();
+	}
 
 	// ====== 不透明描画 ======
 	frameBuffer->Clear(gfx->GetBgColor());

@@ -94,7 +94,7 @@ void StaticModel::CreateComObject()
 	// material の名前に対応する テクスチャからshaderResourceViewの生成
 	for (auto& [name, material] : modelResource->GetMaterials())		// 構造化束縛
 	{
-		for (int textureIndex = 0; textureIndex < 4; textureIndex++)
+		for (int textureIndex = 0; textureIndex < 6; textureIndex++)
 		{
 			if (material.textureFilenames[textureIndex].size() > 0)
 			{
@@ -108,8 +108,8 @@ void StaticModel::CreateComObject()
 				DWORD color = 0xFFFFFFFF;
 				// normal
 				if (textureIndex == 1) color = 0xFFFF7F7F;
-				// emissive
-				if (textureIndex == 3) color = 0x00000000;
+				// emissive & dissolve
+				if (textureIndex == 3 || textureIndex == 5) color = 0x00000000;
 				LoadFbx::Instance().MakeDummyTexture(material.shaderResourceViews[textureIndex].GetAddressOf(), color, 16);
 			}
 		}
@@ -179,6 +179,8 @@ void StaticModel::Render(int instancing, DirectX::XMFLOAT4X4* instancingTransfor
 			dc->PSSetShaderResources(_normalTexture, 1, material.shaderResourceViews[_normalTexture].GetAddressOf());
 			dc->PSSetShaderResources(_specularTexture, 1, material.shaderResourceViews[_specularTexture].GetAddressOf());
 			dc->PSSetShaderResources(_emissiveTexture, 1, material.shaderResourceViews[_emissiveTexture].GetAddressOf());
+			dc->PSSetShaderResources(_occlusionTexture, 1, material.shaderResourceViews[_occlusionTexture].GetAddressOf());
+			dc->PSSetShaderResources(_dissolveTexture, 1, material.shaderResourceViews[_dissolveTexture].GetAddressOf());
 
 			// インスタンシング描画
 			dc->DrawIndexedInstanced(subset.indexCount, instancing, subset.startIndex, 0, 0);

@@ -28,12 +28,20 @@ public:
 	// BreathData の中身をまとめて描画
 	void Render(bool isShadow = false);
 
-protected:
+	// lightning 生成
+	void LightningGenerateUpdate();
+
+private:
 	// area オブジェクト
 	std::unique_ptr<BreathArea> areaObject;
 	// crossPlane オブジェクト
 	std::unique_ptr<BreathCrossPlane> crossPlaneObject;
 	// cylinder オブジェクト
 	std::unique_ptr<BreathCylinder> cylinderObject;
+
+	float lifeTimer = 0.0f;
+	float lifeTime = 4.0f;
+
+	float endTime = 2.8f;
 };
 

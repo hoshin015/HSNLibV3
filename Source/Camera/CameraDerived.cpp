@@ -15,7 +15,11 @@ void PlayerCamera::Initialize()
 {
 	verticalAngle = 45.0f;
 	horizontalAngle = 0.0f;
-	range = 13.0f;
+
+	// Ÿè‚É range •Ï‚¦‚Ä‚Ü‚·
+	//range = 13.0f;
+	range = 26.0f;
+
 	height = 3.0f;
 	fixedCursor = true;
 	

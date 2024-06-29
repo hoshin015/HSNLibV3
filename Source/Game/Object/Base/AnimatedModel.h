@@ -43,6 +43,7 @@ public:
 		float roughnessPower = -1.0f;
 		float pad;
 	};
+
 	Constants data;
 
 	// uvスクロール用定数バッファ
@@ -51,16 +52,18 @@ public:
 		DirectX::XMFLOAT2 uvScrollValue = {0, 0};
 		DirectX::XMFLOAT2 pad;
 	};
+
 	UvScrollConstant uvScrollConstant;
 
 	// ディゾルブ用定数バッファ
 	struct DissolveConstant
 	{
-		float             dissolveThreshold; // ディゾルブ量
-		float             edgeThreshold;     // 緑の閾値
+		float             dissolveThreshold = 0.0f; // ディゾルブ量
+		float             edgeThreshold     = 1.0f;  // エッジの閾値
 		DirectX::XMFLOAT2 pad;
-		DirectX::XMFLOAT4 edgeColor; // 緑の色
+		DirectX::XMFLOAT4 edgeColor = {0.0, 0.0, 1.0, 1.0}; // エッジの色
 	};
+
 	DissolveConstant dissolveConstant;
 
 private:

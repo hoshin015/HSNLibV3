@@ -31,13 +31,13 @@ void SceneAnimationTest::DrawDebugGUI() {
 }
 
 void SceneAnimationTest::Initialize() {
-	_model = std::make_shared<AnimatedModel>("Data/Fbx/Albino/Albino.model");
+	_model = std::make_shared<AnimatedModel>("Data/Fbx/gaoanimal/gaoanimal_3.model");
 	std::vector<ModelResource::Animation>& animations = _model->GetModelResource()->GetAnimationClips();
 
 	Animator::BlendTree blendTree;
-	blendTree.motions.emplace_back(Animator::Motion{&animations[6],{0,0}, 1.f });
-	blendTree.motions.emplace_back(Animator::Motion{&animations[12],{0.5f,0},1});
-	blendTree.motions.emplace_back(Animator::Motion{&animations[9],{1,0},2});
+	blendTree.motions.emplace_back(Animator::Motion{&animations[4],{0,0}, 1.f });
+	blendTree.motions.emplace_back(Animator::Motion{&animations[2],{0.5f,0},1});
+	blendTree.motions.emplace_back(Animator::Motion{&animations[6],{1,0},2});
 	blendTree.parameters[0] = "x";
 	blendTree.maxSeconds = 1.33333f;
 
@@ -45,7 +45,7 @@ void SceneAnimationTest::Initialize() {
 	move.object = std::make_shared<Animator::BlendTree>(std::forward<Animator::BlendTree>(blendTree));
 	move.type = Animator::State::BLEND_TREE;
 	move.transitions.emplace_back(
-		TFunc {
+		STATE_FUNC(animator) {
 			if (bool& attack = animator.GetParameter<bool>("attack")) {
 				attack = false;
 				return &animator.GetState("attack");
@@ -62,8 +62,8 @@ void SceneAnimationTest::Initialize() {
 	attack.object = std::make_shared<Animator::Motion>(std::forward<Animator::Motion>(motion));
 	attack.type = Animator::State::MOTION;
 	attack.transitions.emplace_back(
-		TFunc {
-			if(std::static_pointer_cast<Animator::Motion>(animator.GetState("attack").object)->endMotion) {
+		STATE_FUNC(animator) {
+			if (animator.GetState("attack").GetObj<Animator::Motion>()->endMotion) {
 				return &animator.GetState("move");
 			}
 			return nullptr;
@@ -79,9 +79,9 @@ void SceneAnimationTest::Initialize() {
 	_animator.SetEntryState("move");
 
 	Camera::Instance().SetLookAt(
-		DirectX::XMFLOAT3(-7.5f, 8, 12.5f), 
-		DirectX::XMFLOAT3(0, 0, 0),  
-		DirectX::XMFLOAT3(0, 1, 0)   
+		DirectX::XMFLOAT3(-7.5f, 8, 12.5f),
+		DirectX::XMFLOAT3(0, 0, 0),
+		DirectX::XMFLOAT3(0, 1, 0)
 	);
 	Camera::Instance().SetAngle(
 		{ DirectX::XMConvertToRadians(24), DirectX::XMConvertToRadians(147), 0 }
@@ -95,7 +95,7 @@ void SceneAnimationTest::Initialize() {
 	LightManager::Instance().Register(directionLight);
 	LightManager::Instance().SetAmbientColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 
-	_transform.scale = { 0.01f,0.01f,0.01f };
+	_transform.scale = { 1.f,1.f,1.f };
 	_transform.position = { 0,0,0 };
 	XMStoreFloat4(&_transform.quaternion, XMQuaternionRotationRollPitchYaw(0, 0, 0));
 }

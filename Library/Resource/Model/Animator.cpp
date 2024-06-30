@@ -92,14 +92,29 @@ ModelResource::KeyFrame Animator::MotionUpdate(Motion* motion, const float rate)
 }
 
 ModelResource::KeyFrame Animator::BlendUpdate(BlendTree* blend, const float time) {
-	const float parameter = std::get<float>(_parameters[blend->parameters[0]]);
+	XMFLOAT2 parameter;
+	parameter.x = std::get<float>(_parameters[blend->parameters[0]]);
+	parameter.y = blend->parameters[1].empty()?0:std::get<float>(_parameters[blend->parameters[1]]);
 
 	Motion* first = nullptr;
 	Motion* second = nullptr;
+	std::vector<Motion*> motions;
 
+	// TODO::2ŽŸŒ³‚Å‚à‘I‘ð‚·‚é•û–@‚ðl‚¦‚é
+	float maxLen = FLT_MIN;
+	float minLen = FLT_MAX;
 	for (auto&& motion : blend->motions) {
-		if (parameter >= motion.threshold.x) first = &motion;
-		if (!second && parameter < motion.threshold.x) second = &motion;
+		float len = XMVectorGetX(XMVector2Length(XMLoadFloat2(&motion.threshold) - XMLoadFloat2(&parameter)));
+		if(len>=1.f) continue;
+
+		if (len > maxLen) {
+			motions.insert(motions.begin(), &motion);
+			maxLen = len;
+		}
+		else if (len < minLen) {
+			motions.emplace_back(&motion);
+			minLen = len;
+		}
 	}
 	if (!second) second = first;
 	if (!first) first = second;
@@ -107,7 +122,7 @@ ModelResource::KeyFrame Animator::BlendUpdate(BlendTree* blend, const float time
 	const float animationRate = time / blend->maxSeconds;
 	const float lerpRate = second == first ?
 		1 :
-		(parameter - first->threshold.x) / (second->threshold.x - first->threshold.x);
+		(parameterX - first->threshold.x) / (second->threshold.x - first->threshold.x);
 
 	const ModelResource::KeyFrame firstKeyFrame  = MotionUpdate(first,animationRate);
 	const ModelResource::KeyFrame secondKeyFrame = MotionUpdate(second, animationRate);

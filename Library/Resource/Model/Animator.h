@@ -5,7 +5,7 @@
 
 #include "ModelResource.h"
 
-#define TFunc [](Animator& animator)->Animator::State*
+#define STATE_FUNC(animator) [](Animator& (animator))->Animator::State*
 
 class Animator {
 public:
@@ -39,6 +39,9 @@ public:
 		ObjectType type;
 		float      speed = 1;
 		float      timer = 0;
+
+		template<typename T>
+		std::shared_ptr<T> GetObj() { return std::static_pointer_cast<Animator::Motion>(object); }
 	};
 
 private:

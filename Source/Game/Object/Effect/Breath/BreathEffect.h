@@ -13,6 +13,7 @@ class BreathEffect
 	~BreathEffect()
 	{
 	}
+
 public:
 	static BreathEffect& Instance()
 	{
@@ -31,6 +32,11 @@ public:
 	// lightning 生成
 	void LightningGenerateUpdate();
 
+
+
+	// ブレス呼び出し
+	void Emit();
+
 private:
 	// area オブジェクト
 	std::unique_ptr<BreathArea> areaObject;
@@ -39,9 +45,17 @@ private:
 	// cylinder オブジェクト
 	std::unique_ptr<BreathCylinder> cylinderObject;
 
+	bool isBreath = false;
+
 	float lifeTimer = 0.0f;
-	float lifeTime = 4.0f;
+	float lifeTime  = 4.0f;
 
 	float endTime = 2.8f;
-};
 
+	float lightningTimer = 0.0f;
+	float lightningTime  = 0.01f;
+
+	DirectX::XMFLOAT3 position = {0, 3, 0};
+	DirectX::XMFLOAT3 angle    = {0, 90, 90};
+	DirectX::XMFLOAT4	orientation = {};
+};

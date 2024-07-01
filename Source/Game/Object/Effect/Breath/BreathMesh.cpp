@@ -7,13 +7,7 @@ void BreathCrossPlane::Update()
 	float deltaTime = Timer::Instance().DeltaTime();
 	lifeTimer += deltaTime;
 
-
 	GetModel()->uvScrollConstant.uvScrollValue.y += 1.5 * deltaTime;
-
-	if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Q))
-	{
-		lifeTimer = 0.0f;
-	}
 
 	// 開始スケール
 	float scale = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, crossPlaneStartScale);
@@ -47,11 +41,6 @@ void BreathCylinder::Update()
 
 
 	GetModel()->uvScrollConstant.uvScrollValue.y += 1.5 * deltaTime;
-
-	if(InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Q))
-	{
-		lifeTimer = 0.0f;
-	}
 
 	// 開始スケール
 	float scale = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, cylinderStartScale);

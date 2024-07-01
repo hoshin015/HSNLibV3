@@ -28,6 +28,8 @@ public:
 	void Update() override;
 	void Render(bool isShadow) override;
 
+	void ReSetLifeTime() { lifeTimer = 0.0f; }
+
 private:
 	float lifeTimer = 0.0f;
 
@@ -53,6 +55,8 @@ public:
 
 	void Update() override;
 	void Render(bool isShadow) override;
+
+	void ReSetLifeTime() { lifeTimer = 0.0f; }
 
 private:
 	float lifeTimer = 0.0f;

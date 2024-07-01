@@ -342,6 +342,11 @@ void SceneTest::Update()
 		EmitterManager::Instance().Register(emitter0);
 	}
 
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F9))
+	{
+		BreathEffect::Instance().Emit();
+	}
+
 	LightningEffect::Instance().Update();
 	RockEffect::Instance().Update();
 	BreathEffect::Instance().Update();

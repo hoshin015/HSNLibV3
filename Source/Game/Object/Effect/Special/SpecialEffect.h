@@ -29,6 +29,11 @@ public:
 	// é¿çs
 	void Emit();
 
+	// ä‚ê∂ê¨
+	void GenerateRock();
+	// lightning ê∂ê¨
+	void GenerateLightning();
+
 private:
 	bool isSpecialEffect = false; // ãNìÆíÜÇ©Ç«Ç§Ç©
 
@@ -68,6 +73,8 @@ private:
 	float               chargeNovaTime         = 5.0f;
 	float               rockIntervalTimer      = 0.0f;
 	float               rockIntervalTime       = 0.1f;
+	float               lightningIntervalTimer = 0.0f;
+	float               lightningIntervalTime  = 0.1f;
 	Easing::EasingValue chargeNovaSamplingDown =
 	{
 		4.0f, 5.0f,

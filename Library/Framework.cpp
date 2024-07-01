@@ -113,7 +113,7 @@ void Framework::Update()
 			SceneManager::Instance().Render();
 
 			// --- バッファ切り替え ---
-			Graphics::Instance().Present();
+			Graphics::Instance().Present(isFullScreen);
 #if USE_IMGUI
 #if SHOW_PERFORMANCE
 			// --- RenderTimer終了  ---

@@ -55,6 +55,8 @@ public:
 	}
 
 private:
+	HWND* pHwnd;
+
 	// --- キーボード ---
 	std::unique_ptr<DirectX::Keyboard> keyboard = nullptr;
 	DirectX::Keyboard::State keyState = {};
@@ -88,6 +90,10 @@ public:
 	int GetCursorPosY() { return mouseState.y; }
 	float GetCursorPosXFloat() { return static_cast<float>(mouseState.x); }
 	float GetCursorPosYFloat() { return static_cast<float>(mouseState.y); }
+	// マウスの座標設定(Window内)
+	void SetCursorPos(int x, int y);
+
+
 	// マウスのホイール値取得
 	int GetScrollWheelValue() { return mouseState.scrollWheelValue; }
 	// マウスのホイール値リセット

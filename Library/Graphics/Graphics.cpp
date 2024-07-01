@@ -436,9 +436,14 @@ void Graphics::Initialize(HWND hwnd, int windowWidth, int windowHeight)
 }
 
 // バッファ切り替え
-void Graphics::Present()
+void Graphics::Present(bool isFullScreen)
 {
 	swapchain->Present(sync ? 1 : 0, NULL);
+
+	if (isFullScreen)
+	{
+		swapchain->SetFullscreenState(TRUE, 0);
+	}
 }
 
 

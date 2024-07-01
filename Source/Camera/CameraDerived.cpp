@@ -118,6 +118,7 @@ void PlayerCamera::OnFixedCursor(float deltaTime)
 	// --- 中央に固定 ---
 		// Todo : 位置がモニターの左上の座標なのでどうにかする
 	SetCursorPos(640, 360);
+	// input.SetCursorPos(640, 360);
 
 	// --- カーソルの座標を取得して中央との差分をとる ---
 	curCursorPos = { input.GetCursorPosXFloat(), input.GetCursorPosYFloat() };

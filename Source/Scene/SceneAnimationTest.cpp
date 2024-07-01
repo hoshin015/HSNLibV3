@@ -35,11 +35,14 @@ void SceneAnimationTest::Initialize() {
 	std::vector<ModelResource::Animation>& animations = _model->GetModelResource()->GetAnimationClips();
 
 	Animator::BlendTree blendTree;
-	blendTree.motions.emplace_back(Animator::Motion{&animations[4],{0,0}, 1.f });
-	blendTree.motions.emplace_back(Animator::Motion{&animations[2],{0.5f,0},1});
-	blendTree.motions.emplace_back(Animator::Motion{&animations[6],{1,0},2});
+	blendTree.motions.emplace_back(Animator::Motion{&animations[2],{0,0}, 1.f });
+	blendTree.motions.emplace_back(Animator::Motion{&animations[4],{0,1},1});
+	blendTree.motions.emplace_back(Animator::Motion{&animations[6],{0,-1},1});
+	blendTree.motions.emplace_back(Animator::Motion{&animations[3],{1,0},1});
+	blendTree.motions.emplace_back(Animator::Motion{&animations[5],{-1,0},1});
 	blendTree.parameters[0] = "x";
-	blendTree.maxSeconds = 1.33333f;
+	blendTree.parameters[1] = "y";
+	blendTree.maxSeconds = 1.83333f;
 
 	Animator::State move;
 	move.object = std::make_shared<Animator::BlendTree>(std::forward<Animator::BlendTree>(blendTree));
@@ -72,6 +75,7 @@ void SceneAnimationTest::Initialize() {
 
 	_animator.SetModelSceneView(&_model->GetModelResource()->GetSceneView());
 	_animator.SetParameter("x", 0.f);
+	_animator.SetParameter("y", 0.f);
 	_animator.SetParameter("attack", false);
 	_animator.SetParameter("end", false);
 	_animator.AddState("move",move);

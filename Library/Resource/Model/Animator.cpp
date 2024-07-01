@@ -3,6 +3,7 @@
 #include "../../../External/ImGui/imgui_internal.h"
 using namespace DirectX;
 
+
 // void Animator::AddBlendAnimation(
 // 	const std::string&                               name,
 // 	ModelResource::SceneView*                        sceneView,
@@ -27,7 +28,9 @@ using namespace DirectX;
 // 	_state[name]     = state;
 // }
 
-ModelResource::KeyFrame Animator::BlendKeyFrame(const ModelResource::KeyFrame* first,const  ModelResource::KeyFrame* second, const float lerpRate) const {
+ModelResource::KeyFrame Animator::BlendKeyFrame(
+	const ModelResource::KeyFrame* first, const ModelResource::KeyFrame* second, const float lerpRate
+) const {
 	const int               maxNodeCount = first->nodes.size();
 	ModelResource::KeyFrame keyFrame;
 	keyFrame.nodes.resize(maxNodeCount);
@@ -52,7 +55,7 @@ ModelResource::KeyFrame Animator::BlendKeyFrame(const ModelResource::KeyFrame* f
 			lerpRate
 		);
 
-		node.name = first->nodes[count].name;
+		node.name     = first->nodes[count].name;
 		node.uniqueId = first->nodes[count].uniqueId;
 
 		XMStoreFloat3(&node.scaling, scaleVec);
@@ -60,13 +63,13 @@ ModelResource::KeyFrame Animator::BlendKeyFrame(const ModelResource::KeyFrame* f
 		XMStoreFloat3(&node.translation, translationVec);
 
 		const int64_t  parentID = _sceneView->nodes.at(_sceneView->GetIndex(node.uniqueId)).parentIndex;
-		const XMMATRIX GT = parentID < 0 ?
-			XMMatrixIdentity() :
-			XMMatrixScalingFromVector(scaleVec) *
-			XMMatrixRotationQuaternion(rotateVec) *
-			XMMatrixTranslationFromVector(translationVec) * XMLoadFloat4x4(
-				&keyFrame.nodes[parentID].globalTransform
-			);
+		const XMMATRIX GT       = parentID < 0 ?
+			                          XMMatrixIdentity() :
+			                          XMMatrixScalingFromVector(scaleVec) *
+			                          XMMatrixRotationQuaternion(rotateVec) *
+			                          XMMatrixTranslationFromVector(translationVec) * XMLoadFloat4x4(
+				                          &keyFrame.nodes[parentID].globalTransform
+			                          );
 
 		XMStoreFloat4x4(&node.globalTransform, GT);
 		keyFrame.nodes[count] = node;
@@ -77,7 +80,7 @@ ModelResource::KeyFrame Animator::BlendKeyFrame(const ModelResource::KeyFrame* f
 
 
 ModelResource::KeyFrame Animator::MotionUpdate(Motion* motion, const float rate) const {
-	const float seq = motion->motion->sequence.size() * fmodf(rate * motion->animationSpeed, 1);
+	const float seq      = motion->motion->sequence.size() * fmodf(rate * motion->animationSpeed, 1);
 	const int   index    = static_cast<int>(seq);
 	const float lerpRate = seq - static_cast<float>(index);
 
@@ -87,47 +90,54 @@ ModelResource::KeyFrame Animator::MotionUpdate(Motion* motion, const float rate)
 			index >= motion->motion->sequence.size() - 1 ? 0 : index + 1
 		)
 	};
-	if(motion->animationSpeed)motion->endMotion = rate * motion->animationSpeed >= 1.f;
-	return BlendKeyFrame(keyFrames[0],keyFrames[1],lerpRate);
+	if (motion->animationSpeed) motion->endMotion = rate * motion->animationSpeed >= 1.f;
+	return BlendKeyFrame(keyFrames[0], keyFrames[1], lerpRate);
 }
 
 ModelResource::KeyFrame Animator::BlendUpdate(BlendTree* blend, const float time) {
 	XMFLOAT2 parameter;
 	parameter.x = std::get<float>(_parameters[blend->parameters[0]]);
-	parameter.y = blend->parameters[1].empty()?0:std::get<float>(_parameters[blend->parameters[1]]);
+	parameter.y = blend->parameters[1].empty() ? 0 : std::get<float>(_parameters[blend->parameters[1]]);
 
-	Motion* first = nullptr;
-	Motion* second = nullptr;
 	std::vector<Motion*> motions;
+	std::vector<float>   weights;
 
 	// TODO::2次元でも選択する方法を考える
-	float maxLen = FLT_MIN;
-	float minLen = FLT_MAX;
-	for (auto&& motion : blend->motions) {
-		float len = XMVectorGetX(XMVector2Length(XMLoadFloat2(&motion.threshold) - XMLoadFloat2(&parameter)));
-		if(len>=1.f) continue;
+	float totalWeight = 0;
+	for (auto&& motion: blend->motions) {
+		const float len = XMVectorGetX(XMVector2Length(XMLoadFloat2(&motion.threshold) - XMLoadFloat2(&parameter)));
 
-		if (len > maxLen) {
-			motions.insert(motions.begin(), &motion);
-			maxLen = len;
-		}
-		else if (len < minLen) {
+		if (float weight = fmaxf(1 - len, 0.f); weight > 0) {
 			motions.emplace_back(&motion);
-			minLen = len;
+			weights.emplace_back(weight);
+			totalWeight += weight;
 		}
 	}
-	if (!second) second = first;
-	if (!first) first = second;
+	if (totalWeight > 0)
+		for (float& weight: weights) { weight /= totalWeight; }
 
-	const float animationRate = time / blend->maxSeconds;
-	const float lerpRate = second == first ?
-		1 :
-		(parameterX - first->threshold.x) / (second->threshold.x - first->threshold.x);
+	const float                          animationRate = time / blend->maxSeconds;
+	std::vector<ModelResource::KeyFrame> keyFrames;
 
-	const ModelResource::KeyFrame firstKeyFrame  = MotionUpdate(first,animationRate);
-	const ModelResource::KeyFrame secondKeyFrame = MotionUpdate(second, animationRate);
+	for (auto&& motion: motions) { keyFrames.emplace_back(MotionUpdate(motion, animationRate)); }
 
-	return BlendKeyFrame(&firstKeyFrame, &secondKeyFrame, lerpRate);
+	// TODO::重さを求めてそこからlerpする
+	ModelResource::KeyFrame& result = keyFrames[0];
+	// result.nodes.resize(keyFrames[0].nodes.size());
+	// for(auto&& node:result.nodes) {
+	// 	node.scaling = { 1,1,1 };
+	// 	node.rotation = { 0,0,0,1 };
+	// }
+	const int weightSize = weights.size();
+	for (int i = 1; i < weightSize;i++) {
+		float rate = (weights[i] - weights[i-1]) / (weights[i - 1] + weights[i]);
+		result = BlendKeyFrame(&result, &keyFrames[i] ,rate);
+	}
+
+	//const ModelResource::KeyFrame firstKeyFrame  = MotionUpdate(first, animationRate);
+	//const ModelResource::KeyFrame secondKeyFrame = MotionUpdate(second, animationRate);
+
+	return result;
 }
 
 ModelResource::KeyFrame Animator::StateUpdate() {
@@ -137,7 +147,7 @@ ModelResource::KeyFrame Animator::StateUpdate() {
 	switch (state.type) {
 		case State::MOTION: {
 			std::shared_ptr<Motion> motion = std::static_pointer_cast<Motion>(state.object);
-			currentKeyFrame = MotionUpdate(motion.get(), _timer / motion->motion->secondsLength);
+			currentKeyFrame                = MotionUpdate(motion.get(), _timer / motion->motion->secondsLength);
 			break;
 		}
 		case State::BLEND_TREE: {
@@ -146,10 +156,10 @@ ModelResource::KeyFrame Animator::StateUpdate() {
 		}
 	}
 
-	for (auto&& function: state.transitions) {
-		if(State* state = function(*this)) {
+	for (auto&&    function: state.transitions) {
+		if (State* state = function(*this)) {
 			_currentState = state;
-			_timer = 0;
+			_timer        = 0;
 			break;
 		}
 	}
@@ -296,42 +306,35 @@ ModelResource::KeyFrame Animator::PlayAnimation(float elapsedTime) {
 void Animator::AnimationEditor() {
 	if (ImGui::Begin("AnimationEditor")) {
 		if (ImGui::CollapsingHeader("Parameters")) {
-			for (auto& [name, var]: _parameters) {
-				if (int* v = std::get_if<int>(&var)) {
-					ImGui::DragInt(name.c_str(), v);
-				}
-				if (float* v = std::get_if<float>(&var)) {
-					ImGui::DragFloat(name.c_str(), v,0.01f);
-				}
-				if (bool* v = std::get_if<bool> (&var)) {
-					ImGui::Checkbox(name.c_str(), v);
-				}
+			for (auto&     [name, var]: _parameters) {
+				if (int*   v = std::get_if<int>(&var)) { ImGui::DragInt(name.c_str(), v); }
+				if (float* v = std::get_if<float>(&var)) { ImGui::DragFloat(name.c_str(), v, 0.01f); }
+				if (bool*  v = std::get_if<bool>(&var)) { ImGui::Checkbox(name.c_str(), v); }
 			}
 		}
-	
+
 		if (ImGui::CollapsingHeader("Motion")) {
 			for (auto& [name, state]: _states) {
 				if (ImGui::TreeNode(name.c_str())) {
-					if(state.type==State::BLEND_TREE) {
+					if (state.type == State::BLEND_TREE) {
 						BlendTree* blendTree = std::static_pointer_cast<BlendTree>(state.object).get();
-
 
 						for (auto&& motion: blendTree->motions) {
 							if (ImGui::TreeNode(motion.motion->name.c_str())) {
 								ImGui::DragFloat("animationSpeed", &motion.animationSpeed);
-								ImGui::DragFloat2("threshold", &motion.threshold.x,0.01f);
+								ImGui::DragFloat2("threshold", &motion.threshold.x, 0.01f);
 
 								ImGui::TreePop();
 							}
 						}
 					}
 
-					if(state.type == State::MOTION) {
+					if (state.type == State::MOTION) {
 						Motion* motion = std::static_pointer_cast<Motion>(state.object).get();
 
 						if (ImGui::TreeNode(motion->motion->name.c_str())) {
-							ImGui::DragFloat("animationSpeed", &motion->animationSpeed,0.01f);
-							if (motion->animationSpeed < 0)motion->animationSpeed = 0;
+							ImGui::DragFloat("animationSpeed", &motion->animationSpeed, 0.01f);
+							if (motion->animationSpeed < 0) motion->animationSpeed = 0;
 
 							ImGui::TreePop();
 						}

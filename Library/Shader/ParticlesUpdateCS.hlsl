@@ -188,6 +188,8 @@ void main(uint3 DTid : SV_DispatchThreadID)
 			break;
 		}
 
+        p.lifeTimer -= deltaTime;
+
 		if (p.lifeTimer <= 0)
 		{
 			p.velocity = float3(0, 0, 0);

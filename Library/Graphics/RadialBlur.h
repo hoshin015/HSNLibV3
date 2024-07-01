@@ -21,6 +21,10 @@ public:
 
 	void SetIsRadial(bool isRadial) { this->isRadial = isRadial; }
 	bool GetIsRadial() { return isRadial; }
+
+	void SetBlurPower(float blurPower) { this->radialBlurConstants.blurPower = blurPower; }
+	void SetSamplingCount(float samplingCount) { this->radialBlurConstants.samplingCount = samplingCount; }
+
 private:
 	bool isRadial = false;
 

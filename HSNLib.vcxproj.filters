@@ -149,6 +149,9 @@
     <Filter Include="2_Source\Game\Object\Effect\Breath">
       <UniqueIdentifier>{a029d405-89d7-45e5-834a-c9d7fbf7af8f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="2_Source\Game\Object\Effect\Special">
+      <UniqueIdentifier>{27edbc6e-beab-4678-9829-cc673174af4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -462,6 +465,9 @@
     </ClCompile>
     <ClCompile Include="Source\Game\Object\Effect\Breath\BreathMesh.cpp">
       <Filter>2_Source\Game\Object\Effect\Breath</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\Special\SpecialEffect.cpp">
+      <Filter>2_Source\Game\Object\Effect\Special</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -809,6 +815,9 @@
     </ClInclude>
     <ClInclude Include="Source\Game\Object\Effect\Breath\BreathMesh.h">
       <Filter>2_Source\Game\Object\Effect\Breath</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\Special\SpecialEffect.h">
+      <Filter>2_Source\Game\Object\Effect\Special</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

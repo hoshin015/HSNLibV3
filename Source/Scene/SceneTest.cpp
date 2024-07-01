@@ -33,6 +33,7 @@
 #include "../UserInterface/DamageTextManager.h"
 #include "../../Library/Math/Math.h"
 #include "../Game/Object/Effect/Breath/BreathEffect.h"
+#include "../Game/Object/Effect/Special/SpecialEffect.h"
 
 
 void SceneTest::Initialize()
@@ -102,26 +103,26 @@ void SceneTest::Initialize()
 	Particle::Instance().Initialize();
 
 	// --- Emitter “o˜^ ---
-	//Emitter* emitter0                           = new Emitter();
-	//emitter0->position                          = {0, 3, 3};
-	//emitter0->emitterData.duration              = 5.0;
-	//emitter0->emitterData.looping               = false;
-	//emitter0->emitterData.burstsTime            = 0.1;
-	//emitter0->emitterData.burstsCount           = 128;
-	//emitter0->emitterData.particleKind          = pk_Dust;
-	//emitter0->emitterData.particleLifeTimeMin   = 1.0f;
-	//emitter0->emitterData.particleLifeTimeMax   = 1.0f;
-	//emitter0->emitterData.particleSpeedMin      = 1.0f;
-	//emitter0->emitterData.particleSpeedMax      = 5.0f;
-	//emitter0->emitterData.particleSizeMin       = {0.1f, 0.1f};
-	//emitter0->emitterData.particleSizeMax       = {0.4f, 0.4f};
-	//emitter0->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
-	//emitter0->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
-	//emitter0->emitterData.particleGravity       = 1;
-	//emitter0->emitterData.particleBillboardType = 0;
-	//emitter0->emitterData.particleTextureType   = 0;
-	//emitter0->emitterData.burstsOneShot   = 1;
-	//EmitterManager::Instance().Register(emitter0);
+	Emitter* emitter0                           = new Emitter();
+	emitter0->position                          = {0, 3, 3};
+	emitter0->emitterData.duration              = 5.0;
+	emitter0->emitterData.looping               = false;
+	emitter0->emitterData.burstsTime            = 0.1;
+	emitter0->emitterData.burstsCount           = 128;
+	emitter0->emitterData.particleKind          = pk_Dust;
+	emitter0->emitterData.particleLifeTimeMin   = 1.0f;
+	emitter0->emitterData.particleLifeTimeMax   = 1.0f;
+	emitter0->emitterData.particleSpeedMin      = 1.0f;
+	emitter0->emitterData.particleSpeedMax      = 5.0f;
+	emitter0->emitterData.particleSizeMin       = {0.1f, 0.1f};
+	emitter0->emitterData.particleSizeMax       = {0.4f, 0.4f};
+	emitter0->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
+	emitter0->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
+	emitter0->emitterData.particleGravity       = 1;
+	emitter0->emitterData.particleBillboardType = 0;
+	emitter0->emitterData.particleTextureType   = 0;
+	emitter0->emitterData.burstsOneShot   = 1;
+	EmitterManager::Instance().Register(emitter0);
 
 	UiPause::Instance().Initialize();
 
@@ -347,10 +348,15 @@ void SceneTest::Update()
 		BreathEffect::Instance().Emit();
 	}
 
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F10))
+	{
+		SpecialEffect::Instance().Emit();
+	}
+
 	LightningEffect::Instance().Update();
 	RockEffect::Instance().Update();
 	BreathEffect::Instance().Update();
-
+	SpecialEffect::Instance().Update(radialBlur.get());
 
 	int* b = new int();
 }

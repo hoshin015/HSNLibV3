@@ -77,6 +77,8 @@ void SceneTest::Initialize()
 	                                          Framework::Instance().GetScreenHeightF());
 	heatHaze = std::make_unique<HeatHaze>(Framework::Instance().GetScreenWidthF(),
 	                                          Framework::Instance().GetScreenHeightF());
+	colorFilter = std::make_unique<ColorFilter>(Framework::Instance().GetScreenWidthF(),
+	                                          Framework::Instance().GetScreenHeightF());
 
 	// --- skyMap 初期化 ---
 	skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
@@ -488,6 +490,13 @@ void SceneTest::Render()
 	// ポストエフェクトをかけるたびにこれを更新する
 	ID3D11ShaderResourceView* useSrv = frameBuffer->shaderResourceViews[0].Get();
 
+	// ====== colorFilter =====
+	if(colorFilter->GetIsColorFilter())
+	{
+		colorFilter->Make(useSrv);
+		useSrv = colorFilter->GetSrv();
+	}
+
 	// ====== heatHaze =====
 	if(heatHaze->GetIsHeatHaze())
 	{
@@ -545,6 +554,7 @@ void SceneTest::Render()
 	wbOitBuffer->DrawDebugGui();
 	radialBlur->DrawDebugGui();
 	heatHaze->DrawDebugGui();
+	colorFilter->DrawDebugGui();
 
 	camera->DrawDebugGui();
 

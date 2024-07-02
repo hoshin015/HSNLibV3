@@ -10,6 +10,7 @@
 #include "../../Library/Graphics/WbOitBuffer.h"
 #include "../../Library/Graphics/RadialBlur.h"
 #include "../../Library/Graphics/HeatHaze.h"
+#include "../../Library/Graphics/ColorFilter.h"
 // --- Scene ---
 #include "Scene.h"
 // --- Game ---
@@ -50,6 +51,7 @@ private:
 	std::unique_ptr<WbOitBuffer> wbOitBuffer;
 	std::unique_ptr<RadialBlur> radialBlur;
 	std::unique_ptr<HeatHaze> heatHaze;
+	std::unique_ptr<ColorFilter> colorFilter;
 
 	std::unique_ptr<SkyMap> skyMap;
 

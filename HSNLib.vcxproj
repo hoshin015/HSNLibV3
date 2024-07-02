@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Library\Graphics\ColorFilter.cpp" />
     <ClCompile Include="Library\Graphics\HeatHaze.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\Breath\BreathEffect.cpp" />
     <ClCompile Include="Library\3D\CameraBase.cpp" />
@@ -279,6 +280,7 @@
     <ClCompile Include="Source\Game\Object\Effect\Special\SpecialEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Library\Graphics\ColorFilter.h" />
     <ClInclude Include="Library\Graphics\HeatHaze.h" />
     <ClInclude Include="Source\Game\Object\Effect\Breath\BreathEffect.h" />
     <ClInclude Include="Library\3D\CameraBase.h" />
@@ -487,7 +489,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
-    <FxCompile Include="Library\Shader\ColorFilter_PS.hlsl">
+    <FxCompile Include="Library\Shader\ColorFilterPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

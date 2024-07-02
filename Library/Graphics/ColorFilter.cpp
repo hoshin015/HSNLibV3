@@ -57,6 +57,7 @@ void ColorFilter::DrawDebugGui()
 	ImGui::SliderFloat("hueShift", &colorFilterConstants.hueShift, 0.0f, 360.0f);
 	ImGui::SliderFloat("saturation", &colorFilterConstants.saturation, 0.0f, 2.0f);
 	ImGui::SliderFloat("brightness", &colorFilterConstants.brightness, 0.0f, 2.0f);
+	ImGui::SliderFloat("contrast", &colorFilterConstants.contrast, 0.1f, 2.0f);
 
 	ImGui::Image(colorFilterBuffer->shaderResourceViews[0].Get(), { 200, 200 });
 

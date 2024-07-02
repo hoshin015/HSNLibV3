@@ -7,7 +7,7 @@ cbuffer COLOR_FILTER : register(_colorFilterConstant)
     float hueShift;
     float saturation;
     float brightness;
-    float colorFilterPad;
+    float contrast;
 }
 
 
@@ -33,6 +33,10 @@ float4 main(VS_OUT pin) : SV_TARGET
     
     // HSV > RGB に変換
     color.rgb = HSV2RGB(color.rgb);
+
+    // コントラスト処理
+    float midpoint = pow(0.5, 2.2);
+    color.rgb = (color.rgb - midpoint) * contrast + midpoint;
     
     return color;
 }

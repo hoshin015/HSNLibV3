@@ -44,7 +44,7 @@ private:
 		float hueShift = 0.0f;
 		float saturation = 1.0f;
 		float brightness = 1.0f;
-		float colorFilterPad;
+		float contrast = 1.0f;
 	};
 	ColorFilterConstants colorFilterConstants;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> colorFilterConstantBuffer;

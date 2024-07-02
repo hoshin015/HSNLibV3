@@ -121,7 +121,7 @@ ModelResource::KeyFrame Animator::BlendUpdate(BlendTree* blend, const float time
 
 	for (auto&& motion: motions) { keyFrames.emplace_back(MotionUpdate(motion, animationRate)); }
 
-	// TODO::d‚³‚ğ‹‚ß‚Ä‚»‚±‚©‚çlerp‚·‚é
+	// TODO::d‚³‚ğ‹‚ß‚Ä‚»‚±‚©‚çüŒ`•âŠÔ‚·‚é
 	ModelResource::KeyFrame& result = keyFrames[0];
 	// result.nodes.resize(keyFrames[0].nodes.size());
 	// for(auto&& node:result.nodes) {
@@ -130,8 +130,7 @@ ModelResource::KeyFrame Animator::BlendUpdate(BlendTree* blend, const float time
 	// }
 	const int weightSize = weights.size();
 	for (int i = 1; i < weightSize;i++) {
-		float rate = (weights[i] - weights[i-1]) / (weights[i - 1] + weights[i]);
-		result = BlendKeyFrame(&result, &keyFrames[i] ,rate);
+		result = BlendKeyFrame(&result, &keyFrames[i] , weights[i]);
 	}
 
 	//const ModelResource::KeyFrame firstKeyFrame  = MotionUpdate(first, animationRate);

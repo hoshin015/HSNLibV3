@@ -113,7 +113,12 @@ void SceneAnimationTest::Update() {
 	ImGuiManager::Instance().Update();
 #endif
 
-	InputManager::Instance().Update();
+	InputManager& input = InputManager::Instance();
+
+	input.Update();
+	_animator.SetParameter("x",input.GetThumSticksLeftX());
+	_animator.SetParameter("y",input.GetThumSticksLeftY());
+
 	Camera::Instance().Update();
 	_transform.UpdateMatrix();
 }

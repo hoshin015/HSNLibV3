@@ -9,6 +9,7 @@
 #include "../../Library/Graphics/Shadow.h"
 #include "../../Library/Graphics/WbOitBuffer.h"
 #include "../../Library/Graphics/RadialBlur.h"
+#include "../../Library/Graphics/HeatHaze.h"
 // --- Scene ---
 #include "Scene.h"
 // --- Game ---
@@ -48,6 +49,7 @@ private:
 	std::unique_ptr<Shadow> shadow;
 	std::unique_ptr<WbOitBuffer> wbOitBuffer;
 	std::unique_ptr<RadialBlur> radialBlur;
+	std::unique_ptr<HeatHaze> heatHaze;
 
 	std::unique_ptr<SkyMap> skyMap;
 

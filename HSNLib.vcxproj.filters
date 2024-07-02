@@ -469,6 +469,9 @@
     <ClCompile Include="Source\Game\Object\Effect\Special\SpecialEffect.cpp">
       <Filter>2_Source\Game\Object\Effect\Special</Filter>
     </ClCompile>
+    <ClCompile Include="Library\Graphics\HeatHaze.cpp">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -819,6 +822,9 @@
     <ClInclude Include="Source\Game\Object\Effect\Special\SpecialEffect.h">
       <Filter>2_Source\Game\Object\Effect\Special</Filter>
     </ClInclude>
+    <ClInclude Include="Library\Graphics\HeatHaze.h">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">
@@ -996,6 +1002,9 @@
     </FxCompile>
     <FxCompile Include="Library\Shader\UnityPbrPS.hlsl">
       <Filter>シェーダーファイル\PbrIbl</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\HeatHazePS.hlsl">
+      <Filter>シェーダーファイル</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

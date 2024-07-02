@@ -75,6 +75,8 @@ void SceneTest::Initialize()
 	                                            Framework::Instance().GetScreenHeightF());
 	radialBlur = std::make_unique<RadialBlur>(Framework::Instance().GetScreenWidthF(),
 	                                          Framework::Instance().GetScreenHeightF());
+	heatHaze = std::make_unique<HeatHaze>(Framework::Instance().GetScreenWidthF(),
+	                                          Framework::Instance().GetScreenHeightF());
 
 	// --- skyMap 初期化 ---
 	skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
@@ -481,31 +483,33 @@ void SceneTest::Render()
 	}
 	frameBuffer->DeActivate();
 
+
+
+	// ポストエフェクトをかけるたびにこれを更新する
+	ID3D11ShaderResourceView* useSrv = frameBuffer->shaderResourceViews[0].Get();
+
+	// ====== heatHaze =====
+	if(heatHaze->GetIsHeatHaze())
+	{
+		heatHaze->Make(useSrv);
+		useSrv = heatHaze->GetSrv();
+	}
+
 	// ====== ラジアルブラー ======
 	if(radialBlur->GetIsRadial())
 	{
-		radialBlur->Make(frameBuffer->shaderResourceViews[0].Get());
+		radialBlur->Make(useSrv);
+		useSrv = radialBlur->GetSrv();
+	}
 
-		// ====== ブルーム処理しての描画 ======
-		bloom->Make(radialBlur->GetSrv());
-		ID3D11ShaderResourceView* shvs[2] =
-		{
-			radialBlur->GetSrv(),
-			bloom->GetSrv()
-		};
-		bitBlockTransfer->blit(shvs, 0, 2, bloom->GetFinalPassPs());
-	}
-	else
+	// ====== ブルーム処理しての描画 ======
+	bloom->Make(useSrv);
+	ID3D11ShaderResourceView* shvs[2] =
 	{
-		// ====== ブルーム処理しての描画 ======
-		bloom->Make(frameBuffer->shaderResourceViews[0].Get());
-		ID3D11ShaderResourceView* shvs[2] =
-		{
-			frameBuffer->shaderResourceViews[0].Get(),
-			bloom->GetSrv()
-		};
-		bitBlockTransfer->blit(shvs, 0, 2, bloom->GetFinalPassPs());
-	}
+		useSrv,
+		bloom->GetSrv()
+	};
+	bitBlockTransfer->blit(shvs, 0, 2, bloom->GetFinalPassPs());
 
 	// ======　ブルームなしの描画　======　
 
@@ -540,6 +544,7 @@ void SceneTest::Render()
 	shadow->DrawDebugGui();
 	wbOitBuffer->DrawDebugGui();
 	radialBlur->DrawDebugGui();
+	heatHaze->DrawDebugGui();
 
 	camera->DrawDebugGui();
 

@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Library\Graphics\HeatHaze.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\Breath\BreathEffect.cpp" />
     <ClCompile Include="Library\3D\CameraBase.cpp" />
     <ClCompile Include="Library\Math\Matrix.cpp" />
@@ -278,6 +279,7 @@
     <ClCompile Include="Source\Game\Object\Effect\Special\SpecialEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Library\Graphics\HeatHaze.h" />
     <ClInclude Include="Source\Game\Object\Effect\Breath\BreathEffect.h" />
     <ClInclude Include="Library\3D\CameraBase.h" />
     <ClInclude Include="Library\Math\Matrix.h" />
@@ -425,6 +427,12 @@
     <None Include="Library\Shader\ShaderFunctions.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Library\Shader\HeatHazePS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="Library\Shader\GlowExtractionPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

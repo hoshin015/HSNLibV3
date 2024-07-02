@@ -37,7 +37,7 @@ private:
 	// PixelShader
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> radialBlurPixelShader;
 
-	// 高輝度抽出定数バッファ
+	// 定数バッファ
 	struct RadialBlurConstants
 	{
 		DirectX::XMFLOAT2 blurCenter = { 0.5, 0.5 };

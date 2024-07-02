@@ -64,6 +64,7 @@
 #define _gaussianAvgConstant			5	// ガウシアンフィルタ平均用
 
 #define _radialBlurConstant		5	// ラジアルブラー用
+#define _heatHazeConstant		6	// heatHaze 用
 
 // ====== テクスチャ番号 ======
 
@@ -105,6 +106,9 @@
 // radialBlur
 #define _radialBlurTexture	0
 
+// heatHaze
+#define _heatHazeTexture 0
+
 // Gpu Particle (ここは別のテクスチャで更新しないようにする)
 #define _particlesTexture		20
 #define _perlinNoiseTexture		21
@@ -128,6 +132,7 @@
 #define _gaussianAvgConstant			b5	// ガウシアンフィルタ平均用
 
 #define _radialBlurConstant		b5	// ラジアルブラー用
+#define _heatHazeConstant		b6	// heatHaze 用
 
 // ====== テクスチャ番号 ======
 
@@ -167,6 +172,9 @@
 
 // radialBlur
 #define _radialBlurTexture	t0
+
+// heatHaze
+#define _heatHazeTexture t0
 
 // Gpu Particle (ここは別のテクスチャで更新しないようにする)
 #define _particlesTexture		t20

@@ -358,7 +358,7 @@ void SceneTest::Update()
 	LightningEffect::Instance().Update();
 	RockEffect::Instance().Update();
 	BreathEffect::Instance().Update();
-	SpecialEffect::Instance().Update(radialBlur.get());
+	SpecialEffect::Instance().Update(radialBlur.get(), heatHaze.get());
 
 	int* b = new int();
 }

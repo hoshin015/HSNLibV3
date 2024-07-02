@@ -1,6 +1,7 @@
 #pragma once
 #include "../../../../../Library/Easing.h"
 #include "../../../../../Library/Graphics/RadialBlur.h"
+#include "../../../../../Library/Graphics/HeatHaze.h"
 
 class SpecialEffect
 {
@@ -21,7 +22,7 @@ public:
 	}
 
 	// çXêV
-	void Update(RadialBlur* radialBlur);
+	void Update(RadialBlur* radialBlur, HeatHaze* heatHaze);
 
 	// ï`âÊ
 	void Render();
@@ -61,12 +62,17 @@ private:
 	Easing::EasingValue firstNovaSamplingDown =
 	{
 		1.0f, 2.0f,
-		12.0f, 3.0f
+		12.0f, 1.0f
+	};
+	Easing::EasingValue firstNovaHeatHazeMaxShiftUp =
+	{
+		1.0f, 2.0f,
+		0.0f, 0.02f
 	};
 	Easing::EasingValue firstNovaColorUp =
 	{
 		0.5f, 1.5f,
-		0.1f, 0.3f,
+		0.2f, 0.4f,
 	};
 
 	// chargeNova
@@ -75,9 +81,15 @@ private:
 	float               rockIntervalTime       = 0.1f;
 	float               lightningIntervalTimer = 0.0f;
 	float               lightningIntervalTime  = 0.1f;
-	Easing::EasingValue chargeNovaSamplingDown =
+
+	Easing::EasingValue chargeNovaHeatHazeMaxShiftDown =
 	{
-		4.0f, 5.0f,
-		3.0f, 1.0f
+		3.5f, 5.0f,
+		0.02f, 0.0f
+	};
+	Easing::EasingValue firstNovaColorDown =
+	{
+		3.5f, 5.0f,
+		0.4f, 0.2f,
 	};
 };

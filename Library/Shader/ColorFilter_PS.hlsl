@@ -1,16 +1,23 @@
 #include "FullScreenQuad.hlsli"
 #include "FilterFunctions.hlsli"
 
-#define POINT 0
-#define LINEAR 1
-#define ANISOTROPIC 2
 
-SamplerState samplerStates[3] : register(s0);
-Texture2D textureMaps[4] : register(t0);
+cbuffer COLOR_FILTER : register(_colorFilterConstant)
+{
+    float hueShift;
+    float saturation;
+    float brightness;
+    float colorFilterPad;
+}
+
+
+SamplerState samplerStates[_samplerNum] : register(s0);
+
+Texture2D colorFilterTexture : register(_colorFilterTexture);
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
-    float4 color = textureMaps[0].Sample(samplerStates[LINEAR], pin.texcoord);
+    float4 color = colorFilterTexture.Sample(samplerStates[_linearSampler], pin.texcoord);
     
     // RGB > HSV ‚É•ÏŠ·
     color.rgb = RGB2HSV(color.rgb);

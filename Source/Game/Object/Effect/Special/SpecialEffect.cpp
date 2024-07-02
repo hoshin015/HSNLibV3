@@ -8,7 +8,7 @@
 #include "../Lightning/LightningEffect.h"
 
 // 更新
-void SpecialEffect::Update(RadialBlur* radialBlur)
+void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 {
 	if (!isSpecialEffect) return;
 
@@ -73,6 +73,11 @@ void SpecialEffect::Update(RadialBlur* radialBlur)
 			radialBlur->SetSamplingCount(0.0f);
 			radialBlur->SetBlurPower(0.02f);
 
+			// --- heatHaze ON ---
+			heatHaze->SetIsHeatHaze(true);
+			heatHaze->SetMaxShift(0.0f);
+
+
 			// --- rock ---
 			rockIntervalTimer = 0.0f;
 
@@ -114,6 +119,11 @@ void SpecialEffect::Update(RadialBlur* radialBlur)
 			}
 			radialBlur->SetSamplingCount(static_cast<float>(static_cast<int>(sampCount)));
 
+			// --- heatHaze ---
+			float heatHazeMaxShift =
+				Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, firstNovaHeatHazeMaxShiftUp);
+			heatHaze->SetMaxShift(heatHazeMaxShift);
+
 			// --- rock ---
 			if (lifeTimer > firstNovaRockStartTime)
 			{
@@ -142,6 +152,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur)
 			// --- ステートチェック ---
 			if (lifeTimer >= firstNovaTime)
 			{
+				radialBlur->SetIsRadial(false);
 				lifeTimer         = 0.0f;
 				rockIntervalTimer = 0.0f;
 				// ステート更新
@@ -151,10 +162,10 @@ void SpecialEffect::Update(RadialBlur* radialBlur)
 		break;
 	case SpecialState::chargeNova:
 		{
-			// --- radialBlur ---
-			float sampCount;
-			sampCount = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, chargeNovaSamplingDown);
-			radialBlur->SetSamplingCount(static_cast<float>(static_cast<int>(sampCount)));
+			// --- heatHaze ---
+			float heatHazeMaxShift =
+				Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, chargeNovaHeatHazeMaxShiftDown);
+			heatHaze->SetMaxShift(heatHazeMaxShift);
 
 			// --- rock ---
 			rockIntervalTimer += deltaTime;
@@ -172,6 +183,10 @@ void SpecialEffect::Update(RadialBlur* radialBlur)
 				lightningIntervalTimer -= 0.2;
 			}
 
+			// --- ambientColor ---
+			float rColor = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, firstNovaColorDown);
+			LightManager::Instance().SetAmbientColor({rColor, 0.2f, 0.2f, 1.0f});
+
 
 			// --- ステートチェック ---
 			if (lifeTimer >= chargeNovaTime)
@@ -179,6 +194,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur)
 				LightManager::Instance().SetAmbientColor({0.2f, 0.2f, 0.2f, 1.0f});
 
 				radialBlur->SetIsRadial(false);
+				heatHaze->SetIsHeatHaze(false);
 				lifeTimer         = 0.0f;
 				rockIntervalTimer = 0.0f;
 				// ステート更新
@@ -207,8 +223,8 @@ void SpecialEffect::GenerateRock()
 {
 	for (int i = 0; i < 3; i++)
 	{
-		DirectX::XMFLOAT3 rPos = { (rand() % 30) - 15.0f, 0, rand() % 30 - 15.0f };
-		DirectX::XMFLOAT3 rVec = { (rand() % 3) - 1.5f, rand() % 1 + 0.5f, rand() % 3 - 1.5f };
+		DirectX::XMFLOAT3 rPos = {(rand() % 30) - 15.0f, 0, rand() % 30 - 15.0f};
+		DirectX::XMFLOAT3 rVec = {(rand() % 3) - 1.5f, rand() % 1 + 0.5f, rand() % 3 - 1.5f};
 
 		RockData* rock = new RockData();
 		rock->SetPos(rPos);
@@ -216,12 +232,12 @@ void SpecialEffect::GenerateRock()
 		rock->SetLifeTime(10.0f);
 		rock->SetEmissivePower(0.0f);
 		float rScale = Math::RandomRange(0.05, 0.15);
-		rock->SetScale({ rScale + Math::RandomRange(0.05, 0.15), rScale, rScale});
+		rock->SetScale({rScale + Math::RandomRange(0.05, 0.15), rScale, rScale});
 		float rX = rand() % 360;
 		float rY = rand() % 360;
 		float rZ = rand() % 360;
-		rock->SetAngle({ rX, rY, rZ });
-		rock->SetColor({ 2.0, 0.8, 0.8, 1 });
+		rock->SetAngle({rX, rY, rZ});
+		rock->SetColor({2.0, 0.8, 0.8, 1});
 		rock->SetUpdateType(RockData::RockFuncEnum::Up);
 		RockEffect::Instance().rockMesh1->Register(rock);
 	}
@@ -236,21 +252,21 @@ void SpecialEffect::GenerateLightning()
 
 		float r = (rand() % 360) / 3.14f;
 
-		l->SetPos({ cos(r) * 6 - 3, sin(r) * 3, sin(r) * 6 - 3 });
+		l->SetPos({cos(r) * 6 - 3, sin(r) * 3, sin(r) * 6 - 3});
 
 		float life = rand() % 1 * 0.3f + 0.1f;
 		l->SetLifeTime(life);
 		float s = (rand() % 1) * 1.0f + 0.5f;
-		l->SetScale({ s + rand() % 3, s, s });
+		l->SetScale({s + rand() % 3, s, s});
 
 		l->SetAngle({
 			static_cast<float>(rand() % 360), static_cast<float>(rand() % 360),
 			static_cast<float>(rand() % 360)
-			});
+		});
 
 		l->SetEmissivePower(2.0f);
 		l->SetUpdateType(LightningData::LightningFuncEnum::Bottom);
-		l->SetColor({ 20.8, 2.8, 2.5, 1 });
+		l->SetColor({20.8, 2.8, 2.5, 1});
 
 		if (rand() % 2)
 		{

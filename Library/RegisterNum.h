@@ -65,6 +65,7 @@
 
 #define _radialBlurConstant		5	// ラジアルブラー用
 #define _heatHazeConstant		6	// heatHaze 用
+#define _colorFilterConstant	7	// カラーフィルター用
 
 // ====== テクスチャ番号 ======
 
@@ -109,6 +110,10 @@
 // heatHaze
 #define _heatHazeTexture 0
 
+// colorFilter
+#define _colorFilterTexture 0
+
+
 // Gpu Particle (ここは別のテクスチャで更新しないようにする)
 #define _particlesTexture		20
 #define _perlinNoiseTexture		21
@@ -133,6 +138,7 @@
 
 #define _radialBlurConstant		b5	// ラジアルブラー用
 #define _heatHazeConstant		b6	// heatHaze 用
+#define _colorFilterConstant	b7	// カラーフィルター用
 
 // ====== テクスチャ番号 ======
 
@@ -175,6 +181,9 @@
 
 // heatHaze
 #define _heatHazeTexture t0
+
+// colorFilter
+#define _colorFilterTexture t0
 
 // Gpu Particle (ここは別のテクスチャで更新しないようにする)
 #define _particlesTexture		t20

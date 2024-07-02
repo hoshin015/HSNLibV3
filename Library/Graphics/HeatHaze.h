@@ -40,7 +40,7 @@ private:
 	// 定数バッファ
 	struct HeatHazeConstants
 	{
-		float shiftSpeed = 0.03f;
+		float shiftSpeed = 0.04f;
 		float maxShift = 0.015;
 		DirectX::XMFLOAT2 heatHazePad;
 	};

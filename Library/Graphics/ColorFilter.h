@@ -42,8 +42,8 @@ private:
 	struct ColorFilterConstants
 	{
 		float hueShift = 0.0f;
-		float saturation = 0.0f;
-		float brightness = 0.0f;
+		float saturation = 1.0f;
+		float brightness = 1.0f;
 		float colorFilterPad;
 	};
 	ColorFilterConstants colorFilterConstants;

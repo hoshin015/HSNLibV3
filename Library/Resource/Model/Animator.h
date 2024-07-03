@@ -13,16 +13,16 @@ public:
 
 public:
 	struct Motion {
-		ModelResource::Animation* motion;
-		DirectX::XMFLOAT2         threshold;
-		float                     animationSpeed;
-		bool                      endMotion = false;
+		ModelResource::Animation* motion         = nullptr;
+		DirectX::XMFLOAT2         threshold      = {};
+		float                     animationSpeed = 0;
+		bool                      endMotion      = false;
 	};
 
 	struct BlendTree {
 		std::vector<Motion> motions;
 		std::string         parameters[2];
-		float               maxSeconds;
+		float               maxSeconds = 0;
 	};
 
 	struct State {
@@ -36,7 +36,7 @@ public:
 		std::shared_ptr<void>           object;
 		std::vector<TransitionFunction> transitions;
 
-		ObjectType type;
+		ObjectType type  = MOTION;
 		float      speed = 1;
 		float      timer = 0;
 
@@ -48,11 +48,18 @@ private:
 	std::map<std::string, State> _states;
 	std::map<std::string, Var>   _parameters;
 	ModelResource::SceneView*    _sceneView;
+	ModelResource::KeyFrame      _nextKeyFrame;
 
 	State* _currentState;
 	State* _nextState;
 
+	std::string _rootMotionName;
+
+	DirectX::XMFLOAT3 _velocity = {};
+
 	float _timer;
+
+	bool _rootMotionEnabled = false;
 
 private:
 	ModelResource::KeyFrame BlendKeyFrame(
@@ -60,7 +67,7 @@ private:
 	) const;
 	ModelResource::KeyFrame MotionUpdate(Motion* motion, float rate) const;
 	ModelResource::KeyFrame BlendUpdate(BlendTree* blend, float time);
-	ModelResource::KeyFrame StateUpdate();
+	ModelResource::KeyFrame StateUpdate(float elapsedTime);
 
 public:
 	Animator() = default;
@@ -92,11 +99,14 @@ public:
 	void SetEntryState(const std::string& name) { _currentState = &_states[name]; }
 	void SetParameter(const std::string& name, const Var var) { _parameters[name] = var; }
 
+	void EnableRootMotion(const std::string& name) { _rootMotionEnabled = true; _rootMotionName = name; }
+
 	template<typename T>
 	T& GetParameter(const std::string& name) { return std::get<T>(_parameters[name]); }
 
-	State& GetState(const std::string& name) { return _states[name]; }
-	float  GetTimer() { return _timer; }
+	State&                   GetState(const std::string& name) { return _states[name]; }
+	float                    GetTimer() const { return _timer; }
+	const DirectX::XMFLOAT3& GetVelocity() const { return _velocity; }
 
 	ModelResource::KeyFrame PlayAnimation(float elapsedTime);
 

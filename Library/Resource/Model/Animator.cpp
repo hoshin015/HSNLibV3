@@ -3,6 +3,13 @@
 #include "../../../External/ImGui/imgui_internal.h"
 using namespace DirectX;
 
+inline XMFLOAT3 operator-(XMFLOAT3& a, XMFLOAT3& b) {
+	XMFLOAT3 result;
+	result.x = a.x - b.x;
+	result.y = a.y - b.y;
+	result.z = a.z - b.z;
+	return result;
+}
 
 // void Animator::AddBlendAnimation(
 // 	const std::string&                               name,
@@ -31,7 +38,7 @@ using namespace DirectX;
 ModelResource::KeyFrame Animator::BlendKeyFrame(
 	const ModelResource::KeyFrame* first, const ModelResource::KeyFrame* second, const float lerpRate
 ) const {
-	const int               maxNodeCount = first->nodes.size();
+	const size_t            maxNodeCount = first->nodes.size();
 	ModelResource::KeyFrame keyFrame;
 	keyFrame.nodes.resize(maxNodeCount);
 
@@ -90,7 +97,10 @@ ModelResource::KeyFrame Animator::MotionUpdate(Motion* motion, const float rate)
 			index >= motion->motion->sequence.size() - 1 ? 0 : index + 1
 		)
 	};
-	if (motion->animationSpeed) motion->endMotion = rate * motion->animationSpeed >= 1.f;
+
+	// TODO::最後のフレームを通過したかの判定をもうちょっと何とかする
+	// このままだとタイミングによっては最後のフレーム担っても感知できない
+	motion->endMotion = fmodf(rate * motion->animationSpeed,1) >= .9f;
 	return BlendKeyFrame(keyFrames[0], keyFrames[1], lerpRate);
 }
 
@@ -113,44 +123,44 @@ ModelResource::KeyFrame Animator::BlendUpdate(BlendTree* blend, const float time
 			totalWeight += weight;
 		}
 	}
-	if (totalWeight > 0)
-		for (float& weight: weights) { weight /= totalWeight; }
+	if (totalWeight > 0) for (float& weight: weights) { weight /= totalWeight; }
 
 	const float                          animationRate = time / blend->maxSeconds;
 	std::vector<ModelResource::KeyFrame> keyFrames;
 
 	for (auto&& motion: motions) { keyFrames.emplace_back(MotionUpdate(motion, animationRate)); }
 
-	// TODO::重さを求めてそこから線形補間する
+	// 重さを求めてそこから線形補間する
 	ModelResource::KeyFrame& result = keyFrames[0];
-	// result.nodes.resize(keyFrames[0].nodes.size());
-	// for(auto&& node:result.nodes) {
-	// 	node.scaling = { 1,1,1 };
-	// 	node.rotation = { 0,0,0,1 };
-	// }
-	const int weightSize = weights.size();
-	for (int i = 1; i < weightSize;i++) {
-		result = BlendKeyFrame(&result, &keyFrames[i] , weights[i]);
-	}
 
-	//const ModelResource::KeyFrame firstKeyFrame  = MotionUpdate(first, animationRate);
-	//const ModelResource::KeyFrame secondKeyFrame = MotionUpdate(second, animationRate);
+	const size_t weightSize = weights.size();
+	for (int i = 1; i < weightSize; i++) { result = BlendKeyFrame(&result, &keyFrames[i], weights[i]); }
 
 	return result;
 }
 
-ModelResource::KeyFrame Animator::StateUpdate() {
+ModelResource::KeyFrame Animator::StateUpdate(float elapsedTime) {
 	State& state = *_currentState;
 
 	ModelResource::KeyFrame currentKeyFrame;
+	ModelResource::KeyFrame nextKeyFrame;
 	switch (state.type) {
 		case State::MOTION: {
-			std::shared_ptr<Motion> motion = std::static_pointer_cast<Motion>(state.object);
-			currentKeyFrame                = MotionUpdate(motion.get(), _timer / motion->motion->secondsLength);
+			const std::shared_ptr<Motion> motion = std::static_pointer_cast<Motion>(state.object);
+
+			currentKeyFrame = MotionUpdate(motion.get(), _timer / motion->motion->secondsLength);
+			nextKeyFrame    = MotionUpdate(motion.get(), (_timer + elapsedTime) / motion->motion->secondsLength);
+			if (motion->endMotion)
+				nextKeyFrame = ModelResource::KeyFrame();
 			break;
 		}
 		case State::BLEND_TREE: {
-			currentKeyFrame = BlendUpdate(std::static_pointer_cast<BlendTree>(state.object).get(), _timer);
+			const std::shared_ptr<BlendTree> blendTree = std::static_pointer_cast<BlendTree>(state.object);
+
+			currentKeyFrame = BlendUpdate(blendTree.get(), _timer);
+			nextKeyFrame = BlendUpdate(blendTree.get(), _timer + elapsedTime);
+
+			i
 			break;
 		}
 	}
@@ -184,122 +194,46 @@ ModelResource::KeyFrame Animator::StateUpdate() {
 		// keyFrame.nodes.resize(maxNodeCount);
 	}
 
+	{
+		const auto currentRootNode = std::find_if(
+			currentKeyFrame.nodes.begin(), currentKeyFrame.nodes.end(), [&](const ModelResource::KeyFrame::Node& a) {
+				return a.name == _rootMotionName;
+			}
+		);
+		const auto nextRootNode = std::find_if(
+			nextKeyFrame.nodes.begin(), nextKeyFrame.nodes.end(), [&](const ModelResource::KeyFrame::Node& a) {
+				return a.name == _rootMotionName;
+			}
+		);
+
+		_velocity = nextRootNode == nextKeyFrame.nodes.end() ?
+						XMFLOAT3() :
+			            nextRootNode->translation - currentRootNode->translation;
+
+		currentRootNode->translation = {};
+		for (auto&& node: currentKeyFrame.nodes) {
+			const int64_t  parentID = _sceneView->nodes.at(_sceneView->GetIndex(node.uniqueId)).parentIndex;
+			const XMMATRIX GT       = parentID < 0 ?
+				                          XMMatrixIdentity() :
+				                          XMMatrixScaling(node.scaling.x, node.scaling.y, node.scaling.z) *
+				                          XMMatrixRotationQuaternion(XMLoadFloat4(&node.rotation)) *
+				                          XMMatrixTranslation(
+					                          node.translation.x, node.translation.y, node.translation.z
+				                          ) * XMLoadFloat4x4(
+					                          &currentKeyFrame.nodes[parentID].globalTransform
+				                          );
+
+			XMStoreFloat4x4(&node.globalTransform, GT);
+		}
+	}
+
+	//_nextKeyFrame = currentKeyFrame;
 	return currentKeyFrame;
 }
 
 ModelResource::KeyFrame Animator::PlayAnimation(float elapsedTime) {
 	_timer += elapsedTime;
-	return StateUpdate();
-	// BlendTree& state = _state[name];
-	// state.blendRate  = rate;
-	//
-	// const Motion* first  = nullptr;
-	// const Motion* second = nullptr;
-	//
-	// for (auto&& motion: state.motions) {
-	// 	if (state.blendRate >= motion.threshold) first = &motion;
-	// 	if (!second && state.blendRate < motion.threshold) second = &motion;
-	// }
-	// if (!second) second = first;
-	// if (!first) first = second;
-	//
-	// const float animationRate = state.timer / state.maxSeconds;
-	// const float leapRate      = second == first ?
-	// 	                            1 :
-	// 	                            (state.blendRate - first->threshold) / (second->threshold - first->threshold);
-	//
-	// float seq = first->motion->sequence.size() * std::fmodf(animationRate * first->animationSpeed, 1.f);
-	// //float seq = first->motion->sequence.size() * animationRate;
-	// int   firstKeyFrameIndex = static_cast<int>(seq);
-	// float firstLeapRate      = seq - static_cast<float>(firstKeyFrameIndex);
-	//
-	// const ModelResource::KeyFrame* firstKeyFrames[2] = {
-	// 	&first->motion->sequence.at(firstKeyFrameIndex),
-	// 	&first->motion->sequence.at(
-	// 		firstKeyFrameIndex >= first->motion->sequence.size() - 1 ? 0 : firstKeyFrameIndex + 1
-	// 	)
-	// };
-	//
-	// seq = second->motion->sequence.size() * std::fmodf(animationRate * second->animationSpeed, 1.f);
-	// int   secondKeyFrameIndex = static_cast<int>(seq);
-	// float secondLeapRate = seq - static_cast<float>(secondKeyFrameIndex);
-	//
-	// const ModelResource::KeyFrame* secondKeyFrames[2] = {
-	// 	&second->motion->sequence.at(secondKeyFrameIndex),
-	// 	&second->motion->sequence.at(
-	// 		secondKeyFrameIndex >= second->motion->sequence.size() - 1 ? 0 : secondKeyFrameIndex + 1
-	// 	)
-	// };
-	//
-	// ModelResource::KeyFrame resultKeyFrame;
-	// resultKeyFrame.nodes.resize(firstKeyFrames[0]->nodes.size());
-	// for (int count = 0; count < resultKeyFrame.nodes.size(); ++count) {
-	// 	ModelResource::KeyFrame::Node node;
-	// 	XMVECTOR                      scaleVec = XMVectorLerp(
-	// 		XMVectorLerp(
-	// 			XMLoadFloat3(&firstKeyFrames[0]->nodes[count].scaling),
-	// 			XMLoadFloat3(&firstKeyFrames[1]->nodes[count].scaling),
-	// 			firstLeapRate
-	// 		),
-	// 		XMVectorLerp(
-	// 			XMLoadFloat3(&secondKeyFrames[0]->nodes[count].scaling),
-	// 			XMLoadFloat3(&secondKeyFrames[1]->nodes[count].scaling),
-	// 			secondLeapRate
-	// 		),
-	// 		leapRate
-	// 	);
-	// 	XMVECTOR rotateVec = XMQuaternionSlerp(
-	// 		XMQuaternionSlerp(
-	// 			XMLoadFloat4(&firstKeyFrames[0]->nodes[count].rotation),
-	// 			XMLoadFloat4(&firstKeyFrames[1]->nodes[count].rotation),
-	// 			firstLeapRate
-	// 		),
-	// 		XMQuaternionSlerp(
-	// 			XMLoadFloat4(&secondKeyFrames[0]->nodes[count].rotation),
-	// 			XMLoadFloat4(&secondKeyFrames[1]->nodes[count].rotation),
-	// 			secondLeapRate
-	// 		),
-	// 		leapRate
-	// 	);
-	// 	XMVECTOR translationVec = XMVectorLerp(
-	// 		XMVectorLerp(
-	// 			XMLoadFloat3(&firstKeyFrames[0]->nodes[count].translation),
-	// 			XMLoadFloat3(&firstKeyFrames[1]->nodes[count].translation),
-	// 			firstLeapRate
-	// 		),
-	// 		XMVectorLerp(
-	// 			XMLoadFloat3(&secondKeyFrames[0]->nodes[count].translation),
-	// 			XMLoadFloat3(&secondKeyFrames[1]->nodes[count].translation),
-	// 			secondLeapRate
-	// 		),
-	// 		leapRate
-	// 	);
-	//
-	// 	node.name     = firstKeyFrames[0]->nodes[count].name;
-	// 	node.uniqueId = firstKeyFrames[0]->nodes[count].uniqueId;
-	//
-	// 	XMStoreFloat3(&node.scaling, scaleVec);
-	// 	XMStoreFloat4(&node.rotation, rotateVec);
-	// 	XMStoreFloat3(&node.translation, translationVec);
-	//
-	// 	int64_t  parentID = _sceneView->nodes.at(_sceneView->GetIndex(node.uniqueId)).parentIndex;
-	// 	XMMATRIX GT       = parentID < 0 ?
-	// 		                    XMMatrixIdentity() :
-	// 		                    XMMatrixScalingFromVector(scaleVec) *
-	// 		                    XMMatrixRotationQuaternion(rotateVec) *
-	// 		                    XMMatrixTranslationFromVector(translationVec) * XMLoadFloat4x4(
-	// 			                    &resultKeyFrame.nodes[parentID].globalTransform
-	// 		                    );
-	//
-	// 	XMStoreFloat4x4(&node.globalTransform, GT);
-	// 	resultKeyFrame.nodes[count] = node;
-	// }
-	//
-	// state.timer += elapsedTime;
-	// //if (state.timer >= state.maxSeconds) state.timer = 0;
-	//
-	// return resultKeyFrame;
-	// return ModelResource::KeyFrame();
+	return StateUpdate(elapsedTime);
 }
 
 void Animator::AnimationEditor() {

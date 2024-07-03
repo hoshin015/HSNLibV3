@@ -31,56 +31,56 @@ void SceneAnimationTest::DrawDebugGUI() {
 }
 
 void SceneAnimationTest::Initialize() {
-	_model = std::make_shared<AnimatedModel>("Data/Fbx/gaoanimal/gaoanimal_3.model");
+	_model = std::make_shared<AnimatedModel>("Data/Fbx/RootMotionTest/test.model");
 	std::vector<ModelResource::Animation>& animations = _model->GetModelResource()->GetAnimationClips();
 
-	Animator::BlendTree blendTree;
-	blendTree.motions.emplace_back(Animator::Motion{&animations[2],{0,0}, 1.f });
-	blendTree.motions.emplace_back(Animator::Motion{&animations[4],{0,1},1});
-	blendTree.motions.emplace_back(Animator::Motion{&animations[6],{0,-1},1});
-	blendTree.motions.emplace_back(Animator::Motion{&animations[3],{1,0},1});
-	blendTree.motions.emplace_back(Animator::Motion{&animations[5],{-1,0},1});
-	blendTree.parameters[0] = "x";
-	blendTree.parameters[1] = "y";
-	blendTree.maxSeconds = 1.83333f;
+	// Animator::BlendTree blendTree;
+	// blendTree.motions.emplace_back(Animator::Motion{&animations[2],{0,0}, 1.f });
+	// blendTree.motions.emplace_back(Animator::Motion{&animations[4],{0,1},1});
+	// blendTree.motions.emplace_back(Animator::Motion{&animations[6],{0,-1},1});
+	// blendTree.motions.emplace_back(Animator::Motion{&animations[3],{1,0},1});
+	// blendTree.motions.emplace_back(Animator::Motion{&animations[5],{-1,0},1});
+	// blendTree.parameters[0] = "x";
+	// blendTree.parameters[1] = "y";
+	// blendTree.maxSeconds = 1.83333f;
 
-	Animator::State move;
-	move.object = std::make_shared<Animator::BlendTree>(std::forward<Animator::BlendTree>(blendTree));
-	move.type = Animator::State::BLEND_TREE;
-	move.transitions.emplace_back(
-		STATE_FUNC(animator) {
-			if (bool& attack = animator.GetParameter<bool>("attack")) {
-				attack = false;
-				return &animator.GetState("attack");
-			}
-			return nullptr;
-		}
-	);
+	// Animator::State move;
+	// move.object = std::make_shared<Animator::BlendTree>(std::forward<Animator::BlendTree>(blendTree));
+	// move.type = Animator::State::BLEND_TREE;
+	// move.transitions.emplace_back(
+	// 	STATE_FUNC(animator) {
+	// 		if (bool& attack = animator.GetParameter<bool>("attack")) {
+	// 			attack = false;
+	// 			return &animator.GetState("attack");
+	// 		}
+	// 		return nullptr;
+	// 	}
+	// );
 
 	Animator::Motion motion;
 	motion.animationSpeed = 1;
 	motion.motion = &animations[0];
 
-	Animator::State attack;
-	attack.object = std::make_shared<Animator::Motion>(std::forward<Animator::Motion>(motion));
-	attack.type = Animator::State::MOTION;
-	attack.transitions.emplace_back(
-		STATE_FUNC(animator) {
-			if (animator.GetState("attack").GetObj<Animator::Motion>()->endMotion) {
-				return &animator.GetState("move");
-			}
-			return nullptr;
-		}
-	);
+	Animator::State rootMotion;
+	rootMotion.object = std::make_shared<Animator::Motion>(std::forward<Animator::Motion>(motion));
+	rootMotion.type = Animator::State::MOTION;
+	// attack.transitions.emplace_back(
+	// 	STATE_FUNC(animator) {
+	// 		if (animator.GetState("attack").GetObj<Animator::Motion>()->endMotion) {
+	// 			return &animator.GetState("move");
+	// 		}
+	// 		return nullptr;
+	// 	}
+	// );
 
 	_animator.SetModelSceneView(&_model->GetModelResource()->GetSceneView());
 	_animator.SetParameter("x", 0.f);
 	_animator.SetParameter("y", 0.f);
 	_animator.SetParameter("attack", false);
 	_animator.SetParameter("end", false);
-	_animator.AddState("move",move);
-	_animator.AddState("attack",attack);
-	_animator.SetEntryState("move");
+	//_animator.AddState("move",move);
+	_animator.AddState("rootMotion",rootMotion);
+	_animator.SetEntryState("rootMotion");
 
 	Camera::Instance().SetLookAt(
 		DirectX::XMFLOAT3(-7.5f, 8, 12.5f),
@@ -118,6 +118,11 @@ void SceneAnimationTest::Update() {
 	input.Update();
 	_animator.SetParameter("x",input.GetThumSticksLeftX());
 	_animator.SetParameter("y",input.GetThumSticksLeftY());
+
+	const XMFLOAT3& vel = _animator.GetVelocity();
+	_transform.position.x += vel.x;
+	_transform.position.y += vel.y;
+	_transform.position.z += vel.z;
 
 	Camera::Instance().Update();
 	_transform.UpdateMatrix();

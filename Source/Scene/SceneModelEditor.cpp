@@ -19,6 +19,7 @@
 #include "../../Library/3D/LineRenderer.h"
 #include "../../Library/3D/LightManager.h"
 #include "../../Library/Graphics/Texture.h"
+#include "../../Library/Resource/Model/Animator.h"
 
 void SceneModelEditor::Initialize()
 {

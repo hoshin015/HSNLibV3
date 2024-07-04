@@ -278,6 +278,7 @@
     <ClCompile Include="Source\Game\Object\StateMachine\StateMachine.cpp" />
     <ClCompile Include="Library\Graphics\WbOitBuffer.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\Special\SpecialEffect.cpp" />
+    <ClCompile Include="Source\UserInterface\UiTitle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\ColorFilter.h" />
@@ -398,6 +399,7 @@
     <ClInclude Include="Source\Game\Object\StateMachine\StateMachine.h" />
     <ClInclude Include="Library\Graphics\WbOitBuffer.h" />
     <ClInclude Include="Source\Game\Object\Effect\Special\SpecialEffect.h" />
+    <ClInclude Include="Source\UserInterface\UiTitle.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc" />

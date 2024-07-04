@@ -15,6 +15,7 @@
 #include "3D/LineRenderer.h"
 #include "../Source/Scene/SceneManager.h"
 #include "../Source/UserInterface/DamageTextManager.h"
+#include "Graphics/Texture.h"
 
 // ‰Šú‰»
 bool Framework::Initialize(HINSTANCE hInstance)
@@ -129,6 +130,9 @@ void Framework::Finalize()
 {
 	// --- EffectManagerI—¹‰» ---
 	EffectManager::Instance().Finalize();
+
+	// --- Texture ‰ğ•ú ---
+	ReleaseAllTextures();
 
 #if USE_IMGUI
 	// --- ImGuiI—¹‰» ---

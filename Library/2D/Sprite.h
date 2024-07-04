@@ -118,4 +118,21 @@ private:
 
 	// 一番手前ではなく一番奥に描画したいときに true にする
 	bool posZ1 = false;
+
+
+	// ディゾルブ表現用
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> dissolveSrv;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> spriteDissolveConstantBuffer;
+	struct SpriteDissolveConstant
+	{
+		float             dissolveThreshold = 0.5f; // ディゾルブ量
+		float             edgeThreshold = 0.0f;  // エッジの閾値
+		DirectX::XMFLOAT2 pad;
+		DirectX::XMFLOAT4 edgeColor = { 0.0, 0.0, 1.0, 1.0 }; // エッジの色
+	};
+
+public:
+	SpriteDissolveConstant spriteDissolveConstant;
+	// ディゾルブテクスチャの設定
+	void SetDissolveTexture(const wchar_t* filename);
 };

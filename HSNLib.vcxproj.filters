@@ -475,6 +475,9 @@
     <ClCompile Include="Library\Graphics\ColorFilter.cpp">
       <Filter>1_HSNLib\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UserInterface\UiTitle.cpp">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -830,6 +833,9 @@
     </ClInclude>
     <ClInclude Include="Library\Graphics\ColorFilter.h">
       <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UserInterface\UiTitle.h">
+      <Filter>2_Source\UserInterface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

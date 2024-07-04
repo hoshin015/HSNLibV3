@@ -14,16 +14,22 @@
 // --- Scene ---
 #include "SceneTitle.h"
 #include "SceneManager.h"
+// --- Game ---
+#include "../UserInterface/UiTitle.h"
 
 
 void SceneTitle::Initialize()
 {
 	Framework* frameWork = &Framework::Instance();
 
-	spr1 = std::make_unique<Sprite>("Data/Texture/Nessie.sprite");
-	spr1->SetPos({100, 100});
+	spr1 = std::make_unique<Sprite>("Data/Texture/Text/PressAnyButton.sprite");
+	spr1->UpdateAnimation();
+	spr1->SetPos({640, 550});
+	//spr1->SetDissolveTexture(L"Data/Texture/dissolve.png");
 
 	imGuiFrameBuffer = std::make_unique<FrameBuffer>(frameWork->GetScreenWidthF(), frameWork->GetScreenHeightF());
+
+	UiTitle::Instance().Initialize();
 }
 
 void SceneTitle::Finalize()
@@ -46,6 +52,8 @@ void SceneTitle::Update()
 	{
 		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
 	}
+
+	UiTitle::Instance().Update();
 
 #if USE_IMGUI
 #endif
@@ -75,7 +83,8 @@ void SceneTitle::Render()
 	// blendStateの設定
 	gfx->SetBlend(BLEND_STATE::ALPHA);	
 
-	spr1->Render();
+	//spr1->Render();
+	UiTitle::Instance().Render();
 
 #if USE_IMGUI
 	// --- デバッグ描画 ---

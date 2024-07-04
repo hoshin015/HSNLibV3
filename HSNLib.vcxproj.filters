@@ -436,9 +436,6 @@
     <ClCompile Include="Source\UserInterface\DamageTextManager.cpp">
       <Filter>2_Source\UserInterface</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Object\Effect\Rock\RockEffect.cpp">
-      <Filter>2_Source\Game\Object\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Game\Object\Effect\Lightning\LightningEffect.cpp">
       <Filter>2_Source\Game\Object\Effect\Lightning</Filter>
     </ClCompile>
@@ -453,6 +450,12 @@
     </ClCompile>
     <ClCompile Include="Library\Math\Vector.cpp">
       <Filter>1_HSNLib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Resource\Model\Animator.cpp">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneAnimationTest.cpp">
+      <Filter>2_Source\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Library\3D\CameraBase.cpp">
       <Filter>1_HSNLib\3D</Filter>
@@ -477,6 +480,9 @@
     </ClCompile>
     <ClCompile Include="Source\UserInterface\UiTitle.cpp">
       <Filter>2_Source\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\Rock\RockEffect.cpp">
+      <Filter>2_Source\Game\Object\Effect\Rock</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -818,6 +824,12 @@
     </ClInclude>
     <ClInclude Include="Source\Camera\CameraDerived.h">
       <Filter>2_Source\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Resource\Model\Animator.h">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneAnimationTest.h">
+      <Filter>2_Source\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Object\Effect\Breath\BreathEffect.h">
       <Filter>2_Source\Game\Object\Effect\Breath</Filter>

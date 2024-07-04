@@ -177,10 +177,12 @@
     <ClCompile Include="Library\3D\CameraBase.cpp" />
     <ClCompile Include="Library\Math\Matrix.cpp" />
     <ClCompile Include="Library\Math\Vector.cpp" />
+    <ClCompile Include="Library\Resource\Model\Animator.cpp" />
     <ClCompile Include="Source\Camera\CameraDerived.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\Breath\BreathMesh.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\Rock\RockEffect.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\Rock\RockMainMesh.cpp" />
+    <ClCompile Include="Source\Scene\SceneAnimationTest.cpp" />
     <ClCompile Include="Source\UserInterface\DamageTextManager.cpp" />
     <ClCompile Include="Library\Graphics\RadialBlur.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\Lightning\LightningMainMesh.cpp" />
@@ -287,10 +289,12 @@
     <ClInclude Include="Library\3D\CameraBase.h" />
     <ClInclude Include="Library\Math\Matrix.h" />
     <ClInclude Include="Library\Math\Vector.h" />
+    <ClInclude Include="Library\Resource\Model\Animator.h" />
     <ClInclude Include="Source\Camera\CameraDerived.h" />
     <ClInclude Include="Source\Game\Object\Effect\Breath\BreathMesh.h" />
     <ClInclude Include="Source\Game\Object\Effect\Rock\RockEffect.h" />
     <ClInclude Include="Source\Game\Object\Effect\Rock\RockMainMesh.h" />
+    <ClInclude Include="Source\Scene\SceneAnimationTest.h" />
     <ClInclude Include="Source\UserInterface\DamageTextManager.h" />
     <ClInclude Include="External\ImGui\IconFontCppHeaders-main\IconsFontAwesome5.h" />
     <ClInclude Include="Library\Graphics\RadialBlur.h" />

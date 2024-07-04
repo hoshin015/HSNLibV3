@@ -448,6 +448,12 @@
     <ClCompile Include="Library\Math\Vector.cpp">
       <Filter>1_HSNLib\Math</Filter>
     </ClCompile>
+    <ClCompile Include="Library\Resource\Model\Animator.cpp">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneAnimationTest.cpp">
+      <Filter>2_Source\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="Library\3D\CameraBase.cpp">
       <Filter>1_HSNLib\3D</Filter>
     </ClCompile>
@@ -794,6 +800,12 @@
     </ClInclude>
     <ClInclude Include="Source\Camera\CameraDerived.h">
       <Filter>2_Source\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Resource\Model\Animator.h">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneAnimationTest.h">
+      <Filter>2_Source\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

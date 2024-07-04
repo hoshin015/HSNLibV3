@@ -160,7 +160,6 @@ ModelResource::KeyFrame Animator::StateUpdate(float elapsedTime) {
 			currentKeyFrame = BlendUpdate(blendTree.get(), _timer);
 			nextKeyFrame = BlendUpdate(blendTree.get(), _timer + elapsedTime);
 
-			i
 			break;
 		}
 	}

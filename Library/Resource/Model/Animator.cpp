@@ -100,7 +100,7 @@ ModelResource::KeyFrame Animator::MotionUpdate(Motion* motion, const float rate)
 
 	// TODO::最後のフレームを通過したかの判定をもうちょっと何とかする
 	// このままだとタイミングによっては最後のフレーム担っても感知できない
-	motion->endMotion = fmodf(rate * motion->animationSpeed,1) >= .9f;
+	motion->endMotion = fmodf(rate * motion->animationSpeed, 1) >= .9f;
 	return BlendKeyFrame(keyFrames[0], keyFrames[1], lerpRate);
 }
 
@@ -136,64 +136,51 @@ ModelResource::KeyFrame Animator::BlendUpdate(BlendTree* blend, const float time
 	const size_t weightSize = weights.size();
 	for (int i = 1; i < weightSize; i++) { result = BlendKeyFrame(&result, &keyFrames[i], weights[i]); }
 
+	blend->endMotion = animationRate >= .9f;
 	return result;
 }
 
-ModelResource::KeyFrame Animator::StateUpdate(float elapsedTime) {
-	State& state = *_currentState;
+ModelResource::KeyFrame Animator::StateUpdate(State* state ,float elapsedTime) {
+	state->timer += elapsedTime;
 
+	bool                    endMotion = false;
 	ModelResource::KeyFrame currentKeyFrame;
 	ModelResource::KeyFrame nextKeyFrame;
-	switch (state.type) {
+	switch (state->type) {
 		case State::MOTION: {
-			const std::shared_ptr<Motion> motion = std::static_pointer_cast<Motion>(state.object);
+			const std::shared_ptr<Motion> motion = std::static_pointer_cast<Motion>(state->object);
 
-			currentKeyFrame = MotionUpdate(motion.get(), _timer / motion->motion->secondsLength);
-			nextKeyFrame    = MotionUpdate(motion.get(), (_timer + elapsedTime) / motion->motion->secondsLength);
-			if (motion->endMotion)
-				nextKeyFrame = ModelResource::KeyFrame();
+			currentKeyFrame = MotionUpdate(motion.get(), state->timer / motion->motion->secondsLength);
+			if (_rootMotionEnabled) {
+				nextKeyFrame = MotionUpdate(motion.get(), (state->timer + elapsedTime) / motion->motion->secondsLength);
+				if (endMotion = motion->endMotion; endMotion) nextKeyFrame.nodes.clear();
+			}
 			break;
 		}
 		case State::BLEND_TREE: {
-			const std::shared_ptr<BlendTree> blendTree = std::static_pointer_cast<BlendTree>(state.object);
+			const std::shared_ptr<BlendTree> blendTree = std::static_pointer_cast<BlendTree>(state->object);
 
-			currentKeyFrame = BlendUpdate(blendTree.get(), _timer);
-			nextKeyFrame = BlendUpdate(blendTree.get(), _timer + elapsedTime);
+			currentKeyFrame = BlendUpdate(blendTree.get(), state->timer);
+			if (_rootMotionEnabled) {
+				nextKeyFrame = BlendUpdate(blendTree.get(), state->timer + elapsedTime);
+				if (endMotion = blendTree->endMotion; endMotion) nextKeyFrame.nodes.clear();
+			}
 
 			break;
 		}
 	}
 
-	for (auto&&    function: state.transitions) {
-		if (State* state = function(*this)) {
-			_currentState = state;
-			_timer        = 0;
-			break;
+	if (!_nextState) {
+		for (auto&& function : state->transitions) {
+			if (State* stateFromFunc = function(*this)) {
+				_nextState = stateFromFunc;
+				//state->timer = 0;
+				break;
+			}
 		}
 	}
 
-	if (_nextState) {
-		// ModelResource::KeyFrame nextKeyFrame;
-		// switch (_nextState->type) {
-		// case State::MOTION:
-		// {
-		// 	std::shared_ptr<Motion> motion = std::static_pointer_cast<Motion>(_nextState->object);
-		// 	nextKeyFrame = MotionUpdate(motion.get(), fmodf(_nextState->timer / motion->motion->secondsLength, 1));
-		// 	break;
-		// }
-		// case State::BLEND_TREE:
-		// {
-		// 	nextKeyFrame = BlendUpdate(std::static_pointer_cast<BlendTree>(_nextState->object).get(), _nextState->timer);
-		// 	break;
-		// }
-		// }
-		//
-		// const int               maxNodeCount = currentkeyFrame.nodes.size();
-		// ModelResource::KeyFrame keyFrame;
-		// keyFrame.nodes.resize(maxNodeCount);
-	}
-
-	{
+	if (_rootMotionEnabled) {
 		const auto currentRootNode = std::find_if(
 			currentKeyFrame.nodes.begin(), currentKeyFrame.nodes.end(), [&](const ModelResource::KeyFrame::Node& a) {
 				return a.name == _rootMotionName;
@@ -206,7 +193,7 @@ ModelResource::KeyFrame Animator::StateUpdate(float elapsedTime) {
 		);
 
 		_velocity = nextRootNode == nextKeyFrame.nodes.end() ?
-						XMFLOAT3() :
+			            XMFLOAT3() :
 			            nextRootNode->translation - currentRootNode->translation;
 
 		currentRootNode->translation = {};
@@ -231,8 +218,23 @@ ModelResource::KeyFrame Animator::StateUpdate(float elapsedTime) {
 }
 
 ModelResource::KeyFrame Animator::PlayAnimation(float elapsedTime) {
-	_timer += elapsedTime;
-	return StateUpdate(elapsedTime);
+
+	ModelResource::KeyFrame current = StateUpdate(_currentState ,elapsedTime);
+	if (_nextState) {
+		_timer += elapsedTime;
+		ModelResource::KeyFrame next = StateUpdate(_nextState, elapsedTime);
+
+		float rate = _timer / 0.5f;
+		current = BlendKeyFrame(&current, &next, rate);
+		if (rate >= 1.f) {
+			_timer = 0;
+			_currentState->timer = 0;
+			_currentState = _nextState;
+			_nextState = nullptr;
+		}
+	}
+
+	return current;
 }
 
 void Animator::AnimationEditor() {

@@ -23,6 +23,7 @@ public:
 		std::vector<Motion> motions;
 		std::string         parameters[2];
 		float               maxSeconds = 0;
+		bool                endMotion  = false;
 	};
 
 	struct State {
@@ -67,7 +68,7 @@ private:
 	) const;
 	ModelResource::KeyFrame MotionUpdate(Motion* motion, float rate) const;
 	ModelResource::KeyFrame BlendUpdate(BlendTree* blend, float time);
-	ModelResource::KeyFrame StateUpdate(float elapsedTime);
+	ModelResource::KeyFrame StateUpdate(State* state, float elapsedTime);
 
 public:
 	Animator() = default;
@@ -99,7 +100,10 @@ public:
 	void SetEntryState(const std::string& name) { _currentState = &_states[name]; }
 	void SetParameter(const std::string& name, const Var var) { _parameters[name] = var; }
 
-	void EnableRootMotion(const std::string& name) { _rootMotionEnabled = true; _rootMotionName = name; }
+	void EnableRootMotion(const std::string& name) {
+		_rootMotionEnabled = true;
+		_rootMotionName    = name;
+	}
 
 	template<typename T>
 	T& GetParameter(const std::string& name) { return std::get<T>(_parameters[name]); }
@@ -111,4 +115,10 @@ public:
 	ModelResource::KeyFrame PlayAnimation(float elapsedTime);
 
 	void AnimationEditor();
+
+	template<typename T>
+	static std::shared_ptr<T> MakeObjPointer(T& obj) {
+		return std::make_shared<T>(std::forward<T>(obj));
+
+	}
 };

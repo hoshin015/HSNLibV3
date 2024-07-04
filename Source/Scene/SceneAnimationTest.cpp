@@ -14,9 +14,9 @@ void SceneAnimationTest::DrawDebugGUI() {
 	DrawMenuBar();
 	ImGuiManager::Instance().DisplayPerformanceStats();
 
-	float& rate = _animator.GetParameter<float>("x");
-	bool& attack = _animator.GetParameter<bool>("attack");
-	bool& end = _animator.GetParameter<bool>("end");
+	float& rate   = _animator.GetParameter<float>("x");
+	bool&  attack = _animator.GetParameter<bool>("attack");
+	bool&  end    = _animator.GetParameter<bool>("end");
 	if (ImGui::Begin("Animator")) {
 		ImGui::DragFloat("rate", &rate, 0.001f, 0, 1);
 		ImGui::Checkbox("attack", &attack);
@@ -31,7 +31,7 @@ void SceneAnimationTest::DrawDebugGUI() {
 }
 
 void SceneAnimationTest::Initialize() {
-	_model = std::make_shared<AnimatedModel>("Data/Fbx/RootMotionTest/test.model");
+	_model                                            = std::make_shared<AnimatedModel>("Data/Fbx/gaoanimal/gaoanimal_3.model");
 	std::vector<ModelResource::Animation>& animations = _model->GetModelResource()->GetAnimationClips();
 
 	// Animator::BlendTree blendTree;
@@ -59,27 +59,46 @@ void SceneAnimationTest::Initialize() {
 
 	Animator::Motion motion;
 	motion.animationSpeed = 1;
-	motion.motion = &animations[0];
+	motion.motion         = &animations[4];
 
 	Animator::State rootMotion;
 	rootMotion.object = std::make_shared<Animator::Motion>(std::forward<Animator::Motion>(motion));
-	rootMotion.type = Animator::State::MOTION;
-	// attack.transitions.emplace_back(
-	// 	STATE_FUNC(animator) {
-	// 		if (animator.GetState("attack").GetObj<Animator::Motion>()->endMotion) {
-	// 			return &animator.GetState("move");
-	// 		}
-	// 		return nullptr;
-	// 	}
-	// );
+	rootMotion.type   = Animator::State::MOTION;
+	rootMotion.transitions.emplace_back(
+ 	STATE_FUNC(animator) {
+ 		if (bool& attack = animator.GetParameter<bool>("attack")) {
+ 			attack = false;
+ 			return &animator.GetState("attack");
+ 		}
+ 		return nullptr;
+ 	}
+ );
+
+	Animator::Motion attackMoiton;
+	attackMoiton.animationSpeed = 1;
+	attackMoiton.motion         = &animations[0];
+
+	Animator::State attack;
+	attack.object = Animator::MakeObjPointer(attackMoiton);
+	attack.type   = Animator::State::MOTION;
+	attack.transitions.emplace_back(
+		STATE_FUNC(animator) {
+			if (animator.GetState("attack").GetObj<Animator::Motion>()->endMotion) {
+				return &animator.GetState("rootMotion");
+			}
+			return nullptr;
+		}
+	);
 
 	_animator.SetModelSceneView(&_model->GetModelResource()->GetSceneView());
 	_animator.SetParameter("x", 0.f);
 	_animator.SetParameter("y", 0.f);
 	_animator.SetParameter("attack", false);
 	_animator.SetParameter("end", false);
+	//_animator.EnableRootMotion("Root");
 	//_animator.AddState("move",move);
-	_animator.AddState("rootMotion",rootMotion);
+	_animator.AddState("rootMotion", rootMotion);
+	_animator.AddState("attack", attack);
 	_animator.SetEntryState("rootMotion");
 
 	Camera::Instance().SetLookAt(
@@ -88,25 +107,23 @@ void SceneAnimationTest::Initialize() {
 		DirectX::XMFLOAT3(0, 1, 0)
 	);
 	Camera::Instance().SetAngle(
-		{ DirectX::XMConvertToRadians(24), DirectX::XMConvertToRadians(147), 0 }
+		{DirectX::XMConvertToRadians(24), DirectX::XMConvertToRadians(147), 0}
 	);
-	Camera::Instance().SetTarget({ 0,0,0 });
+	Camera::Instance().SetTarget({0, 0, 0});
 	Camera::Instance().cameraType = Camera::CAMERA::FREE;
 
 	Light* directionLight = new Light(LightType::Directional);
 	directionLight->SetDirection(DirectX::XMFLOAT3(-1, -1, -1));
 	directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
 	LightManager::Instance().Register(directionLight);
-	LightManager::Instance().SetAmbientColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+	LightManager::Instance().SetAmbientColor({1.0f, 1.0f, 1.0f, 1.0f});
 
-	_transform.scale = { 1.f,1.f,1.f };
-	_transform.position = { 0,0,0 };
+	_transform.scale    = {1.f, 1.f, 1.f};
+	_transform.position = {0, 0, 0};
 	XMStoreFloat4(&_transform.quaternion, XMQuaternionRotationRollPitchYaw(0, 0, 0));
 }
 
-void SceneAnimationTest::Finalize() {
-	LightManager::Instance().Clear();
-}
+void SceneAnimationTest::Finalize() { LightManager::Instance().Clear(); }
 
 void SceneAnimationTest::Update() {
 #if USE_IMGUI
@@ -116,8 +133,8 @@ void SceneAnimationTest::Update() {
 	InputManager& input = InputManager::Instance();
 
 	input.Update();
-	_animator.SetParameter("x",input.GetThumSticksLeftX());
-	_animator.SetParameter("y",input.GetThumSticksLeftY());
+	_animator.SetParameter("x", input.GetThumSticksLeftX());
+	_animator.SetParameter("y", input.GetThumSticksLeftY());
 
 	const XMFLOAT3& vel = _animator.GetVelocity();
 	_transform.position.x += vel.x;
@@ -129,16 +146,14 @@ void SceneAnimationTest::Update() {
 }
 
 void SceneAnimationTest::Render() {
-	Graphics* gfx = &Graphics::Instance();
-	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
+	Graphics*            gfx = &Graphics::Instance();
+	ID3D11DeviceContext* dc  = gfx->GetDeviceContext();
 
 	dc->OMSetRenderTargets(1, gfx->GetRTVAddress(), gfx->GetDSV());
 	{
-
 		dc->ClearRenderTargetView(gfx->GetRTV(), gfx->GetBgColor());
 		dc->ClearDepthStencilView(gfx->GetDSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}
-
 
 	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
 
@@ -148,16 +163,13 @@ void SceneAnimationTest::Render() {
 
 	Camera::Instance().UpdateCameraConstant();
 
-
 	LightManager::Instance().UpdateConstants();
 
-
 	ModelResource::KeyFrame keyFrame = _animator.PlayAnimation(Timer::Instance().DeltaTime());
-	_model->Render(_transform.world, &keyFrame , false);
+	_model->Render(_transform.world, &keyFrame, false);
 
 #if USE_IMGUI
 	DrawDebugGUI();
-
 
 	ImGuiManager::Instance().Render();
 #endif

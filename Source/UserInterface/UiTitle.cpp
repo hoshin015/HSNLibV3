@@ -1,6 +1,10 @@
 #include "UiTitle.h"
+
+#include "../../Library/Framework.h"
 #include "../../Library/Timer.h"
 #include "../../Library/Input/InputManager.h"
+#include "../../Library/RegisterNum.h"
+#include "../../Library/Particle/Particle.h"
 
 
 void UiTitle::Initialize()
@@ -35,7 +39,6 @@ void UiTitle::Update()
 	{
 	case UiTitleState::Title:
 		{
-			// ポーズフラグがtrueになったら遷移
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
 			{
 				imgGameStart->SetIsRender(true);
@@ -106,16 +109,28 @@ void UiTitle::Update()
 			case SelectMenu::GamePlay:
 				{
 					imgSelectBar->SetPos(imgGameStartPos.endValueVec);
+
+					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
+					{
+					}
 				}
 				break;
 			case SelectMenu::Options:
 				{
 					imgSelectBar->SetPos(imgOptionsPos.endValueVec);
+
+					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
+					{
+					}
 				}
 				break;
 			case SelectMenu::Quit:
 				{
 					imgSelectBar->SetPos(imgQuitPos.endValueVec);
+
+					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
+					{
+					}
 				}
 				break;
 			}

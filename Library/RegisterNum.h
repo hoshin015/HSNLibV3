@@ -41,6 +41,8 @@
 #define pk_fireBreath			10
 #define pk_beamCylinder			11
 
+#define pk_titleSelect			12
+
 // billboardType
 #define bt_View		0
 #define bt_Velocity 1

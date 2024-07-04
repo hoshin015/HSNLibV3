@@ -107,5 +107,4 @@ private:
 	int selectMenu;
 
 	std::unique_ptr<Sprite> imgSelectBar;
-
 };

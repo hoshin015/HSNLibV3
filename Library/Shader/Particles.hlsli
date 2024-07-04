@@ -350,10 +350,10 @@ void spawn(uint id, inout Particle p)
 
 			// y •ûŒü
 			p.position.y = p.position.y - sin(r) * 0.8f;
-			
+
 
 			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
-			
+
 			// x •ûŒü
 			p.velocity.x = 0;
 
@@ -362,6 +362,18 @@ void spawn(uint id, inout Particle p)
 
 			// z •ûŒü
 			p.velocity.z = 1 * particleSpeed;
+		}
+		break;
+	case pk_titleSelect:
+		{
+			p.position   = emitterPosition;
+			float r      = rand(seed) * 360 / 3.14;
+			float length = rand(seed) * 10;
+
+			// x •ûŒü
+			p.position.x = p.position.x + cos(r) * length;
+			// y •ûŒü
+			p.position.y = p.position.y - sin(r) * length;
 		}
 		break;
 	}

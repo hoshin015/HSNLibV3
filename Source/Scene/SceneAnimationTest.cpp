@@ -31,7 +31,7 @@ void SceneAnimationTest::DrawDebugGUI() {
 }
 
 void SceneAnimationTest::Initialize() {
-	_model                                            = std::make_shared<AnimatedModel>("Data/Fbx/gaoanimal/gaoanimal_3.model");
+	_model                                            = std::make_shared<AnimatedModel>("Data/Fbx/RootMotionTest/test.model");
 	std::vector<ModelResource::Animation>& animations = _model->GetModelResource()->GetAnimationClips();
 
 	// Animator::BlendTree blendTree;
@@ -59,7 +59,7 @@ void SceneAnimationTest::Initialize() {
 
 	Animator::Motion motion;
 	motion.animationSpeed = 1;
-	motion.motion         = &animations[4];
+	motion.motion         = &animations[0];
 
 	Animator::State rootMotion;
 	rootMotion.object = std::make_shared<Animator::Motion>(std::forward<Animator::Motion>(motion));
@@ -73,32 +73,32 @@ void SceneAnimationTest::Initialize() {
  		return nullptr;
  	}
  );
-
-	Animator::Motion attackMoiton;
-	attackMoiton.animationSpeed = 1;
-	attackMoiton.motion         = &animations[0];
-
-	Animator::State attack;
-	attack.object = Animator::MakeObjPointer(attackMoiton);
-	attack.type   = Animator::State::MOTION;
-	attack.transitions.emplace_back(
-		STATE_FUNC(animator) {
-			if (animator.GetState("attack").GetObj<Animator::Motion>()->endMotion) {
-				return &animator.GetState("rootMotion");
-			}
-			return nullptr;
-		}
-	);
+	//
+	// Animator::Motion attackMoiton;
+	// attackMoiton.animationSpeed = 1;
+	// attackMoiton.motion         = &animations[0];
+	//
+	// Animator::State attack;
+	// attack.object = Animator::MakeObjPointer(attackMoiton);
+	// attack.type   = Animator::State::MOTION;
+	// attack.transitions.emplace_back(
+	// 	STATE_FUNC(animator) {
+	// 		if (animator.GetState("attack").GetObj<Animator::Motion>()->endMotion) {
+	// 			return &animator.GetState("rootMotion");
+	// 		}
+	// 		return nullptr;
+	// 	}
+	// );
 
 	_animator.SetModelSceneView(&_model->GetModelResource()->GetSceneView());
 	_animator.SetParameter("x", 0.f);
 	_animator.SetParameter("y", 0.f);
 	_animator.SetParameter("attack", false);
 	_animator.SetParameter("end", false);
-	//_animator.EnableRootMotion("Root");
+	_animator.EnableRootMotion("kosi");
 	//_animator.AddState("move",move);
 	_animator.AddState("rootMotion", rootMotion);
-	_animator.AddState("attack", attack);
+	//_animator.AddState("attack", attack);
 	_animator.SetEntryState("rootMotion");
 
 	Camera::Instance().SetLookAt(

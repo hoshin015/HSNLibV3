@@ -62,7 +62,7 @@ void SceneTest::Initialize()
 
 	// --- ステージ初期化 ---
 	StageManager& stageManager = StageManager::Instance();
-	StageMain*    stageMain    = new StageMain("Data/Fbx/ExampleStage/ExampleStage.model");
+	StageMain*    stageMain    = new StageMain("Data/Fbx/Stage/Stage.model");
 	stageManager.Register(stageMain);
 
 	// --- buffer 系初期化 ---

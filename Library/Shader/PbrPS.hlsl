@@ -48,8 +48,8 @@ float4 main(VS_OUT pin) : SV_TARGET
 
 
 	// オブジェクトパラメータによる調整
-	roughness = saturate(roughness + roughnessPower);
-    metalness = saturate(metalness + metalnessPower);
+	roughness = clamp(roughness + roughnessPower, 0.0, 1.0);
+    metalness = clamp(metalness + metalnessPower, 0.0, 1.0);
     emissiveColor *= emissivePower;
 
 

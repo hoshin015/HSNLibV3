@@ -237,7 +237,7 @@ void SpecialEffect::GenerateRock()
 		float rY = rand() % 360;
 		float rZ = rand() % 360;
 		rock->SetAngle({rX, rY, rZ});
-		rock->SetColor({2.0, 0.8, 0.8, 1});
+		rock->SetColor({10.0, 0.8, 0.8, 1});
 		rock->SetUpdateType(RockData::RockFuncEnum::Up);
 		RockEffect::Instance().rockMesh1->Register(rock);
 	}

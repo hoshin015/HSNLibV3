@@ -13,13 +13,13 @@ void SceneLoading::Initialize()
 	thread = new std::thread(LoadingThread, this);
 
 	// スレッドの管理を放棄
-	thread->detach();
+	//thread->detach();
 }
 
 void SceneLoading::Finalize()
 {
 	if (thread->joinable()) {
-		thread->join();
+		thread->join();		// スレッドが終わるまでまつ。(おわったら delete)
 	}
 	delete thread;
 }

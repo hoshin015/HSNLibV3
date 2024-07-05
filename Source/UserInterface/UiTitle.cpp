@@ -15,6 +15,12 @@ void UiTitle::Initialize()
 	imgPressAnyButton->UpdateAnimation();
 	imgPressAnyButton->SetPos({640, 550});
 
+	imgBgCover = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/BgCover.png");
+	//imgBgCover->UpdateAnimation();
+	imgBgCover->SetPos({0, 0});
+	imgBgCover->SetIsRender(false);
+	//imgBgCover->SetColorA(0.0f);
+
 	imgGameStart = std::make_unique<Sprite>("Data/Texture/Text/GameStart.sprite");
 	imgGameStart->UpdateAnimation();
 	imgGameStart->SetIsRender(false);
@@ -31,6 +37,30 @@ void UiTitle::Initialize()
 	imgSelectBar->UpdateAnimation();
 	imgSelectBar->SetIsRender(false);
 	imgSelectBar->SetPos({100.0f, 100.0});
+
+
+	imgSelectLevel = std::make_unique<Sprite>("Data/Texture/Text/LevelSelect.sprite");
+	imgSelectLevel->UpdateAnimation();
+	imgSelectLevel->SetIsRender(false);
+	imgSelectLevel->SetPos(imgSelectLevelPos);
+	imgSelectLevel->SetDissolveTexture(L"Data/Texture/Noise/GrungeMap.png");
+	imgSelectLevel->spriteDissolveConstant.edgeThreshold = 1.0f;
+	imgSelectLevel->spriteDissolveConstant.edgeColor = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+	imgEasy = std::make_unique<Sprite>("Data/Texture/Text/Easy.sprite");
+	imgEasy->UpdateAnimation();
+	imgEasy->SetIsRender(false);
+	imgEasy->SetPos(imgEasyPos);
+
+	imgNormal = std::make_unique<Sprite>("Data/Texture/Text/normal.sprite");
+	imgNormal->UpdateAnimation();
+	imgNormal->SetIsRender(false);
+	imgNormal->SetPos(imgNormalPos);
+
+	imgHard = std::make_unique<Sprite>("Data/Texture/Text/hard.sprite");
+	imgHard->UpdateAnimation();
+	imgHard->SetIsRender(false);
+	imgHard->SetPos(imgHardPos);
 }
 
 void UiTitle::Update()
@@ -41,6 +71,7 @@ void UiTitle::Update()
 		{
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
 			{
+				imgBgCover->SetIsRender(true);
 				imgGameStart->SetIsRender(true);
 				imgOptions->SetIsRender(true);
 				imgQuit->SetIsRender(true);
@@ -59,6 +90,9 @@ void UiTitle::Update()
 			imgPressAnyButton->SetScale({_imgPressAnyButtonScale, _imgPressAnyButtonScale});
 			imgPressAnyButton->SetColorA(
 				Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgPressAnyButtonAlpha));
+
+			// imgBgCover
+			imgBgCover->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgBgCoverAlpha));
 
 			// imgGameStartPos
 			imgGameStart->SetPos(Easing::GetNowParamVec(Easing::OutQuad<float>, titleTimer, imgGameStartPos));
@@ -112,6 +146,18 @@ void UiTitle::Update()
 
 					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
 					{
+						imgGameStart->SetIsRender(false);
+						imgOptions->SetIsRender(false);
+						imgQuit->SetIsRender(false);
+						imgSelectBar->SetIsRender(false);
+
+						imgSelectLevel->SetIsRender(true);
+						imgEasy->SetIsRender(true);
+						imgNormal->SetIsRender(true);
+						imgHard->SetIsRender(true);
+
+						titleTimer = 0.0f;
+						state      = UiTitleState::SelectMenuToLevel;
 					}
 				}
 				break;
@@ -140,6 +186,25 @@ void UiTitle::Update()
 		{
 		}
 		break;
+	case UiTitleState::SelectMenuToLevel:
+		{
+			titleTimer += Timer::Instance().DeltaTime();
+
+			imgSelectLevel->spriteDissolveConstant.dissolveThreshold = Easing::GetNowParam(
+				Easing::OutQuad<float>, titleTimer, imgSelectLevelDissolveThread);
+
+			// •\Ž¦Š®—¹‚µ‚½‚ç‘JˆÚ
+			if (titleTimer > selectMenuToSelectLevelTime)
+			{
+				titleTimer = 0.0f;
+				state = UiTitleState::Level;
+			}
+		}
+		break;
+	case UiTitleState::Level:
+		{
+		}
+		break;
 	}
 }
 
@@ -149,8 +214,13 @@ void UiTitle::Render()
 	//if (!isPause) return;
 
 	imgPressAnyButton->Render();
+	imgBgCover->Render();
 	imgGameStart->Render();
 	imgOptions->Render();
 	imgQuit->Render();
 	imgSelectBar->Render();
+	imgSelectLevel->Render();
+	imgEasy->Render();
+	imgNormal->Render();
+	imgHard->Render();
 }

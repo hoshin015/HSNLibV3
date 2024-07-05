@@ -62,8 +62,10 @@ void SceneTest::Initialize()
 
 	// --- ステージ初期化 ---
 	StageManager& stageManager = StageManager::Instance();
-	StageMain*    stageMain    = new StageMain("Data/Fbx/Stage/Stage.model");
+	StageMain*    stageMain    = new StageMain("Data/Fbx/StageMain/StageMain.model");
 	stageManager.Register(stageMain);
+	StageMain* StageFence = new StageMain("Data/Fbx/StageFence/StageFence.model");
+	stageManager.Register(StageFence);
 
 	// --- buffer 系初期化 ---
 	bitBlockTransfer = std::make_unique<FullScreenQuad>();
@@ -361,8 +363,6 @@ void SceneTest::Update()
 	RockEffect::Instance().Update();
 	BreathEffect::Instance().Update();
 	SpecialEffect::Instance().Update(radialBlur.get(), heatHaze.get());
-
-	int* b = new int();
 }
 
 void SceneTest::Render()

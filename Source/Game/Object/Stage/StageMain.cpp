@@ -6,7 +6,7 @@
 // 更新処理
 void StageMain::Update()
 {
-	GetModel()->uvScrollConstant.uvScrollValue.x += 0.01 * Timer::Instance().DeltaTime();
+	//GetModel()->uvScrollConstant.uvScrollValue.x += 0.01 * Timer::Instance().DeltaTime();
 
 
 	// 姿勢行列更新

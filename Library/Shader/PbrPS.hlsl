@@ -43,13 +43,15 @@ float4 main(VS_OUT pin) : SV_TARGET
 	// --- 金属質/粗さ ---
 	float4 metallicRoughnessColor = metallicRoughnessTexture.Sample(samplerStates[_pointSampler], pin.texcoord);
 	//float  roughness              = metallicRoughnessColor.a;
-	float  roughness              = 1.0f - metallicRoughnessColor.a; // テクスチャに入っている情報が roughness ではなく smooth だから変換している
+	float  roughness              = metallicRoughnessColor.a; // テクスチャに入っている情報が roughness ではなく smooth だから変換している
 	float  metalness              = metallicRoughnessColor.r;
 
 
 	// オブジェクトパラメータによる調整
+#if 0
 	roughness = clamp(roughness + roughnessPower, 0.0, 1.0);
     metalness = clamp(metalness + metalnessPower, 0.0, 1.0);
+#endif
     emissiveColor *= emissivePower;
 
 

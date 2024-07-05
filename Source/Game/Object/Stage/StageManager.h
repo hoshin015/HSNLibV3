@@ -23,6 +23,7 @@ public:
 
 	// 描画処理
 	void Render(bool isShadow = false);
+	void Render(const size_t index, const bool isShadow = false);
 
 	// ステージ登録
 	void Register(Stage* stage);
@@ -32,6 +33,7 @@ public:
 
 	// レイキャスト
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
+	bool RayCast(const size_t index, const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 
 	// デバッグGUI描画
 	void DrawDebugImGui();

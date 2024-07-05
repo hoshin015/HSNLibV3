@@ -6,11 +6,14 @@
 class PlayerCamera : public CameraBase
 {
 public:
+	void SetTimer(const float timer) { this->timer = timer; }
+
 	void Initialize() override;
 	void Update() override;
 	void UpdateConstants() override;
 	void DrawDebugGui() override;
 
+	void OnSetCamera();
 	void OnFixedCursor(float deltaTime);	// カーソルを固定しているときに呼ばれる
 	void CalcPositionFromAngle(const Vector3& position);	// 角度から位置を計算
 
@@ -21,6 +24,7 @@ private:
 	float range;					// カメラの目標からの距離
 	float height;					// プレイヤーの高さ
 	bool  fixedCursor = true;		// 中央にカーソルを固定するか
+	float timer = 0.0f;
 
 	// --- Lerp減衰用 ---
 	float t = 0.3f;	// 補完量
@@ -46,5 +50,6 @@ private:
 	float range;	// 距離
 
 	float t = 0.3f;	// 補完量
+	Vector3 prevTarget;	// 前回の目標の位置
 };
 

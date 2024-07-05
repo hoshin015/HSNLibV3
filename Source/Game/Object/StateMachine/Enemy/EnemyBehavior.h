@@ -5,6 +5,28 @@
 #include "Enemy.h"
 
 
+enum class MonsterAnimation
+{
+	STAMP,
+	BLESS,
+	DOWN,
+	WHILE_DOWN,
+	ROAR,
+	ROAR_BIG,
+	IDLE,
+	BITE_1,
+	BITE_2,
+	STAND_UP,
+	DEAD,
+	TACKLE,
+	RUSH,
+	WALK_LEFT,
+	WALK_FOWARD,
+	WALK_RIGHT,
+	WALK_BEHIND,
+};
+
+
 // --- 追跡行動の判定 ---
 class EnemyPursuitJudgment final : public JudgmentBase<Enemy>
 {
@@ -42,24 +64,6 @@ public:
 };
 
 
-// --- 攻撃行動 ---
-class EnemyAttackAction final : public ActionBase<Enemy>
-{
-public:
-	EnemyAttackAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
-	BT_ActionState Run(float elapsedTime) override;
-};
-
-
-// --- 攻撃行動 ---
-class EnemyAttackAction2 final : public ActionBase<Enemy>
-{
-public:
-	EnemyAttackAction2(Enemy* owner) : ActionBase<Enemy>(owner) {}
-	BT_ActionState Run(float elapsedTime) override;
-};
-
-
 
 // --- 探索行動の判定 ---
 class EnemyScoutJudgment final : public JudgmentBase<Enemy>
@@ -93,5 +97,105 @@ class EnemyIdleAction final : public ActionBase<Enemy>
 {
 public:
 	EnemyIdleAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ==== 戦闘開始時の行動判定 ======================================================================================================================================================
+class EnemyBattleInitJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyBattleInitJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
+// ===== 遠距離の判定 ======================================================================================================================================================
+class EnemyLongRangeJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyLongRangeJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
+// ===== 近距離の判定 ======================================================================================================================================================
+class EnemyShortRangeJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyShortRangeJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
+// ===== 大咆哮の行動 ======================================================================================================================================================
+class EnemyBigRoarAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyBigRoarAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== 軸合わせの行動 ======================================================================================================================================================
+class EnemyAxisAlignmentAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyAxisAlignmentAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== ブレスの行動 ======================================================================================================================================================
+class EnemyBlessAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyBlessAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== 威嚇行動 ======================================================================================================================================================
+class EnemyThreatAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyThreatAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== 突進行動 ======================================================================================================================================================
+class EnemyRushAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyRushAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== 踏みつけ行動 ======================================================================================================================================================
+class EnemyStampAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyStampAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== 噛みつき行動 ======================================================================================================================================================
+class EnemyBiteAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyBiteAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };

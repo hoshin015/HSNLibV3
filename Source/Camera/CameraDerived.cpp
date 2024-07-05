@@ -6,16 +6,19 @@
 
 #include "../../Library/Input/InputManager.h"
 
+#include "../../Library/Math/Collision.h"
+
 #include "../Game/Object/StateMachine/Player/Player.h"
 #include "../Game/Object/StateMachine/Enemy/Enemy.h"
+#include "../Game/Object/Stage/StageManager.h"
 
 
 // ===== プレイヤーのカメラ ======================================================================================================================================================
 void PlayerCamera::Initialize()
 {
 	verticalAngle = 45.0f;
-	horizontalAngle = 0.0f;
-	range = 13.0f;
+	//horizontalAngle = 0.0f;
+	range = 15.0f;
 	height = 3.0f;
 	fixedCursor = true;
 	
@@ -58,8 +61,46 @@ void PlayerCamera::Update()
 		currentPosition = Vector3::Lerp(currentPosition, position, t);
 
 
+
+		timer -= deltaTime;
+		Vector3 shakeOffset;
+		Vector3 shakeIntensity = { 1.0f, 1.0f, 1.0f };
+		if (timer > 0.0f)
+		{
+			shakeOffset = rightVec * (((rand() % 100) / 100.0f) - 0.5f) * shakeIntensity.x;
+			shakeOffset += upVec * (((rand() % 100) / 100.0f) - 0.5f) * shakeIntensity.y;
+			shakeOffset += frontVec * (((rand() % 100) / 100.0f) - 0.5f) * shakeIntensity.z;
+		}
+
+		else
+		{
+			timer = 0.0f;
+			shakeOffset = Vector3::Zero_;
+		}
+
+
+		// --- 床に埋まらないように制限 ---
+		if (currentPosition.y < 1.0f)
+			currentPosition.y = 1.0f;
+
+		if (position.y < 1.0f)
+			position.y = 1.0f;
+
+		if (verticalAngle < 0.0f)
+			verticalAngle = 0.0f;
+
+
+		// --- 仮の壁とのレイキャスト ---
+		HitResult result;
+		if (StageManager::Instance().RayCast(1, target.vec_, position.vec_, result))
+		{
+			currentPosition = result.position;
+			position = result.position;
+		}
+
+
 		// --- カメラ情報の更新 ---
-		CameraBase::Update(currentPosition, target, up, fov, nearZ, farZ, aspect);
+		CameraBase::Update(currentPosition + shakeOffset, target, up, fov, nearZ, farZ, aspect);
 
 		break;
 	}
@@ -84,6 +125,9 @@ void PlayerCamera::DrawDebugGui()
 	if (input.GetKeyPressed(DirectX::Keyboard::Keys::M))
 		fixedCursor = !fixedCursor;
 
+	if (ImGui::Button(u8"シェイク", { 100.0f, 30.0f }))
+		timer = 0.3f;
+
 
 	ImGui::BulletText(u8"カーソル");
 	ImGui::Text(u8"x : %f / y : %f", input.GetCursorPosXFloat(), input.GetCursorPosYFloat());
@@ -101,7 +145,33 @@ void PlayerCamera::DrawDebugGui()
 
 	ImGui::DragFloat3(u8"目標", &target.x);
 
+	float atan = atan2(position.y, position.x);
+	atan += DirectX::XM_PIDIV2;
+	ImGui::Text("Atan : %f", DirectX::XMConvertToDegrees(atan));
+
 	ImGui::End();
+}
+
+
+// --- カメラを設定したときに呼ばれる ---
+void PlayerCamera::OnSetCamera()
+{
+	// --- ターゲットカメラは角度を使用していないので、どうにかして合わせる ---
+	Vector3 enemyPos = Enemy::Instance().GetPos();
+	Vector3 playerPos = Player::Instance().GetPos();
+	Vector2 vec = enemyPos.xz() - playerPos.xz();
+	float atan = atan2(vec.y, vec.x);
+	atan = DirectX::XMConvertToDegrees(atan);
+	atan += 180.0f; // -180.0 ~ 180.0を0.0 ~ 360.0に
+
+	horizontalAngle = atan;
+	verticalAngle = 30.0f;	// 垂直角度は大体30度
+
+	Vector3 offset = { 0.0f, height, 0.0f };
+	float horizontalTheta = DirectX::XMConvertToRadians(horizontalAngle);
+	float verticalTheta = DirectX::XMConvertToRadians(verticalAngle);
+	Vector3 cameraVec = { cosf(horizontalTheta), sinf(verticalTheta), sinf(horizontalTheta) };
+	position = playerPos + cameraVec * range;
 }
 
 
@@ -125,6 +195,14 @@ void PlayerCamera::OnFixedCursor(float deltaTime)
 	// --- カーソルの差分だけ角度を加算 ---
 	horizontalAngle += -cursorDelta.x * deltaTime * sensitivity;		// 右側がプラスなので符号を反転させる
 	verticalAngle += cursorDelta.y * deltaTime * sensitivity * 2.0f;	// 画面比率を考慮して2倍
+
+
+	// --- 角度を360.0 ~ 0.0の間に制限 ---
+	if (horizontalAngle > 360.0f)
+		horizontalAngle -= 360.0f;
+
+	else if (horizontalAngle < 0.0f)
+		horizontalAngle += 360.0f;
 
 }
 
@@ -160,7 +238,14 @@ void LockOnCamera::Update()
 	case 1:
 	{
 		Vector3 playerPos = Player::Instance().GetPos();	// プレイヤーの位置
-		Vector3 enemyPos = Enemy::Instance().GetPos();		// 目標の位置
+		//Vector3 enemyPos = Enemy::Instance().GetPos();		// 目標の位置
+		prevTarget = target;
+		Vector3 enemyPos = Enemy::Instance().GetBonePosition("atama");
+
+		// --- 前回との移動量が小さかったら更新しない ---
+		//float l = Vector3(prevTarget - enemyPos).Length();
+		//if (l < 0.005f)
+		//	break;
 
 		target = enemyPos;	// 目標
 
@@ -173,8 +258,8 @@ void LockOnCamera::Update()
 		position = target + offset + vec * (length + range);
 
 
-		// --- 今の位置を本来あるべき位置へ補完し続ける ---
-		currentPosition = Vector3::Lerp(currentPosition, position, t);
+		if (position.y < 1.0f)
+			position.y = 1.0f;
 
 		CameraBase::Update();
 

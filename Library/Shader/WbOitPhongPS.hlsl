@@ -1,4 +1,5 @@
 #include "Phong.hlsli"
+#include "ShaderFunctions.hlsli"
 
 SamplerState samplerStates[_samplerNum] : register(s0);
 
@@ -6,12 +7,14 @@ Texture2D diffuseTexture : register(_deffuseTexture);
 Texture2D normalTexture : register(_normalTexture);
 Texture2D specularTexture : register(_specularTexture);
 Texture2D emissiveTexture : register(_emissiveTexture);
+Texture2D occlusionTexture : register(_occlusionTexture);
+Texture2D dissolveTexture : register(_dissolveTexture);
 
 Texture2D shadowTexture[SHADOWMAP_COUNT] : register(_shadowTexture);
 
 struct PSOUT
 {
-    float4 accum : SV_TARGET0; // カラーバッファ
+    float4 accum :  SV_TARGET0; // カラーバッファ
     float4 reveal : SV_TARGET1; // ウェイトバッファ
 };
 PSOUT main(VS_OUT pin)
@@ -21,6 +24,10 @@ PSOUT main(VS_OUT pin)
 #if USE_LinearWorkflow
     diffuseColor.rgb = pow(diffuseColor.rgb, 2.2f);
 #endif
+
+    // ディゾルブ処理
+    dissolve(diffuseColor, dissolveThreshold, edgeThreshold, edgeColor, dissolveTexture, samplerStates[_anisotropicSampler], pin.texcoord);
+
 
 	// ノーマルマップの取得
     float4 normal = normalTexture.Sample(samplerStates[_anisotropicSampler], pin.texcoord);

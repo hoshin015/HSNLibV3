@@ -146,6 +146,12 @@
     <Filter Include="シェーダーファイル\Misc">
       <UniqueIdentifier>{61c2a66f-6026-4327-8c3f-2282ea33ac85}</UniqueIdentifier>
     </Filter>
+    <Filter Include="2_Source\Game\Object\Effect\Breath">
+      <UniqueIdentifier>{a029d405-89d7-45e5-834a-c9d7fbf7af8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\Game\Object\Effect\Special">
+      <UniqueIdentifier>{27edbc6e-beab-4678-9829-cc673174af4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -430,16 +436,13 @@
     <ClCompile Include="Source\UserInterface\DamageTextManager.cpp">
       <Filter>2_Source\UserInterface</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Object\Effect\RockEffect.cpp">
-      <Filter>2_Source\Game\Object\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\Object\Effect\LightningEffect.cpp">
+    <ClCompile Include="Source\Game\Object\Effect\Lightning\LightningEffect.cpp">
       <Filter>2_Source\Game\Object\Effect\Lightning</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Object\Effect\LightningMainMesh.cpp">
+    <ClCompile Include="Source\Game\Object\Effect\Lightning\LightningMainMesh.cpp">
       <Filter>2_Source\Game\Object\Effect\Lightning</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Object\Effect\RockMainMesh.cpp">
+    <ClCompile Include="Source\Game\Object\Effect\Rock\RockMainMesh.cpp">
       <Filter>2_Source\Game\Object\Effect\Rock</Filter>
     </ClCompile>
     <ClCompile Include="Library\Math\Matrix.cpp">
@@ -448,11 +451,38 @@
     <ClCompile Include="Library\Math\Vector.cpp">
       <Filter>1_HSNLib\Math</Filter>
     </ClCompile>
+    <ClCompile Include="Library\Resource\Model\Animator.cpp">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneAnimationTest.cpp">
+      <Filter>2_Source\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="Library\3D\CameraBase.cpp">
       <Filter>1_HSNLib\3D</Filter>
     </ClCompile>
     <ClCompile Include="Source\Camera\CameraDerived.cpp">
       <Filter>2_Source\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\Breath\BreathEffect.cpp">
+      <Filter>2_Source\Game\Object\Effect\Breath</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\Breath\BreathMesh.cpp">
+      <Filter>2_Source\Game\Object\Effect\Breath</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\Special\SpecialEffect.cpp">
+      <Filter>2_Source\Game\Object\Effect\Special</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Graphics\HeatHaze.cpp">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Graphics\ColorFilter.cpp">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UserInterface\UiTitle.cpp">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\Rock\RockEffect.cpp">
+      <Filter>2_Source\Game\Object\Effect\Rock</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -765,16 +795,16 @@
     <ClInclude Include="Source\UserInterface\DamageTextManager.h">
       <Filter>2_Source\UserInterface</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Object\Effect\LightningEffect.h">
+    <ClInclude Include="Source\Game\Object\Effect\Lightning\LightningEffect.h">
       <Filter>2_Source\Game\Object\Effect\Lightning</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Object\Effect\LightningMainMesh.h">
+    <ClInclude Include="Source\Game\Object\Effect\Lightning\LightningMainMesh.h">
       <Filter>2_Source\Game\Object\Effect\Lightning</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Object\Effect\RockEffect.h">
+    <ClInclude Include="Source\Game\Object\Effect\Rock\RockEffect.h">
       <Filter>2_Source\Game\Object\Effect\Rock</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Object\Effect\RockMainMesh.h">
+    <ClInclude Include="Source\Game\Object\Effect\Rock\RockMainMesh.h">
       <Filter>2_Source\Game\Object\Effect\Rock</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\AI\BehaviorTree.h">
@@ -795,6 +825,30 @@
     <ClInclude Include="Source\Camera\CameraDerived.h">
       <Filter>2_Source\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="Library\Resource\Model\Animator.h">
+      <Filter>1_HSNLib\Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneAnimationTest.h">
+      <Filter>2_Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\Breath\BreathEffect.h">
+      <Filter>2_Source\Game\Object\Effect\Breath</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\Breath\BreathMesh.h">
+      <Filter>2_Source\Game\Object\Effect\Breath</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\Special\SpecialEffect.h">
+      <Filter>2_Source\Game\Object\Effect\Special</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Graphics\HeatHaze.h">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Graphics\ColorFilter.h">
+      <Filter>1_HSNLib\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UserInterface\UiTitle.h">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">
@@ -802,7 +856,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Library\Shader\ColorFilter_PS.hlsl">
+    <FxCompile Include="Library\Shader\ColorFilterPS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
     <FxCompile Include="Library\Shader\ShadowMapCasterVS.hlsl">
@@ -973,6 +1027,9 @@
     <FxCompile Include="Library\Shader\UnityPbrPS.hlsl">
       <Filter>シェーダーファイル\PbrIbl</Filter>
     </FxCompile>
+    <FxCompile Include="Library\Shader\HeatHazePS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\Shader\Light.hlsli">
@@ -1043,6 +1100,9 @@
     </None>
     <None Include="Library\Shader\PbrFunctions.hlsli">
       <Filter>シェーダーファイル\PbrIbl</Filter>
+    </None>
+    <None Include="Library\Shader\ShaderFunctions.hlsli">
+      <Filter>シェーダーファイル</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -27,11 +27,13 @@
 #include "../Game/Object/StateMachine/Enemy/Enemy.h"
 #include "../Game/Object/StateMachine/Player/Player.h"
 // --- UserInterface ---
-#include "../Game/Object/Effect/LightningEffect.h"
-#include "../Game/Object/Effect/RockEffect.h"
+#include "../Game/Object/Effect/Lightning/LightningEffect.h"
+#include "../Game/Object/Effect/Rock/RockEffect.h"
 #include "../UserInterface//UiPause.h"
 #include "../UserInterface/DamageTextManager.h"
 #include "../../Library/Math/Math.h"
+#include "../Game/Object/Effect/Breath/BreathEffect.h"
+#include "../Game/Object/Effect/Special/SpecialEffect.h"
 
 
 void SceneTest::Initialize()
@@ -80,6 +82,10 @@ void SceneTest::Initialize()
 	                                            Framework::Instance().GetScreenHeightF());
 	radialBlur = std::make_unique<RadialBlur>(Framework::Instance().GetScreenWidthF(),
 	                                          Framework::Instance().GetScreenHeightF());
+	heatHaze = std::make_unique<HeatHaze>(Framework::Instance().GetScreenWidthF(),
+	                                          Framework::Instance().GetScreenHeightF());
+	colorFilter = std::make_unique<ColorFilter>(Framework::Instance().GetScreenWidthF(),
+	                                          Framework::Instance().GetScreenHeightF());
 
 	// --- skyMap 初期化 ---
 	skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
@@ -109,31 +115,32 @@ void SceneTest::Initialize()
 	Particle::Instance().Initialize();
 
 	// --- Emitter 登録 ---
-	//Emitter* emitter0                           = new Emitter();
-	//emitter0->position                          = {0, 3, 3};
-	//emitter0->emitterData.duration              = 5.0;
-	//emitter0->emitterData.looping               = false;
-	//emitter0->emitterData.burstsTime            = 0.1;
-	//emitter0->emitterData.burstsCount           = 128;
-	//emitter0->emitterData.particleKind          = pk_Dust;
-	//emitter0->emitterData.particleLifeTimeMin   = 1.0f;
-	//emitter0->emitterData.particleLifeTimeMax   = 1.0f;
-	//emitter0->emitterData.particleSpeedMin      = 1.0f;
-	//emitter0->emitterData.particleSpeedMax      = 5.0f;
-	//emitter0->emitterData.particleSizeMin       = {0.1f, 0.1f};
-	//emitter0->emitterData.particleSizeMax       = {0.4f, 0.4f};
-	//emitter0->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
-	//emitter0->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
-	//emitter0->emitterData.particleGravity       = 1;
-	//emitter0->emitterData.particleBillboardType = 0;
-	//emitter0->emitterData.particleTextureType   = 0;
-	//emitter0->emitterData.burstsOneShot   = 1;
-	//EmitterManager::Instance().Register(emitter0);
+	Emitter* emitter0                           = new Emitter();
+	emitter0->position                          = {0, 3, 3};
+	emitter0->emitterData.duration              = 5.0;
+	emitter0->emitterData.looping               = false;
+	emitter0->emitterData.burstsTime            = 0.1;
+	emitter0->emitterData.burstsCount           = 128;
+	emitter0->emitterData.particleKind          = pk_Dust;
+	emitter0->emitterData.particleLifeTimeMin   = 1.0f;
+	emitter0->emitterData.particleLifeTimeMax   = 1.0f;
+	emitter0->emitterData.particleSpeedMin      = 1.0f;
+	emitter0->emitterData.particleSpeedMax      = 5.0f;
+	emitter0->emitterData.particleSizeMin       = {0.1f, 0.1f};
+	emitter0->emitterData.particleSizeMax       = {0.4f, 0.4f};
+	emitter0->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
+	emitter0->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
+	emitter0->emitterData.particleGravity       = 1;
+	emitter0->emitterData.particleBillboardType = 0;
+	emitter0->emitterData.particleTextureType   = 0;
+	emitter0->emitterData.burstsOneShot   = 1;
+	EmitterManager::Instance().Register(emitter0);
 
 	UiPause::Instance().Initialize();
 
 	LightningEffect::Instance().Initialize();
 	RockEffect::Instance().Initialize();
+	BreathEffect::Instance().Initialize();
 }
 
 void SceneTest::Finalize()
@@ -259,7 +266,7 @@ void SceneTest::Update()
 	{
 		Emitter* emitter0 = new Emitter();
 		emitter0->position = { 0, 0, 0 };
-		emitter0->emitterData.duration = 3.0;
+		emitter0->emitterData.duration = 10.0;
 		emitter0->emitterData.looping = false;
 		emitter0->emitterData.burstsTime = 0.05;
 		emitter0->emitterData.burstsCount = 1;
@@ -268,10 +275,10 @@ void SceneTest::Update()
 		emitter0->emitterData.particleLifeTimeMax = 1.0f;
 		emitter0->emitterData.particleSpeedMin = 1.0f;
 		emitter0->emitterData.particleSpeedMax = 1.0f;
-		emitter0->emitterData.particleSizeMin = { 3.0f, 3.0f };
-		emitter0->emitterData.particleSizeMax = { 5.0f, 5.0f };
-		emitter0->emitterData.particleColorMin = { 3.0, 3.0, 3.0, 1 };
-		emitter0->emitterData.particleColorMax = { 3.0, 3.0, 3.0, 1 };
+		emitter0->emitterData.particleSizeMin = { 2.0f, 2.0f };
+		emitter0->emitterData.particleSizeMax = { 2.0f, 2.0f };
+		emitter0->emitterData.particleColorMin = { 30.0, 3.0, 3.0, 1 };
+		emitter0->emitterData.particleColorMax = { 30.0, 3.0, 3.0, 1 };
 		emitter0->emitterData.particleGravity = 0;
 		emitter0->emitterData.particleBillboardType = 0;
 		emitter0->emitterData.particleTextureType = 7;
@@ -285,14 +292,14 @@ void SceneTest::Update()
 		emitter0->emitterData.duration = 3.0;
 		emitter0->emitterData.looping = false;
 		emitter0->emitterData.burstsTime = 0.05;
-		emitter0->emitterData.burstsCount = 12;
+		emitter0->emitterData.burstsCount = 24;
 		emitter0->emitterData.particleKind = pk_novaBurst;
 		emitter0->emitterData.particleLifeTimeMin = 2.0f;
 		emitter0->emitterData.particleLifeTimeMax = 2.0f;
 		emitter0->emitterData.particleSpeedMin = 24.0f;
 		emitter0->emitterData.particleSpeedMax = 36.0f;
-		emitter0->emitterData.particleSizeMin = { 0.3f, 0.3f };
-		emitter0->emitterData.particleSizeMax = { 0.5f, 0.5f };
+		emitter0->emitterData.particleSizeMin = { 0.1f, 0.1f };
+		emitter0->emitterData.particleSizeMax = { 0.3f, 0.3f };
 		emitter0->emitterData.particleColorMin = { 6.0, 0.8, 0.8, 1 };
 		emitter0->emitterData.particleColorMax = { 10.0, 0.8, 0.8, 1 };
 		emitter0->emitterData.particleGravity = 0;
@@ -302,11 +309,67 @@ void SceneTest::Update()
 		EmitterManager::Instance().Register(emitter0);
 	}
 
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F7))
+	{
+		Emitter* emitter0 = new Emitter();
+		emitter0->position = { 0, 0, 0 };
+		emitter0->emitterData.duration = 3.0;
+		emitter0->emitterData.looping = false;
+		emitter0->emitterData.burstsTime = 0.1;
+		emitter0->emitterData.burstsCount = 36;
+		emitter0->emitterData.particleKind = pk_novaStartFire;
+		emitter0->emitterData.particleLifeTimeMin = 0.7f;
+		emitter0->emitterData.particleLifeTimeMax = 0.9f;
+		emitter0->emitterData.particleSpeedMin = 50.0f;
+		emitter0->emitterData.particleSpeedMax = 60.0f;
+		emitter0->emitterData.particleSizeMin = { 17.0f, 17.0f };
+		emitter0->emitterData.particleSizeMax = { 18.0f, 18.0f };
+		emitter0->emitterData.particleColorMin = { 5.0, 0.9, 0.9, 1 };
+		emitter0->emitterData.particleColorMax = { 5.0, 1.0, 1.0, 1 };
+		emitter0->emitterData.particleGravity = 0;
+		emitter0->emitterData.particleBillboardType = 0;
+		emitter0->emitterData.particleTextureType = 9;
+		emitter0->emitterData.burstsOneShot = 1;
+		EmitterManager::Instance().Register(emitter0);
+	}
+
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F8))
+	{
+		Emitter* emitter0 = new Emitter();
+		emitter0->position = { 0, 0, 0 };
+		emitter0->emitterData.duration = 3.0;
+		emitter0->emitterData.looping = false;
+		emitter0->emitterData.burstsTime = 0.025;
+		emitter0->emitterData.burstsCount = 5;
+		emitter0->emitterData.particleKind = pk_fireBreath;
+		emitter0->emitterData.particleLifeTimeMin = 2.0f;
+		emitter0->emitterData.particleLifeTimeMax = 4.0f;
+		emitter0->emitterData.particleSpeedMin = 10.0f;
+		emitter0->emitterData.particleSpeedMax = 15.0f;
+		emitter0->emitterData.particleSizeMin = { 2.0f, 2.0f };
+		emitter0->emitterData.particleSizeMax = { 3.0f, 3.0f };
+		emitter0->emitterData.particleColorMin = { 3.0, 1.0, 1.0, 1 };
+		emitter0->emitterData.particleColorMax = { 3.0, 1.0, 1.0, 1 };
+		emitter0->emitterData.particleGravity = 0;
+		emitter0->emitterData.particleBillboardType = 0;
+		emitter0->emitterData.particleTextureType = 10;
+		EmitterManager::Instance().Register(emitter0);
+	}
+
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F9))
+	{
+		BreathEffect::Instance().Emit();
+	}
+
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F10))
+	{
+		SpecialEffect::Instance().Emit();
+	}
 
 	LightningEffect::Instance().Update();
 	RockEffect::Instance().Update();
-
-
+	BreathEffect::Instance().Update();
+	SpecialEffect::Instance().Update(radialBlur.get(), heatHaze.get());
 
 	int* b = new int();
 }
@@ -344,7 +407,7 @@ void SceneTest::Render()
 
 		for (int i = 0; i < SHADOWMAP_COUNT; i++)
 		{
-			shadow->Activate(i);
+			shadow->Activate(i, camera);
 			// 影を付けたいモデルはここで描画を行う(Render の引数に true をいれる)
 			{
 				// --- animated object ---
@@ -398,7 +461,6 @@ void SceneTest::Render()
 		Player::Instance().DrawDebugPrimitive();
 		DebugPrimitive::Instance().Render();
 
-
 		skyMap->Render();
 	}
 	frameBuffer->DeActivate();
@@ -414,6 +476,7 @@ void SceneTest::Render()
 
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
 		LightningEffect::Instance().Render();
+		BreathEffect::Instance().Render();
 	}
 	wbOitBuffer->DeActivate();
 
@@ -433,31 +496,40 @@ void SceneTest::Render()
 	}
 	frameBuffer->DeActivate();
 
+
+
+	// ポストエフェクトをかけるたびにこれを更新する
+	ID3D11ShaderResourceView* useSrv = frameBuffer->shaderResourceViews[0].Get();
+
+	// ====== colorFilter =====
+	if(colorFilter->GetIsColorFilter())
+	{
+		colorFilter->Make(useSrv);
+		useSrv = colorFilter->GetSrv();
+	}
+
+	// ====== heatHaze =====
+	if(heatHaze->GetIsHeatHaze())
+	{
+		heatHaze->Make(useSrv);
+		useSrv = heatHaze->GetSrv();
+	}
+
 	// ====== ラジアルブラー ======
 	if(radialBlur->GetIsRadial())
 	{
-		radialBlur->Make(frameBuffer->shaderResourceViews[0].Get());
+		radialBlur->Make(useSrv);
+		useSrv = radialBlur->GetSrv();
+	}
 
-		// ====== ブルーム処理しての描画 ======
-		bloom->Make(radialBlur->GetSrv());
-		ID3D11ShaderResourceView* shvs[2] =
-		{
-			radialBlur->GetSrv(),
-			bloom->GetSrv()
-		};
-		bitBlockTransfer->blit(shvs, 0, 2, bloom->GetFinalPassPs());
-	}
-	else
+	// ====== ブルーム処理しての描画 ======
+	bloom->Make(useSrv);
+	ID3D11ShaderResourceView* shvs[2] =
 	{
-		// ====== ブルーム処理しての描画 ======
-		bloom->Make(frameBuffer->shaderResourceViews[0].Get());
-		ID3D11ShaderResourceView* shvs[2] =
-		{
-			frameBuffer->shaderResourceViews[0].Get(),
-			bloom->GetSrv()
-		};
-		bitBlockTransfer->blit(shvs, 0, 2, bloom->GetFinalPassPs());
-	}
+		useSrv,
+		bloom->GetSrv()
+	};
+	bitBlockTransfer->blit(shvs, 0, 2, bloom->GetFinalPassPs());
 
 	// ======　ブルームなしの描画　======　
 
@@ -492,6 +564,8 @@ void SceneTest::Render()
 	shadow->DrawDebugGui();
 	wbOitBuffer->DrawDebugGui();
 	radialBlur->DrawDebugGui();
+	heatHaze->DrawDebugGui();
+	colorFilter->DrawDebugGui();
 
 	camera->DrawDebugGui();
 

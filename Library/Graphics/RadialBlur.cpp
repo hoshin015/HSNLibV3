@@ -56,7 +56,7 @@ void RadialBlur::DrawDebugGui()
 	ImGui::Checkbox("IsRadial", &isRadial);
 	ImGui::SliderFloat2("blurCenter", &radialBlurConstants.blurCenter.x, 0.0f, 1.0f);
 	ImGui::DragFloat("blurPower", &radialBlurConstants.blurPower, 0.01f, 0.0f, 0.2f);
-	ImGui::DragFloat("samplingCount", &radialBlurConstants.samplingCount, 1, 1.0f, 12.0f);
+	ImGui::DragFloat("samplingCount", &radialBlurConstants.samplingCount, 0.1f, 1.0f, 12.0f);
 
 	ImGui::Image(radialBuffer->shaderResourceViews[0].Get(), { 200, 200 });
 

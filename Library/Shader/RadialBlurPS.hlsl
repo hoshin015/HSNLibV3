@@ -1,13 +1,6 @@
 #include "../RegisterNum.h"
 #include "FullScreenQuad.hlsli"
 
-cbuffer LuminanceExtractionConstant : register(_luminanceExtractionConstant)
-{
-    float threshould; // 高輝度抽出のための閾値
-    float intensity; // ブルームの強度
-    float2 lumiPad;
-}
-
 cbuffer RadialBlurConstant : register(_radialBlurConstant)
 {
     float2 blurCenter;      // ブラーの中心座標

@@ -27,7 +27,7 @@ VS_OUT main(VS_IN vin)
     vout.worldTangent = normalize(mul(vin.tangent, world));
     vout.worldTangent.w = sigma;
     
-    vout.texcoord = vin.texcoord;
+    vout.texcoord = vin.texcoord + uvScrollValue;
     vout.color = materialColorKd;
     
     for (int shdowIndex = 0; shdowIndex < SHADOWMAP_COUNT; shdowIndex++)

@@ -3,6 +3,8 @@
 // 初期化処理
 void InputManager::Initialize(HWND hwnd)
 {
+	pHwnd = &hwnd;
+
 	// --- キーボード ---
 	keyboard = std::make_unique<DirectX::Keyboard>();
 
@@ -76,6 +78,7 @@ bool InputManager::GetKeyReleased(DirectX::Keyboard::Keys key)
 
 
 
+
 // ---	マウス ---
 void InputManager::ResetScrollWheelValue()
 {
@@ -107,6 +110,14 @@ void InputManager::SetMouseVisible(bool visible)
 void InputManager::SetMousePositionMode(DirectX::Mouse::Mode mode)
 {
 	mouse->SetMode(mode);
+}
+
+// マウスの座標設定(Window内)
+void InputManager::SetCursorPos(int x, int y)
+{
+	POINT p = { x,y };
+	ClientToScreen(*pHwnd, &p);
+	::SetCursorPos(p.x, p.y);
 }
 
 // ---	ゲームパッド ---

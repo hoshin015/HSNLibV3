@@ -31,6 +31,10 @@ void Scene::DrawMenuBar()
 				{
 					SceneManager::Instance().ChangeScene(new SceneSpriteEditor);
 				}
+				if (ImGui::MenuItem("AnimationTest"))
+				{
+					SceneManager::Instance().ChangeScene(new SceneAnimationTest);
+				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
@@ -39,7 +43,7 @@ void Scene::DrawMenuBar()
 	}
 }
 
-// タイマー定数バッファの更新
+// 繧ｿ繧､繝槭�ｼ螳壽焚繝舌ャ繝輔ぃ縺ｮ譖ｴ譁ｰ
 void Scene::UpdateTimerConstnat()
 {
 	Graphics*            gfx = &Graphics::Instance();

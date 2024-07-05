@@ -6,6 +6,8 @@ Texture2D diffuseTexture : register(_deffuseTexture);
 Texture2D normalTexture : register(_normalTexture);
 Texture2D specularTexture : register(_specularTexture);
 Texture2D emissiveTexture : register(_emissiveTexture);
+Texture2D occlusionTexture : register(_occlusionTexture);
+Texture2D dissolveTexture : register(_dissolveTexture);
 
 Texture2D shadowTexture[SHADOWMAP_COUNT] : register(_shadowTexture);
 

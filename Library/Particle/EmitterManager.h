@@ -28,6 +28,9 @@ public:
 	// 全削除
 	void Clear();
 
+	// 空かどうかのチェック
+	bool Empty() { return emitters.empty(); };
+
 private:
 	std::vector<Emitter*> emitters;
 	std::set<Emitter*> removes;

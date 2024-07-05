@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Base/StaticObject.h"
+#include "../../Base/StaticObject.h"
 #include "../../Library/Easing.h"
 
 

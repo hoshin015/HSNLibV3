@@ -15,6 +15,7 @@
 #include "3D/LineRenderer.h"
 #include "../Source/Scene/SceneManager.h"
 #include "../Source/UserInterface/DamageTextManager.h"
+#include "Graphics/Texture.h"
 
 // 初期化
 bool Framework::Initialize(HINSTANCE hInstance)
@@ -113,7 +114,7 @@ void Framework::Update()
 			SceneManager::Instance().Render();
 
 			// --- バッファ切り替え ---
-			Graphics::Instance().Present();
+			Graphics::Instance().Present(isFullScreen);
 #if USE_IMGUI
 #if SHOW_PERFORMANCE
 			// --- RenderTimer終了  ---
@@ -129,6 +130,9 @@ void Framework::Finalize()
 {
 	// --- EffectManager終了化 ---
 	EffectManager::Instance().Finalize();
+
+	// --- Texture 解放 ---
+	ReleaseAllTextures();
 
 #if USE_IMGUI
 	// --- ImGui終了化 ---

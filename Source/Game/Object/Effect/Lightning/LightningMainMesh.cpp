@@ -1,5 +1,5 @@
 #include "LightningMainMesh.h"
-#include "../../../../Library/Timer.h"
+#include "../../../../../Library/Timer.h"
 
 
 
@@ -39,6 +39,12 @@ void LightningData::LightningBottomUpdate()
 
 	float ePower = 4 - Easing::InCirc(lifeTimer, lifeTime, 2.0f, 0.0f);
 	SetEmissivePower(ePower);
+}
+
+void LightningData::LightningBreathCylinderUpdate()
+{
+	float deltaTime = Timer::Instance().DeltaTime();
+	//position.z += 10 * deltaTime;
 }
 
 

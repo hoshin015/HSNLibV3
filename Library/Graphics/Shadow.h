@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <DirectXMath.h>
 #include "../RegisterNum.h"
+#include "../3D/CameraBase.h"
 
 // シャドウマップのサイズ
 static const UINT SHADOWMAP_SIZE = 2048*2;
@@ -16,7 +17,7 @@ public:
 	~Shadow();
 
 	void Clear(float r = 0, float g = 0, float b = 0, float a = 1, float depth = 1);
-	void Activate(int index);
+	void Activate(int index, CameraBase* camera);
 	void DeActivate();
 
 	// シャドウマップ描画開始

@@ -19,6 +19,7 @@
 #include "../../Library/3D/LineRenderer.h"
 #include "../../Library/3D/LightManager.h"
 #include "../../Library/Graphics/Texture.h"
+#include "../../Library/Resource/Model/Animator.h"
 
 void SceneModelEditor::Initialize()
 {
@@ -232,8 +233,8 @@ void SceneModelEditor::DrawDebugGUI()
 							ImGuiManager::Instance().InputText("vertexShader", material.vertexShaderName);
 							ImGuiManager::Instance().InputText("pixelShader", material.pixelShaderName);
 
-							const char* textureLabelNames[5] = {"Diffuse", "Normal", "Specular", "Emissive", "Occlusion"};
-							for (int textureIndex = 0; textureIndex < 5; textureIndex++)
+							const char* textureLabelNames[6] = {"Diffuse", "Normal", "Specular", "Emissive", "Occlusion", "dissolve"};
+							for (int textureIndex = 0; textureIndex < 6; textureIndex++)
 							{
 								ImGuiManager::Instance().InputText(textureLabelNames[textureIndex], material.textureFilenames[textureIndex]);
 								ImGui::Image(material.shaderResourceViews[textureIndex].Get(), {64, 64});
@@ -283,7 +284,7 @@ void SceneModelEditor::DrawDebugGUI()
 										for (auto& [name, material] : modelObject->GetModel()->GetModelResource()->
 										     GetMaterials()) // ç\ë¢âªë©îõ
 										{
-											for (int textureIndex = 0; textureIndex < 5; textureIndex++)
+											for (int textureIndex = 0; textureIndex < 6; textureIndex++)
 											{
 												if (material.textureFilenames[textureIndex].size() > 0)
 												{
@@ -301,8 +302,8 @@ void SceneModelEditor::DrawDebugGUI()
 													DWORD color = 0xFFFFFFFF;
 													// normal
 													if (textureIndex == 1) color = 0xFFFF7F7F;
-													// emissive
-													if (textureIndex == 3) color = 0x00000000;
+													// emissive & dissolve
+													if (textureIndex == 3 || textureIndex == 5) color = 0x00000000;
 													LoadFbx::Instance().MakeDummyTexture(
 														material.shaderResourceViews[textureIndex].GetAddressOf(),
 														color, 16);

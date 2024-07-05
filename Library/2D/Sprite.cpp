@@ -6,6 +6,7 @@
 #include "../RegisterNum.h"
 #include "../Timer.h"
 #include "../3D/ResourceManager.h"
+#include "../Graphics/Texture.h"
 
 
 // 回転
@@ -69,6 +70,15 @@ Sprite::Sprite(const char* filename, const char* pixelShaderPath, const char* ve
 	if (pixelShaderPath == nullptr) pixelShaderPath = "./Data/Shader/SpritePS.cso";
 	csoName = { pixelShaderPath };
 	CreatePsFromCso(csoName, pixelShader.GetAddressOf());
+
+	//--- 定数バッファ作成 ---
+	bufferDesc = {};
+	bufferDesc.ByteWidth = sizeof(SpriteDissolveConstant);
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	hr = device->CreateBuffer(&bufferDesc, nullptr, spriteDissolveConstantBuffer.ReleaseAndGetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
+
 
 	// リソースの取得
 	spriteResource = ResourceManager::Instance().LoadSpriteResource(filename);
@@ -237,6 +247,10 @@ void Sprite::Render()
 	UINT offset{ 0 };
 	dc->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 
+	//---　< 定数バッファのバインド > ---
+	dc->UpdateSubresource(spriteDissolveConstantBuffer.Get(), 0, 0, &spriteDissolveConstant, 0, 0);
+	dc->PSSetConstantBuffers(_dissolveConstant, 1, spriteDissolveConstantBuffer.GetAddressOf());
+
 	//--- < プリミティブタイプおよにデータ順序に関する情報のバインド > ---
 	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
@@ -249,6 +263,7 @@ void Sprite::Render()
 
 	//--- < シェーダーリソースのバインド > ---
 	dc->PSSetShaderResources(_spriteTexture, 1, spriteResource->GetSrvAddres());
+	dc->PSSetShaderResources(_dissolveTexture, 1, dissolveSrv.GetAddressOf());
 
 	//--- < プリミティブの描画 > ---
 	dc->Draw(4, 0);
@@ -272,5 +287,12 @@ void Sprite::SprTextOut(std::string s, DirectX::XMFLOAT2 pos)
 
 		carriage += size.x;
 	}
+}
+
+// ディゾルブテクスチャの設定
+void Sprite::SetDissolveTexture(const wchar_t* filename)
+{
+	D3D11_TEXTURE2D_DESC texture2dDesc = {};
+	LoadTextureFromFile(filename, dissolveSrv.GetAddressOf(), &texture2dDesc);
 }
 

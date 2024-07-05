@@ -21,6 +21,10 @@ public:
 
 	void SetIsRadial(bool isRadial) { this->isRadial = isRadial; }
 	bool GetIsRadial() { return isRadial; }
+
+	void SetBlurPower(float blurPower) { this->radialBlurConstants.blurPower = blurPower; }
+	void SetSamplingCount(float samplingCount) { this->radialBlurConstants.samplingCount = samplingCount; }
+
 private:
 	bool isRadial = false;
 
@@ -33,7 +37,7 @@ private:
 	// PixelShader
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> radialBlurPixelShader;
 
-	// 高輝度抽出定数バッファ
+	// 定数バッファ
 	struct RadialBlurConstants
 	{
 		DirectX::XMFLOAT2 blurCenter = { 0.5, 0.5 };

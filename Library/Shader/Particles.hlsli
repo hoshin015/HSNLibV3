@@ -279,7 +279,7 @@ void spawn(uint id, inout Particle p)
 			p.position.y = emitterPosition.y + rand(seed) * 1.5;
 
 
-			p.velocity.y = rand(seed) * 6 + 0.5;
+			p.velocity.y = rand(seed) * 8.0;
 
 			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
 
@@ -296,6 +296,84 @@ void spawn(uint id, inout Particle p)
 				p.textureType = 4;
 			if (rand(seed) > 0.66)
 				p.textureType = 5;
+		}
+		break;
+	case pk_novaStartFire:
+		{
+			p.position = emitterPosition;
+
+			p.velocity.y = 0.0;
+
+			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+
+			float r = rand(seed) * 360;
+
+			// x •ûŒü
+			p.velocity.x = cos(r) * particleSpeed;
+
+			// z •ûŒü
+			p.velocity.z = -sin(r) * particleSpeed;
+
+			p.angle = 0;
+		}
+		break;
+	case pk_fireBreath:
+		{
+			p.position = emitterPosition;
+			p.position.y += 3;
+
+			p.angle = rand(seed) * 360;
+
+
+			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+
+			float r = rand(seed) / 3.14 * 0.1;
+
+			// x •ûŒü
+			p.velocity.x = 0;
+
+			// y •ûŒü
+			p.velocity.y = 0;
+
+			// z •ûŒü
+			p.velocity.z = 1 * particleSpeed;
+		}
+		break;
+	case pk_beamCylinder:
+		{
+			p.position = emitterPosition;
+			float r    = rand(seed) * 360 / 3.14;
+
+
+			// x •ûŒü
+			p.position.x = p.position.x + cos(r) * 0.8f;
+
+			// y •ûŒü
+			p.position.y = p.position.y - sin(r) * 0.8f;
+
+
+			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+
+			// x •ûŒü
+			p.velocity.x = 0;
+
+			// y •ûŒü
+			p.velocity.y = 0;
+
+			// z •ûŒü
+			p.velocity.z = 1 * particleSpeed;
+		}
+		break;
+	case pk_titleSelect:
+		{
+			p.position   = emitterPosition;
+			float r      = rand(seed) * 360 / 3.14;
+			float length = rand(seed) * 10;
+
+			// x •ûŒü
+			p.position.x = p.position.x + cos(r) * length;
+			// y •ûŒü
+			p.position.y = p.position.y - sin(r) * length;
 		}
 		break;
 	}

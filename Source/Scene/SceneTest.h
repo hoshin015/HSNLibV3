@@ -9,12 +9,14 @@
 #include "../../Library/Graphics/Shadow.h"
 #include "../../Library/Graphics/WbOitBuffer.h"
 #include "../../Library/Graphics/RadialBlur.h"
+#include "../../Library/Graphics/HeatHaze.h"
+#include "../../Library/Graphics/ColorFilter.h"
 // --- Scene ---
 #include "Scene.h"
 // --- Game ---
 #include "../Game/Object/TestStatic.h"
 #include "../Game/Object/StateMachine/BlendTestPlayer/BlendTestPlayer.h"
-#include "../Game/Object/Effect/LightningMainMesh.h"
+#include "../Game/Object/Effect/Lightning/LightningMainMesh.h"
 // --- Camera ---
 #include "../Camera/CameraDerived.h"
 
@@ -48,6 +50,8 @@ private:
 	std::unique_ptr<Shadow> shadow;
 	std::unique_ptr<WbOitBuffer> wbOitBuffer;
 	std::unique_ptr<RadialBlur> radialBlur;
+	std::unique_ptr<HeatHaze> heatHaze;
+	std::unique_ptr<ColorFilter> colorFilter;
 
 	std::unique_ptr<SkyMap> skyMap;
 

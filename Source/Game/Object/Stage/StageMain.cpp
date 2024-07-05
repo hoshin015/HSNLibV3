@@ -1,10 +1,14 @@
 // --- Game ---
 #include "StageMain.h"
+#include "../../../../Library/Timer.h"
 
 
 // 更新処理
 void StageMain::Update()
 {
+	GetModel()->uvScrollConstant.uvScrollValue.x += 0.01 * Timer::Instance().DeltaTime();
+
+
 	// 姿勢行列更新
 	UpdateTransform();
 }

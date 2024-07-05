@@ -157,7 +157,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
 			{
 				p.position += p.velocity * deltaTime;
 
-				if ((p.lifeTimer / p.lifeTime) < 0.8)
+				if ((p.lifeTimer / p.lifeTime) < 0.9)
 				{
 					p.velocity.y += 8 * deltaTime;
 					p.velocity.x -= (p.velocity.x * 0.66 * deltaTime);
@@ -166,9 +166,35 @@ void main(uint3 DTid : SV_DispatchThreadID)
 				p.lifeTimer -= deltaTime;
 			}
 			break;
+		case pk_novaStartFire:
+			{
+				p.position += p.velocity * deltaTime;
+				p.lifeTimer -= deltaTime;
+			}
+			break;
+		case pk_fireBreath:
+			{
+				p.position += p.velocity * deltaTime;
+				p.lifeTimer -= deltaTime;
+			}
+			break;
+		case pk_beamCylinder:
+			{
+				p.position += p.velocity * deltaTime;
+				p.lifeTimer -= deltaTime;
+			}
+			break;
+		case pk_titleSelect:
+			{
+				p.color.a = (p.lifeTimer / p.lifeTime);
+				p.lifeTimer -= deltaTime;
+			}
+                break;
 		default:
 			break;
 		}
+
+		p.lifeTimer -= deltaTime;
 
 		if (p.lifeTimer <= 0)
 		{

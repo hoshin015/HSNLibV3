@@ -159,6 +159,17 @@ float3 CalcCascadedShadowColorPCFFilter(Texture2D texes[SHADOWMAP_COUNT], Sample
                     factor += step(shadowTexcoord.z - depth, shadowBias[shaodwIndex]);
                 }
             }
+#if 0
+            if (shaodwIndex == 0)
+                return float4(1, 0, 0, 1);
+            if (shaodwIndex == 1)
+                return float4(0, 1, 0, 1);
+            if (shaodwIndex == 2)
+                return float4(0, 0, 1, 1);
+            if (shaodwIndex == 3)
+                return float4(0, 0, 0, 1);
+#endif
+
             // ê[ìxílÇî‰ärÇµÇƒâeÇ©Ç«Ç§Ç©ÇîªíËÇ∑ÇÈ
             shadow = lerp(shadowColor, 1, factor / (PCFKernelSize * PCFKernelSize));
             break;

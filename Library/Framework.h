@@ -33,6 +33,8 @@ private:
 
 	BOOL showCalcFrame = TRUE;
 
+	BOOL isFullScreen = FALSE;
+
 public:
 	int   GetScreenWidth() { return screenWidth; }
 	int   GetScreenHeight() { return screenHeight; }

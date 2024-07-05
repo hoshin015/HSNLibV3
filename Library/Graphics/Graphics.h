@@ -82,7 +82,7 @@ public:
 	void Initialize(HWND hwnd, int windowWidth, int windowHeight);
 
 	// バッファ切り替え
-	void Present();
+	void Present(bool isFullScreen);
 
 	// depthStencilの設定
 	void SetDepthStencil(DEPTHSTENCIL_STATE state);

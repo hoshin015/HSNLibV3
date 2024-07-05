@@ -133,6 +133,42 @@ void main(
 			texcoords[3] = float2(TEX_P_HALF_SIZE * (_x + 1) / TEX_W_SIZE, TEX_P_HALF_SIZE * _y / TEX_H_SIZE);
 		}
 		break;
+	case 9:
+		{
+			// 現在何フレーム目かを計算
+			float animIndex = (1.0 - (p.lifeTimer / p.lifeTime)) * 80.0;
+
+			int _x = animIndex % 20;
+			int _y = animIndex / 20;
+
+			_y += 8; // そもそも4段(1024*4 px)だけ下だからその分
+
+
+			texcoords[0] = float2(TEX_P_HALF_SIZE * _x / TEX_W_SIZE, TEX_P_HALF_SIZE * (_y + 1) / TEX_H_SIZE);
+			texcoords[1] = float2(TEX_P_HALF_SIZE * _x / TEX_W_SIZE, TEX_P_HALF_SIZE * _y / TEX_H_SIZE);
+			texcoords[2] = float2(TEX_P_HALF_SIZE * (_x + 1) / TEX_W_SIZE, TEX_P_HALF_SIZE * (_y + 1) / TEX_H_SIZE);
+			texcoords[3] = float2(TEX_P_HALF_SIZE * (_x + 1) / TEX_W_SIZE, TEX_P_HALF_SIZE * _y / TEX_H_SIZE);
+		}
+		break;
+	case 10:
+		{
+			// 火炎ブレス
+
+			// 現在何フレーム目かを計算
+			float animIndex = (1.0 - (p.lifeTimer / p.lifeTime)) * 40.0;
+
+			int _x = animIndex % 20;
+			int _y = animIndex / 20;
+
+			_y += 10; // そもそも4段(1024*6 px)だけ下だからその分
+
+
+			texcoords[0] = float2(TEX_P_HALF_SIZE * _x / TEX_W_SIZE, TEX_P_HALF_SIZE * (_y + 1) / TEX_H_SIZE);
+			texcoords[1] = float2(TEX_P_HALF_SIZE * _x / TEX_W_SIZE, TEX_P_HALF_SIZE * _y / TEX_H_SIZE);
+			texcoords[2] = float2(TEX_P_HALF_SIZE * (_x + 1) / TEX_W_SIZE, TEX_P_HALF_SIZE * (_y + 1) / TEX_H_SIZE);
+			texcoords[3] = float2(TEX_P_HALF_SIZE * (_x + 1) / TEX_W_SIZE, TEX_P_HALF_SIZE * _y / TEX_H_SIZE);
+		}
+		break;
 	}
 
 

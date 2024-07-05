@@ -30,6 +30,15 @@ public:
 	// 描画
 	void Render();
 
+
+private:
+	bool isStageRender = true;			// タイトルステージ描画フラグ
+	bool isCharacterRender = false;		// タイトルキャラクター描画フラグ
+
+public:
+	bool GetIsStageRender() { return isStageRender; }
+	bool GetIsCharacterRender() { return isCharacterRender; }
+
 private:
 	// タイトルUI状態管理用
 	enum class UiTitleState

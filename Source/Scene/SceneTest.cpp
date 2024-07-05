@@ -18,6 +18,7 @@
 #include "../../Library/Particle/Particle.h"
 #include "../../Library/Particle/EmitterManager.h"
 #include "../../Library/Text/DispString.h"
+#include "../../Library/Math/Math.h"
 // --- Scene ---
 #include "SceneTest.h"
 #include "SceneManager.h"
@@ -26,14 +27,13 @@
 #include "../Game/Object/Stage/StageMain.h"
 #include "../Game/Object/StateMachine/Enemy/Enemy.h"
 #include "../Game/Object/StateMachine/Player/Player.h"
-// --- UserInterface ---
-#include "../Game/Object/Effect/Lightning/LightningEffect.h"
-#include "../Game/Object/Effect/Rock/RockEffect.h"
-#include "../UserInterface//UiPause.h"
-#include "../UserInterface/DamageTextManager.h"
-#include "../../Library/Math/Math.h"
 #include "../Game/Object/Effect/Breath/BreathEffect.h"
 #include "../Game/Object/Effect/Special/SpecialEffect.h"
+#include "../Game/Object/Effect/Lightning/LightningEffect.h"
+#include "../Game/Object/Effect/Rock/RockEffect.h"
+// --- UserInterface ---
+#include "../UserInterface//UiPause.h"
+#include "../UserInterface/DamageTextManager.h"
 
 
 void SceneTest::Initialize()

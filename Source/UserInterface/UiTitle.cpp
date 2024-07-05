@@ -156,6 +156,9 @@ void UiTitle::Update()
 						imgNormal->SetIsRender(true);
 						imgHard->SetIsRender(true);
 
+						// ステージ非描画
+						isStageRender = false;
+
 						titleTimer = 0.0f;
 						state      = UiTitleState::SelectMenuToLevel;
 					}

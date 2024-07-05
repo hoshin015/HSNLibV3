@@ -15,20 +15,30 @@
 
 Enemy::~Enemy()
 {
-	// --- ビヘイビアツリーの終了処理 ---
-	FinalizeBehaviorTree();
 }
-
 
 void Enemy::Initialize()
 {
 	// --- ビヘイビアツリーの初期化   子ノードの追加やアクションノードの設定など ---
 	InitializeBehaviorTree();
 
-	position = { 0, 0, -15 };
+	position = { 0, 0, 0 };
+	Vector3 s = scale;
+	s *= 1.15f;
+	scale = s.vec_;
 
-	//PlayAnimation(12/*Walk*/, true);
-	PlayAnimation(0/*Walk*/, true);
+	foundPlayer = false;
+
+	float theta = DirectX::XMConvertToRadians(rand() % 360);
+	moveTargetPosition_ = { cosf(theta) * wanderRange, 0.0f, sinf(theta) * wanderRange };
+	front = Vector3::Zero_;
+
+	PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
+}
+
+void Enemy::Finalize()
+{
+	FinalizeBehaviorTree();
 }
 
 
@@ -43,26 +53,31 @@ void Enemy::Update()
 	// 姿勢行列更新
 	//UpdateTransform();
 
+	// --- 位置の制限 ---
+	ClampPosition(75.0f);
 
 
-		// スケール変更
-	DirectX::XMMATRIX MS = DirectX::XMMatrixScaling(model->GetModelResource()->GetScale(),
-		model->GetModelResource()->GetScale(),
-		model->GetModelResource()->GetScale());
+	// スケール変更
+	Matrix MS;
+	Vector3 modelScale = Vector3::Unit_ * model->GetModelResource()->GetScale();
+	MS.MakeScaling(modelScale);
 
 	// 軸変換行列
-	DirectX::XMMATRIX C = DirectX::XMLoadFloat4x4(&model->GetModelResource()->GetCoordinateSystemTransform());
+	Matrix C = model->GetModelResource()->GetCoordinateSystemTransform();
 
 	// スケール行列を作成
-	DirectX::XMMATRIX S = DirectX::XMMatrixScaling(GetScaleX(), GetScaleY(), GetScaleZ());
+	Matrix S;
+	S.MakeScaling(GetScale());
 	// 回転行列を作成
-	DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&quaternion_));
+	Matrix R;
+	R.MakeRotationFromQuaternion(quaternion_);
 	// 位置行列を作成
-	DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(GetPosX(), GetPosY(), GetPosZ());
+	Matrix T;
+	T.MakeTranslation(GetPos());
 
 	// ４つの行列を組み合わせ、ワールド行列を作成
-	DirectX::XMMATRIX W = MS * S * R * T * C;
-	DirectX::XMStoreFloat4x4(&transform, W);
+	Matrix W = MS * S * R * T * C;
+	transform = W.mat_;
 }
 
 
@@ -72,67 +87,70 @@ void Enemy::Render(bool isShadow)
 }
 
 
+void Enemy::ShowNode(NodeBase<Enemy>* node, std::string nodeName)
+{
+	ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+	if (ImGui::TreeNode(nodeName.c_str()))
+	{
+		for (auto& childNode : node->children)
+		{
+			std::string name = childNode->GetName();
+			if (activeNode_)
+			{
+				if (name == activeNode_->GetName())
+					name += u8" : 実行中";
+			}
+
+			ShowNode(childNode, name);
+		}
+
+		ImGui::TreePop();
+	}
+}
+
+
 // --- デバッグGui描画 ---
 void Enemy::DrawDebugGui()
 {
-	ImGui::Begin(u8"敵");
+	ImGui::Begin(u8"ビヘイビアツリー");
 
 	// --- 実行中のノード ---
 	ImGui::Text(activeNode_ ? activeNode_->GetName().c_str() : u8"ノードなし");
 
+
 	// --- ビヘイビアツリーのデバッグ ---
 	auto* root = aiTree_->GetRoot();
+	ImGui::SetNextItemOpen(true, ImGuiCond_Once);
 	if (ImGui::TreeNode(root->GetName().c_str()))
 	{
 		for (auto& node : root->children)
 		{
-			std::string nodeName = node->GetName();
-
-			ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-			if (ImGui::TreeNode(nodeName.c_str()))
-			{
-				for (auto* childNode : node->children)
-				{
-					std::string childNodeName = childNode->GetName();
-					if (activeNode_)
-						if (childNodeName == activeNode_->GetName())
-							childNodeName += u8" : 実行中";
-
-					ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-					if (ImGui::TreeNode(childNodeName.c_str()))
-					{
-						for (auto* c : childNode->children)
-						{
-							std::string n = c->GetName();
-							if (activeNode_)
-								if (n == activeNode_->GetName())
-									n += u8" : 実行中";
-
-							ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-							if (ImGui::TreeNode(n.c_str()))
-							{
-								ImGui::TreePop();
-							}
-						}
-
-						ImGui::TreePop();
-					}
-
-				}
-
-				ImGui::TreePop();
-			}
+			ShowNode(node, node->GetName());
 		}
 
 		ImGui::TreePop();
 	}
 
+	ImGui::End();
+
+
+	ImGui::Begin(u8"敵");
+
 	ImGui::DragFloat(u8"索敵距離", &searchRange_);
-	bool IsSearch = SearchPlayer();
-	ImGui::Checkbox(u8"発見", &IsSearch);
+	ImGui::Checkbox(u8"発見", &foundPlayer);
 	ImGui::DragFloat3(u8"スケール", &scale.x);
 	ImGui::DragFloat(u8"歩く速度", &walkSpeed_, 0.01f);
 	ImGui::DragFloat(u8"走る速度", &runSpeed_, 0.01f);
+	ImGui::DragFloat3(u8"徘徊目標", &moveTargetPosition_.x);
+
+	ImGui::Separator();
+	ImGui::DragFloat(u8"突進スピード", &rushSpeed, 0.01f);
+	ImGui::DragFloat(u8"突進終わりスピード", &rushEndSpeed, 0.01f);
+	ImGui::DragFloat(u8"突進溜め時間", &rushChargeTimer, 0.01f);
+	ImGui::DragFloat(u8"突進中の時間", &whileRushTimer, 0.01f);
+
+	ImGui::Separator();
+	ImGui::DragFloat(u8"遠距離範囲", &longRange, 0.01f);
 
 	ImGui::End();
 }
@@ -140,8 +158,11 @@ void Enemy::DrawDebugGui()
 
 void Enemy::DrawDebug()
 {
-	DebugPrimitive::Instance().AddCylinder(position, searchRange_, 1.0f, { 0.3f, 0.3f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddSphere(moveTargetPosition_, 1.0f, { 0.3f, 0.3f, 1.0f, 1.0f });
+	DebugPrimitive::Instance().AddCylinder(position, searchRange_, 1.0f, { 1.0f, 0.0f, 1.0f, 1.0f });
+	DebugPrimitive::Instance().AddCylinder({}, wanderRange, 5.0f, { 0.3f, 0.3f, 1.0f, 1.0f });
+	DebugPrimitive::Instance().AddCylinder(position, shortRange, 5.0f, { 1.0f, 0.0f, 0.0f, 1.0f });
+	DebugPrimitive::Instance().AddCylinder(position, longRange, 5.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
+	DebugPrimitive::Instance().AddSphere(moveTargetPosition_.vec_, 1.0f, { 0.3f, 0.3f, 1.0f, 1.0f });
 }
 
 
@@ -149,17 +170,19 @@ void Enemy::DrawDebug()
 bool Enemy::SearchPlayer()
 {
 	// --- プレイヤーとの距離の計算 ---
-	const DirectX::XMFLOAT3& playerPosition = Player::Instance().GetPos();
-	DirectX::XMFLOAT3 toPlayerVec = playerPosition - position;
-	float length = Float3Length(toPlayerVec);
+	const Vector3& playerPosition = Player::Instance().GetPos();
+	Vector3 toPlayerVec = playerPosition - position;
+	float length = toPlayerVec.Length();
 
 	// --- 距離が探知範囲内なら ---
 	if (length < searchRange_)
 	{
 		// --- 正面ベクトルを取得 ---
-		DirectX::XMVECTOR F = DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&quaternion_)).r[2];
-		DirectX::XMVECTOR V = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&toPlayerVec));
-		float dot = DirectX::XMVector3Dot(F, V).m128_f32[0];
+		Matrix R;
+		R.MakeRotationFromQuaternion(quaternion_);
+		Vector3 front = R.v_[2].xyz();
+		Vector3 vec = Vector3::Normalize(toPlayerVec);
+		float dot = front.Dot(vec);
 
 		if (dot > 0.0f)
 		{
@@ -167,31 +190,49 @@ bool Enemy::SearchPlayer()
 		}
 	}
 
+	// --- 見つからなかった ---
 	return false;
 }
 
 
-void Enemy::RotateToTargetVec(const DirectX::XMFLOAT3& targetVec, float t)
+// --- 目標のベクトルへ回転 ---
+void Enemy::RotateToTargetVec(const DirectX::XMFLOAT3& targetVec, float t, const Vector3* tempFront)
 {
-	DirectX::XMMATRIX R;
-	R = DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&quaternion_));
-	DirectX::XMVECTOR F = R.r[2];	// 正面を取得
+	Matrix R;
+	R.MakeRotationFromQuaternion(quaternion_);
+	Vector3 front = R.v_[2].xyz();	// 正面を取得
 
-	DirectX::XMVECTOR V = DirectX::XMLoadFloat3(&targetVec);
-	DirectX::XMVECTOR C = DirectX::XMVector3Cross(F, V);
+	if (tempFront)
+		front = *tempFront;
+	
+	Vector3 cross = front.Cross(targetVec);
 
-	float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(F, V));
+	float dot = front.Dot(targetVec);
 	if (dot != 1.0f)
 	{
 		float angle = acosf(dot);
 
-		DirectX::XMVECTOR rot = DirectX::XMQuaternionRotationAxis(C, angle);
-		DirectX::XMVECTOR Q = DirectX::XMLoadFloat4(&quaternion_);
+		Quaternion rot;
+		rot.SetRotation(cross, angle);
 		if (angle > 1e-8f)
 		{
-			DirectX::XMVECTOR rotation = DirectX::XMQuaternionMultiply(rot, Q);
-			DirectX::XMStoreFloat4(&quaternion_, DirectX::XMQuaternionSlerp(Q, rotation, t));
+			Quaternion dst = rot * quaternion_;
+			quaternion_ = quaternion_.Lerp(quaternion_, dst, t);
 		}
+	}
+}
+
+
+// --- 位置の制限 ---
+void Enemy::ClampPosition(float range)
+{
+	Vector3 pos = position;
+	float length = pos.Length();
+	if (length > range)
+	{
+		pos.Normalize();
+		pos *= range;
+		position = pos.vec_;
 	}
 }
 
@@ -203,61 +244,101 @@ void Enemy::InitializeBehaviorTree()
 	behaviorData_ = new BehaviorData<Enemy>();
 	aiTree_ = new BehaviorTree<Enemy>();
 
-	// --- ツリーの構築 ---
-	// 								     |---Attack1
-	//		   				|---Attack---|
-	//		   |---Battle---|		     |---Attack2
-	// 		   |			|
-	// 		   |			|
-	//		   |			|---Pursuit
-	// 		   |
-	// Root ---|
-	// 		   |		   |---Wander
-	//		   |---Scout---|
-	// 		   			   |---Idle
-	//
-
 
 	// --- 大元のノード ---
 	aiTree_->AddNode("", "Root", 0, BT_SelectRule::Priority, nullptr, nullptr);
 
-	// --- 戦闘ノード ---
+
+	// --- 最初の発見時 ---
+	aiTree_->AddNode("Root", "Find", 0, BT_SelectRule::Sequence, new EnemyBattleInitJudgment(this), nullptr);
 	{
-		aiTree_->AddNode("Root", "Battle", 0, BT_SelectRule::Priority, new EnemyBattleJudgment(this), nullptr);
+		aiTree_->AddNode("Find", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+		aiTree_->AddNode("Find", "BigRoar", 0, BT_SelectRule::Non, nullptr, new EnemyBigRoarAction(this));
+	}
 
+
+	// --- 戦闘ノード ---
+	aiTree_->AddNode("Root", "Battle", 1, BT_SelectRule::Priority, new EnemyBattleJudgment(this), nullptr);
+	{
 		// --- 攻撃ノード ---
+		aiTree_->AddNode("Battle", "Attack", 0, BT_SelectRule::Random, nullptr, nullptr);
 		{
-			aiTree_->AddNode("Battle", "Attack", 0, BT_SelectRule::Random, new EnemyAttackJudgment(this), nullptr);
-
-			// --- 攻撃の種類 ---
+			// --- 遠距離 ---
+			aiTree_->AddNode("Attack", "LongRange", 0, BT_SelectRule::Random, /*new EnemyLongRangeJudgment(this)*/nullptr, nullptr);
 			{
-				aiTree_->AddNode("Attack", "Attack1", 0, BT_SelectRule::Non, nullptr, new EnemyAttackAction(this));
-				aiTree_->AddNode("Attack", "Attack2", 0, BT_SelectRule::Non, nullptr, new EnemyAttackAction2(this));
+				// --- ブレス → 威嚇 ---
+				aiTree_->AddNode("LongRange", "Bless_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+				{
+					aiTree_->AddNode("Bless_Threat", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+					aiTree_->AddNode("Bless_Threat", "Bless", 0, BT_SelectRule::Non, nullptr, new EnemyBlessAction(this));
+					aiTree_->AddNode("Bless_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
+				}
+
+				// --- 突進 → 威嚇 ---
+				aiTree_->AddNode("LongRange", "Rush_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+				{
+					aiTree_->AddNode("Rush_Threat", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+					aiTree_->AddNode("Rush_Threat", "Rush", 0, BT_SelectRule::Non, nullptr, new EnemyRushAction(this));
+					aiTree_->AddNode("Rush_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
+				}
+
+				// --- 普通に接近 ---
+				aiTree_->AddNode("LongRange", "Pursuit", 0, BT_SelectRule::Non, nullptr, new EnemyPursuitAction(this));
+			}
+
+
+			// --- 近距離 ---
+			aiTree_->AddNode("Attack", "ShortRange", 1, BT_SelectRule::Random, new EnemyShortRangeJudgment(this), nullptr);
+			{
+				// --- 踏みつけ → 威嚇 ---
+				aiTree_->AddNode("ShortRange", "Stamp_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+				{
+					aiTree_->AddNode("Stamp_Threat", "Stamp", 0, BT_SelectRule::Non, nullptr, new EnemyStampAction(this));
+					aiTree_->AddNode("Stamp_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
+				}
+
+				// --- 軸合わせ → 噛みつき ---
+				aiTree_->AddNode("ShortRange", "AxisAlignment_Bite", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+				{
+					aiTree_->AddNode("AxisAlignment_Bite", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+					aiTree_->AddNode("AxisAlignment_Bite", "Bite", 0, BT_SelectRule::Non, nullptr, new EnemyBiteAction(this));
+				}
 			}
 		}
 
+
 		// --- 追跡ノード ---
-		{
-			aiTree_->AddNode("Battle", "Pursuit", 1, BT_SelectRule::Non, nullptr, new EnemyPursuitAction(this));
-		}
+		aiTree_->AddNode("Battle", "Pursuit", 1, BT_SelectRule::Non, nullptr, new EnemyPursuitAction(this));
 	}
 
-	// --- 探索ノード ---
-	{
-		aiTree_->AddNode("Root", "Scout", 0, BT_SelectRule::Sequence, new EnemyScoutJudgment(this), nullptr);
 
-		{
-			aiTree_->AddNode("Scout", "Wander", 0, BT_SelectRule::Non, new EnemyWanderJudgment(this), new EnemyWanderAction(this));
-			aiTree_->AddNode("Scout", "Idle", 0, BT_SelectRule::Non, nullptr, new EnemyIdleAction(this));
-		}
+	// --- 未発見時ノード ---
+	aiTree_->AddNode("Root", "Scout", 2, BT_SelectRule::Sequence, new EnemyScoutJudgment(this), nullptr);
+	{
+		// --- 徘徊 ---
+		aiTree_->AddNode("Scout", "Wander", 0, BT_SelectRule::Non, new EnemyWanderJudgment(this), new EnemyWanderAction(this));
+		
+		// --- 待機 ---
+		aiTree_->AddNode("Scout", "Idle", 0, BT_SelectRule::Non, nullptr, new EnemyIdleAction(this));
 	}
 }
 
 // --- 終了処理 ---
 void Enemy::FinalizeBehaviorTree()
 {
-	delete behaviorData_;
-	delete aiTree_;
+	if(behaviorData_)
+	{
+		delete behaviorData_;
+		behaviorData_ = nullptr;
+	}
+
+	if(aiTree_)
+	{
+		delete aiTree_;
+		aiTree_ = nullptr;
+	}
+
+	activeNode_ = nullptr;
 }
 
 

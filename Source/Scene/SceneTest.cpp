@@ -62,9 +62,17 @@ void SceneTest::Initialize()
 
 	// --- ステージ初期化 ---
 	StageManager& stageManager = StageManager::Instance();
+#if 0
+	StageMain*    stageMain    = new StageMain("Data/Fbx/ExampleStage/ExampleStage.model");
+#else
 	StageMain*    stageMain    = new StageMain("Data/Fbx/StageMain/StageMain.model");
+	stageMain->SetScale({ 4.0f, 4.0f, 4.0f });
+	StageMain* stage = new StageMain("./Data/Fbx/Stage/StageCollision.fbx");
+#endif
 	stageManager.Register(stageMain);
+	stageManager.Register(stage);
 	StageMain* StageFence = new StageMain("Data/Fbx/StageFence/StageFence.model");
+	StageFence->SetScale({ 4.0f, 4.0f, 4.0f });
 	stageManager.Register(StageFence);
 
 	// --- buffer 系初期化 ---
@@ -104,6 +112,7 @@ void SceneTest::Initialize()
 	Enemy::Instance().Initialize();
 	Player::Instance().Initialize();
 	Player::Instance().SetCamera(camera);	// 今のカメラを設定
+	Player::Instance().SetPos({ 0.0f, 0.0f, 100.0f });
 
 
 	Particle::Instance().Initialize();
@@ -142,6 +151,7 @@ void SceneTest::Finalize()
 	StageManager::Instance().Clear();
 	LightManager::Instance().Clear();
 	EmitterManager::Instance().Clear();
+	Enemy::Instance().Finalize();
 }
 
 void SceneTest::Update()
@@ -403,7 +413,9 @@ void SceneTest::Render()
 			{
 				// --- animated object ---
 				shadow->SetAnimatedShader(); // animated object の影描画開始
-				StageManager::Instance().Render(true);
+				//StageManager::Instance().Render(true);
+				StageManager::Instance().Render(0, true);
+				StageManager::Instance().Render(2, true);
 				Enemy::Instance().Render(true);
 
 				Player::Instance().Render(true);
@@ -431,7 +443,9 @@ void SceneTest::Render()
 		gfx->SetBlend(BLEND_STATE::ALPHA);
 
 		// ここに不透明オブジェクトの描画
-		StageManager::Instance().Render();
+		//StageManager::Instance().Render();
+		StageManager::Instance().Render(0, false);
+		StageManager::Instance().Render(2, false);
 
 		//testStatic->Render();
 		Enemy::Instance().Render();
@@ -580,31 +594,31 @@ void SceneTest::DrawDebugGUI()
 
 
 		// --- カメラ関連 ---
-		static bool cameraFlag = false;
+		static bool cameraFlag = true;
 		InputManager& input = InputManager::Instance();
 		if (input.GetKeyPressed(DirectX::Keyboard::Keys::L))
 		{
+			// --- プレイヤーカメラをセット ---
 			if (!cameraFlag)
 			{
 				Vector3 position = camera->GetCurrentPosition();
 				Vector3 target = camera->GetTarget();
 				camera = &playerCamera;
-				camera->Initialize();
-
-				camera->SetCurrentPosition(position);
-				camera->SetTarget(target);
+				playerCamera.OnSetCamera();
 				Player::Instance().SetCamera(camera);
 
 				cameraFlag = !cameraFlag;
 			}
 
+			// --- ロックオンカメラをセット ---
 			else
 			{
-				Vector3 position = camera->GetCurrentPosition();
+				Vector3 position = camera->GetPosition();
 				Vector3 target = camera->GetTarget();
 				camera = &lockOnCamera;
 				camera->Initialize();
 
+				camera->SetPosition(position);
 				camera->SetCurrentPosition(position);
 				camera->SetTarget(target);
 				Player::Instance().SetCamera(camera);
@@ -612,13 +626,6 @@ void SceneTest::DrawDebugGUI()
 				cameraFlag = !cameraFlag;
 			}
 		}
-
-		Vector3 enemyPos = Enemy::Instance().GetPos();
-		Vector3 playerPos = Player::Instance().GetPos();
-		Vector2 vec = enemyPos.xz() - playerPos.xz();
-		float atan = atan2(vec.y, vec.x);
-		atan = DirectX::XMConvertToDegrees(atan);
-		ImGui::Text("Theta : %f", atan);
 	}
 	ImGui::End();
 }

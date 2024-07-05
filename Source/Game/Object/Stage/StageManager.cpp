@@ -21,6 +21,14 @@ void StageManager::Render(bool isShadow)
 	}
 }
 
+void StageManager::Render(const size_t index, const bool isShadow)
+{
+	Stage* stage = stages.at(index);
+
+	stage->Render(isShadow);
+}
+
+
 // ステージ登録
 void StageManager::Register(Stage* stage)
 {
@@ -54,6 +62,29 @@ bool StageManager::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOA
 
 	return result;
 }
+
+
+// --- インデックスで限定 ---
+bool StageManager::RayCast(const size_t index, const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
+{
+	bool result = false;
+
+	hit.distance = FLT_MAX;
+
+	Stage* stage = stages.at(index);
+	HitResult hitResult;
+	if (stage->RayCast(start, end, hitResult))
+	{
+		if (hit.distance > hitResult.distance)
+		{
+			hit = hitResult;
+			result = true;
+		}
+	}
+
+	return result;
+}
+
 
 void StageManager::DrawDebugImGui()
 {

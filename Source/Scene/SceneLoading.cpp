@@ -13,7 +13,7 @@ void SceneLoading::Initialize()
 	thread = new std::thread(LoadingThread, this);
 
 	// ƒXƒŒƒbƒh‚ÌŠÇ—‚ð•úŠü
-	thread->detach();
+	//thread->detach();
 }
 
 void SceneLoading::Finalize()

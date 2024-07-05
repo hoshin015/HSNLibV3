@@ -11,6 +11,7 @@
 #include "../Enemy/Enemy.h"
 #include "../../Library/ImGui/ConsoleData.h"
 #include "../../../../../Library/Particle/EmitterManager.h"
+#include "../../../../../Library/Resource/Model/Animator.h"
 #include "../../../../UserInterface/DamageTextManager.h"
 
 Player::Player(const char* filePath) : AnimatedObject(filePath)
@@ -23,7 +24,67 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerWalkState(this));
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerRunState(this));
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerAttackState(this));
-	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerDrinkState(this));
+	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerDodgeState(this));
+
+	auto& animation = model->GetModelResource()->GetAnimationClips();
+
+	Animator::Motion idle;
+	idle.motion = &animation[2];
+	idle.animationSpeed = 0.2f;
+
+	Animator::Motion walkMotion;
+	walkMotion.motion = &animation[4];
+	walkMotion.animationSpeed = 0.3f;
+	walkMotion.threshold = { 1,0 };
+
+	Animator::Motion runMotion;
+	runMotion.motion = &animation[3];
+	runMotion.animationSpeed = 0.2f;
+	runMotion.threshold = { 1,0 };
+
+	Animator::BlendTree walkTree;
+	walkTree.motions.emplace_back(idle);
+	walkTree.motions.emplace_back(walkMotion);
+	walkTree.maxSeconds = 1;
+	walkTree.parameters[0] = "moveX";
+	walkTree.parameters[1] = "moveY";
+
+	Animator::BlendTree runTree;
+	runTree.motions.emplace_back(idle);
+	runTree.motions.emplace_back(runMotion);
+	runTree.maxSeconds = 1;
+	runTree.parameters[0] = "moveX";
+	runTree.parameters[1] = "moveY";
+
+	Animator::State walkState;
+	walkState.object = Animator::MakeObjPointer(walkTree);
+	walkState.type = Animator::State::BLEND_TREE;
+	walkState.transitions.emplace_back(
+		STATE_FUNC(animator) {
+		if (animator.GetParameter<bool>("run"))
+			return &animator.GetState("run");
+		return nullptr;
+		}
+	);
+
+	Animator::State runState;
+	runState.object = Animator::MakeObjPointer(runTree);
+	runState.type = Animator::State::BLEND_TREE;
+	runState.transitions.emplace_back(
+		STATE_FUNC(animator) {
+		if (!animator.GetParameter<bool>("run"))
+			return &animator.GetState("walk");
+		return nullptr;
+		}
+	);
+
+	animator.AddState("walk", walkState);
+	animator.AddState("run", runState);
+	animator.SetParameter("run", false);
+	animator.SetParameter("moveX", 0.f);
+	animator.SetParameter("moveY", 0.f);
+	animator.SetModelSceneView(&model->GetModelResource()->GetSceneView());
+	animator.SetEntryState("walk");
 }
 
 void Player::Initialize()
@@ -56,6 +117,8 @@ void Player::Update()
 
 void Player::Render(bool isShadow)
 {
+	// Animatorを使ったモーション
+	ModelResource::KeyFrame keyFrame = animator.PlayAnimation(Timer::Instance().DeltaTime());
 	model->Render(transform, &keyFrame, isShadow);
 }
 
@@ -66,60 +129,97 @@ void Player::DrawDebugImGui(int number)
 		ImGui::DragFloat("emissive", &GetModel()->data.emissivePower, 0.01f);
 		ImGui::SliderFloat("roughness", &GetModel()->data.roughnessPower, -1.0f, 1.0f);
 		ImGui::SliderFloat("metalness", &GetModel()->data.metalnessPower, -1.0f, 1.0f);
+
+		//ImGui::ShowDemoWindow();
+		if(ImGui::CollapsingHeader(u8"ステータス")) {
+			if(ImGui::TreeNode(u8"能力値")) {
+				ImGui::DragFloat(u8"体力", &ability.hp, 1);
+				ImGui::DragFloat(u8"攻撃力", &ability.strength, 0.1f);
+				ImGui::DragFloat(u8"移動速度", &ability.moveSpeed, 0.1f);
+
+				ImGui::TreePop();
+			}
+
+			if(ImGui::TreeNode(u8"定数値")) {
+				ImGui::DragFloat(u8"最大体力", &constant.maxHp);
+				ImGui::DragFloat(u8"ダッシュ移行時間", &constant.shiftDashTimer,0.01f);
+				ImGui::DragFloat(u8"ダッシュ倍率", &constant.dashPower,0.01f);
+
+				static float rate = constant.dashDeadZone * 100;
+				if(ImGui::DragFloat(u8"ダッシュデットゾーン", &rate,1.f,0,100,"%.0f%%"))
+					constant.dashDeadZone = rate / 100;
+
+				ImGui::TreePop();
+			}
+
+		}
 	}
 	ImGui::End();
+
+	animator.AnimationEditor();
 }
 
 // 入力データ取得
 void Player::Input()
 {
-	InputManager* input = &InputManager::Instance();
+	InputManager& input = InputManager::Instance();
 
 	// --- 移動 ---
-	DirectX::XMFLOAT2 inputMoveData;
-	inputMoveData.x = input->GetKeyPress(Keyboard::D) - input->GetKeyPress(Keyboard::A);
-	inputMoveData.y = input->GetKeyPress(Keyboard::W) - input->GetKeyPress(Keyboard::S);
+	Vector2 inputMoveData;
+	inputMoveData.x = input.GetKeyPress(Keyboard::D) - input.GetKeyPress(Keyboard::A);
+	inputMoveData.y = input.GetKeyPress(Keyboard::W) - input.GetKeyPress(Keyboard::S);
 
 	// コントローラー対応
-	if (input->IsGamePadConnected() && inputMoveData.x == 0 && inputMoveData.y == 0)
+	if (input.IsGamePadConnected() && inputMoveData.x == 0 && inputMoveData.y == 0)
 	{
-		inputMoveData.x = input->GetThumSticksLeftX();
-		inputMoveData.y = input->GetThumSticksLeftY();
+		inputMoveData.x = input.GetThumSticksLeftX();
+		inputMoveData.y = input.GetThumSticksLeftY();
 	}
-	inputMap["Move"] = inputMoveData;
+
+	if (inputMoveData.LengthSq() > 1)inputMoveData.Normalize();
+
+	inputMap["Move"] = inputMoveData.vec_;
+	animator.SetParameter("moveX", inputMoveData.Length());
 
 	// --- 走り ---
-	bool inputRunData;
-	inputRunData = InputManager::Instance().GetKeyPress(DirectX::Keyboard::LeftShift);
+	static bool  inputRunData = false;
+	static float timer        = 0;
 
-	// コントローラー対応
-	if (input->IsGamePadConnected() && !inputRunData)
-	{
-		inputRunData = input->GetGamePadButtonPress(GAMEPADBUTTON_STATE::rightShoulder);
-	}
+	if (inputMoveData.Length() > constant.dashDeadZone) timer += Timer::Instance().DeltaTime();
+	else timer = 0;
+
+	inputRunData = timer >= constant.shiftDashTimer;
 	inputMap["Run"] = inputRunData;
+	animator.SetParameter("run", inputRunData);
 
 	// --- 攻撃 ---
-	bool inputAttackData;
-	inputAttackData = InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter);
+	bool inputAttackData = input.GetKeyPressed(DirectX::Keyboard::Enter);
 
 	// コントローラー対応
-	if (input->IsGamePadConnected() && !inputAttackData)
+	if (input.IsGamePadConnected() && !inputAttackData)
 	{
-		inputAttackData = input->GetGamePadButtonPressed(GAMEPADBUTTON_STATE::y);
+		inputAttackData = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::y);
 	}
 	inputMap["Attack"] = inputAttackData;
 
-	// --- ドリンク ---
-	bool inputDrinkData;
-	inputDrinkData = InputManager::Instance().GetKeyPressed(DirectX::Keyboard::E);
+	// --- 回避 ---
+	bool dodge = input.GetKeyPressed(DirectX::Keyboard::Space);
 
-	// コントローラー対応
-	if (input->IsGamePadConnected() && !inputDrinkData)
-	{
-		inputDrinkData = input->GetGamePadButtonPressed(GAMEPADBUTTON_STATE::x);
-	}
-	inputMap["Drink"] = inputDrinkData;
+	if (input.IsGamePadConnected() && !dodge)
+		dodge = input.GetGamePadButtonPress(GAMEPADBUTTON_STATE::a);
+
+	inputMap["Dodge"] = dodge;
+	if (dodge)inputMap["DodgeMove"] = inputMoveData.vec_;
+
+	// // --- ドリンク ---
+	// bool inputDrinkData = InputManager::Instance().GetKeyPressed(DirectX::Keyboard::E);
+	//
+	// // コントローラー対応
+	// if (input.IsGamePadConnected() && !inputDrinkData)
+	// {
+	// 	inputDrinkData = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::x);
+	// }
+	// inputMap["Drink"] = inputDrinkData;
 }
 
 // 移動量計算
@@ -129,44 +229,66 @@ void Player::CalcWalkVelocity()
 	float deltaTime = Timer::Instance().DeltaTime();
 
 #if 0
-	velocity.x += Camera::Instance().GetFront().x * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * deltaTime;
-	velocity.z += Camera::Instance().GetFront().z * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * deltaTime;
+	velocity.x += Camera::Instance().GetFront().x * GetInputMap<DirectX::XMFLOAT2>("Move").y * ability.moveSpeed * deltaTime;
+	velocity.z += Camera::Instance().GetFront().z * GetInputMap<DirectX::XMFLOAT2>("Move").y * ability.moveSpeed * deltaTime;
 
-	velocity.x += Camera::Instance().GetRight().x * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * deltaTime;
-	velocity.z += Camera::Instance().GetRight().z * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * deltaTime;
+	velocity.x += Camera::Instance().GetRight().x * GetInputMap<DirectX::XMFLOAT2>("Move").x * ability.moveSpeed * deltaTime;
+	velocity.z += Camera::Instance().GetRight().z * GetInputMap<DirectX::XMFLOAT2>("Move").x * ability.moveSpeed * deltaTime;
 #else
-	velocity.x += camera->GetFrontVec().x * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * deltaTime;
-	velocity.z += camera->GetFrontVec().z * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * deltaTime;
+	const XMFLOAT2 move = GetInputMap<XMFLOAT2>("Move");
+	velocity.x += camera->GetFrontVec().x * move.y * ability.moveSpeed * deltaTime;
+	velocity.z += camera->GetFrontVec().z * move.y * ability.moveSpeed * deltaTime;
 
-	velocity.x += camera->GetRightVec().x * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * deltaTime;
-	velocity.z += camera->GetRightVec().z * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * deltaTime;
+	velocity.x += camera->GetRightVec().x * move.x * ability.moveSpeed * deltaTime;
+	velocity.z += camera->GetRightVec().z * move.x * ability.moveSpeed * deltaTime;
 #endif
 }
 
 // 走り移動量計算
 void Player::CalcRunVelocity()
 {
-	float runPower = 3.0f;
+	float runPower = constant.dashPower;
 
 	// カメラの方向に対応する移動
 	float deltaTime = Timer::Instance().DeltaTime();
 #if 0
-	velocity.x += Camera::Instance().GetFront().x * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * runPower *
+	velocity.x += Camera::Instance().GetFront().x * GetInputMap<DirectX::XMFLOAT2>("Move").y * ability.moveSpeed * runPower *
 		deltaTime;
-	velocity.z += Camera::Instance().GetFront().z * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * runPower *
+	velocity.z += Camera::Instance().GetFront().z * GetInputMap<DirectX::XMFLOAT2>("Move").y * ability.moveSpeed * runPower *
 		deltaTime;
 
-	velocity.x += Camera::Instance().GetRight().x * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * runPower *
+	velocity.x += Camera::Instance().GetRight().x * GetInputMap<DirectX::XMFLOAT2>("Move").x * ability.moveSpeed * runPower *
 		deltaTime;
-	velocity.z += Camera::Instance().GetRight().z * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * runPower *
+	velocity.z += Camera::Instance().GetRight().z * GetInputMap<DirectX::XMFLOAT2>("Move").x * ability.moveSpeed * runPower *
 		deltaTime;
 
 #else
-	velocity.x += camera->GetFrontVec().x * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * runPower * deltaTime;
-	velocity.z += camera->GetFrontVec().z * GetInputMap<DirectX::XMFLOAT2>("Move").y * moveSpeed * runPower * deltaTime;
+	const XMFLOAT2& move = GetInputMap<XMFLOAT2>("Move");
+	velocity.x += camera->GetFrontVec().x * move.y * ability.moveSpeed * runPower * deltaTime;
+	velocity.z += camera->GetFrontVec().z * move.y * ability.moveSpeed * runPower * deltaTime;
 
-	velocity.x += camera->GetRightVec().x * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * runPower * deltaTime;
-	velocity.z += camera->GetRightVec().z * GetInputMap<DirectX::XMFLOAT2>("Move").x * moveSpeed * runPower * deltaTime;
+	velocity.x += camera->GetRightVec().x * move.x * ability.moveSpeed * runPower * deltaTime;
+	velocity.z += camera->GetRightVec().z * move.x * ability.moveSpeed * runPower * deltaTime;
+#endif
+}
+
+void Player::CalcDodgeVelocity() {
+#if 1 // TODO::RootMotionを使うなら消す
+	float dt = Timer::Instance().DeltaTime();
+	const XMFLOAT2& move = GetInputMap<XMFLOAT2>("DodgeMove");
+	Vector3 vec;
+
+	vec.x += camera->GetFrontVec().x * move.y;
+	vec.z += camera->GetFrontVec().z * move.y;
+	vec.x += camera->GetRightVec().x * move.x;
+	vec.z += camera->GetRightVec().z * move.x;
+
+	vec *= ability.moveSpeed * constant.dodgePower * dt;
+
+	velocity += vec.vec_;
+#else
+	velocity += animator.GetVelocity();
+
 #endif
 }
 

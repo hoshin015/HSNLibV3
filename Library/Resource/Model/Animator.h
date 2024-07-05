@@ -15,7 +15,7 @@ public:
 	struct Motion {
 		ModelResource::Animation* motion         = nullptr;
 		DirectX::XMFLOAT2         threshold      = {};
-		float                     animationSpeed = 0;
+		float                     animationSpeed = 1;
 		bool                      endMotion      = false;
 	};
 

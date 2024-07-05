@@ -2,6 +2,7 @@
 
 #include <variant>
 #include "../StateMachine.h"
+#include "../../../../../Library/Resource/Model/Animator.h"
 #include "../../Source/Game/Object/Base/AnimatedObject.h"
 
 #include "../../Library/3D/CameraBase.h"
@@ -18,6 +19,26 @@ enum class PlayerAnimNum
 
 class Player : public AnimatedObject
 {
+public:
+
+	// ゲーム中変動する値
+	struct AbilityStatus {
+		float hp        = 10;
+		float strength  = 1;
+		float moveSpeed = 3;
+	};
+
+	// 外部要因(ImGuiとか)でのみ変動する値
+	struct ConstantStatus {
+		float maxHp = 10;
+		float shiftDashTimer = 0.4f;
+		float dashPower = 3;
+		float dashDeadZone = 0.7f;
+		float dodgePower = 5;
+	};
+
+private:
+
 	Player(const char* filePath);
 
 	~Player() override
@@ -42,6 +63,9 @@ public:
 	void CalcWalkVelocity();
 	// 走り移動量計算
 	void CalcRunVelocity();
+	// 回避
+	void CalcDodgeVelocity();
+
 	// 移動している方向に向く
 	void Turn();
 	// 移動
@@ -64,6 +88,7 @@ public:
 		Walk,
 		Run,
 		Attack,
+		Dodge,
 		Drink,
 	};
 
@@ -71,7 +96,7 @@ private:
 	std::unique_ptr<StateMachine<Player>> stateMachine;
 
 	DirectX::XMFLOAT3 velocity  = {0, 0, 0};
-	float             moveSpeed = 3.0f; // プレイヤーが１秒間に加速する加速度
+	//float             moveSpeed = 3.0f; // プレイヤーが１秒間に加速する加速度
 	float             rot       = 720;  // プレイヤーが１秒間に回転する角度
 
 	// 入力データ保管用
@@ -81,6 +106,12 @@ private:
 	// --- カメラのポインタ ---
 	CameraBase* camera;
 
+	Animator animator;
+
+	// ステータス
+	AbilityStatus ability;
+	ConstantStatus constant;
+
 public:
 	StateMachine<Player>* GetStateMachine() { return stateMachine.get(); }
 
@@ -89,8 +120,13 @@ public:
 
 
 	template <typename T>
-	T GetInputMap(std::string str)
+	const T& GetInputMap(const std::string& str)
 	{
 		return std::get<T>(inputMap[str]);
 	}
+
+	void SetInputMap(const std::string& str, const inputData& data) { inputMap[str] = data; }
+
+	AbilityStatus& AbilityStatus() { return ability; }
+	ConstantStatus& ConstantStatus() { return constant; }
 };

@@ -73,22 +73,22 @@ void SceneAnimationTest::Initialize() {
  		return nullptr;
  	}
  );
-	//
-	// Animator::Motion attackMoiton;
-	// attackMoiton.animationSpeed = 1;
-	// attackMoiton.motion         = &animations[0];
-	//
-	// Animator::State attack;
-	// attack.object = Animator::MakeObjPointer(attackMoiton);
-	// attack.type   = Animator::State::MOTION;
-	// attack.transitions.emplace_back(
-	// 	STATE_FUNC(animator) {
-	// 		if (animator.GetState("attack").GetObj<Animator::Motion>()->endMotion) {
-	// 			return &animator.GetState("rootMotion");
-	// 		}
-	// 		return nullptr;
-	// 	}
-	// );
+
+	Animator::Motion attackMoiton;
+	attackMoiton.animationSpeed = 1;
+	attackMoiton.motion         = &animations[0];
+
+	Animator::State attack;
+	attack.object = Animator::MakeObjPointer(attackMoiton);
+	attack.type   = Animator::State::MOTION;
+	attack.transitions.emplace_back(
+		STATE_FUNC(animator) {
+			if (animator.GetState("attack").GetObj<Animator::Motion>()->endMotion) {
+				return &animator.GetState("move");
+			}
+			return nullptr;
+		}
+	);
 
 	_animator.SetModelSceneView(&_model->GetModelResource()->GetSceneView());
 	_animator.SetParameter("x", 0.f);
@@ -98,7 +98,7 @@ void SceneAnimationTest::Initialize() {
 	_animator.EnableRootMotion("kosi");
 	//_animator.AddState("move",move);
 	_animator.AddState("rootMotion", rootMotion);
-	//_animator.AddState("attack", attack);
+	_animator.AddState("attack", attack);
 	_animator.SetEntryState("rootMotion");
 
 	Camera::Instance().SetLookAt(
@@ -121,6 +121,7 @@ void SceneAnimationTest::Initialize() {
 	_transform.scale    = {1.f, 1.f, 1.f};
 	_transform.position = {0, 0, 0};
 	XMStoreFloat4(&_transform.quaternion, XMQuaternionRotationRollPitchYaw(0, 0, 0));
+
 }
 
 void SceneAnimationTest::Finalize() { LightManager::Instance().Clear(); }
@@ -129,6 +130,7 @@ void SceneAnimationTest::Update() {
 #if USE_IMGUI
 	ImGuiManager::Instance().Update();
 #endif
+
 
 	InputManager& input = InputManager::Instance();
 

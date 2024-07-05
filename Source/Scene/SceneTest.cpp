@@ -361,8 +361,6 @@ void SceneTest::Update()
 	RockEffect::Instance().Update();
 	BreathEffect::Instance().Update();
 	SpecialEffect::Instance().Update(radialBlur.get(), heatHaze.get());
-
-	int* b = new int();
 }
 
 void SceneTest::Render()

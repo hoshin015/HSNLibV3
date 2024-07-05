@@ -116,7 +116,8 @@ void PlayerWalkState::Execute()
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Drink));
 	}
 
-	
+	if (owner->GetInputMap<bool>("Dodge"))
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Dodge));
 
 	// ‰ñ“]
 	owner->Turn();
@@ -166,6 +167,9 @@ void PlayerRunState::Execute()
 	{
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Drink));
 	}
+
+	if (owner->GetInputMap<bool>("Dodge"))
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Dodge));
 
 	// ‰ñ“]
 	owner->Turn();
@@ -238,4 +242,22 @@ void PlayerDrinkState::Execute()
 
 void PlayerDrinkState::Exit()
 {
+}
+
+void PlayerDodgeState::Enter() {
+	
+}
+
+void PlayerDodgeState::Execute() {
+	owner->CalcDodgeVelocity();
+
+	// ‰ñ“]
+	owner->Turn();
+
+	// ˆÚ“®
+	owner->Move();
+}
+
+void PlayerDodgeState::Exit() {
+	
 }

@@ -8,13 +8,13 @@ void BreathEffect::Initialize()
 {
 	crossPlaneObject = std::make_unique<BreathCrossPlane>("Data/Fbx/Breath/CrossPlane/CrossPlane.model");
 	crossPlaneObject->SetPos({0, 3, 0});
-	crossPlaneObject->SetScale({2, 80, 2});
+	crossPlaneObject->SetScale({6, 80, 6});
 	crossPlaneObject->SetAngle({90, 0, 0});
 
 
 	cylinderObject = std::make_unique<BreathCylinder>("Data/Fbx/Breath/Cylinder/Cylinder.model");
 	cylinderObject->SetPos({0, 3, 0});
-	cylinderObject->SetScale({1.2, 80, 1.2});
+	cylinderObject->SetScale({3.6, 80, 3.6});
 	cylinderObject->SetAngle({90, 0, 0});
 	cylinderObject->GetModel()->dissolveConstant.dissolveThreshold = 0.2f;
 	cylinderObject->GetModel()->dissolveConstant.edgeThreshold     = 0.3f;
@@ -88,20 +88,22 @@ void BreathEffect::LightningGenerateUpdate()
 			float cos_r = cosf(r);
 			float sin_r = -sinf(r);
 
-			float length = static_cast<float>(rand() % 50);
+			float length = static_cast<float>(rand() % 75);
+
+			float rLength = 2.1f;
 
 			DirectX::XMFLOAT3 randomPos;
-			randomPos.x = (right.x * cos_r * 0.7f) + (up.x * length) + (forward.x * sin_r * 0.7f);
-			randomPos.y = (right.y * cos_r * 0.7f) + (up.y * length) + (forward.y * sin_r * 0.7f);
-			randomPos.z = (right.z * cos_r * 0.7f) + (up.z * length) + (forward.z * sin_r * 0.7f);
+			randomPos.x = (right.x * cos_r * rLength) + (up.x * length) + (forward.x * sin_r * rLength);
+			randomPos.y = (right.y * cos_r * rLength) + (up.y * length) + (forward.y * sin_r * rLength);
+			randomPos.z = (right.z * cos_r * rLength) + (up.z * length) + (forward.z * sin_r * rLength);
 
 			l->SetPos({position.x + randomPos.x, position.y + randomPos.y, position.z + randomPos.z});
 
 			float life = rand() % 1 * 0.1f + 0.1f;
 			l->SetLifeTime(life);
-			float s = (rand() % 1) * 0.5f + 0.05f;
-			l->SetScale({s + 0.025f, s, s});
-
+			float s = (rand() % 1) * 1.5f + 0.15f;
+			l->SetScale({s + 0.075f, s, s});
+			 
 			float randomR = rand() % 180;
 
 

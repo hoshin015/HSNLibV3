@@ -36,12 +36,12 @@ private:
 	Easing::EasingValue crossPlaneStartScale =
 	{
 		0.0f, 0.15f,
-		0.0f,2.0f
+		0.0f,6.0f
 	};
 	Easing::EasingValue crossPlaneEndScale =
 	{
 		2.5f, 3.0f,
-		2.0f,0.0f
+		6.0f,0.0f
 	};
 };
 
@@ -64,12 +64,12 @@ private:
 	Easing::EasingValue cylinderStartScale =
 	{
 		0.0f, 0.25f,
-		0.0f,1.2f
+		0.0f,3.6f
 	};
 	Easing::EasingValue cylinderEndScale =
 	{
 		2.5f, 3.0f,
-		1.2f,0.0f
+		3.6f,0.0f
 	};
 	Easing::EasingValue cylinderEndDissolveThread =
 	{

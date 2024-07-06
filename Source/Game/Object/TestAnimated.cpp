@@ -2,8 +2,6 @@
 
 void TestAnimated::Update()
 {
-	position = {0, 0, 5};
-
 	// アニメーション更新
 	UpdateAnimation();
 
@@ -14,4 +12,9 @@ void TestAnimated::Update()
 void TestAnimated::Render(bool isShadow)
 {
 	model->Render(transform, &keyFrame, isShadow);
+}
+
+void TestAnimated::NoAnimRender(bool isShadow)
+{
+	model->Render(transform, nullptr, isShadow);
 }

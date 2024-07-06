@@ -5,11 +5,15 @@
 #include "../../Library/Input/InputManager.h"
 #include "../../Library/RegisterNum.h"
 #include "../../Library/Particle/Particle.h"
+#include "../../Library/3D/LightManager.h"
 
 
 void UiTitle::Initialize()
 {
 	state = UiTitleState::Title;
+	isStageRender = true;
+	isCharacterRender = false;
+
 
 	imgPressAnyButton = std::make_unique<Sprite>("Data/Texture/Text/PressAnyButton.sprite");
 	imgPressAnyButton->UpdateAnimation();
@@ -158,6 +162,16 @@ void UiTitle::Update()
 
 						// ステージ非描画
 						isStageRender = false;
+						// player描画
+						isCharacterRender = true;
+
+						// ライト設定
+						//LightManager::Instance().Clear();
+						//Light* directionLight = new Light(LightType::Directional);
+						//directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
+						//directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
+						//LightManager::Instance().Register(directionLight);
+						//LightManager::Instance().SetAmbientColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 
 						titleTimer = 0.0f;
 						state      = UiTitleState::SelectMenuToLevel;

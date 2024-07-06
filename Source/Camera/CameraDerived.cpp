@@ -21,9 +21,9 @@ void PlayerCamera::Initialize()
 
 	// Ÿè‚É range •Ï‚¦‚Ä‚Ü‚·
 	//range = 13.0f;
-	range = 22.0f;
+	range = 28.0f;
 
-	height = 3.0f;
+	height = 6.0f;
 	fixedCursor = true;
 	
 	// --- ƒJƒƒ‰ˆÊ’u‚Æ–Ú•W‚Ìİ’è ---

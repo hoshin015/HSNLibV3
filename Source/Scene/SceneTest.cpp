@@ -61,18 +61,19 @@ void SceneTest::Initialize()
 
 
 	// --- ステージ初期化 ---
+	float stageScale = 4.0f;
 	StageManager& stageManager = StageManager::Instance();
 #if 0
 	StageMain*    stageMain    = new StageMain("Data/Fbx/ExampleStage/ExampleStage.model");
 #else
 	StageMain*    stageMain    = new StageMain("Data/Fbx/StageMain/StageMain.model");
-	stageMain->SetScale({ 4.0f, 4.0f, 4.0f });
+	stageMain->SetScale({ stageScale, stageScale, stageScale });
 	StageMain* stage = new StageMain("./Data/Fbx/Stage/StageCollision.fbx");
 #endif
 	stageManager.Register(stageMain);
 	stageManager.Register(stage);
 	StageMain* StageFence = new StageMain("Data/Fbx/StageFence/StageFence.model");
-	StageFence->SetScale({ 4.0f, 4.0f, 4.0f });
+	StageFence->SetScale({ stageScale, stageScale, stageScale });
 	stageManager.Register(StageFence);
 
 	// --- buffer 系初期化 ---

@@ -3,9 +3,13 @@
 // --- Library ---
 #include "../../Library/2D/Sprite.h"
 #include "../../Library/Graphics/FrameBuffer.h"
+#include "../../Library/3D/SkyMap.h"
 // --- Scene ---
 #include "Scene.h"
+#include "../Game/Object/TestAnimated.h"
 
+
+class TestAnimated;
 
 // タイトルシーン
 class SceneTitle : public Scene
@@ -31,4 +35,8 @@ public:
 
 private:
 	std::unique_ptr<FrameBuffer> frameBuffer;
+	std::unique_ptr<TestAnimated> titlePlayer;
+	std::unique_ptr<TestAnimated> titleFloor;
+
+	std::unique_ptr<SkyMap> skyMap;
 };

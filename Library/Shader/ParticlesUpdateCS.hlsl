@@ -46,34 +46,34 @@ void main(uint3 DTid : SV_DispatchThreadID)
 				p.position += p.velocity * deltaTime;
 
 				// x
-				while (p.position.x > 30)
+				while (p.position.x > 60)
 				{
-					p.position.x -= 60;
+					p.position.x -= 120;
 				}
-				while (p.position.x < -30)
+				while (p.position.x < -60)
 				{
-					p.position.x += 60;
+					p.position.x += 120;
 				}
 
 				// y
 				while (p.position.y < -2)
 				{
-					p.position.y += 10;
+					p.position.y += 40;
 				}
 
-				while (p.position.y > 10)
+				while (p.position.y > 40)
 				{
-					p.position.y -= 10;
+					p.position.y -= 42;
 				}
 
 				// x
-				while (p.position.z > 30)
+				while (p.position.z > 60)
 				{
-					p.position.z -= 60;
+					p.position.z -= 120;
 				}
-				while (p.position.z < -30)
+				while (p.position.z < -60)
 				{
-					p.position.z += 60;
+					p.position.z += 120;
 				}
 			}
 			break;
@@ -193,8 +193,6 @@ void main(uint3 DTid : SV_DispatchThreadID)
 		default:
 			break;
 		}
-
-		p.lifeTimer -= deltaTime;
 
 		if (p.lifeTimer <= 0)
 		{

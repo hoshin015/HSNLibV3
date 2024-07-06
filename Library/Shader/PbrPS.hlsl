@@ -98,6 +98,7 @@ float4 main(VS_OUT pin) : SV_TARGET
 
 	// 色生成(エミッシブもここで追加)
     float3 finalColor = directionDiffuse + directionSpecular + emissiveColor;
+    finalColor *= pin.color.rgb;
 	finalColor        = pow(finalColor, 1.0f / GammaFactor);
 	return float4(finalColor, albedoColor.a);
 }

@@ -147,11 +147,11 @@ private:
 	};
 
 	std::unique_ptr<Sprite> imgEasy;
-	DirectX::XMFLOAT2 imgEasyPos = { 200.0f, 200.0f };
+	DirectX::XMFLOAT2 imgEasyPos = { 200.0f, 300.0f };
 
 	std::unique_ptr<Sprite> imgNormal;
-	DirectX::XMFLOAT2 imgNormalPos = { 200.0f, 300.0f };
+	DirectX::XMFLOAT2 imgNormalPos = { 200.0f, 400.0f };
 
 	std::unique_ptr<Sprite> imgHard;
-	DirectX::XMFLOAT2 imgHardPos = { 200.0f, 400.0f };
+	DirectX::XMFLOAT2 imgHardPos = { 200.0f, 500.0f };
 };

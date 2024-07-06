@@ -90,12 +90,12 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 				emitter->emitterData.burstsTime            = 0.3;
 				emitter->emitterData.burstsCount           = 3;
 				emitter->emitterData.particleKind          = pk_smoke;
-				emitter->emitterData.particleLifeTimeMin   = 1.0f;
-				emitter->emitterData.particleLifeTimeMax   = 4.0f;
+				emitter->emitterData.particleLifeTimeMin   = 2.0f;
+				emitter->emitterData.particleLifeTimeMax   = 6.0f;
 				emitter->emitterData.particleSpeedMin      = 1.0f;
 				emitter->emitterData.particleSpeedMax      = 60.0f;
-				emitter->emitterData.particleSizeMin       = {30.0f, 30.0f};
-				emitter->emitterData.particleSizeMax       = {50.0f, 50.0f};
+				emitter->emitterData.particleSizeMin       = {60.0f, 60.0f};
+				emitter->emitterData.particleSizeMax       = {100.0f, 100.0f};
 				emitter->emitterData.particleColorMin      = {2.9, 0.9, 0.9, 1};
 				emitter->emitterData.particleColorMax      = {3.0, 1.0, 1.0, 1};
 				emitter->emitterData.particleGravity       = 0;

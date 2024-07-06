@@ -30,7 +30,7 @@ void LightningEffect::Update()
 				LightningData* l = new LightningData();
 				l->SetPos(lightningEmit.position);
 				l->SetLifeTime(0.1f);
-				float s = Math::RandomRange(0.025f, 0.2f);
+				float s = Math::RandomRange(0.075f, 0.6f);
 				l->SetScale({s, s, s});
 				l->SetEmissivePower(1.0f);
 				l->SetAngleY(rand() % 360);
@@ -65,7 +65,7 @@ void LightningEffect::Update()
 			LightningData* l = new LightningData();
 			l->SetPos(lightningEmit.position);
 			l->SetLifeTime(0.1f);
-			l->SetScale({0.5, 1.0, 0.5});
+			l->SetScale({1.0, 2.0, 1.0});
 			l->SetEmissivePower(4.0f);
 			l->SetVal1(scaleValue);
 			l->SetEmissivePower(4.0f);
@@ -76,7 +76,7 @@ void LightningEffect::Update()
 			LightningData* l2 = new LightningData();
 			l2->SetPos(lightningEmit.position);
 			l2->SetLifeTime(0.1f);
-			l2->SetScale({0.5, 1.0, 0.5});
+			l2->SetScale({1.0, 2.0, 1.0});
 			l2->SetEmissivePower(2.0f);
 			l2->SetVal1(scaleValue);
 			l2->SetEmissivePower(4.0f);
@@ -99,7 +99,7 @@ void LightningEffect::Update()
 			LightningData* l = new LightningData();
 			l->SetPos(lightningEmit.position);
 			l->SetLifeTime(0.4f);
-			l->SetScale({0.5, 1.0, 0.5});
+			l->SetScale({1.0, 2.0, 1.0});
 			l->SetEmissivePower(4.0f);
 			l->SetVal1(scaleValue);
 			l->SetEmissivePower(4.0f);
@@ -110,7 +110,7 @@ void LightningEffect::Update()
 			LightningData* l2 = new LightningData();
 			l2->SetPos(lightningEmit.position);
 			l2->SetLifeTime(0.4f);
-			l2->SetScale({0.5, 0.75, 0.5});
+			l2->SetScale({1.0, 1.5, 1.0});
 			l2->SetEmissivePower(4.0f);
 			l2->SetVal1(scaleValue);
 			l2->SetEmissivePower(4.0f);
@@ -132,7 +132,7 @@ void LightningEffect::Update()
 			LightningData* l2 = new LightningData();
 			l2->SetPos(lightningEmit.position);
 			l2->SetLifeTime(0.5f);
-			l2->SetScale({0.5, 0.5, 0.5});
+			l2->SetScale({1.0, 1.0, 1.0});
 			l2->SetEmissivePower(4.0f);
 			l2->SetVal1(scaleValue);
 			l2->SetAngleY(rand() % 360);
@@ -154,7 +154,7 @@ void LightningEffect::Update()
 			LightningData* l2 = new LightningData();
 			l2->SetPos(lightningEmit.position);
 			l2->SetLifeTime(0.3f);
-			l2->SetScale({0.5, 1.0, 0.5});
+			l2->SetScale({1.0, 2.0, 1.0});
 			l2->SetEmissivePower(4.0f);
 			l2->SetVal1(scaleValue);
 			l2->SetUpdateType(LightningData::LightningFuncEnum::Main);
@@ -170,7 +170,7 @@ void LightningEffect::Update()
 			for (int i = 0; i < rockNum; i++)
 			{
 				DirectX::XMFLOAT3 rVec = {(rand() % 6) - 3.0f, rand() % 8 + 0.5f, rand() % 6 - 3.0f};
-				RockEffect::Instance().Emit(rPos, rVec, {0.05, 0.1});
+				RockEffect::Instance().Emit(rPos, rVec, {0.15, 0.3});
 			}
 
 			Emitter* emitter                           = new Emitter();
@@ -184,8 +184,8 @@ void LightningEffect::Update()
 			emitter->emitterData.particleLifeTimeMax   = 2.0f;
 			emitter->emitterData.particleSpeedMin      = 1.0f;
 			emitter->emitterData.particleSpeedMax      = 4.0f;
-			emitter->emitterData.particleSizeMin       = {0.1f, 0.05};
-			emitter->emitterData.particleSizeMax       = {0.4f, 0.1f};
+			emitter->emitterData.particleSizeMin       = {0.4f, 0.2};
+			emitter->emitterData.particleSizeMax       = {0.8f, 0.4f};
 			emitter->emitterData.particleColorMin      = {20.8, 2.8, 2.5, 1};
 			emitter->emitterData.particleColorMax      = {20.8, 2.8, 2.5, 1};
 			emitter->emitterData.particleGravity       = 4;
@@ -245,8 +245,8 @@ void LightningEffect::Emit(DirectX::XMFLOAT3 pos)
 		emitter->emitterData.particleLifeTimeMax   = 1.0f;
 		emitter->emitterData.particleSpeedMin      = 0.025f;
 		emitter->emitterData.particleSpeedMax      = 2.0f;
-		emitter->emitterData.particleSizeMin       = {0.1f, 0.05};
-		emitter->emitterData.particleSizeMax       = {0.4f, 0.1f};
+		emitter->emitterData.particleSizeMin       = {0.2f, 0.1f};
+		emitter->emitterData.particleSizeMax       = {0.8f, 0.2f};
 		emitter->emitterData.particleColorMin      = {20.8, 2.8, 2.5, 1};
 		emitter->emitterData.particleColorMax      = {20.8, 2.8, 2.5, 1};
 		emitter->emitterData.particleGravity       = 0;

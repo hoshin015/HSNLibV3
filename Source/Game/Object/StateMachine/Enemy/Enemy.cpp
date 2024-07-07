@@ -1,5 +1,4 @@
 #include "Enemy.h"
-#include "../../../../../External/ImGui/imgui.h"
 
 #include "../../External/ImGui/imgui.h"
 
@@ -31,7 +30,13 @@ void Enemy::Initialize()
 
 	float theta = DirectX::XMConvertToRadians(rand() % 360);
 	moveTargetPosition_ = { cosf(theta) * wanderRange, 0.0f, sinf(theta) * wanderRange };
-	front = Vector3::Zero_;
+	targetVec = Vector3::Zero_;
+
+
+	// --- ÉXÉeÅ[É^ÉXÇÃê›íË ---
+	hp = 1000.0f;
+	flinchValue = 100.0f;
+
 
 	PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
 }
@@ -135,6 +140,10 @@ void Enemy::DrawDebugGui()
 
 
 	ImGui::Begin(u8"ìG");
+
+	ImGui::DragFloat(u8"HP", &hp, 1.0f);
+	ImGui::DragFloat(u8"ãØÇ›íl", &flinchValue, 1.0f);
+	ImGui::Separator();
 
 	ImGui::DragFloat(u8"çıìGãóó£", &searchRange_);
 	ImGui::Checkbox(u8"î≠å©", &foundPlayer);
@@ -256,9 +265,15 @@ void Enemy::InitializeBehaviorTree()
 		aiTree_->AddNode("Find", "BigRoar", 0, BT_SelectRule::Non, nullptr, new EnemyBigRoarAction(this));
 	}
 
+	// --- éÄñS ---
+	aiTree_->AddNode("Root", "Dead", 1, BT_SelectRule::Non, new EnemyDeadJudgment(this), new EnemyDeadAction(this));
+
+	// --- ãØÇ› ---
+	aiTree_->AddNode("Root", "Flinch", 2, BT_SelectRule::Non, new EnemyFlinchJudgment(this), new EnemyFlinchAction(this));
+
 
 	// --- êÌì¨ÉmÅ[Éh ---
-	aiTree_->AddNode("Root", "Battle", 1, BT_SelectRule::Priority, new EnemyBattleJudgment(this), nullptr);
+	aiTree_->AddNode("Root", "Battle", 3, BT_SelectRule::Priority, new EnemyBattleJudgment(this), nullptr);
 	{
 		// --- çUåÇÉmÅ[Éh ---
 		aiTree_->AddNode("Battle", "Attack", 0, BT_SelectRule::Random, nullptr, nullptr);
@@ -287,8 +302,21 @@ void Enemy::InitializeBehaviorTree()
 			}
 
 
+			// --- íÜãóó£ ---
+			aiTree_->AddNode("Attack", "MiddleRange", 0, BT_SelectRule::Random, new EnemyMiddleRangeJudgment(this), nullptr);
+			{
+				// --- é≤çáÇÌÇπ Å® ì•Ç›çûÇ›äöÇ›Ç¬Ç´ Å® ì•Ç›Ç¬ÇØ or É^ÉbÉNÉã or à–äd ---
+				aiTree_->AddNode("MiddleRange", "Turn_RushingBite_Any", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+				{
+					aiTree_->AddNode("Turn_RushingBite_Any", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+					aiTree_->AddNode("Turn_RushingBite_Any", "RushingBite", 0, BT_SelectRule::Non, nullptr, new EnemyRushingBiteAction(this));
+					aiTree_->AddNode("Turn_RushingBite_Any", "AfterAction", 0, BT_SelectRule::Non, nullptr, new EnemyAfterRushingBiteAction(this));
+				}
+			}
+
+
 			// --- ãﬂãóó£ ---
-			aiTree_->AddNode("Attack", "ShortRange", 1, BT_SelectRule::Random, new EnemyShortRangeJudgment(this), nullptr);
+			aiTree_->AddNode("Attack", "ShortRange", 0, BT_SelectRule::Random, new EnemyShortRangeJudgment(this), nullptr);
 			{
 				// --- ì•Ç›Ç¬ÇØ Å® à–äd ---
 				aiTree_->AddNode("ShortRange", "Stamp_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
@@ -303,6 +331,9 @@ void Enemy::InitializeBehaviorTree()
 					aiTree_->AddNode("AxisAlignment_Bite", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
 					aiTree_->AddNode("AxisAlignment_Bite", "Bite", 0, BT_SelectRule::Non, nullptr, new EnemyBiteAction(this));
 				}
+
+				// --- êKîˆâÒì] ---
+				aiTree_->AddNode("ShortRange", "TailAttack", 0, BT_SelectRule::Non, nullptr, new EnemyTailAttack(this));
 			}
 		}
 
@@ -313,7 +344,7 @@ void Enemy::InitializeBehaviorTree()
 
 
 	// --- ñ¢î≠å©éûÉmÅ[Éh ---
-	aiTree_->AddNode("Root", "Scout", 2, BT_SelectRule::Sequence, new EnemyScoutJudgment(this), nullptr);
+	aiTree_->AddNode("Root", "Scout", 4, BT_SelectRule::Sequence, new EnemyScoutJudgment(this), nullptr);
 	{
 		// --- úpúj ---
 		aiTree_->AddNode("Scout", "Wander", 0, BT_SelectRule::Non, new EnemyWanderJudgment(this), new EnemyWanderAction(this));

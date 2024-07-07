@@ -122,11 +122,41 @@ public:
 
 
 
+// ===== ’†‹——£‚Ì”»’è ======================================================================================================================================================
+class EnemyMiddleRangeJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyMiddleRangeJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
 // ===== ‹ß‹——£‚Ì”»’è ======================================================================================================================================================
 class EnemyShortRangeJudgment final : public JudgmentBase<Enemy>
 {
 public:
 	EnemyShortRangeJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
+// ===== ‹¯‚İ‚Ì”»’è ======================================================================================================================================================
+class EnemyFlinchJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyFlinchJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
+// ===== €–S”»’è ======================================================================================================================================================
+class EnemyDeadJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyDeadJudgment(Enemy* owner) : JudgmentBase(owner) {}
 	bool Judgment() override;
 };
 
@@ -197,5 +227,55 @@ class EnemyBiteAction final : public ActionBase<Enemy>
 {
 public:
 	EnemyBiteAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== “¥‚İ‚İŠš‚İ‚Â‚«s“® ======================================================================================================================================================
+class EnemyRushingBiteAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyRushingBiteAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== “¥‚İ‚İŠš‚İ‚Â‚«Œã‚Ìs“® ======================================================================================================================================================
+class EnemyAfterRushingBiteAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyAfterRushingBiteAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== ‹¯‚İs“® ======================================================================================================================================================
+class EnemyFlinchAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyFlinchAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== €–Ss“® ======================================================================================================================================================
+class EnemyDeadAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyDeadAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== K”ö‰ñ“]s“® ======================================================================================================================================================
+class EnemyTailAttack final : public ActionBase<Enemy>
+{
+public:
+	EnemyTailAttack(Enemy* owner) : ActionBase<Enemy>(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };

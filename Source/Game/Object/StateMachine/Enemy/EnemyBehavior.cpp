@@ -5,7 +5,6 @@
 #include "../Player/Player.h"
 
 
-
 // --- 追跡行動の判定 ---
 bool EnemyPursuitJudgment::Judgment()
 {
@@ -28,6 +27,10 @@ bool EnemyPursuitJudgment::Judgment()
 // --- 追跡行動 ---
 BT_ActionState EnemyPursuitAction::Run(float elapsedTime)
 {
+	// --- ダウン/死亡処理 ---
+	if (owner_->IsDown() || owner_->IsDead())
+		return BT_ActionState::Failed;
+
 	switch (step)
 	{
 		// --- 初期設定 ---
@@ -128,7 +131,13 @@ bool EnemyWanderJudgment::Judgment()
 
 // --- 徘徊行動 ---
 BT_ActionState EnemyWanderAction::Run(float elapsedTime)
-{
+{	
+	// --- ダウン/死亡処理 ---
+	if (owner_->IsDown() || owner_->IsDead())
+		return BT_ActionState::Failed;
+
+
+
 	switch (step)
 	{
 		// --- 初期設定 ---
@@ -180,6 +189,12 @@ BT_ActionState EnemyWanderAction::Run(float elapsedTime)
 // --- 待機行動 次の移動地点を決める ---
 BT_ActionState EnemyIdleAction::Run(float elapsedTime)
 {
+	// --- ダウン/死亡処理 ---
+	if (owner_->IsDown() || owner_->IsDead())
+		return BT_ActionState::Failed;
+
+
+
 	switch (step)
 	{
 		// --- 初期設定 ---
@@ -188,7 +203,7 @@ BT_ActionState EnemyIdleAction::Run(float elapsedTime)
 		owner_->runTimer_ = (rand() / FLT_MAX) * 2.0f + 3.0f;	// 3.0 ~ 5.0
 		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::IDLE), true);
 
-			step++;
+		step++;
 		break;
 
 
@@ -265,6 +280,27 @@ bool EnemyLongRangeJudgment::Judgment()
 
 
 
+// ===== 中距離の判定 ======================================================================================================================================================
+bool EnemyMiddleRangeJudgment::Judgment()
+{
+	Vector3 playerPosition = Player::Instance().GetPos();
+	Vector3 enemyPosition = owner_->GetPos();
+
+	// --- プレイヤーとの距離をとる ---
+	Vector3 vec = playerPosition - enemyPosition;
+	float length = vec.Length();
+
+
+	// --- 距離が一定以下なら成功 ---
+	if (length < owner_->GetMiddleRange())
+		return true;
+
+	else
+		return false;
+}
+
+
+
 // ===== 近距離の判定 ======================================================================================================================================================
 bool EnemyShortRangeJudgment::Judgment()
 {
@@ -286,10 +322,32 @@ bool EnemyShortRangeJudgment::Judgment()
 
 
 
+// ===== 怯みの判定 ======================================================================================================================================================
+bool EnemyFlinchJudgment::Judgment()
+{
+	return owner_->IsDown();
+}
+
+
+
+// ===== 死亡判定 ======================================================================================================================================================
+bool EnemyDeadJudgment::Judgment()
+{
+	return owner_->IsDead();
+}
+
+
+
 
 // ===== 大咆哮の行動 ======================================================================================================================================================
 BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 {
+	// --- ダウン/死亡処理 ---
+	if (owner_->IsDown() || owner_->IsDead())
+		return BT_ActionState::Failed;
+
+
+
 	switch (step)
 	{
 		// --- 初期設定 ---
@@ -323,7 +381,11 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 // ===== 軸合わせの行動 ======================================================================================================================================================
 BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 {
-	switch(step)
+	// --- ダウン/死亡処理 ---
+	if (owner_->IsDown() || owner_->IsDead())
+		return BT_ActionState::Failed;
+
+	switch (step)
 	{
 	case 0:
 
@@ -335,7 +397,7 @@ BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 		{
 			Matrix R;
 			R.MakeRotationFromQuaternion(owner_->quaternion_);
-			owner_->front = R.v_[2].xyz();
+			owner_->targetVec = R.v_[2].xyz();
 		}
 
 		step++;
@@ -379,11 +441,17 @@ BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 // ===== ブレスの行動 ======================================================================================================================================================
 BT_ActionState EnemyBlessAction::Run(float elapsedTime)
 {
+	// --- ダウン/死亡処理 ---
+	if (owner_->IsDown() || owner_->IsDead())
+		return BT_ActionState::Failed;
+
+
+
 	switch (step)
 	{
 	case 0:
 
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BLESS), false);	
+		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BLESS), false);
 
 		step++;
 		break;
@@ -408,6 +476,12 @@ BT_ActionState EnemyBlessAction::Run(float elapsedTime)
 // ===== 威嚇行動 ======================================================================================================================================================
 BT_ActionState EnemyThreatAction::Run(float elapsedTime)
 {
+	// --- ダウン/死亡処理 ---
+	if (owner_->IsDown() || owner_->IsDead())
+		return BT_ActionState::Failed;
+
+
+
 	switch (step)
 	{
 	case 0:
@@ -437,6 +511,12 @@ BT_ActionState EnemyThreatAction::Run(float elapsedTime)
 // ===== 突進行動 ======================================================================================================================================================
 BT_ActionState EnemyRushAction::Run(float elapsedTime)
 {
+	// --- ダウン/死亡処理 ---
+	if (owner_->IsDown() || owner_->IsDead())
+		return BT_ActionState::Failed;
+
+
+
 	switch (step)
 	{
 	case 0:
@@ -447,7 +527,7 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 		{
 			Matrix R;
 			R.MakeRotationFromQuaternion(owner_->quaternion_);
-			owner_->front = R.v_[2].xyz();
+			owner_->targetVec = R.v_[2].xyz();
 		}
 
 		step++;
@@ -473,7 +553,7 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	{
 		// --- 正面へ移動 ---
 		Vector3 position = owner_->GetPos();
-		position += owner_->front * owner_->GetRushSpeed() * elapsedTime;
+		position += owner_->targetVec * owner_->GetRushSpeed() * elapsedTime;
 		owner_->SetPos(position.vec_);
 
 		owner_->runTimer_ -= elapsedTime;
@@ -486,12 +566,12 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	}
 
 
-		// --- 突進終わり ---
+	// --- 突進終わり ---
 	case 3:
 	{
 		// --- 正面へ移動 ---
 		Vector3 position = owner_->GetPos();
-		position += owner_->front * owner_->GetRushEndSpeed() * elapsedTime;
+		position += owner_->targetVec * owner_->GetRushEndSpeed() * elapsedTime;
 		owner_->SetPos(position.vec_);
 
 		break;
@@ -516,6 +596,12 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 // ===== 踏みつけ行動 ======================================================================================================================================================
 BT_ActionState EnemyStampAction::Run(float elapsedTime)
 {
+	// --- ダウン/死亡処理 ---
+	if (owner_->IsDown() || owner_->IsDead())
+		return BT_ActionState::Failed;
+
+
+
 	switch (step)
 	{
 	case 0:
@@ -545,6 +631,12 @@ BT_ActionState EnemyStampAction::Run(float elapsedTime)
 // ===== 噛みつき行動 ======================================================================================================================================================
 BT_ActionState EnemyBiteAction::Run(float elapsedTime)
 {
+	// --- ダウン/死亡処理 ---
+	if (owner_->IsDown() || owner_->IsDead())
+		return BT_ActionState::Failed;
+
+
+
 	switch (step)
 	{
 	case 0:
@@ -575,6 +667,379 @@ BT_ActionState EnemyBiteAction::Run(float elapsedTime)
 		}
 
 		break;
+	}
+
+	return BT_ActionState::Run;
+}
+
+
+
+// ===== 踏み込み噛みつき行動 ======================================================================================================================================================
+BT_ActionState EnemyRushingBiteAction::Run(float elapsedTime)
+{
+	// --- ダウン/死亡処理 ---
+	if (owner_->IsDown() || owner_->IsDead())
+		return BT_ActionState::Failed;
+
+
+
+	switch (step)
+	{
+	case 0:
+
+		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BITE_1), false);
+
+		step++;
+		break;
+
+	case 1:
+
+	{
+		Matrix R;
+		R.MakeRotationFromQuaternion(owner_->quaternion_);
+		Vector3 front = R.v_[2].xyz();
+
+		Vector3 position = owner_->GetPos();
+		position += front * 0.15f;
+		owner_->SetPos(position.vec_);
+	}
+
+	// --- アニメーションが終わったら終了 ---
+	if (owner_->GetAnimationEndFlag())
+	{
+		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BITE_2), false);
+		step++;
+	}
+
+	break;
+
+	case 2:
+
+	{
+		Matrix R;
+		R.MakeRotationFromQuaternion(owner_->quaternion_);
+		Vector3 front = R.v_[2].xyz();
+
+		Vector3 position = owner_->GetPos();
+		position += front * 0.15f;
+		owner_->SetPos(position.vec_);
+	}
+
+	// --- アニメーションが終わったら終了 ---
+	if (owner_->GetAnimationEndFlag())
+	{
+		step = 0;
+		return BT_ActionState::Complete;
+	}
+
+	break;
+	}
+
+	return BT_ActionState::Run;
+}
+
+
+
+// ===== 踏み込み噛みつき後の行動 ======================================================================================================================================================
+BT_ActionState EnemyAfterRushingBiteAction::Run(float elapsedTime)
+{
+	// --- ダウン/死亡処理 ---
+	if (owner_->IsDown() || owner_->IsDead())
+		return BT_ActionState::Failed;
+
+
+
+	switch (step)
+	{
+	case 0:
+
+		// --- この時点で 踏みつけ 左右タックル 威嚇 何もしない を決める ---
+	{
+		// --- 正面と右方向の取得 ---
+		Matrix R;
+		R.MakeRotationFromQuaternion(owner_->quaternion_);
+		Vector3 front = R.v_[2].xyz();
+		Vector3 right = R.v_[0].xyz();
+
+		Vector3 playerPos = Player::Instance().GetPos();
+		Vector3 vec = playerPos - owner_->GetPos();
+		float length = vec.Length();
+		vec.Normalize();
+
+
+		// --- 距離が近かったら ---
+		if (length < 10.0f)
+		{
+			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::STAMP), false);
+			step++;
+			break;
+		}
+
+		// --- 右方向との内積 ---
+		float dotR = right.Dot(vec);
+		if (dotR > 0.5f)	// 横にいたらタックル
+		{
+			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TACKLE), false);
+			step = 2;
+			owner_->runTimer_ = 0.25f;
+			break;
+		}
+
+		else if (dotR < -0.5f)
+		{
+			// --- 右タックル ---
+			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TACKLE), false);
+			step = 3;
+			owner_->runTimer_ = 0.25f;
+			break;
+		}
+
+
+		float dotF = front.Dot(vec);
+		if (dotF > 0.5f)	// 正面にいたら
+		{
+			return BT_ActionState::Complete;
+		}
+
+		else if (dotF < -0.5f)	// 後ろにいたら
+		{
+			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROAR), false);
+			step++;
+			break;
+		}
+	}
+
+	break;
+
+
+	case 1:
+
+		// --- アニメーションが終わったら終了 ---
+		if (owner_->GetAnimationEndFlag())
+		{
+			step = 0;
+			return BT_ActionState::Complete;
+		}
+
+		break;
+
+
+	case 2:	// 右タックル
+	{
+		owner_->runTimer_ -= elapsedTime;
+
+		if(owner_->runTimer_ < 0.0f)
+		{
+			Matrix R;
+			R.MakeRotationFromQuaternion(owner_->quaternion_);
+			Vector3 right = R.v_[0].xyz();
+
+			Vector3 position = owner_->GetPos();
+			position += right * 0.1f;
+			owner_->SetPos(position.vec_);
+		}
+
+		// --- アニメーションが終わったら終了 ---
+		if (owner_->GetAnimationEndFlag())
+		{
+			step = 0;
+			owner_->runTimer_ = 0.0f;
+			return BT_ActionState::Complete;
+		}
+
+		break;
+	}
+
+
+	case 3:	// 右タックル
+	{
+		owner_->runTimer_ -= elapsedTime;
+
+		if (owner_->runTimer_ < 0.0f)
+		{
+			Matrix R;
+			R.MakeRotationFromQuaternion(owner_->quaternion_);
+			Vector3 left = -R.v_[0].xyz();
+
+			Vector3 position = owner_->GetPos();
+			position += left * 0.1f;
+			owner_->SetPos(position.vec_);
+		}
+
+		// --- アニメーションが終わったら終了 ---
+		if (owner_->GetAnimationEndFlag())
+		{
+			step = 0;
+			owner_->runTimer_ = 0.0f;
+			return BT_ActionState::Complete;
+		}
+
+		break;
+	}
+
+	}
+
+	return BT_ActionState::Run;
+}
+
+
+
+// ===== 怯み行動 ======================================================================================================================================================
+BT_ActionState EnemyFlinchAction::Run(float elapsedTime)
+{
+	// --- 死亡処理 ---
+	if (owner_->IsDead())
+		return BT_ActionState::Failed;
+
+
+	switch (step)
+	{
+	case 0:
+
+		owner_->runTimer_ = 5.0f;
+		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DOWN), false);
+		step++;
+
+		break;
+
+
+	case 1:
+
+		if (owner_->GetAnimationEndFlag())
+		{
+			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WHILE_DOWN), true);
+			step++;
+		}
+
+		break;
+
+
+	case 2:
+
+		owner_->runTimer_ -= elapsedTime;
+		if (owner_->runTimer_ < 0.0f)
+		{
+			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::STAND_UP), false);
+			step++;
+		}
+
+		break;
+
+
+	case 3:
+
+		if (owner_->GetAnimationEndFlag())
+		{
+			owner_->runTimer_ = 0.0f;
+			step = 0;
+			owner_->SetFlinchValue(100.0f); // Todo : 怯み値仮
+			return BT_ActionState::Complete;
+		}
+
+		break;
+	}
+
+
+	return BT_ActionState::Run;
+}
+
+
+
+// ===== 死亡行動 ======================================================================================================================================================
+BT_ActionState EnemyDeadAction::Run(float elapsedTime)
+{
+
+	switch (step)
+	{
+	case 0:
+
+		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEAD), false);
+		step++;
+
+		break;
+	}
+
+	return BT_ActionState::Run;
+}
+
+
+
+// ===== 尻尾回転行動 ======================================================================================================================================================
+BT_ActionState EnemyTailAttack::Run(float elapsedTime)
+{
+	switch (step)
+	{
+	case 0:
+		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::IDLE), true);
+
+		step++;
+		break;
+
+
+	case 1:
+	{
+		float rotateSpeed = elapsedTime * 360.0f;
+		Quaternion orientation;
+		orientation.SetRotationDegY(rotateSpeed);
+
+		owner_->quaternion_ *= orientation;
+		owner_->runTimer_ += rotateSpeed;
+
+		if (owner_->runTimer_ > 180.0f)
+		{
+			step++;
+			owner_->runTimer_ = 1.5f;
+		}
+
+		break;
+	}
+
+
+	case 2:
+	{
+		owner_->runTimer_ -= elapsedTime;
+
+		if (owner_->runTimer_ < 0.0f)
+		{
+			step++;
+			owner_->runTimer_ = 0.0f;
+		}
+
+		break;
+	}
+
+
+	case 3:
+	{
+		float rotateSpeed = elapsedTime * 360.0f;
+		Quaternion orientation;
+		orientation.SetRotationDegY(rotateSpeed);
+
+		owner_->quaternion_ *= orientation;
+		owner_->runTimer_ += rotateSpeed;
+
+		if (owner_->runTimer_ > 180.0f)
+		{
+			step++;
+			owner_->runTimer_ = 1.0f;
+		}
+
+		break;
+	}
+
+
+	case 4:
+	{
+		owner_->runTimer_ -= elapsedTime;
+
+		if (owner_->runTimer_ < 0.0f)
+		{
+			step = 0;
+			owner_->runTimer_ = 0.0f;
+			return BT_ActionState::Complete;
+		}
+	}
+
 	}
 
 	return BT_ActionState::Run;

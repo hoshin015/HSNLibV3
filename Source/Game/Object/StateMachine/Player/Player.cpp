@@ -30,11 +30,11 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 
 	Animator::Motion idle;
 	idle.motion = &animation[2];
-	idle.animationSpeed = 0.2f;
+	idle.animationSpeed = 0.15f;
 
 	Animator::Motion walkMotion;
 	walkMotion.motion = &animation[4];
-	walkMotion.animationSpeed = 0.3f;
+	walkMotion.animationSpeed = 0.2f;
 	walkMotion.threshold = { 1,0 };
 
 	Animator::Motion runMotion;
@@ -146,7 +146,7 @@ void Player::DrawDebugImGui(int number)
 				ImGui::DragFloat(u8"ダッシュ倍率", &constant.dashPower,0.01f);
 
 				static float rate = constant.dashDeadZone * 100;
-				if(ImGui::DragFloat(u8"ダッシュデットゾーン", &rate,1.f,0,100,"%.0f%%"))
+				if(ImGui::SliderFloat(u8"ダッシュデットゾーン", &rate,0,100,"%.0f%%"))
 					constant.dashDeadZone = rate / 100;
 
 				ImGui::TreePop();
@@ -177,6 +177,13 @@ void Player::Input()
 	}
 
 	if (inputMoveData.LengthSq() > 1)inputMoveData.Normalize();
+	/*if (inputMoveData.LengthSq() <= FLT_EPSILON)*/ {
+		if(XMFLOAT2* move = std::get_if<XMFLOAT2>(&inputMap["Move"])) {
+			XMVECTOR v1 = XMLoadFloat2(move);
+			XMVECTOR v2 = XMLoadFloat2(&inputMoveData.vec_);
+			XMStoreFloat2(&inputMoveData.vec_, v1 * XMVector3Length(XMVectorLerp(v1, v2, Timer::Instance().DeltaTime() * 10)));
+		}
+	}
 
 	inputMap["Move"] = inputMoveData.vec_;
 	animator.SetParameter("moveX", inputMoveData.Length());

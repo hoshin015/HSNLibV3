@@ -224,7 +224,7 @@ ModelResource::KeyFrame Animator::PlayAnimation(float elapsedTime) {
 		_timer += elapsedTime;
 		ModelResource::KeyFrame next = StateUpdate(_nextState, elapsedTime);
 
-		float rate = _timer / 0.3f;
+		float rate = _timer / 0.8f;
 		current = BlendKeyFrame(&current, &next, rate);
 		if (rate >= 1.f) {
 			_timer = 0;

@@ -64,15 +64,14 @@ void SceneAnimationTest::Initialize() {
 	Animator::State rootMotion;
 	rootMotion.object = std::make_shared<Animator::Motion>(std::forward<Animator::Motion>(motion));
 	rootMotion.type   = Animator::State::MOTION;
-	rootMotion.transitions.emplace_back(
+	rootMotion.transitions =
  	STATE_FUNC(animator) {
  		if (bool& attack = animator.GetParameter<bool>("attack")) {
  			attack = false;
  			return &animator.GetState("attack");
  		}
  		return nullptr;
- 	}
- );
+ 	};
 
 	Animator::Motion attackMoiton;
 	attackMoiton.animationSpeed = 1;
@@ -81,14 +80,13 @@ void SceneAnimationTest::Initialize() {
 	Animator::State attack;
 	attack.object = Animator::MakeObjPointer(attackMoiton);
 	attack.type   = Animator::State::MOTION;
-	attack.transitions.emplace_back(
+	attack.transitions =
 		STATE_FUNC(animator) {
 			if (animator.GetState("attack").GetObj<Animator::Motion>()->endMotion) {
 				return &animator.GetState("move");
 			}
 			return nullptr;
-		}
-	);
+		};
 
 	_animator.SetModelSceneView(&_model->GetModelResource()->GetSceneView());
 	_animator.SetParameter("x", 0.f);

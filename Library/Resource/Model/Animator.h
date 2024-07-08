@@ -34,12 +34,13 @@ public:
 			BLEND_TREE,
 		};
 
-		std::shared_ptr<void>           object;
-		std::vector<TransitionFunction> transitions;
+		std::shared_ptr<void> object;
+		TransitionFunction    transitions;
 
 		ObjectType type  = MOTION;
 		float      speed = 1;
 		float      timer = 0;
+		float      transitionTime = 0.5f;
 
 		template<typename T>
 		std::shared_ptr<T> GetObj() { return std::static_pointer_cast<Animator::Motion>(object); }
@@ -117,8 +118,5 @@ public:
 	void AnimationEditor();
 
 	template<typename T>
-	static std::shared_ptr<T> MakeObjPointer(T& obj) {
-		return std::make_shared<T>(std::forward<T>(obj));
-
-	}
+	static std::shared_ptr<T> MakeObjPointer(T& obj) { return std::make_shared<T>(std::forward<T>(obj)); }
 };

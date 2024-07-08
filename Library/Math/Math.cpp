@@ -148,3 +148,12 @@ DirectX::XMFLOAT3 Math::XMFloat3Cross(const DirectX::XMFLOAT3& f1, const DirectX
 	DirectX::XMStoreFloat3(&cross, CROSS);
 	return cross;
 }
+
+/// 線形補間
+/// @param f1 補間元の最初の値
+/// @param f2 補間元の2つ目の値
+/// @param t 補間制御係数 0であればf1を,1であればf2になる
+/// @return 補間した値を返す
+float Math::Lerp(const float& f1, const float& f2, const float& t) {
+	return f1 + t * (f2 - f1);
+}

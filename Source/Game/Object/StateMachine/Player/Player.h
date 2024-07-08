@@ -32,7 +32,8 @@ public:
 	struct ConstantStatus {
 		float maxHp = 10;
 		float shiftDashTimer = 0.4f;
-		float dashPower = 3;
+		float walkSpeed = 3;
+		float dashSpeed = 6;
 		float dashDeadZone = 0.7f;
 		float dodgePower = 5;
 	};
@@ -47,7 +48,7 @@ private:
 public:
 	static Player& Instance()
 	{
-		static Player instance("Data/Fbx/Character/Character.model");
+		static Player instance("Data/Fbx/GaoPlayer/player_test_01.model");
 		return instance;
 	}
 
@@ -56,7 +57,8 @@ public:
 	void Render(bool isShadow = false) override;
 	void DrawDebugImGui(int number);
 
-
+	void UpdateAnimation();
+	
 	// 入力データ取得
 	void Input();
 	// 歩行移動量計算

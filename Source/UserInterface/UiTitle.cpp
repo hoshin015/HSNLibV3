@@ -11,57 +11,66 @@
 
 void UiTitle::Initialize()
 {
-	state = UiTitleState::Title;
-	isStageRender = true;
-	isCharacterRender = false;
+	state = UiTitleState::Init;
 
 
 	imgEnterText = std::make_unique<Sprite>("Data/Texture/Text/enterText.png");
 	imgEnterText->SetIsRender(false);
 	imgEnterText->SetColorA(0.0f);
 	imgEnterText->SetPos(imgEnterTextPos);
+	sprites.emplace_back(imgEnterText.get());
 	imgBackText = std::make_unique<Sprite>("Data/Texture/Text/backText.png");
 	imgBackText->SetIsRender(false);
 	imgBackText->SetColorA(0.0f);
 	imgBackText->SetPos(imgBackTextPos);
+	sprites.emplace_back(imgBackText.get());
 
 
 	imgTitleLogo = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/TitleLogo.png");
+	imgTitleLogo->SetDissolveTexture(L"Data/Texture/Noise/DirtGradient.png");
+	sprites.emplace_back(imgTitleLogo.get());
 	imgTitleLogoSmall = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/TitleLogoSmall.png");
 	imgTitleLogoSmall->SetIsRender(false);
 	imgTitleLogoSmall->SetColorA(0.0f);
+	sprites.emplace_back(imgTitleLogoSmall.get());
 
 	imgPressAnyButton = std::make_unique<Sprite>("Data/Texture/Text/PressAnyButton.sprite");
 	imgPressAnyButton->UpdateAnimation();
 	imgPressAnyButton->SetPos({640, 550});
+	sprites.emplace_back(imgPressAnyButton.get());
 
 	imgTitleText = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/titleText.sprite");
+	imgTitleText->SetDissolveTexture(L"Data/Texture/Noise/DirtGradient2.png");
 	imgTitleText->UpdateAnimation();
 	imgTitleText->SetPos(imgTitleTextPos);
-
+	sprites.emplace_back(imgTitleText.get());
 
 	imgBgCover = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/BgCover.png");
-	//imgBgCover->UpdateAnimation();
 	imgBgCover->SetPos({0, 0});
 	imgBgCover->SetIsRender(false);
 	imgBgCover->SetColorA(0.0f);
+	sprites.emplace_back(imgBgCover.get());
 
 	imgGameStart = std::make_unique<Sprite>("Data/Texture/Text/GameStart.sprite");
 	imgGameStart->UpdateAnimation();
 	imgGameStart->SetIsRender(false);
+	sprites.emplace_back(imgGameStart.get());
 
 	imgOptions = std::make_unique<Sprite>("Data/Texture/Text/Options.sprite");
 	imgOptions->UpdateAnimation();
 	imgOptions->SetIsRender(false);
+	sprites.emplace_back(imgOptions.get());
 
 	imgQuit = std::make_unique<Sprite>("Data/Texture/Text/Quit.sprite");
 	imgQuit->UpdateAnimation();
 	imgQuit->SetIsRender(false);
+	sprites.emplace_back(imgQuit.get());
 
 	imgSelectBar = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/selectBar.sprite");
 	imgSelectBar->UpdateAnimation();
 	imgSelectBar->SetIsRender(false);
 	imgSelectBar->SetPos({100.0f, 100.0});
+	sprites.emplace_back(imgSelectBar.get());
 
 
 	imgSelectLevelBgCover = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/levelSelectBgCover.png");
@@ -69,49 +78,115 @@ void UiTitle::Initialize()
 	imgSelectLevelBgCover->SetDissolveTexture(L"Data/Texture/Noise/GrungeMap.png");
 	imgSelectLevelBgCover->spriteDissolveConstant.edgeThreshold = 0.0f;
 	imgSelectLevelBgCover->spriteDissolveConstant.edgeColor = { 0.2f, 0.2f, 1.0f, 1.0f };
+	sprites.emplace_back(imgSelectLevelBgCover.get());
 
 	imgSelectLevel = std::make_unique<Sprite>("Data/Texture/Text/LevelSelect.sprite");
 	imgSelectLevel->UpdateAnimation();
 	imgSelectLevel->SetIsRender(false);
 	imgSelectLevel->SetPos(imgSelectLevelPos);
+	sprites.emplace_back(imgSelectLevel.get());
 
 	imgEasy = std::make_unique<Sprite>("Data/Texture/Text/Easy.sprite");
 	imgEasy->UpdateAnimation();
 	imgEasy->SetIsRender(false);
 	imgEasy->SetPos(imgEasyPos);
+	sprites.emplace_back(imgEasy.get());
 
 	imgNormal = std::make_unique<Sprite>("Data/Texture/Text/normal.sprite");
 	imgNormal->UpdateAnimation();
 	imgNormal->SetIsRender(false);
 	imgNormal->SetPos(imgNormalPos);
+	sprites.emplace_back(imgNormal.get());
 
 	imgHard = std::make_unique<Sprite>("Data/Texture/Text/hard.sprite");
 	imgHard->UpdateAnimation();
 	imgHard->SetIsRender(false);
 	imgHard->SetPos(imgHardPos);
+	sprites.emplace_back(imgHard.get());
 }
 
 void UiTitle::Update()
 {
 	switch (state)
 	{
-	case UiTitleState::Title:
+	case UiTitleState::Init:
 		{
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
-			{
-				imgEnterText->SetIsRender(true);
-				imgBackText->SetIsRender(true);
-				imgTitleLogoSmall->SetIsRender(true);
-				imgBgCover->SetIsRender(true);
-				imgGameStart->SetIsRender(true);
-				imgOptions->SetIsRender(true);
-				imgQuit->SetIsRender(true);
+			state = UiTitleState::ToTitle1;
+		}
+		break;
+	case UiTitleState::ToTitle1:
+		{
+			SetAllOffRender();
 
-				state = UiTitleState::TitleToSelectMenu;
+			imgTitleLogo->SetIsRender(true);
+			imgTitleLogo->SetColorA(1.0f);
+			imgTitleText->SetIsRender(true);
+			imgTitleText->SetColorA(1.0f);
+			imgPressAnyButton->SetIsRender(true);
+			imgPressAnyButton->SetColorA(1.0f);
+
+			// ステージ非描画
+			isStageRender = true;
+			// player描画
+			isCharacterRender = false;
+
+			titleTimer = 0.0f;
+
+			state = UiTitleState::ToTitle2;
+		}
+		//[[fallthrough]]
+	case UiTitleState::ToTitle2:
+		{
+			titleTimer += Timer::Instance().DeltaTime();
+
+			imgTitleLogo->spriteDissolveConstant.dissolveThreshold = Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgTitleLogDissolveThread);
+			imgTitleText->spriteDissolveConstant.dissolveThreshold = Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgTitleTextDissolveThread);
+
+			// 表示完了したら遷移
+			if (titleTimer > toTitleTime)
+			{
+				state = UiTitleState::Title1;
 			}
 		}
 		break;
-	case UiTitleState::TitleToSelectMenu:
+	case UiTitleState::Title1:
+		{
+			titleTimer = 0.0f;
+
+			state = UiTitleState::Title2;
+
+		}
+		//[[fallthrough]]
+	case UiTitleState::Title2:
+		{
+			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
+			{
+				state = UiTitleState::TitleToSelectMenu1;
+			}
+		}
+		break;
+	case UiTitleState::TitleToSelectMenu1:
+		{
+			SetAllOffRender();
+
+			imgTitleLogo->SetIsRender(true);
+			imgTitleText->SetIsRender(true);
+			imgPressAnyButton->SetIsRender(true);
+
+			imgEnterText->SetIsRender(true);
+			imgBackText->SetIsRender(true);
+			imgTitleLogoSmall->SetIsRender(true);
+			imgBgCover->SetIsRender(true);
+			imgGameStart->SetIsRender(true);
+			imgOptions->SetIsRender(true);
+			imgQuit->SetIsRender(true);
+
+			titleTimer = 0.0f;
+
+			state = UiTitleState::TitleToSelectMenu2;
+		}
+		//[[fallthrough]]
+	case UiTitleState::TitleToSelectMenu2:
 		{
 			titleTimer += Timer::Instance().DeltaTime();
 
@@ -151,24 +226,24 @@ void UiTitle::Update()
 			// 表示完了したら遷移
 			if (titleTimer > titleToSelectMenuTime)
 			{
-				imgTitleLogo->SetIsRender(false);
-				imgTitleText->SetIsRender(false);
-				imgPressAnyButton->SetIsRender(false);
-
-				imgSelectBar->SetIsRender(true);
-
-				selectMenu = static_cast<int>(SelectMenu::GamePlay);
-
-				titleTimer = 0.0f;
-				state      = UiTitleState::SelectMenu;
+				state      = UiTitleState::SelectMenu1;
 			}
 		}
 		break;
-	case UiTitleState::SelectMenu:
+	case UiTitleState::SelectMenu1:
+		{
+			selectMenu = static_cast<int>(SelectMenu::GamePlay);
+
+			imgSelectBar->SetIsRender(true);
+			titleTimer = 0.0f;
+			state = UiTitleState::SelectMenu2;
+		}
+		//[[fallthrough]]
+	case UiTitleState::SelectMenu2:
 		{
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
 			{
-				state = UiTitleState::SelectMenuToTitle;
+				state = UiTitleState::ToTitle1;
 			}
 
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::W))
@@ -189,38 +264,7 @@ void UiTitle::Update()
 
 					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
 					{
-						imgTitleLogoSmall->SetIsRender(false);
-						imgGameStart->SetIsRender(false);
-						imgOptions->SetIsRender(false);
-						imgQuit->SetIsRender(false);
-						imgSelectBar->SetIsRender(false);
-
-						imgSelectLevelBgCover->SetIsRender(true);
-						imgSelectLevel->SetIsRender(true);
-						imgEasy->SetIsRender(true);
-						imgNormal->SetIsRender(true);
-						imgHard->SetIsRender(true);
-
-						// ステージ非描画
-						isStageRender = false;
-						// player描画
-						isCharacterRender = true;
-
-						// テキストカラー設定
-						imgEasy->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
-						imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
-						imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
-
-						// ライト設定
-						//LightManager::Instance().Clear();
-						//Light* directionLight = new Light(LightType::Directional);
-						//directionLight->SetDirection(DirectX::XMFLOAT3(0.5, -1, -1));
-						//directionLight->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
-						//LightManager::Instance().Register(directionLight);
-						//LightManager::Instance().SetAmbientColor({ 0.2f, 0.2f, 0.2f, 1.0f });
-
-						titleTimer = 0.0f;
-						state      = UiTitleState::SelectMenuToLevel;
+						state      = UiTitleState::SelectMenuToLevel1;
 					}
 				}
 				break;
@@ -245,11 +289,34 @@ void UiTitle::Update()
 			}
 		}
 		break;
-	case UiTitleState::SelectMenuToTitle:
+	case UiTitleState::SelectMenuToLevel1:
 		{
+			// テキストカラー設定
+			imgEasy->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
+			imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
+			imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
+
+			SetAllOffRender();
+
+			imgEnterText->SetIsRender(true);
+			imgBackText->SetIsRender(true);
+
+			imgSelectLevelBgCover->SetIsRender(true);
+			imgSelectLevel->SetIsRender(true);
+			imgEasy->SetIsRender(true);
+			imgNormal->SetIsRender(true);
+			imgHard->SetIsRender(true);
+
+			// ステージ非描画
+			isStageRender = false;
+			// player描画
+			isCharacterRender = true;
+
+			titleTimer = 0.0f;
+			state = UiTitleState::SelectMenuToLevel2;
 		}
-		break;
-	case UiTitleState::SelectMenuToLevel:
+		//[[fallthrough]]
+	case UiTitleState::SelectMenuToLevel2:
 		{
 			titleTimer += Timer::Instance().DeltaTime();
 
@@ -263,13 +330,23 @@ void UiTitle::Update()
 			// 表示完了したら遷移
 			if (titleTimer > selectMenuToSelectLevelTime)
 			{
-				titleTimer = 0.0f;
-				state = UiTitleState::Level;
+				state = UiTitleState::Level1;
 			}
 		}
 		break;
-	case UiTitleState::Level:
+	case UiTitleState::Level1:
 		{
+			titleTimer = 0.0f;
+			state = UiTitleState::Level2;
+		}
+		//[[fallthrough]]
+	case UiTitleState::Level2:
+		{
+			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
+			{
+				state = UiTitleState::ToTitle1;
+			}
+
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::W))
 			{
 				selectLevel--;
@@ -354,4 +431,12 @@ void UiTitle::DrawDebugImGui()
 		ImGui::SliderFloat("EdgeThread", &imgSelectLevelBgCover->spriteDissolveConstant.edgeThreshold, 0.0f, 1.0f);
 	}
 	ImGui::End();
+}
+
+void UiTitle::SetAllOffRender()
+{
+	for(auto* sprite: sprites)
+	{
+		sprite->SetIsRender(false);
+	}
 }

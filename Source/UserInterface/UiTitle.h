@@ -43,20 +43,44 @@ public:
 	bool GetIsCharacterRender() { return isCharacterRender; }
 
 private:
+	void SetAllOffRender();
+
+private:
+	std::vector<Sprite*> sprites;
+
 	// タイトルUI状態管理用
 	enum class UiTitleState
 	{
-		Title,
-		TitleToSelectMenu,
-		SelectMenuToTitle,
-		SelectMenu,
-		SelectMenuToLevel,
-		Level,
-		LevelToTitle,
+		Init,
+		ToTitle1,
+		ToTitle2,
+		Title1,
+		Title2,
+		TitleToSelectMenu1,
+		TitleToSelectMenu2,
+		SelectMenu1,
+		SelectMenu2,
+		SelectMenuToLevel1,
+		SelectMenuToLevel2,
+		Level1,
+		Level2,
 	};
 	UiTitleState state;
 
 	float titleTimer = 0.0f;
+
+	// --- toTitleMenu ---
+	float toTitleTime = 2.0f;
+	Easing::EasingValue imgTitleLogDissolveThread =
+	{
+		0.0f, 1.5f,
+		0.0f, 1.0f
+	};
+	Easing::EasingValue imgTitleTextDissolveThread =
+	{
+		0.5f, 1.7f,
+		0.0f, 1.0f
+	};
 
 	// --- enter back text ---
 	std::unique_ptr<Sprite> imgEnterText;
@@ -74,7 +98,6 @@ private:
 		0.3f, 0.5f,
 		0.0f, 1.0f
 	};
-
 
 	// --- titleToSelectMenu ---
 	float titleToSelectMenuTime = 1.0f;
@@ -154,6 +177,8 @@ private:
 		0.7f, 0.9f,
 		{50.0f, 300.0f}, {100.0f,300.0}
 	};
+
+
 
 	// --- selectMenu ---
 	enum class SelectMenu

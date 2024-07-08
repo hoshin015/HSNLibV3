@@ -58,6 +58,23 @@ private:
 
 	float titleTimer = 0.0f;
 
+	// --- enter back text ---
+	std::unique_ptr<Sprite> imgEnterText;
+	DirectX::XMFLOAT2 imgEnterTextPos = { 100, 650 };
+	std::unique_ptr<Sprite> imgBackText;
+	DirectX::XMFLOAT2 imgBackTextPos = { 200, 650 };
+
+	Easing::EasingValue imgEnterBackTextTitleToSelectMenuAlpha =
+	{
+		0.7f, 0.9f,
+		0.0f, 1.0f
+	};
+	Easing::EasingValue imgEnterBackTextSelectMenuToLevelAlpha =
+	{
+		0.3f, 0.5f,
+		0.0f, 1.0f
+	};
+
 
 	// --- titleToSelectMenu ---
 	float titleToSelectMenuTime = 1.0f;

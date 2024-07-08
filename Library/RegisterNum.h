@@ -60,6 +60,7 @@
 #define _emitterConstant	7		// エミッターのデータ
 #define _uvScrollConstant	8		// uvスクロールのデータ
 #define _dissolveConstant	9		// ディゾルブのデータ
+#define _addColorConstant	10		// 追加カラーのデータ
 
 #define _luminanceExtractionConstant	5	// 高輝度抽出用
 #define _gaussianConstant				5	// ガウシアンフィルタ用
@@ -133,6 +134,7 @@
 #define _emitterConstant	b7		// エミッターのデータ
 #define _uvScrollConstant	b8		// uvスクロールのデータ
 #define _dissolveConstant	b9		// ディゾルブのデータ
+#define _addColorConstant	b10		// 追加カラーのデータ
 
 #define _luminanceExtractionConstant	b5	// 高輝度抽出用
 #define _gaussianConstant				b5	// ガウシアンフィルタ用

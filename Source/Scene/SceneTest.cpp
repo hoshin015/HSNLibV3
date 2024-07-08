@@ -450,7 +450,7 @@ void SceneTest::Render()
 		StageManager::Instance().Render(2, false);
 
 		//testStatic->Render();
-		//Enemy::Instance().Render();
+		Enemy::Instance().Render();
 
 		Player::Instance().Render();
 

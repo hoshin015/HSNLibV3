@@ -16,6 +16,16 @@ void UiTitle::Initialize()
 	isCharacterRender = false;
 
 
+	imgEnterText = std::make_unique<Sprite>("Data/Texture/Text/enterText.png");
+	imgEnterText->SetIsRender(false);
+	imgEnterText->SetColorA(0.0f);
+	imgEnterText->SetPos(imgEnterTextPos);
+	imgBackText = std::make_unique<Sprite>("Data/Texture/Text/backText.png");
+	imgBackText->SetIsRender(false);
+	imgBackText->SetColorA(0.0f);
+	imgBackText->SetPos(imgBackTextPos);
+
+
 	imgTitleLogo = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/TitleLogo.png");
 	imgTitleLogoSmall = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/TitleLogoSmall.png");
 	imgTitleLogoSmall->SetIsRender(false);
@@ -89,6 +99,8 @@ void UiTitle::Update()
 		{
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
 			{
+				imgEnterText->SetIsRender(true);
+				imgBackText->SetIsRender(true);
 				imgTitleLogoSmall->SetIsRender(true);
 				imgBgCover->SetIsRender(true);
 				imgGameStart->SetIsRender(true);
@@ -103,6 +115,9 @@ void UiTitle::Update()
 		{
 			titleTimer += Timer::Instance().DeltaTime();
 
+			// imgEnterBackText
+			imgEnterText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextTitleToSelectMenuAlpha));
+			imgBackText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextTitleToSelectMenuAlpha));
 
 			// imgTitleLogo
 			imgTitleLogo->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgTitleLogoAlpha));
@@ -191,6 +206,11 @@ void UiTitle::Update()
 						// player描画
 						isCharacterRender = true;
 
+						// テキストカラー設定
+						imgEasy->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
+						imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
+						imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
+
 						// ライト設定
 						//LightManager::Instance().Clear();
 						//Light* directionLight = new Light(LightType::Directional);
@@ -233,6 +253,10 @@ void UiTitle::Update()
 		{
 			titleTimer += Timer::Instance().DeltaTime();
 
+			// imgEnterBackText
+			imgEnterText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextSelectMenuToLevelAlpha));
+			imgBackText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextSelectMenuToLevelAlpha));
+
 			imgSelectLevelBgCover->spriteDissolveConstant.dissolveThreshold = Easing::GetNowParam(
 				Easing::OutQuad<float>, titleTimer, imgSelectLevelBgCoverDissolveThread);
 
@@ -260,6 +284,9 @@ void UiTitle::Update()
 			{
 			case SelectLevel::Easy:
 				{
+				imgEasy->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
+				imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
+				imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
 				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
@@ -268,6 +295,9 @@ void UiTitle::Update()
 				break;
 			case SelectLevel::Normal:
 				{
+				imgEasy->spriteAddColorConstant.addColor = { 0,0,0,1 };
+				imgNormal->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
+				imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
 				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
@@ -276,6 +306,9 @@ void UiTitle::Update()
 				break;
 			case SelectLevel::Hard:
 				{
+				imgEasy->spriteAddColorConstant.addColor = { 0,0,0,1 };
+				imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
+				imgHard->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
 				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
@@ -293,6 +326,7 @@ void UiTitle::Render()
 {
 	//if (!isPause) return;
 
+
 	imgTitleLogo->Render();
 	imgTitleLogoSmall->Render();
 	imgTitleText->Render();
@@ -307,6 +341,9 @@ void UiTitle::Render()
 	imgEasy->Render();
 	imgNormal->Render();
 	imgHard->Render();
+
+	imgEnterText->Render();
+	imgBackText->Render();
 }
 
 void UiTitle::DrawDebugImGui()

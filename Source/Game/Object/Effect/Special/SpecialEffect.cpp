@@ -221,9 +221,9 @@ void SpecialEffect::Emit()
 // ä‚ê∂ê¨
 void SpecialEffect::GenerateRock()
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 2; i++)
 	{
-		DirectX::XMFLOAT3 rPos = {(rand() % 30) - 15.0f, 0, rand() % 30 - 15.0f};
+		DirectX::XMFLOAT3 rPos = {(rand() % 60) - 30.0f, 0, rand() % 60 - 30.0f};
 		DirectX::XMFLOAT3 rVec = {(rand() % 3) - 1.5f, rand() % 1 + 0.5f, rand() % 3 - 1.5f};
 
 		RockData* rock = new RockData();

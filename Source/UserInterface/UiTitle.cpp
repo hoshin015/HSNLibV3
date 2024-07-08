@@ -89,11 +89,9 @@ void UiTitle::Update()
 			titleTimer += Timer::Instance().DeltaTime();
 
 			// pressAnyButton
-			float _imgPressAnyButtonScale = Easing::GetNowParam(Easing::OutQuad<float>, titleTimer,
-			                                                    imgPressAnyButtonScale);
+			float _imgPressAnyButtonScale = Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgPressAnyButtonScale);
 			imgPressAnyButton->SetScale({_imgPressAnyButtonScale, _imgPressAnyButtonScale});
-			imgPressAnyButton->SetColorA(
-				Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgPressAnyButtonAlpha));
+			imgPressAnyButton->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgPressAnyButtonAlpha));
 
 			// imgBgCover
 			imgBgCover->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgBgCoverAlpha));

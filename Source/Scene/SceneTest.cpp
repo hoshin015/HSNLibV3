@@ -119,26 +119,26 @@ void SceneTest::Initialize()
 	Particle::Instance().Initialize();
 
 	// --- Emitter 登録 ---
-	Emitter* emitter0                           = new Emitter();
-	emitter0->position                          = {0, 3, 3};
-	emitter0->emitterData.duration              = 5.0;
-	emitter0->emitterData.looping               = false;
-	emitter0->emitterData.burstsTime            = 0.1;
-	emitter0->emitterData.burstsCount           = 128;
-	emitter0->emitterData.particleKind          = pk_Dust;
-	emitter0->emitterData.particleLifeTimeMin   = 1.0f;
-	emitter0->emitterData.particleLifeTimeMax   = 1.0f;
-	emitter0->emitterData.particleSpeedMin      = 1.0f;
-	emitter0->emitterData.particleSpeedMax      = 5.0f;
-	emitter0->emitterData.particleSizeMin       = {0.1f, 0.1f};
-	emitter0->emitterData.particleSizeMax       = {0.4f, 0.4f};
-	emitter0->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
-	emitter0->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
-	emitter0->emitterData.particleGravity       = 1;
-	emitter0->emitterData.particleBillboardType = 0;
-	emitter0->emitterData.particleTextureType   = 0;
-	emitter0->emitterData.burstsOneShot   = 1;
-	EmitterManager::Instance().Register(emitter0);
+	//Emitter* emitter0                           = new Emitter();
+	//emitter0->position                          = {0, 3, 3};
+	//emitter0->emitterData.duration              = 5.0;
+	//emitter0->emitterData.looping               = false;
+	//emitter0->emitterData.burstsTime            = 0.1;
+	//emitter0->emitterData.burstsCount           = 128;
+	//emitter0->emitterData.particleKind          = pk_Dust;
+	//emitter0->emitterData.particleLifeTimeMin   = 1.0f;
+	//emitter0->emitterData.particleLifeTimeMax   = 1.0f;
+	//emitter0->emitterData.particleSpeedMin      = 1.0f;
+	//emitter0->emitterData.particleSpeedMax      = 5.0f;
+	//emitter0->emitterData.particleSizeMin       = {0.1f, 0.1f};
+	//emitter0->emitterData.particleSizeMax       = {0.4f, 0.4f};
+	//emitter0->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
+	//emitter0->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
+	//emitter0->emitterData.particleGravity       = 1;
+	//emitter0->emitterData.particleBillboardType = 0;
+	//emitter0->emitterData.particleTextureType   = 0;
+	//emitter0->emitterData.burstsOneShot   = 1;
+	//EmitterManager::Instance().Register(emitter0);
 
 	UiPause::Instance().Initialize();
 
@@ -238,9 +238,10 @@ void SceneTest::Update()
 	}
 	if (InputManager::Instance().GetKeyPressed(Keyboard::F3))
 	{
-		for(int i = 0; i < 3; i++)
+		for(int i = 0; i < 1; i++)
 		{
-			DirectX::XMFLOAT3 rPos = { (rand() % 24) - 12.0f, 0, rand() % 24 - 12.0f };
+			//DirectX::XMFLOAT3 rPos = { (rand() % 40) - 20.0f, 0, rand() % 40 - 20.0f };
+			DirectX::XMFLOAT3 rPos = { 0,0,0};
 			LightningEffect::Instance().Emit(rPos);
 		}
 	}
@@ -504,6 +505,7 @@ void SceneTest::Render()
 
 	// ポストエフェクトをかけるたびにこれを更新する
 	ID3D11ShaderResourceView* useSrv = frameBuffer->shaderResourceViews[0].Get();
+	//bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 
 	// ====== colorFilter =====
 	if(colorFilter->GetIsColorFilter())
@@ -511,21 +513,21 @@ void SceneTest::Render()
 		colorFilter->Make(useSrv);
 		useSrv = colorFilter->GetSrv();
 	}
-
+	
 	// ====== heatHaze =====
 	if(heatHaze->GetIsHeatHaze())
 	{
 		heatHaze->Make(useSrv);
 		useSrv = heatHaze->GetSrv();
 	}
-
+	
 	// ====== ラジアルブラー ======
 	if(radialBlur->GetIsRadial())
 	{
 		radialBlur->Make(useSrv);
 		useSrv = radialBlur->GetSrv();
 	}
-
+	
 	// ====== ブルーム処理しての描画 ======
 	bloom->Make(useSrv);
 	ID3D11ShaderResourceView* shvs[2] =

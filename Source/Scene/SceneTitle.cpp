@@ -85,7 +85,7 @@ void SceneTitle::Update()
 	EffectManager::Instance().Update();
 
 	// --- カメラ処理 ---
-	Camera::Instance().Update();
+	//Camera::Instance().Update();
 
 	// タイマーの定数バッファの更新
 	UpdateTimerConstnat();

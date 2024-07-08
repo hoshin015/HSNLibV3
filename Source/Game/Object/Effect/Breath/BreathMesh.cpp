@@ -13,13 +13,14 @@ void BreathCrossPlane::Update()
 	float scale = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, crossPlaneStartScale);
 	SetScale({ scale, 80, scale });
 
-	// 終了ディゾルブ値
+	// 終了スケール
 	if(lifeTimer > crossPlaneEndScale.startTime)
 	{
 		float scale = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, crossPlaneEndScale);
 		SetScale({ scale, 80, scale });
 	}
-	
+
+	GetModel()->dissolveConstant.dissolveThreshold = 0.01f;
 
 	// 姿勢行列更新
 	UpdateTransform();

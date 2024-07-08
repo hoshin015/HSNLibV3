@@ -30,6 +30,9 @@ public:
 	// 描画
 	void Render();
 
+	// debugGui
+	void DrawDebugImGui();
+
 
 private:
 	bool isStageRender = true;			// タイトルステージ描画フラグ
@@ -59,6 +62,26 @@ private:
 	// --- titleToSelectMenu ---
 	float titleToSelectMenuTime = 1.0f;
 
+	std::unique_ptr<Sprite> imgTitleLogo;
+	Easing::EasingValue imgTitleLogoAlpha =
+	{
+		0.0f, 0.25f,
+		1.0f, 0.0f
+	};
+	std::unique_ptr<Sprite> imgTitleLogoSmall;
+	Easing::EasingValue imgTitleLogoSmallAlpha =
+	{
+		0.7f, 0.9f,
+		0.0f, 1.0f
+	};
+
+	std::unique_ptr<Sprite> imgTitleText;
+	DirectX::XMFLOAT2 imgTitleTextPos = {640, 360};
+	Easing::EasingValue imgTitleTextAlpha =
+	{
+		0.0f, 0.25f,
+		1.0f, 0.0f
+	};
 
 	std::unique_ptr<Sprite> imgPressAnyButton;
 	Easing::EasingValue imgPressAnyButtonScale =
@@ -134,24 +157,26 @@ private:
 		Easy,
 		Normal,
 		Hard,
-		End,
+		END,
 	};
 	int selectLevel;
 
-	std::unique_ptr<Sprite> imgSelectLevel;
-	DirectX::XMFLOAT2 imgSelectLevelPos = { 200.0f, 100.0f };
-	Easing::EasingValue imgSelectLevelDissolveThread =
+	std::unique_ptr<Sprite> imgSelectLevelBgCover;
+	Easing::EasingValue imgSelectLevelBgCoverDissolveThread =
 	{
-		0.0f, 0.5f,
-		0.0f, 1.5f
+		0.0f, 0.6f,
+		0.0f, 1.0f
 	};
 
+	std::unique_ptr<Sprite> imgSelectLevel;
+	DirectX::XMFLOAT2 imgSelectLevelPos = { 200.0f, 100.0f };
+
 	std::unique_ptr<Sprite> imgEasy;
-	DirectX::XMFLOAT2 imgEasyPos = { 200.0f, 300.0f };
+	DirectX::XMFLOAT2 imgEasyPos = { 200.0f, 250.0f };
 
 	std::unique_ptr<Sprite> imgNormal;
 	DirectX::XMFLOAT2 imgNormalPos = { 200.0f, 400.0f };
 
 	std::unique_ptr<Sprite> imgHard;
-	DirectX::XMFLOAT2 imgHardPos = { 200.0f, 500.0f };
+	DirectX::XMFLOAT2 imgHardPos = { 200.0f, 550.0f };
 };

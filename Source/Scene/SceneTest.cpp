@@ -450,7 +450,7 @@ void SceneTest::Render()
 		StageManager::Instance().Render(2, false);
 
 		//testStatic->Render();
-		Enemy::Instance().Render();
+		//Enemy::Instance().Render();
 
 		Player::Instance().Render();
 
@@ -500,7 +500,6 @@ void SceneTest::Render()
 		bitBlockTransfer->blit(srvs, 0, ARRAYSIZE(srvs), wbOitBuffer->GetWbOitPS());
 	}
 	frameBuffer->DeActivate();
-
 
 
 	// ポストエフェクトをかけるたびにこれを更新する

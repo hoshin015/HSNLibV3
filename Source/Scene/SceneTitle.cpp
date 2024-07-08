@@ -161,6 +161,7 @@ void SceneTitle::Render()
 #if USE_IMGUI
 	// --- デバッグ描画 ---
 	DrawDebugGUI();
+	UiTitle::Instance().DrawDebugImGui();
 	LightManager::Instance().DrawDebugGui();
 
 #if SHOW_PERFORMANCE

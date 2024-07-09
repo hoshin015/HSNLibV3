@@ -108,6 +108,10 @@ private:
 	using inputData = std::variant<bool, int, float, DirectX::XMFLOAT2>;
 	std::map<std::string, inputData> inputMap;
 
+#ifdef _DEBUG
+	std::map<std::string, inputData> debug;
+#endif
+
 	// --- カメラのポインタ ---
 	CameraBase* camera;
 

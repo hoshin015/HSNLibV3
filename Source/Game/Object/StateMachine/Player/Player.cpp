@@ -244,6 +244,26 @@ void Player::DrawDebugImGui(int number)
 			}
 
 		}
+
+#ifdef _DEBUG
+		if(ImGui::CollapsingHeader(u8"デバッグ")) {
+			for (auto& [name, data] : debug) {
+				if(const float* val = std::get_if<float>(&data)) ImGui::Text("%s: %f", name.c_str(),*val);
+				if(const bool* val = std::get_if<bool>(&data)) ImGui::Text("%s: %s", name.c_str(), *val ? "true" : "false");
+				if(const int* val = std::get_if<int>(&data)) ImGui::Text("%s: %d", name.c_str(),*val);
+				if(const XMFLOAT2* val = std::get_if<XMFLOAT2>(&data)) ImGui::Text("%s: %f,%f", name.c_str(),val->x, val->y);
+			}
+		}
+#endif
+
+		if (ImGui::CollapsingHeader(u8"入力")) {
+			for (auto& [name, data] : inputMap) {
+				if (const float* val = std::get_if<float>(&data)) ImGui::Text("%s: %f", name.c_str(), *val);
+				if (const bool* val = std::get_if<bool>(&data)) ImGui::Text("%s: %s", name.c_str(), *val ? "true" : "false");
+				if (const int* val = std::get_if<int>(&data)) ImGui::Text("%s: %d", name.c_str(), *val);
+				if (const XMFLOAT2* val = std::get_if<XMFLOAT2>(&data)) ImGui::Text("%s: %f,%f", name.c_str(), val->x, val->y);
+			}
+		}
 	}
 	ImGui::End();
 
@@ -326,17 +346,21 @@ void Player::Input()
 	// animator.SetParameter("attack", inputAttackData);
 
 	static float attackTimer = 0;
-	if(inputAttackData) attackTimer = 0.5f;
+	//if(inputAttackData) attackTimer = 0.5f;
 
-	if (bool* attack = std::get_if<bool>(&inputMap["Attack"])) {
-		inputMap["Attack"] = *attack ? inputAttackData : false;
+	// 攻撃の入力した時点で次の入力をする
+	if (bool* endAttack = std::get_if<bool>(&inputMap["EndAttack"])) {
+		bool attack = *endAttack||animator.GetEndMotion() ? inputAttackData : false;
+		if (attack)attackTimer = 0.5f;
+		inputMap["Attack"] = attack;
+		animator.SetParameter("attack", attack);
 	}
-	else inputMap["Attack"] = false;
+	//else inputMap["Attack"] = false;
 
 	if(animator.GetEndMotion()) attackTimer -= dt;
 	inputMap["EndAttack"] = attackTimer <= 0;
 	animator.SetParameter("endAttack", attackTimer <= 0);
-
+	debug[u8"攻撃時間"] = attackTimer;
 	//animator.GetVelocity()
 
 	// --- 回避 ---

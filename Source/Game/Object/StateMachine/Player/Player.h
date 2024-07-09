@@ -48,7 +48,7 @@ private:
 public:
 	static Player& Instance()
 	{
-		static Player instance("Data/Fbx/GaoPlayer/player_test_01.model");
+		static Player instance("Data/Fbx/GaoPlayer/gaoplayer_3.model");
 		return instance;
 	}
 
@@ -67,6 +67,9 @@ public:
 	void CalcRunVelocity();
 	// ‰ñ”ð
 	void CalcDodgeVelocity();
+
+	// RootAnimation
+	void CalcRootAnimationVelocity();
 
 	// ˆÚ“®‚µ‚Ä‚¢‚é•ûŒü‚ÉŒü‚­
 	void Turn();

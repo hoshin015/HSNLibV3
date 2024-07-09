@@ -87,7 +87,12 @@ ModelResource::KeyFrame Animator::BlendKeyFrame(
 }
 
 
-ModelResource::KeyFrame Animator::MotionUpdate(Motion* motion, const float rate) const {
+ModelResource::KeyFrame Animator::MotionUpdate(Motion* motion, const float rate) {
+	if(!motion->loop&&motion->endMotion) {
+		int endKey = motion->motion->sequence.size() - 1;
+		return motion->motion->sequence[endKey];
+	}
+
 	const float seq      = motion->motion->sequence.size() * fmodf(rate * motion->animationSpeed, 1);
 	const int   index    = static_cast<int>(seq);
 	const float lerpRate = seq - static_cast<float>(index);
@@ -101,7 +106,7 @@ ModelResource::KeyFrame Animator::MotionUpdate(Motion* motion, const float rate)
 
 	// TODO::最後のフレームを通過したかの判定をもうちょっと何とかする
 	// このままだとタイミングによっては最後のフレーム担っても感知できない
-	motion->endMotion = fmodf(rate * motion->animationSpeed, 1) >= .9f;
+	_isEndMotion = motion->endMotion = fmodf(rate * motion->animationSpeed, 1) >= .9f;
 	return BlendKeyFrame(keyFrames[0], keyFrames[1], lerpRate);
 }
 
@@ -231,6 +236,10 @@ ModelResource::KeyFrame Animator::PlayAnimation(float elapsedTime) {
 		if (rate >= 1.f) {
 			_timer               = 0;
 			_currentState->timer = 0;
+			if(_currentState->type == State::MOTION)_currentState->GetObj<Motion>()->endMotion = false;
+			if (_currentState->type == State::BLEND_TREE) {
+				_currentState->GetObj<BlendTree>()->endMotion = false;
+			}
 			_currentState        = _nextState;
 			_nextState           = nullptr;
 		}

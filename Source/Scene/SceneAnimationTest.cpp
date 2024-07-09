@@ -14,9 +14,9 @@ void SceneAnimationTest::DrawDebugGUI() {
 	DrawMenuBar();
 	ImGuiManager::Instance().DisplayPerformanceStats();
 
-	float& rate   = _animator.GetParameter<float>("x");
-	bool&  attack = _animator.GetParameter<bool>("attack");
-	bool&  end    = _animator.GetParameter<bool>("end");
+	float rate   = _animator.GetParameter<float>("x");
+	bool  attack = _animator.GetParameter<bool>("attack");
+	bool  end    = _animator.GetParameter<bool>("end");
 	if (ImGui::Begin("Animator")) {
 		ImGui::DragFloat("rate", &rate, 0.001f, 0, 1);
 		ImGui::Checkbox("attack", &attack);
@@ -66,7 +66,7 @@ void SceneAnimationTest::Initialize() {
 	rootMotion.type   = Animator::State::MOTION;
 	rootMotion.transitions =
  	STATE_FUNC(animator) {
- 		if (bool& attack = animator.GetParameter<bool>("attack")) {
+ 		if (bool attack = animator.GetParameter<bool>("attack")) {
  			attack = false;
  			return &animator.GetState("attack");
  		}

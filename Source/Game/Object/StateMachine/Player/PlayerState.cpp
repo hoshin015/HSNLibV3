@@ -193,10 +193,13 @@ void PlayerAttackState::Enter()
 
 void PlayerAttackState::Execute()
 {
-	if(owner->GetAnimationEndFlag())
+	if(owner->GetInputMap<bool>("EndAttack"))
 	{
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
 	}
+
+	owner->CalcRootAnimationVelocity();
+	owner->Move();
 }
 
 void PlayerAttackState::Exit()

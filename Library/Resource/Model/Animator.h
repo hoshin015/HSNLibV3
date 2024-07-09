@@ -17,6 +17,7 @@ public:
 		DirectX::XMFLOAT2         threshold      = {};
 		float                     animationSpeed = 1;
 		bool                      endMotion      = false;
+		bool                      loop           = true;
 	};
 
 	struct BlendTree {
@@ -37,13 +38,13 @@ public:
 		std::shared_ptr<void> object;
 		TransitionFunction    transitions;
 
-		ObjectType type  = MOTION;
-		float      speed = 1;
-		float      timer = 0;
+		ObjectType type           = MOTION;
+		float      speed          = 1;
+		float      timer          = 0;
 		float      transitionTime = 0.5f;
 
 		template<typename T>
-		std::shared_ptr<T> GetObj() { return std::static_pointer_cast<Animator::Motion>(object); }
+		std::shared_ptr<T> GetObj() { return std::static_pointer_cast<T>(object); }
 	};
 
 private:
@@ -62,12 +63,13 @@ private:
 	float _timer;
 
 	bool _rootMotionEnabled = false;
+	bool _isEndMotion       = false;
 
 private:
 	ModelResource::KeyFrame BlendKeyFrame(
 		const ModelResource::KeyFrame* first, const ModelResource::KeyFrame* second, float lerpRate
 	) const;
-	ModelResource::KeyFrame MotionUpdate(Motion* motion, float rate) const;
+	ModelResource::KeyFrame MotionUpdate(Motion* motion, float rate);
 	ModelResource::KeyFrame BlendUpdate(BlendTree* blend, float time);
 	ModelResource::KeyFrame StateUpdate(State* state, float elapsedTime);
 
@@ -107,11 +109,15 @@ public:
 	}
 
 	template<typename T>
-	T& GetParameter(const std::string& name) { return std::get<T>(_parameters[name]); }
+	T          GetParameter(const std::string& name) {
+		if (T* get = std::get_if<T>(&_parameters[name])) return *get;
+		return T();
+	}
 
 	State&                   GetState(const std::string& name) { return _states[name]; }
-	float                    GetTimer() const { return _timer; }
 	const DirectX::XMFLOAT3& GetVelocity() const { return _velocity; }
+	float                    GetTimer() const { return _timer; }
+	bool                     GetEndMotion() const { return _isEndMotion; }
 
 	ModelResource::KeyFrame PlayAnimation(float elapsedTime);
 

@@ -550,11 +550,22 @@ void SceneModelEditor::DrawDebugGUI()
 						mySequence.Add(collision.name, static_cast<int>(SequencerItemType::Sphere),
 						               collision.startFrame, collision.endFrame);
 					}
+					if (mySequence.myItems.at(mySequence.selectItemNum).mType == static_cast<int>(
+						SequencerItemType::SE))
+					{
+						int index = mySequence.myItems.at(mySequence.selectItemNum).mTypeIndex;
+
+						AnimSe se = animationClip.animSes.at(index);
+						animationClip.animSes.push_back(se);
+
+						mySequence.Add(se.name, static_cast<int>(SequencerItemType::SE),
+							se.startFrame, se.endFrame);
+					}
 				}
 
 				// 削除
 				ImGui::SameLine();
-				if (ImGui::Button("Delete"))
+				if (ImGui::Button(u8"削除"))
 				{
 					isSkip = true;
 					// モデルが持ってるアイテムを削除
@@ -563,6 +574,12 @@ void SceneModelEditor::DrawDebugGUI()
 					{
 						int index = mySequence.myItems.at(mySequence.selectItemNum).mTypeIndex;
 						animationClip.animSphereCollisions.erase(animationClip.animSphereCollisions.begin() + index);
+					}
+					if (mySequence.myItems.at(mySequence.selectItemNum).mType == static_cast<int>(
+						SequencerItemType::SE))
+					{
+						int index = mySequence.myItems.at(mySequence.selectItemNum).mTypeIndex;
+						animationClip.animSes.erase(animationClip.animSes.begin() + index);
 					}
 
 					// mySequence 内のアイテムを削除
@@ -625,6 +642,7 @@ void SceneModelEditor::DrawDebugGUI()
 
 						MUSIC_LABEL& musicType = animationClip.animSes.at(index).musicType;
 
+						// TODO: SE更新箇所
 						std::string musicTypeName[] = {"TEST_MUISC", "WEAPON"};
 
 						if (ImGui::BeginCombo("SE TYPE", musicTypeName[static_cast<int>(musicType)].c_str()))

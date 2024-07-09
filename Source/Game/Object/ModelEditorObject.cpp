@@ -3,6 +3,8 @@
 
 void ModelEditorObject::Update()
 {
+	UpdateSe();
+
 	// アニメーション更新
 	UpdateAnimation();
 

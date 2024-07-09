@@ -77,6 +77,7 @@ void AnimatedObject::PlayAnimation(int index, bool loop)
 	animationEndFlag  = false;
 
 	ClearAnimSphereCollisionDamagedFlag();
+	ClearSeFlag();
 }
 
 // アニメーション更新
@@ -108,6 +109,7 @@ void AnimatedObject::UpdateAnimation()
 			currentAnimationSeconds -= animation.secondsLength;
 
 			ClearAnimSphereCollisionDamagedFlag();
+			ClearSeFlag();
 		}
 		else
 		{
@@ -308,6 +310,41 @@ void AnimatedObject::ClearAnimSphereCollisionDamagedFlag()
 	for (auto& playerAnimSphereCollision : model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSphereCollisions)
 	{
 		playerAnimSphereCollision.isDamaged = false;
+	}
+}
+
+// 効果音更新
+void AnimatedObject::UpdateSe()
+{
+	int seCount = model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSes.size();
+
+	for (int i = 0; i < seCount; i++)
+	{
+		// 既に再生されているなら再生しない
+		if (model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSes.at(i).isPlay) continue;
+
+		int startFrame = model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSes.at(i).startFrame;
+		int endFrame = model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSes.at(i).endFrame;
+
+		//if (currentFrameInt < startFrame || currentFrameInt > endFrame) continue;
+		if (currentKeyFrame != startFrame) continue;
+
+		model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSes.at(i).isPlay = true;
+
+		MUSIC_LABEL type = model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSes.at(i).musicType;
+
+		AudioManager::Instance().PlayMusic(static_cast<int>(type));
+	}
+}
+
+// 効果音フラグのクリア
+void AnimatedObject::ClearSeFlag()
+{
+	int seCount = model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSes.size();
+
+	for (int i = 0; i < seCount; i++)
+	{
+		model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSes.at(i).isPlay = false;
 	}
 }
 

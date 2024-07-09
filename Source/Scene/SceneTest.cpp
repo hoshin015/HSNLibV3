@@ -412,7 +412,7 @@ void SceneTest::Render()
 
 		for (int i = 0; i < SHADOWMAP_COUNT; i++)
 		{
-			shadow->Activate(i, camera);
+			shadow->Activate(i, CameraManager::Instance().GetCamera().get());
 			// ‰e‚ğ•t‚¯‚½‚¢ƒ‚ƒfƒ‹‚Í‚±‚±‚Å•`‰æ‚ğs‚¤(Render ‚Ìˆø”‚É true ‚ğ‚¢‚ê‚é)
 			{
 				// --- animated object ---

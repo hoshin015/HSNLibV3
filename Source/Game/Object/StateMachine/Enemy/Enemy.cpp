@@ -10,7 +10,7 @@
 
 #include "../../Library/Input/InputManager.h"
 
-#include "../../Effect/RockEffect.h"
+#include "../../Effect/Rock/RockEffect.h"
 
 #include "EnemyBehavior.h"
 

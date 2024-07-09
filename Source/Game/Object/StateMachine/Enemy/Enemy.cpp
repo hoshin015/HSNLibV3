@@ -3,9 +3,14 @@
 #include "../../External/ImGui/imgui.h"
 
 #include "../../Library/3D/DebugPrimitive.h"
+#include "../../Library/3D/CameraManager.h"
 
 #include "../../Library/Timer.h"
 #include "../../Library/Math/Math.h"
+
+#include "../../Library/Input/InputManager.h"
+
+#include "../../Effect/RockEffect.h"
 
 #include "EnemyBehavior.h"
 
@@ -31,11 +36,14 @@ void Enemy::Initialize()
 	float theta = DirectX::XMConvertToRadians(rand() % 360);
 	moveTargetPosition_ = { cosf(theta) * wanderRange, 0.0f, sinf(theta) * wanderRange };
 	targetVec = Vector3::Zero_;
+	turnAngle = 0.0f;
 
 
 	// --- ステータスの設定 ---
 	hp = 1000.0f;
 	flinchValue = 100.0f;
+
+	alive = true;
 
 
 	PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
@@ -60,6 +68,17 @@ void Enemy::Update()
 
 	// --- 位置の制限 ---
 	ClampPosition(75.0f);
+
+	if (alive && hp < 0.0f)
+	{
+		OnDead();
+	}
+
+
+	if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::P))
+	{
+		PlayRockEffect();
+	}
 
 
 	// スケール変更
@@ -111,6 +130,15 @@ void Enemy::ShowNode(NodeBase<Enemy>* node, std::string nodeName)
 
 		ImGui::TreePop();
 	}
+}
+
+
+// --- 死亡したときに呼ばれる ---
+void Enemy::OnDead()
+{
+	CameraManager::Instance().SetCurrentCamera("EnemyDeadCamera");
+
+	alive = false;
 }
 
 
@@ -242,6 +270,19 @@ void Enemy::ClampPosition(float range)
 		pos.Normalize();
 		pos *= range;
 		position = pos.vec_;
+	}
+}
+
+
+void Enemy::PlayRockEffect()
+{
+	for (int i = 0; i < 10; i++)
+	{
+		DirectX::XMFLOAT3 rPos = { (rand() % 10) - 5.0f, 0, rand() % 10 - 5.0f };
+		DirectX::XMFLOAT3 rVec = { (rand() % 10) - 5.0f, 5, rand() % 10 - 5.0f };
+		Vector3 position = GetPos();
+		position += rPos;
+		RockEffect::Instance().Emit(position.vec_, rVec, { 0.1, 1 });
 	}
 }
 

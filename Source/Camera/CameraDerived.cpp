@@ -2,6 +2,8 @@
 
 #include "../../External/ImGui/imgui.h"
 
+#include "../../Library/3D/CameraManager.h"
+
 #include "../../Library/Timer.h"
 
 #include "../../Library/Input/InputManager.h"
@@ -71,7 +73,7 @@ void PlayerCamera::Update()
 			shakeOffset += upVec * (((rand() % 100) / 100.0f) - 0.5f) * shakeIntensity.y;
 			shakeOffset += frontVec * (((rand() % 100) / 100.0f) - 0.5f) * shakeIntensity.z;
 		}
-
+		
 		else
 		{
 			timer = 0.0f;
@@ -282,4 +284,61 @@ void LockOnCamera::DrawDebugGui()
 	ImGui::DragFloat(u8"‹——£", &range, 0.1f);
 
 	ImGui::End();
+}
+
+
+
+void EnemyDeadCamera::Initialize()
+{
+}
+
+void EnemyDeadCamera::Update()
+{
+	switch(state)
+	{
+	case 0:
+
+		timer = 3.0f;
+
+		state++;
+		break;
+
+
+	case 1:
+	{
+		Vector3 headPos = Enemy::Instance().GetBonePosition("atama");
+		target = headPos;	// –Ú•W
+
+		Vector3 enemyPosition = Enemy::Instance().GetPos();
+		Vector3 vec = headPos - enemyPosition;
+		vec.Normalize();
+
+		position = enemyPosition + vec * 25.0f;
+
+		if (position.y < 1.0f)
+			position.y = 1.0f;
+
+		CameraBase::Update();
+
+
+		float elapsedTime = Timer::Instance().DeltaTime();
+		timer -= elapsedTime;
+		if (timer < 0.0f)
+		{
+			CameraManager::Instance().SetCurrentCamera("PlayerCamera");
+		}
+		break;
+	}
+
+
+	}
+}
+
+void EnemyDeadCamera::UpdateConstants()
+{
+	CameraBase::UpdateConstants();
+}
+
+void EnemyDeadCamera::DrawDebugGui()
+{
 }

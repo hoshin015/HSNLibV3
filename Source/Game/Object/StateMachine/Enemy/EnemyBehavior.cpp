@@ -388,8 +388,7 @@ BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 	switch (step)
 	{
 	case 0:
-
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::IDLE), true);
+		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
 		owner_->SetCurrentAnimationSeconds(0.0f);
 		owner_->SetAnimationEndFlag(false);
 
@@ -398,6 +397,10 @@ BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 			Matrix R;
 			R.MakeRotationFromQuaternion(owner_->quaternion_);
 			owner_->targetVec = R.v_[2].xyz();
+			Vector3 playerPosition = Player::Instance().GetPos();
+			Vector3 vec = playerPosition - owner_->GetPos();
+			vec.Normalize();
+			owner_->turnAngle = owner_->targetVec.Dot(vec);
 		}
 
 		step++;
@@ -405,28 +408,58 @@ BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 
 	case 1:
 	{
-
+#if 1
 		Vector3 position = owner_->GetPos();
 		Vector3 playerPosition = Player::Instance().GetPos();
 
 		Vector3 targetVec = playerPosition - position;
 		targetVec.Normalize();
 
-		// --- 目標の方へ回転 ---
-		owner_->RotateToTargetVec(targetVec.vec_, 0.1f/*, &owner_->front*/);
+		// --- 回転前に内積を求めて、補完量を決める ---
+		Matrix R;
+		R.MakeRotationFromQuaternion(owner_->quaternion_);
+		Vector3 front = R.v_[2].xyz();
 
+		// --- -1.0 ~ 1.0 を 0.0 ~ 0.9に ---
+		float dot = front.Dot(targetVec);
+		dot += 1.0f;
+		dot /= 2.0f;
+		dot -= 0.1f;
+		dot *= 0.05f;
+
+		// --- 目標の方へ回転 ---
+		owner_->RotateToTargetVec(targetVec.vec_, 0.1f + dot/*, &owner_->front*/);
+
+
+		R.MakeRotationFromQuaternion(owner_->quaternion_);
+		front = R.v_[2].xyz();
+
+		// --- 目標に向いていたら ---
+		dot = front.Dot(targetVec);
+		if (dot > 0.985f)
+		{
+			step = 0;
+			return BT_ActionState::Complete;
+		}
+#else
+		Quaternion rotation;
+		rotation.SetRotationY(owner_->turnAngle / 10.0f);
+		owner_->quaternion_ *= rotation;
 
 		Matrix R;
 		R.MakeRotationFromQuaternion(owner_->quaternion_);
 		Vector3 front = R.v_[2].xyz();
 
-		// --- 目標に向いていたら ---
-		float dot = front.Dot(targetVec);
+		Vector3 vec = Player::Instance().GetPos() - owner_->GetPos();
+		vec.Normalize();
+
+		float dot = front.Dot(vec);
 		if (dot > 0.99f)
 		{
 			step = 0;
 			return BT_ActionState::Complete;
 		}
+#endif
 
 		break;
 	}
@@ -606,12 +639,26 @@ BT_ActionState EnemyStampAction::Run(float elapsedTime)
 	{
 	case 0:
 
+		owner_->runTimer_ = 0.75f;
 		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::STAMP), false);
 
 		step++;
 		break;
 
 	case 1:
+
+		owner_->runTimer_ -= elapsedTime;
+		if (owner_->runTimer_ < 0.0f)
+		{
+			owner_->PlayRockEffect();
+			owner_->runTimer_ = 0.0f;
+			step++;
+		}
+
+		break;
+
+
+	case 2:
 
 		// --- アニメーションが終わったら終了 ---
 		if (owner_->GetAnimationEndFlag())
@@ -779,7 +826,7 @@ BT_ActionState EnemyAfterRushingBiteAction::Run(float elapsedTime)
 		float dotR = right.Dot(vec);
 		if (dotR > 0.5f)	// 横にいたらタックル
 		{
-			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TACKLE), false);
+			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TACKLE_RIGHT), false);
 			step = 2;
 			owner_->runTimer_ = 0.25f;
 			break;
@@ -788,7 +835,7 @@ BT_ActionState EnemyAfterRushingBiteAction::Run(float elapsedTime)
 		else if (dotR < -0.5f)
 		{
 			// --- 右タックル ---
-			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TACKLE), false);
+			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TACKLE_LEFT), false);
 			step = 3;
 			owner_->runTimer_ = 0.25f;
 			break;

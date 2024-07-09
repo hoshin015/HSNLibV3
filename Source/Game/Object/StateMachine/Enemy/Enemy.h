@@ -20,7 +20,7 @@ private:
 public:
 	static Enemy& Instance()
 	{
-		static Enemy instance("Data/Fbx/Monster/gaoanimal_4.model");
+		static Enemy instance("Data/Fbx/Monster/gaoanimal_5.model");
 		return instance;
 	}
 
@@ -58,12 +58,18 @@ public:
 	void RotateToTargetVec(const DirectX::XMFLOAT3& targetVec, float t, const Vector3* tempFront = nullptr);
 	void ClampPosition(float range);
 
+
+	// --- エフェクト関連 ---
+	void PlayRockEffect();
+
 private:
 	// --- ビヘイビアツリー関連 ---
 	void InitializeBehaviorTree();
 	void FinalizeBehaviorTree();
 	void UpdateBehaviorTree(float elapsedTime);
 	void ShowNode(NodeBase<Enemy>* node, std::string nodeName);
+
+	void OnDead();
 
 	BehaviorTree<Enemy>* aiTree_;		// この中にツリーが伸びていく
 	BehaviorData<Enemy>* behaviorData_;	// ビヘイビアのデータを保存する変数
@@ -88,11 +94,14 @@ private:
 	float hp;			// 体力
 	float flinchValue;	// 怯み値
 
+	bool alive;
+
 public:
 	Quaternion quaternion_;
 	Vector3 moveTargetPosition_;
 	float runTimer_;
 	Vector3 targetVec;	// 回転する目標
+	float turnAngle;
 
 	float walkSpeed_ = 7.0f;
 	float runSpeed_ = 10.0f;

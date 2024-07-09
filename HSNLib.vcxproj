@@ -172,6 +172,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Library\3D\CameraBase.cpp" />
+    <ClCompile Include="Library\3D\CameraManager.cpp" />
     <ClCompile Include="Library\Math\Matrix.cpp" />
     <ClCompile Include="Library\Math\Vector.cpp" />
     <ClCompile Include="Source\Camera\CameraDerived.cpp" />
@@ -276,6 +277,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\3D\CameraBase.h" />
+    <ClInclude Include="Library\3D\CameraManager.h" />
     <ClInclude Include="Library\Math\Matrix.h" />
     <ClInclude Include="Library\Math\Vector.h" />
     <ClInclude Include="Source\Camera\CameraDerived.h" />

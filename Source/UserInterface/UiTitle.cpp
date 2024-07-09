@@ -14,6 +14,9 @@ void UiTitle::Initialize()
 	state = UiTitleState::Init;
 
 
+	imgBlack = std::make_unique<Sprite>("Data/Texture/Black.png");
+	sprites.emplace_back(imgBlack.get());
+
 	imgEnterText = std::make_unique<Sprite>("Data/Texture/Text/enterText.png");
 	imgEnterText->SetIsRender(false);
 	imgEnterText->SetColorA(0.0f);
@@ -118,6 +121,8 @@ void UiTitle::Update()
 		{
 			SetAllOffRender();
 
+
+			imgBlack->SetIsRender(true);
 			imgTitleLogo->SetIsRender(true);
 			imgTitleLogo->SetColorA(1.0f);
 			imgTitleText->SetIsRender(true);
@@ -139,6 +144,7 @@ void UiTitle::Update()
 		{
 			titleTimer += Timer::Instance().DeltaTime();
 
+			imgBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgBlackToTitleAlpha));
 			imgTitleLogo->spriteDissolveConstant.dissolveThreshold = Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgTitleLogDissolveThread);
 			imgTitleText->spriteDissolveConstant.dissolveThreshold = Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgTitleTextDissolveThread);
 
@@ -298,6 +304,7 @@ void UiTitle::Update()
 
 			SetAllOffRender();
 
+			imgBlack->SetIsRender(true);
 			imgEnterText->SetIsRender(true);
 			imgBackText->SetIsRender(true);
 
@@ -319,6 +326,8 @@ void UiTitle::Update()
 	case UiTitleState::SelectMenuToLevel2:
 		{
 			titleTimer += Timer::Instance().DeltaTime();
+
+			imgBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgBlackSelectMenuToLevelAlpha));
 
 			// imgEnterBackText
 			imgEnterText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextSelectMenuToLevelAlpha));
@@ -403,7 +412,6 @@ void UiTitle::Render()
 {
 	//if (!isPause) return;
 
-
 	imgTitleLogo->Render();
 	imgTitleLogoSmall->Render();
 	imgTitleText->Render();
@@ -421,6 +429,8 @@ void UiTitle::Render()
 
 	imgEnterText->Render();
 	imgBackText->Render();
+
+	imgBlack->Render();
 }
 
 void UiTitle::DrawDebugImGui()

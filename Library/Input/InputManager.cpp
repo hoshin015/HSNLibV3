@@ -1,9 +1,9 @@
 #include "InputManager.h"
 
 // 初期化処理
-void InputManager::Initialize(HWND hwnd)
+void InputManager::Initialize(HWND* hwnd)
 {
-	pHwnd = &hwnd;
+	pHwnd = hwnd;
 
 	// --- キーボード ---
 	keyboard = std::make_unique<DirectX::Keyboard>();
@@ -16,7 +16,7 @@ void InputManager::Initialize(HWND hwnd)
 	mouseButtonStates[static_cast<size_t>(MOUSEBUTTON_STATE::xButton1)]			= &mouseTracker.xButton1;
 	mouseButtonStates[static_cast<size_t>(MOUSEBUTTON_STATE::xButton2)]			= &mouseTracker.xButton2;
 	SetMousePositionMode(DirectX::Mouse::MODE_ABSOLUTE);
-	mouse->SetWindow(hwnd);
+	mouse->SetWindow(*hwnd);
 
 	// --- ゲームパッド ---
 	gamepad = std::make_unique<DirectX::GamePad>();
@@ -113,11 +113,13 @@ void InputManager::SetMousePositionMode(DirectX::Mouse::Mode mode)
 }
 
 // マウスの座標設定(Window内)
-void InputManager::SetCursorPos(int x, int y)
+void InputManager::SetCursorPosition(int x, int y)
 {
 	POINT p = { x,y };
-	ClientToScreen(*pHwnd, &p);
-	::SetCursorPos(p.x, p.y);
+	if(ClientToScreen(*pHwnd, &p))
+	{
+		SetCursorPos(p.x, p.y);
+	}
 }
 
 // ---	ゲームパッド ---

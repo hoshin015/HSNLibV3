@@ -69,6 +69,19 @@ private:
 
 	float titleTimer = 0.0f;
 
+	// --- black ---
+	std::unique_ptr<Sprite> imgBlack;
+	Easing::EasingValue imgBlackToTitleAlpha =
+	{
+		0.0f, 0.3f,
+		1.0f, 0.0f
+	};
+	Easing::EasingValue imgBlackSelectMenuToLevelAlpha =
+	{
+		0.0f, 0.3f,
+		1.0f, 0.0f
+	};
+
 	// --- toTitleMenu ---
 	float toTitleTime = 2.0f;
 	Easing::EasingValue imgTitleLogDissolveThread =

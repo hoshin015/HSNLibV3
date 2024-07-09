@@ -48,7 +48,9 @@ void SceneTest::Initialize()
 	Camera::Instance().SetAngle({DirectX::XMConvertToRadians(45), DirectX::XMConvertToRadians(180), 0});
 	Camera::Instance().cameraType = Camera::CAMERA::TARGET_PLAYER;
 #else
-	camera = &playerCamera;
+	CameraManager::Instance().Initialize();
+	CameraManager::Instance().SetCurrentCamera("PlayerCamera");
+	//camera = &playerCamera;
 	//camera = &lockOnCamera;
 #endif
 
@@ -111,7 +113,7 @@ void SceneTest::Initialize()
 
 	Enemy::Instance().Initialize();
 	Player::Instance().Initialize();
-	Player::Instance().SetCamera(camera);	// 今のカメラを設定
+	Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());	// 今のカメラを設定
 	Player::Instance().SetPos({ 0.0f, 0.0f, 100.0f });
 
 
@@ -175,7 +177,8 @@ void SceneTest::Update()
 	//Camera::Instance().SetTarget(blendTestPlayer->GetPos());
 	Camera::Instance().Update();
 #else
-	camera->Update();
+	CameraManager::Instance().Update();
+	//camera->Update();
 #endif
 
 
@@ -396,7 +399,8 @@ void SceneTest::Render()
 #if 0
 	Camera::Instance().UpdateCameraConstant();
 #else
-	camera->UpdateConstants();
+	CameraManager::Instance().UpdateConstants();
+	//camera->UpdateConstants();
 #endif
 	// ライトの定数バッファの更新
 	LightManager::Instance().UpdateConstants();
@@ -570,7 +574,8 @@ void SceneTest::Render()
 	heatHaze->DrawDebugGui();
 	colorFilter->DrawDebugGui();
 
-	camera->DrawDebugGui();
+
+	CameraManager::Instance().GetCamera()->DrawDebugGui();
 
 #if SHOW_PERFORMANCE
 	// --- パフォーマンス描画 ---
@@ -601,11 +606,15 @@ void SceneTest::DrawDebugGUI()
 			// --- プレイヤーカメラをセット ---
 			if (!cameraFlag)
 			{
+				auto camera = CameraManager::Instance().GetCamera();
 				Vector3 position = camera->GetCurrentPosition();
 				Vector3 target = camera->GetTarget();
-				camera = &playerCamera;
-				playerCamera.OnSetCamera();
-				Player::Instance().SetCamera(camera);
+				CameraManager::Instance().SetCurrentCamera("PlayerCamera");
+				auto ptr = std::dynamic_pointer_cast<PlayerCamera>(CameraManager::Instance().GetCamera());
+				ptr->OnSetCamera();
+				//camera = &playerCamera;
+				//playerCamera.OnSetCamera();
+				Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());
 
 				cameraFlag = !cameraFlag;
 			}
@@ -613,17 +622,24 @@ void SceneTest::DrawDebugGUI()
 			// --- ロックオンカメラをセット ---
 			else
 			{
-				Vector3 position = camera->GetPosition();
-				Vector3 target = camera->GetTarget();
-				camera = &lockOnCamera;
-				camera->Initialize();
+				if(!Enemy::Instance().IsDead())
+				{
+					auto camera = CameraManager::Instance().GetCamera();
+					Vector3 position = camera->GetPosition();
+					Vector3 target = camera->GetTarget();
+					CameraManager::Instance().SetCurrentCamera("LockOnCamera");
+					camera = CameraManager::Instance().GetCamera();
+					camera->Initialize();
+					//camera = &lockOnCamera;
+					//camera->Initialize();
 
-				camera->SetPosition(position);
-				camera->SetCurrentPosition(position);
-				camera->SetTarget(target);
-				Player::Instance().SetCamera(camera);
+					camera->SetPosition(position);
+					camera->SetCurrentPosition(position);
+					camera->SetTarget(target);
+					Player::Instance().SetCamera(camera.get());
 
-				cameraFlag = !cameraFlag;
+					cameraFlag = !cameraFlag;
+				}
 			}
 		}
 	}

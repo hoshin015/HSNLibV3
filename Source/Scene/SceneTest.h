@@ -19,6 +19,7 @@
 #include "../Game/Object/Effect/Lightning/LightningMainMesh.h"
 // --- Camera ---
 #include "../Camera/CameraDerived.h"
+#include "../../Library/3D/CameraManager.h"
 
 
 // テストシーン
@@ -64,7 +65,7 @@ private:
 
 	bool showCollision = false;
 
-	CameraBase* camera;
-	PlayerCamera playerCamera;
-	LockOnCamera lockOnCamera;
+	//CameraBase* camera;
+	//PlayerCamera playerCamera;
+	//LockOnCamera lockOnCamera;
 };

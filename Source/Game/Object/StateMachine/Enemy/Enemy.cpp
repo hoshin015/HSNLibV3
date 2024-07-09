@@ -1,12 +1,16 @@
 #include "Enemy.h"
-#include "../../../../../External/ImGui/imgui.h"
 
 #include "../../External/ImGui/imgui.h"
 
 #include "../../Library/3D/DebugPrimitive.h"
+#include "../../Library/3D/CameraManager.h"
 
 #include "../../Library/Timer.h"
 #include "../../Library/Math/Math.h"
+
+#include "../../Library/Input/InputManager.h"
+
+#include "../../Effect/RockEffect.h"
 
 #include "EnemyBehavior.h"
 
@@ -31,7 +35,16 @@ void Enemy::Initialize()
 
 	float theta = DirectX::XMConvertToRadians(rand() % 360);
 	moveTargetPosition_ = { cosf(theta) * wanderRange, 0.0f, sinf(theta) * wanderRange };
-	front = Vector3::Zero_;
+	targetVec = Vector3::Zero_;
+	turnAngle = 0.0f;
+
+
+	// --- ステータスの設定 ---
+	hp = 1000.0f;
+	flinchValue = 100.0f;
+
+	alive = true;
+
 
 	PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
 }
@@ -55,6 +68,17 @@ void Enemy::Update()
 
 	// --- 位置の制限 ---
 	ClampPosition(75.0f);
+
+	if (alive && hp < 0.0f)
+	{
+		OnDead();
+	}
+
+
+	if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::P))
+	{
+		PlayRockEffect();
+	}
 
 
 	// スケール変更
@@ -109,6 +133,15 @@ void Enemy::ShowNode(NodeBase<Enemy>* node, std::string nodeName)
 }
 
 
+// --- 死亡したときに呼ばれる ---
+void Enemy::OnDead()
+{
+	CameraManager::Instance().SetCurrentCamera("EnemyDeadCamera");
+
+	alive = false;
+}
+
+
 // --- デバッグGui描画 ---
 void Enemy::DrawDebugGui()
 {
@@ -135,6 +168,10 @@ void Enemy::DrawDebugGui()
 
 
 	ImGui::Begin(u8"敵");
+
+	ImGui::DragFloat(u8"HP", &hp, 1.0f);
+	ImGui::DragFloat(u8"怯み値", &flinchValue, 1.0f);
+	ImGui::Separator();
 
 	ImGui::DragFloat(u8"索敵距離", &searchRange_);
 	ImGui::Checkbox(u8"発見", &foundPlayer);
@@ -237,6 +274,19 @@ void Enemy::ClampPosition(float range)
 }
 
 
+void Enemy::PlayRockEffect()
+{
+	for (int i = 0; i < 10; i++)
+	{
+		DirectX::XMFLOAT3 rPos = { (rand() % 10) - 5.0f, 0, rand() % 10 - 5.0f };
+		DirectX::XMFLOAT3 rVec = { (rand() % 10) - 5.0f, 5, rand() % 10 - 5.0f };
+		Vector3 position = GetPos();
+		position += rPos;
+		RockEffect::Instance().Emit(position.vec_, rVec, { 0.1, 1 });
+	}
+}
+
+
 
 // --- ビヘイビアツリーの初期化 ---
 void Enemy::InitializeBehaviorTree()
@@ -256,9 +306,15 @@ void Enemy::InitializeBehaviorTree()
 		aiTree_->AddNode("Find", "BigRoar", 0, BT_SelectRule::Non, nullptr, new EnemyBigRoarAction(this));
 	}
 
+	// --- 死亡 ---
+	aiTree_->AddNode("Root", "Dead", 1, BT_SelectRule::Non, new EnemyDeadJudgment(this), new EnemyDeadAction(this));
+
+	// --- 怯み ---
+	aiTree_->AddNode("Root", "Flinch", 2, BT_SelectRule::Non, new EnemyFlinchJudgment(this), new EnemyFlinchAction(this));
+
 
 	// --- 戦闘ノード ---
-	aiTree_->AddNode("Root", "Battle", 1, BT_SelectRule::Priority, new EnemyBattleJudgment(this), nullptr);
+	aiTree_->AddNode("Root", "Battle", 3, BT_SelectRule::Priority, new EnemyBattleJudgment(this), nullptr);
 	{
 		// --- 攻撃ノード ---
 		aiTree_->AddNode("Battle", "Attack", 0, BT_SelectRule::Random, nullptr, nullptr);
@@ -287,8 +343,21 @@ void Enemy::InitializeBehaviorTree()
 			}
 
 
+			// --- 中距離 ---
+			aiTree_->AddNode("Attack", "MiddleRange", 0, BT_SelectRule::Random, new EnemyMiddleRangeJudgment(this), nullptr);
+			{
+				// --- 軸合わせ → 踏み込み噛みつき → 踏みつけ or タックル or 威嚇 ---
+				aiTree_->AddNode("MiddleRange", "Turn_RushingBite_Any", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+				{
+					aiTree_->AddNode("Turn_RushingBite_Any", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+					aiTree_->AddNode("Turn_RushingBite_Any", "RushingBite", 0, BT_SelectRule::Non, nullptr, new EnemyRushingBiteAction(this));
+					aiTree_->AddNode("Turn_RushingBite_Any", "AfterAction", 0, BT_SelectRule::Non, nullptr, new EnemyAfterRushingBiteAction(this));
+				}
+			}
+
+
 			// --- 近距離 ---
-			aiTree_->AddNode("Attack", "ShortRange", 1, BT_SelectRule::Random, new EnemyShortRangeJudgment(this), nullptr);
+			aiTree_->AddNode("Attack", "ShortRange", 0, BT_SelectRule::Random, new EnemyShortRangeJudgment(this), nullptr);
 			{
 				// --- 踏みつけ → 威嚇 ---
 				aiTree_->AddNode("ShortRange", "Stamp_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
@@ -303,6 +372,9 @@ void Enemy::InitializeBehaviorTree()
 					aiTree_->AddNode("AxisAlignment_Bite", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
 					aiTree_->AddNode("AxisAlignment_Bite", "Bite", 0, BT_SelectRule::Non, nullptr, new EnemyBiteAction(this));
 				}
+
+				// --- 尻尾回転 ---
+				aiTree_->AddNode("ShortRange", "TailAttack", 0, BT_SelectRule::Non, nullptr, new EnemyTailAttack(this));
 			}
 		}
 
@@ -313,7 +385,7 @@ void Enemy::InitializeBehaviorTree()
 
 
 	// --- 未発見時ノード ---
-	aiTree_->AddNode("Root", "Scout", 2, BT_SelectRule::Sequence, new EnemyScoutJudgment(this), nullptr);
+	aiTree_->AddNode("Root", "Scout", 4, BT_SelectRule::Sequence, new EnemyScoutJudgment(this), nullptr);
 	{
 		// --- 徘徊 ---
 		aiTree_->AddNode("Scout", "Wander", 0, BT_SelectRule::Non, new EnemyWanderJudgment(this), new EnemyWanderAction(this));

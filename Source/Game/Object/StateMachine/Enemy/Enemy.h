@@ -20,12 +20,11 @@ private:
 public:
 	static Enemy& Instance()
 	{
-		static Enemy instance("Data/Fbx/Monster/gaoanimal_4.model");
+		static Enemy instance("Data/Fbx/Monster/gaoanimal_5.model");
 		return instance;
 	}
 
 	const float GetWanderRange() const { return wanderRange; }
-	const float GetShortRange() const { return shortRange; }
 	const bool IsFoundPlayer() const { return foundPlayer; }
 
 	const float GetRushSpeed() const { return rushSpeed; }
@@ -34,8 +33,18 @@ public:
 	const float GetWhileRushTimer() const { return whileRushTimer; }
 
 	const float GetLongRange() const { return longRange; }
+	const float GetMiddleRange() const { return middleRange; }
+	const float GetShortRange() const { return shortRange; }
+
+	const float GetHP() const { return hp; }
+	const float GetFlinchValue() const { return flinchValue; }
 
 	void SetFoundPlayer(const bool found) { foundPlayer = found; }
+	void SetHP(const float hp) { this->hp = hp; }
+	void SetFlinchValue(const float flinchValue) { this->flinchValue = flinchValue; }
+
+	bool IsDown() { return flinchValue < 0.0f; }
+	bool IsDead() { return hp < 0.0f; }
 
 
 	void Initialize();
@@ -49,12 +58,18 @@ public:
 	void RotateToTargetVec(const DirectX::XMFLOAT3& targetVec, float t, const Vector3* tempFront = nullptr);
 	void ClampPosition(float range);
 
+
+	// --- エフェクト関連 ---
+	void PlayRockEffect();
+
 private:
 	// --- ビヘイビアツリー関連 ---
 	void InitializeBehaviorTree();
 	void FinalizeBehaviorTree();
 	void UpdateBehaviorTree(float elapsedTime);
 	void ShowNode(NodeBase<Enemy>* node, std::string nodeName);
+
+	void OnDead();
 
 	BehaviorTree<Enemy>* aiTree_;		// この中にツリーが伸びていく
 	BehaviorData<Enemy>* behaviorData_;	// ビヘイビアのデータを保存する変数
@@ -65,6 +80,7 @@ private:
 	bool foundPlayer;	// プレイヤーを見つけたか
 
 	float longRange = 40.0f;	// 遠距離範囲
+	float middleRange = 25.0f;	// 中距離範囲
 	float shortRange = 15.0f;	// 近距離範囲
 
 	// --- 突進関連 ---
@@ -73,11 +89,19 @@ private:
 	float rushChargeTimer = 1.25f;
 	float whileRushTimer = 2.5f;
 
+
+	// --- ステータス関連 ---
+	float hp;			// 体力
+	float flinchValue;	// 怯み値
+
+	bool alive;
+
 public:
 	Quaternion quaternion_;
 	Vector3 moveTargetPosition_;
 	float runTimer_;
-	Vector3 front;	// 正面
+	Vector3 targetVec;	// 回転する目標
+	float turnAngle;
 
 	float walkSpeed_ = 7.0f;
 	float runSpeed_ = 10.0f;

@@ -53,3 +53,17 @@ private:
 	Vector3 prevTarget;	// ‘O‰ñ‚Ì–Ú•W‚ÌˆÊ’u
 };
 
+
+
+class EnemyDeadCamera final : public CameraBase
+{
+public:
+	void Initialize() override;
+	void Update() override;
+	void UpdateConstants() override;
+	void DrawDebugGui() override;
+
+private:
+	int state;
+	float timer;
+};

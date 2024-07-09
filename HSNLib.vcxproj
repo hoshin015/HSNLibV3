@@ -175,6 +175,7 @@
     <ClCompile Include="Library\Graphics\HeatHaze.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\Breath\BreathEffect.cpp" />
     <ClCompile Include="Library\3D\CameraBase.cpp" />
+    <ClCompile Include="Library\3D\CameraManager.cpp" />
     <ClCompile Include="Library\Math\Matrix.cpp" />
     <ClCompile Include="Library\Math\Vector.cpp" />
     <ClCompile Include="Library\Resource\Model\Animator.cpp" />
@@ -287,6 +288,7 @@
     <ClInclude Include="Library\Graphics\HeatHaze.h" />
     <ClInclude Include="Source\Game\Object\Effect\Breath\BreathEffect.h" />
     <ClInclude Include="Library\3D\CameraBase.h" />
+    <ClInclude Include="Library\3D\CameraManager.h" />
     <ClInclude Include="Library\Math\Matrix.h" />
     <ClInclude Include="Library\Math\Vector.h" />
     <ClInclude Include="Library\Resource\Model\Animator.h" />

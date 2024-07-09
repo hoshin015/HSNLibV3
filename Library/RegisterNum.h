@@ -88,6 +88,9 @@
 // dissolve
 #define _dissolveTexture	5
 
+// fur
+#define _furTexture			5
+
 // ibl (事前計算テクスチャ)
 #define  _IEM	33		// Pre-filtered Irradiance Environment Map (IEM)
 #define _PMREM	34		// Pre-filtered Mipmapped Radiance Environment Map (PMREM)
@@ -161,6 +164,9 @@
 
 // dissolve
 #define _dissolveTexture	t5
+
+// fur
+#define _furTexture			t5
 
 // ibl (事前計算テクスチャ)
 #define  _IEM	t33		// Pre-filtered Irradiance Environment Map (IEM)

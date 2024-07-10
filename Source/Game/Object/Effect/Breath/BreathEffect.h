@@ -21,6 +21,9 @@ public:
 		return instance;
 	}
 
+	void SetPosition(const DirectX::XMFLOAT3& position) { this->position = position; }
+	void SetAngle(const float angle) { this->angle.y = angle; }
+
 	// BreathData Çê∂ê¨
 	void Initialize();
 
@@ -55,7 +58,7 @@ private:
 	float lightningTimer = 0.0f;
 	float lightningTime  = 0.01f;
 
-	DirectX::XMFLOAT3 position = {0, 3, 0};
+	DirectX::XMFLOAT3 position = {0, 0, 0};
 	DirectX::XMFLOAT3 angle    = {0, 90, 90};
 	DirectX::XMFLOAT4	orientation = {};
 };

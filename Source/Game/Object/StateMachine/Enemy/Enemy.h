@@ -39,6 +39,8 @@ public:
 	const float GetHP() const { return hp; }
 	const float GetFlinchValue() const { return flinchValue; }
 
+	const Vector3 GetFrontVec();
+
 	void SetFoundPlayer(const bool found) { foundPlayer = found; }
 	void SetHP(const float hp) { this->hp = hp; }
 	void SetFlinchValue(const float flinchValue) { this->flinchValue = flinchValue; }
@@ -61,6 +63,7 @@ public:
 
 	// --- エフェクト関連 ---
 	void PlayRockEffect();
+	void PlayFireBress(float angle);
 
 private:
 	// --- ビヘイビアツリー関連 ---

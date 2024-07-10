@@ -134,7 +134,7 @@ void BreathEffect::Emit()
 
 	lifeTimer = 0.0f;
 
-	angle.y = rand() % 360;
+	//angle.y = rand() % 360;
 	//angle.x = rand() % 360;
 	//angle.z = rand() % 360;
 

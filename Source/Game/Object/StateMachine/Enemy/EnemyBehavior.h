@@ -14,6 +14,7 @@ enum class MonsterAnimation
 	ROAR,
 	ROAR_BIG,
 	IDLE,
+	ROTATION,
 	BITE_1,
 	BITE_2,
 	STAND_UP,
@@ -21,6 +22,8 @@ enum class MonsterAnimation
 	SCOOP_UP,
 	TACKLE_LEFT,
 	TACKLE_RIGHT,
+	TURN_LEFT,
+	TURN_RIGHT,
 	RUSH,
 	WALK_LEFT,
 	WALK_FOWARD,
@@ -164,6 +167,16 @@ public:
 
 
 
+// ===== ê≥ñ ÇÃîªíË ======================================================================================================================================================
+class EnemyFrontJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyFrontJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
 // ===== ëÂôÙöKÇÃçsìÆ ======================================================================================================================================================
 class EnemyBigRoarAction final : public ActionBase<Enemy>
 {
@@ -279,5 +292,15 @@ class EnemyTailAttack final : public ActionBase<Enemy>
 {
 public:
 	EnemyTailAttack(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== ãdÇ¢è„Ç∞çsìÆ ======================================================================================================================================================
+class EnemyScoopUpAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyScoopUpAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };

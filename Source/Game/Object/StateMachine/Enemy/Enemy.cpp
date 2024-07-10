@@ -11,6 +11,8 @@
 #include "../../Library/Input/InputManager.h"
 
 #include "../../Effect/Rock/RockEffect.h"
+#include "../../Effect/Breath/BreathEffect.h"
+#include "../../Library/Particle/EmitterManager.h"
 
 #include "EnemyBehavior.h"
 
@@ -20,6 +22,15 @@
 Enemy::~Enemy()
 {
 }
+
+
+const Vector3 Enemy::GetFrontVec()
+{
+	Matrix R;
+	R.MakeRotationFromQuaternion(quaternion_);
+	return R.v_[2].xyz();
+}
+
 
 void Enemy::Initialize()
 {
@@ -77,7 +88,12 @@ void Enemy::Update()
 
 	if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::P))
 	{
-		PlayRockEffect();
+		Matrix R;
+		R.MakeRotationFromQuaternion(quaternion_);
+		Vector3 front = R.v_[2].xyz();
+		float atan = atan2(front.z, front.x);
+		float theta = DirectX::XMConvertToDegrees(atan);
+		PlayFireBress(theta);
 	}
 
 
@@ -189,6 +205,24 @@ void Enemy::DrawDebugGui()
 	ImGui::Separator();
 	ImGui::DragFloat(u8"遠距離範囲", &longRange, 0.01f);
 
+	Matrix R;
+	R.MakeRotationFromQuaternion(quaternion_);
+	Vector3 front = R.v_[2].xyz();
+	float atan = atan2(front.z, front.x);
+	float theta = DirectX::XMConvertToDegrees(atan);
+	ImGui::Text(u8"角度 :%f", theta);
+
+	Vector3 playerPosition = Player::Instance().GetPos();
+	Vector3 vec = playerPosition - position;
+	vec.Normalize();
+
+	float cross = (front.z * vec.x) - (front.x * vec.z);
+	ImGui::Text(u8"左右判定 : %f", cross);
+
+	float dot = front.Dot(vec);
+	ImGui::Text(u8"内積 : %f", dot);
+
+
 	ImGui::End();
 }
 
@@ -197,7 +231,8 @@ void Enemy::DrawDebug()
 {
 	DebugPrimitive::Instance().AddCylinder(position, searchRange_, 1.0f, { 1.0f, 0.0f, 1.0f, 1.0f });
 	DebugPrimitive::Instance().AddCylinder({}, wanderRange, 5.0f, { 0.3f, 0.3f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddCylinder(position, shortRange, 5.0f, { 1.0f, 0.0f, 0.0f, 1.0f });
+	DebugPrimitive::Instance().AddCylinder(position, shortRange, 2.0f, { 1.0f, 0.0f, 0.0f, 1.0f });
+	DebugPrimitive::Instance().AddCylinder(position, middleRange, 2.0f, { 0.0f, 1.0f, 0.0f, 1.0f });
 	DebugPrimitive::Instance().AddCylinder(position, longRange, 5.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
 	DebugPrimitive::Instance().AddSphere(moveTargetPosition_.vec_, 1.0f, { 0.3f, 0.3f, 1.0f, 1.0f });
 }
@@ -256,6 +291,12 @@ void Enemy::RotateToTargetVec(const DirectX::XMFLOAT3& targetVec, float t, const
 			Quaternion dst = rot * quaternion_;
 			quaternion_ = quaternion_.Lerp(quaternion_, dst, t);
 		}
+
+		else
+		{
+			Quaternion dst = rot * quaternion_;
+			quaternion_ = quaternion_.Lerp(quaternion_, dst, 1.0f);
+		}
 	}
 }
 
@@ -274,6 +315,7 @@ void Enemy::ClampPosition(float range)
 }
 
 
+// --- 岩エフェクト ---
 void Enemy::PlayRockEffect()
 {
 	for (int i = 0; i < 10; i++)
@@ -284,6 +326,15 @@ void Enemy::PlayRockEffect()
 		position += rPos;
 		RockEffect::Instance().Emit(position.vec_, rVec, { 0.1, 1 });
 	}
+}
+
+
+// --- 炎ブレス ---
+void Enemy::PlayFireBress(float angle)
+{
+	BreathEffect::Instance().SetPosition(Enemy::Instance().GetBonePosition("sitaago"));
+	BreathEffect::Instance().SetAngle(angle);
+	BreathEffect::Instance().Emit();
 }
 
 
@@ -353,6 +404,13 @@ void Enemy::InitializeBehaviorTree()
 					aiTree_->AddNode("Turn_RushingBite_Any", "RushingBite", 0, BT_SelectRule::Non, nullptr, new EnemyRushingBiteAction(this));
 					aiTree_->AddNode("Turn_RushingBite_Any", "AfterAction", 0, BT_SelectRule::Non, nullptr, new EnemyAfterRushingBiteAction(this));
 				}
+
+				// --- 軸合わせ → 掬い上げ ---
+				aiTree_->AddNode("MiddleRange", "Turn_ScoopUp", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+				{
+					aiTree_->AddNode("Turn_ScoopUp", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+					aiTree_->AddNode("Turn_ScoopUp", "ScoopUp", 0, BT_SelectRule::Non, nullptr, new EnemyScoopUpAction(this));
+				}
 			}
 
 
@@ -375,6 +433,9 @@ void Enemy::InitializeBehaviorTree()
 
 				// --- 尻尾回転 ---
 				aiTree_->AddNode("ShortRange", "TailAttack", 0, BT_SelectRule::Non, nullptr, new EnemyTailAttack(this));
+
+				// --- 噛みつき ---
+				aiTree_->AddNode("ShortRange", "Bite", 0, BT_SelectRule::Non, new EnemyFrontJudgment(this), new EnemyBiteAction(this));
 			}
 		}
 

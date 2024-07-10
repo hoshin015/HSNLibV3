@@ -2,6 +2,8 @@
 
 #include "../../Library/Math/Math.h"
 
+#include "../../Effect/Breath/BreathEffect.h"
+
 #include "../Player/Player.h"
 
 
@@ -338,6 +340,26 @@ bool EnemyDeadJudgment::Judgment()
 
 
 
+// ===== ³–Ê‚Ì”»’è ======================================================================================================================================================
+bool EnemyFrontJudgment::Judgment()
+{
+	Vector3 front = owner_->GetFrontVec();
+	Vector3 vec = Player::Instance().GetPos();
+	vec = vec - owner_->GetPos();
+	vec.Normalize();
+	float dot = front.Dot(vec);
+
+	// --- ³–Ê ---
+	if (dot > 0.75f)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+
 
 // ===== ‘å™ôšK‚Ìs“® ======================================================================================================================================================
 BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
@@ -388,20 +410,37 @@ BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 	switch (step)
 	{
 	case 0:
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
-		owner_->SetCurrentAnimationSeconds(0.0f);
-		owner_->SetAnimationEndFlag(false);
 
-		// --- ‰ñ“]‚Ì‚½‚ß‚É³–Ê‚ðŽæ“¾ ---
 		{
 			Matrix R;
 			R.MakeRotationFromQuaternion(owner_->quaternion_);
-			owner_->targetVec = R.v_[2].xyz();
+			Vector3 front = R.v_[2].xyz();
 			Vector3 playerPosition = Player::Instance().GetPos();
 			Vector3 vec = playerPosition - owner_->GetPos();
 			vec.Normalize();
+
+			float cross = (front.z * vec.x) - (front.x * vec.z);
+
+			if (cross < 0.0f)
+				owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TURN_LEFT), false);
+
+			else
+				owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TURN_RIGHT), false);
+
 			owner_->turnAngle = owner_->targetVec.Dot(vec);
+
+
+			// --- –Ú•W‚ÉŒü‚¢‚Ä‚¢‚½‚ç ---
+			float dot = front.Dot(vec);
+			if (dot > 0.99f)
+			{
+				step = 0;
+				return BT_ActionState::Complete;
+			}
 		}
+
+
+
 
 		step++;
 		break;
@@ -436,7 +475,14 @@ BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 
 		// --- –Ú•W‚ÉŒü‚¢‚Ä‚¢‚½‚ç ---
 		dot = front.Dot(targetVec);
-		if (dot > 0.985f)
+		if (dot > 0.99f)
+		{
+			step = 0;
+			return BT_ActionState::Complete;
+		}
+
+
+		if (owner_->GetAnimationEndFlag())
 		{
 			step = 0;
 			return BT_ActionState::Complete;
@@ -484,12 +530,33 @@ BT_ActionState EnemyBlessAction::Run(float elapsedTime)
 	{
 	case 0:
 
+		owner_->runTimer_ = 1.5f;
 		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BLESS), false);
 
 		step++;
 		break;
 
 	case 1:
+
+		owner_->runTimer_ -= elapsedTime;
+		if (owner_->runTimer_ < 0.0f)
+		{
+			Matrix R;
+			R.MakeRotationFromQuaternion(owner_->quaternion_);
+			Vector3 front = R.v_[2].xyz();
+			float atan = atan2(front.z, front.x);
+			float theta = DirectX::XMConvertToDegrees(atan);
+			owner_->PlayFireBress(-(theta + 180.0f));
+			owner_->runTimer_ = 0.0f;
+			step++;
+		}
+
+		break;
+
+
+	case 2:
+
+		BreathEffect::Instance().SetPosition(Enemy::Instance().GetBonePosition("sitaago"));
 
 		// --- ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI‚í‚Á‚½‚çI—¹ ---
 		if (owner_->GetAnimationEndFlag())
@@ -1014,28 +1081,59 @@ BT_ActionState EnemyDeadAction::Run(float elapsedTime)
 // ===== K”ö‰ñ“]s“® ======================================================================================================================================================
 BT_ActionState EnemyTailAttack::Run(float elapsedTime)
 {
+	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
+	if (owner_->IsDown() || owner_->IsDead())
+		return BT_ActionState::Failed;
+
 	switch (step)
 	{
 	case 0:
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::IDLE), true);
+		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROTATION), false);
 
 		step++;
 		break;
 
 
 	case 1:
-	{
-		float rotateSpeed = elapsedTime * 360.0f;
-		Quaternion orientation;
-		orientation.SetRotationDegY(rotateSpeed);
 
-		owner_->quaternion_ *= orientation;
-		owner_->runTimer_ += rotateSpeed;
-
-		if (owner_->runTimer_ > 180.0f)
+		if (owner_->GetAnimationEndFlag())
 		{
+			step = 0;
+			return BT_ActionState::Complete;
+		}
+
+		break;
+	}
+
+	return BT_ActionState::Run;
+}
+
+
+
+// ===== ‹d‚¢ã‚°s“® ======================================================================================================================================================
+BT_ActionState EnemyScoopUpAction::Run(float elapsedTime)
+{	
+	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
+	if (owner_->IsDown() || owner_->IsDead())
+		return BT_ActionState::Failed;
+
+	switch (step)
+	{
+	case 0:
+		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::SCOOP_UP), false);
+		owner_->runTimer_ = 0.5f;
+		step++;
+		break;
+
+
+	case 1:
+	{
+		owner_->runTimer_ -= elapsedTime;
+
+		if (owner_->runTimer_ < 0.0f)
+		{
+			owner_->runTimer_ = 0.0f;
 			step++;
-			owner_->runTimer_ = 1.5f;
 		}
 
 		break;
@@ -1044,50 +1142,24 @@ BT_ActionState EnemyTailAttack::Run(float elapsedTime)
 
 	case 2:
 	{
-		owner_->runTimer_ -= elapsedTime;
+		Matrix R;
+		R.MakeRotationFromQuaternion(owner_->quaternion_);
+		Vector3 front = R.v_[2].xyz();
 
-		if (owner_->runTimer_ < 0.0f)
-		{
-			step++;
-			owner_->runTimer_ = 0.0f;
-		}
+		Vector3 position = owner_->GetPos();
+		position += front * 5.0f * elapsedTime;
+		owner_->SetPos(position.vec_);
 
-		break;
-	}
-
-
-	case 3:
-	{
-		float rotateSpeed = elapsedTime * 360.0f;
-		Quaternion orientation;
-		orientation.SetRotationDegY(rotateSpeed);
-
-		owner_->quaternion_ *= orientation;
-		owner_->runTimer_ += rotateSpeed;
-
-		if (owner_->runTimer_ > 180.0f)
-		{
-			step++;
-			owner_->runTimer_ = 1.0f;
-		}
-
-		break;
-	}
-
-
-	case 4:
-	{
-		owner_->runTimer_ -= elapsedTime;
-
-		if (owner_->runTimer_ < 0.0f)
+		if (owner_->GetAnimationEndFlag())
 		{
 			step = 0;
-			owner_->runTimer_ = 0.0f;
 			return BT_ActionState::Complete;
 		}
+		break;
 	}
 
 	}
+
 
 	return BT_ActionState::Run;
 }

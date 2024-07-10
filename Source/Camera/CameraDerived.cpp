@@ -23,7 +23,7 @@ void PlayerCamera::Initialize()
 
 	// 勝手に range 変えてます
 	//range = 13.0f;
-	range = 22.0f;
+	range = 30.0f;
 
 	height = 3.0f;
 	fixedCursor = true;
@@ -229,7 +229,7 @@ void PlayerCamera::CalcPositionFromAngle(const Vector3& position)
 void LockOnCamera::Initialize()
 {
 	height = 7.0f;
-	range = 15.5f;
+	range = 30.0f;
 }
 
 void LockOnCamera::Update()
@@ -245,9 +245,9 @@ void LockOnCamera::Update()
 	case 1:
 	{
 		Vector3 playerPos = Player::Instance().GetPos();	// プレイヤーの位置
-		//Vector3 enemyPos = Enemy::Instance().GetPos();		// 目標の位置
+		Vector3 enemyPos = Enemy::Instance().GetPos();		// 目標の位置
 		prevTarget = target;
-		Vector3 enemyPos = Enemy::Instance().GetBonePosition("atama");
+		//Vector3 enemyPos = Enemy::Instance().GetBonePosition("atama");
 
 		// --- 前回との移動量が小さかったら更新しない ---
 		//float l = Vector3(prevTarget - enemyPos).Length();

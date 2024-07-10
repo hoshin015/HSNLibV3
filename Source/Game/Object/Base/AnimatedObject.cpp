@@ -333,7 +333,7 @@ void AnimatedObject::UpdateSe()
 
 		MUSIC_LABEL type = model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSes.at(i).musicType;
 
-		AudioManager::Instance().PlayMusic(static_cast<int>(type));
+		AudioManager::Instance().PlayMusic(type);
 	}
 }
 

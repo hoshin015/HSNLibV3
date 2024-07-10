@@ -67,4 +67,7 @@ private:
 	CameraBase* camera;
 	PlayerCamera playerCamera;
 	LockOnCamera lockOnCamera;
+
+	bool stopSoundTimer = false;
+	float soundTimer = 0.0f;
 };

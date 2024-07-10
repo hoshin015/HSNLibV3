@@ -254,10 +254,12 @@ void UiTitle::Update()
 
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::W))
 			{
+				AudioManager::Instance().PlayMusic(MUSIC_LABEL::SELECT_MOVE, false);
 				selectMenu--;
 			}
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::S))
 			{
+				AudioManager::Instance().PlayMusic(MUSIC_LABEL::SELECT_MOVE, false);
 				selectMenu++;
 			}
 			selectMenu = (selectMenu + static_cast<int>(SelectMenu::END)) % static_cast<int>(SelectMenu::END);

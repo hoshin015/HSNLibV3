@@ -26,6 +26,8 @@ public:
 	// ライトニング追加
 	void Emit(DirectX::XMFLOAT3 pos);
 
+	void PlayLightningSound();
+
 	struct LightningEmitter
 	{
 		DirectX::XMFLOAT3 position;
@@ -53,6 +55,8 @@ private:
 
 	float bottomTime = 0.01f;
 	float bottomTimer = 0.0f;
+
+	bool isSound = false;
 
 	std::vector<LightningEmitter> lightningEmitters;
 };

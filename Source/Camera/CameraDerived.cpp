@@ -71,9 +71,9 @@ void PlayerCamera::Update()
 		Vector3 shakeIntensity = { 1.0f, 1.0f, 1.0f };
 		if (timer > 0.0f)
 		{
-			shakeOffset = rightVec * (((rand() % 100) / 100.0f) - 0.5f) * shakeIntensity.x;
-			shakeOffset += upVec * (((rand() % 100) / 100.0f) - 0.5f) * shakeIntensity.y;
-			shakeOffset += frontVec * (((rand() % 100) / 100.0f) - 0.5f) * shakeIntensity.z;
+			shakeOffset = rightVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * shakeIntensity.x;
+			shakeOffset = upVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * shakeIntensity.y;
+			shakeOffset = frontVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * shakeIntensity.z;
 		}
 
 		else

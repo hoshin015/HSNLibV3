@@ -7,6 +7,7 @@ class PlayerCamera : public CameraBase
 {
 public:
 	void SetTimer(const float timer) { this->timer = timer; }
+	void SetShakePower(const float power) { shakePower = power; }
 
 	void Initialize() override;
 	void Update() override;
@@ -25,6 +26,8 @@ private:
 	float height;					// プレイヤーの高さ
 	bool  fixedCursor = true;		// 中央にカーソルを固定するか
 	float timer = 0.0f;
+
+	float shakePower = 100.0f;		// 画面を揺らす力
 
 	// --- Lerp減衰用 ---
 	float t = 0.3f;	// 補完量

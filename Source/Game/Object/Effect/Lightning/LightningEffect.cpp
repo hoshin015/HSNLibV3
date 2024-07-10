@@ -56,6 +56,8 @@ void LightningEffect::Update()
 		lightningEmit.timer += deltaTime;
 		if (!lightningEmit.addLightning0 && lightningEmit.timer >= lightning0GenerateTime)
 		{
+			PlayLightningSound();
+
 			Easing::EasingValue scaleValue;
 			scaleValue.startTime  = 0.0f;
 			scaleValue.endTime    = 0.2f;
@@ -257,4 +259,22 @@ void LightningEffect::Emit(DirectX::XMFLOAT3 pos)
 		lightningEmitter.position = pos;
 		lightningEmitters.push_back(lightningEmitter);
 	}
+}
+
+void LightningEffect::PlayLightningSound()
+{
+	int musicRand;
+	int checkCount = 0;
+	while (1)
+	{
+		musicRand = rand() % 10;
+		if (!AudioManager::Instance().IsInUseMusic((static_cast<MUSIC_LABEL>(static_cast<int>(MUSIC_LABEL::Lightning1)))))
+		{
+			break;
+		}
+		checkCount++;
+		if (checkCount > 100) break;
+	}
+	AudioManager::Instance().PlayMusic((static_cast<MUSIC_LABEL>(static_cast<int>(MUSIC_LABEL::Lightning1) + musicRand)), false);
+	AudioManager::Instance().SetMusicVolume((static_cast<MUSIC_LABEL>(static_cast<int>(MUSIC_LABEL::Lightning1) + musicRand)), 0.4f);
 }

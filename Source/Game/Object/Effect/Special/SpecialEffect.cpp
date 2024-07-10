@@ -8,7 +8,7 @@
 #include "../Lightning/LightningEffect.h"
 
 // 更新
-void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
+void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze, PlayerCamera* playerCamera)
 {
 	if (!isSpecialEffect) return;
 
@@ -85,7 +85,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 			{
 				Emitter* emitter                           = new Emitter();
 				emitter->position                          = {0, 0, 0};
-				emitter->emitterData.duration              = 5.0;
+				emitter->emitterData.duration              = 10.0;
 				emitter->emitterData.looping               = false;
 				emitter->emitterData.burstsTime            = 0.3;
 				emitter->emitterData.burstsCount           = 3;
@@ -103,6 +103,13 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 				emitter->emitterData.particleTextureType   = 6;
 				EmitterManager::Instance().Register(emitter);
 			}
+
+			AudioManager::Instance().StopMusic(MUSIC_LABEL::BATTLE1);
+			AudioManager::Instance().PlayMusic(MUSIC_LABEL::MonsterRoar1, false);
+			AudioManager::Instance().PlayMusic(MUSIC_LABEL::Fire1, false);
+
+			AudioManager::Instance().PlayMusic(MUSIC_LABEL::NovaNoise1, false);
+			AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::NovaNoise1, 0.4);
 
 			// ステート更新
 			specialState = SpecialState::firstNova;
@@ -152,6 +159,10 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 			// --- ステートチェック ---
 			if (lifeTimer >= firstNovaTime)
 			{
+				// カメラ揺らし
+				playerCamera->SetShakePower(2);
+				playerCamera->SetTimer(chargeNovaTime);
+
 				radialBlur->SetIsRadial(false);
 				lifeTimer         = 0.0f;
 				rockIntervalTimer = 0.0f;
@@ -187,16 +198,70 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 			float rColor = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, firstNovaColorDown);
 			LightManager::Instance().SetAmbientColor({rColor, 0.2f, 0.2f, 1.0f});
 
+			// --- ChargeSound ---
+			if(!isPlayChargeSound && lifeTimer > playChargeSoundTime)
+			{
+				AudioManager::Instance().PlayMusic(MUSIC_LABEL::NovaNoise2);
+				AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::NovaNoise2, 1.5f);
+				isPlayChargeSound = true;
+			}
 
 			// --- ステートチェック ---
 			if (lifeTimer >= chargeNovaTime)
 			{
+				AudioManager::Instance().StopMusic(MUSIC_LABEL::NovaNoise1);
+
 				LightManager::Instance().SetAmbientColor({0.2f, 0.2f, 0.2f, 1.0f});
 
 				radialBlur->SetIsRadial(false);
 				heatHaze->SetIsHeatHaze(false);
 				lifeTimer         = 0.0f;
 				rockIntervalTimer = 0.0f;
+				// ステート更新
+				specialState = SpecialState::UpMusic;
+			}
+		}
+		break;
+	case SpecialState::Nova:
+		{
+			
+		}
+		break;
+	case SpecialState::UpMusic:
+		{
+			lifeTimer += deltaTime;
+			
+			if(AudioManager::Instance().GetSoundState(MUSIC_LABEL::BATTLE2) == DirectX::SoundState::PAUSED)
+			{
+				AudioManager::Instance().ResumeMusic(MUSIC_LABEL::BATTLE2);
+
+				// 仮置きm
+				Emitter* emitter                           = new Emitter();
+				emitter->position                          = {0, 3, 3};
+				emitter->emitterData.duration              = 5.0;
+				emitter->emitterData.looping               = false;
+				emitter->emitterData.burstsTime            = 0.1;
+				emitter->emitterData.burstsCount           = 128;
+				emitter->emitterData.particleKind          = pk_Dust;
+				emitter->emitterData.particleLifeTimeMin   = 1.0f;
+				emitter->emitterData.particleLifeTimeMax   = 1.0f;
+				emitter->emitterData.particleSpeedMin      = 1.0f;
+				emitter->emitterData.particleSpeedMax      = 5.0f;
+				emitter->emitterData.particleSizeMin       = {0.1f, 0.1f};
+				emitter->emitterData.particleSizeMax       = {0.4f, 0.4f};
+				emitter->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
+				emitter->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
+				emitter->emitterData.particleGravity       = 1;
+				emitter->emitterData.particleBillboardType = 0;
+				emitter->emitterData.particleTextureType   = 0;
+				emitter->emitterData.burstsOneShot   = 1;
+				EmitterManager::Instance().Register(emitter);
+			}
+			AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE2, Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, soundUpValue));
+
+			if (lifeTimer >= chargeNovaTime)
+			{
+				lifeTimer = 0.0f;
 				// ステート更新
 				specialState = SpecialState::End;
 			}
@@ -214,6 +279,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 void SpecialEffect::Emit()
 {
 	isSpecialEffect = true;
+	isPlayChargeSound = false;
 
 	specialState = SpecialState::Init;
 }

@@ -90,6 +90,8 @@ void SceneTest::Initialize()
 	                                          Framework::Instance().GetScreenHeightF());
 	colorFilter = std::make_unique<ColorFilter>(Framework::Instance().GetScreenWidthF(),
 	                                          Framework::Instance().GetScreenHeightF());
+	colorFilter->SetIsColorFilter(true);
+	colorFilter->SetBrightness(2.0f);
 
 	// --- skyMap èâä˙âª ---
 	skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
@@ -145,6 +147,15 @@ void SceneTest::Initialize()
 	LightningEffect::Instance().Initialize();
 	RockEffect::Instance().Initialize();
 	BreathEffect::Instance().Initialize();
+
+	// ÉeÉXÉg
+	AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
+	AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
+
+	AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE2, true);
+	AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE2, 0.0f);
+	stopSoundTimer = false;
+	soundTimer = 0.0f;
 }
 
 void SceneTest::Finalize()
@@ -153,6 +164,9 @@ void SceneTest::Finalize()
 	LightManager::Instance().Clear();
 	EmitterManager::Instance().Clear();
 	Enemy::Instance().Finalize();
+
+	AudioManager::Instance().StopMusic(MUSIC_LABEL::BATTLE1);
+	AudioManager::Instance().StopMusic(MUSIC_LABEL::BATTLE2);
 }
 
 void SceneTest::Update()
@@ -240,8 +254,8 @@ void SceneTest::Update()
 	{
 		for(int i = 0; i < 1; i++)
 		{
-			//DirectX::XMFLOAT3 rPos = { (rand() % 40) - 20.0f, 0, rand() % 40 - 20.0f };
-			DirectX::XMFLOAT3 rPos = { 0,0,0};
+			DirectX::XMFLOAT3 rPos = { (rand() % 40) - 20.0f, 0, rand() % 40 - 20.0f };
+			//DirectX::XMFLOAT3 rPos = { 0,0,0};
 			LightningEffect::Instance().Emit(rPos);
 		}
 	}
@@ -374,7 +388,19 @@ void SceneTest::Update()
 	LightningEffect::Instance().Update();
 	RockEffect::Instance().Update();
 	BreathEffect::Instance().Update();
-	SpecialEffect::Instance().Update(radialBlur.get(), heatHaze.get());
+	SpecialEffect::Instance().Update(radialBlur.get(), heatHaze.get(), &playerCamera);
+
+	// sound
+	if(!stopSoundTimer)
+	{
+		soundTimer += Timer::Instance().DeltaTime();
+		if (soundTimer >= 48)
+		{
+			AudioManager::Instance().PauseMusic(MUSIC_LABEL::BATTLE2);
+			stopSoundTimer = true;
+		}
+	}
+	
 }
 
 void SceneTest::Render()

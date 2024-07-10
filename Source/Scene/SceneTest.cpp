@@ -76,6 +76,8 @@ void SceneTest::Initialize()
 	StageMain* StageFence = new StageMain("Data/Fbx/StageFence/StageFence.model");
 	StageFence->SetScale({ 4.0f, 4.0f, 4.0f });
 	stageManager.Register(StageFence);
+	StageMain* stage2 = new StageMain("./Data/Fbx/Stage/StageCollision1.fbx");
+	stageManager.Register(stage2);
 
 	// --- buffer 系初期化 ---
 	bitBlockTransfer = std::make_unique<FullScreenQuad>();
@@ -596,6 +598,11 @@ void SceneTest::DrawDebugGUI()
 	ImGui::Begin("TestScene");
 	{
 		ImGui::Checkbox("collision", &showCollision);
+
+
+		Vector3 playerPos = Player::Instance().GetPos();
+		float length = playerPos.Length();
+		ImGui::Text(u8"プレイヤーの中心からの距離 : %f", length);
 
 
 		// --- カメラ関連 ---

@@ -38,9 +38,6 @@ void Enemy::Initialize()
 	InitializeBehaviorTree();
 
 	position = { 0, 0, 0 };
-	Vector3 s = scale;
-	s *= 1.15f;
-	scale = s.vec_;
 
 	foundPlayer = false;
 
@@ -242,9 +239,14 @@ void Enemy::DrawDebug()
 bool Enemy::SearchPlayer()
 {
 	// --- プレイヤーとの距離の計算 ---
-	const Vector3& playerPosition = Player::Instance().GetPos();
+	Vector3 playerPosition = Player::Instance().GetPos();
 	Vector3 toPlayerVec = playerPosition - position;
 	float length = toPlayerVec.Length();
+
+	// --- 中央から離れていたら ---
+	float playerLength = playerPosition.Length();
+	if (playerLength > 80.0f)
+		return false;
 
 	// --- 距離が探知範囲内なら ---
 	if (length < searchRange_)

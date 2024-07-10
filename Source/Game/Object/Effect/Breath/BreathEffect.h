@@ -21,7 +21,7 @@ public:
 		return instance;
 	}
 
-	void SetPosition(const DirectX::XMFLOAT3& position) { this->position = position; }
+	void SetPosition(const DirectX::XMFLOAT3& position);
 	void SetAngle(const float angle) { this->angle.y = angle; }
 
 	// BreathData ‚ğ¶¬

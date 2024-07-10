@@ -104,6 +104,14 @@ void PlayerCamera::Update()
 			position = result.position;
 		}
 
+		// --- 待機場所 ---
+		result = {};
+		if (StageManager::Instance().RayCast(3, target.vec_, position.vec_, result))
+		{
+			currentPosition = result.position;
+			position = result.position;
+		}
+
 
 		// --- カメラ情報の更新 ---
 		CameraBase::Update(currentPosition + shakeOffset, target, up, fov, nearZ, farZ, aspect);

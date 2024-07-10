@@ -149,7 +149,7 @@ std::shared_ptr<ModelResource> LoadFbx::Load(const char* fbxFilename, bool trian
 	// マテリアルの取得
 	FetchMaterial(fbxScene, modelResource.get());
 	// アニメーションの取得
-	FetchAnimations(fbxScene, modelResource.get(), 30);
+	FetchAnimations(fbxScene, modelResource.get(), 60);
 
 
 	// 破棄
@@ -412,11 +412,11 @@ void LoadFbx::FetchBoneInfluence(FbxMesh* fbxMesh, std::vector<BoneInfluencesPer
 	const int controlPointsCount = fbxMesh->GetControlPointsCount();
 	boneInfluences.resize(controlPointsCount);
 
-	// すべての deformer (FbxSkin) を処理 
+	// すべての deformer (FbxSkin) を処理
 	const int skinCount = fbxMesh->GetDeformerCount(FbxDeformer::eSkin);
 	for (int skinIndex = 0; skinIndex < skinCount; ++skinIndex)
 	{
-		// 処理する deformer の取得	
+		// 処理する deformer の取得
 		const FbxSkin* fbxSkin = static_cast<FbxSkin*>(fbxMesh->GetDeformer(skinIndex, FbxDeformer::eSkin));
 
 		// この deformer がもつ全ての cluster を処理する --- (すべてのボーンの処理)
@@ -450,11 +450,11 @@ void LoadFbx::FetchBoneInfluence(FbxMesh* fbxMesh, std::vector<BoneInfluencesPer
 // skeleton		: 取得したボーンデータの格納先
 void LoadFbx::FetchSkeleton(FbxMesh* fbxMesh, ModelResource::Skeleton& skeleton, ModelResource* modelResource)
 {
-	// すべての deformer (FbxSkin) を処理 
+	// すべての deformer (FbxSkin) を処理
 	const int deformerCount = fbxMesh->GetDeformerCount(FbxDeformer::eSkin);
 	for (int deformerIndex = 0; deformerIndex < deformerCount; ++deformerIndex)
 	{
-		// 処理する deformer の取得	
+		// 処理する deformer の取得
 		FbxSkin* skin = static_cast<FbxSkin*>(fbxMesh->GetDeformer(deformerIndex, FbxDeformer::eSkin));
 
 		// この deformer がもつ全ての cluster を処理する --- (すべてのボーンの処理)
@@ -565,7 +565,7 @@ void LoadFbx::FetchAnimations(FbxScene* fbxScene, ModelResource* modelResource, 
 
 			// --- 各キーフレームに対する処理 ---
 			// アニメーションの開始時間から終了時間まで、サンプリング間隔ごとにキーフレームを生成している
-			for (FbxTime time = startTime; time < stopTime; time += samplingInterval)
+			for (FbxTime time = startTime; time <= stopTime; time += samplingInterval)
 			{
 				// キーフレームを生成してシークエンスにemplace_backしている
 				ModelResource::KeyFrame& keyFrame = animationClip.sequence.emplace_back();

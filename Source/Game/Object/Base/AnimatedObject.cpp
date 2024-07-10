@@ -320,6 +320,7 @@ DirectX::XMFLOAT3 AnimatedObject::GetBonePosition(std::string boneName)
 		{
 			if(bone.name == boneName)
 			{
+				// TODO:Model“–‚½‚è”»’è‘‚«Š·‚¦‚é
 				ModelResource::Animation& animationClip = model->GetModelResource()->GetAnimationClips().
 					at(currentAnimationIndex);
 

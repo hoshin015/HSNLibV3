@@ -26,6 +26,7 @@ public:
 		float hp        = 10;
 		float strength  = 1;
 		float moveSpeed = 3;
+		float attackCount = 0;
 	};
 
 	// 外部要因(ImGuiとか)でのみ変動する値
@@ -36,6 +37,8 @@ public:
 		float dashSpeed = 6;
 		float dashDeadZone = 0.7f;
 		float dodgePower = 5;
+		float maxAttackCombo = 4;
+		float inputReceptionTime = 0.2f;
 	};
 
 private:
@@ -57,7 +60,7 @@ public:
 	void Render(bool isShadow = false) override;
 	void DrawDebugImGui(int number);
 
-	void UpdateAnimation();
+	void UpdateAnimationParam();
 	
 	// 入力データ取得
 	void Input();

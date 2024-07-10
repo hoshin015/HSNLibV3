@@ -56,7 +56,7 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	Animator::Motion runMotion;
 	runMotion.motion = &animation[6];
 	runMotion.animationSpeed = 0.2f;
-	runMotion.threshold = { 1,0 };
+	runMotion.threshold = { 0,1 };
 
 	Animator::Motion attack1;
 	attack1.motion = &animation[2];
@@ -80,7 +80,7 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	attack4.motion = &animation[5];
 	attack4.animationSpeed = 0.2f;
 	attack4.threshold = { 1,0 };
-	attack2.loop = false;
+	attack4.loop = false;
 
 	Animator::BlendTree walkTree;
 	walkTree.motions.emplace_back(idle);
@@ -159,6 +159,18 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	attack3State.transitions = STATE_FUNC(animator) {
 		if (animator.GetParameter<bool>("endAttack"))
 			return &animator.GetState("walk");
+
+		if (animator.GetParameter<bool>("attack"))
+			return &animator.GetState("attack4");
+		return nullptr;
+	};
+
+	Animator::State attack4State;
+	attack4State.object = Animator::MakeObjPointer(attack4);
+	attack4State.type = Animator::State::MOTION;
+	attack4State.transitions = STATE_FUNC(animator) {
+		if (animator.GetParameter<bool>("endAttack"))
+			return &animator.GetState("walk");
 		return nullptr;
 	};
 
@@ -167,6 +179,7 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	animator.AddState("attack1", attack1State);
 	animator.AddState("attack2", attack2State);
 	animator.AddState("attack3", attack3State);
+	animator.AddState("attack4", attack4State);
 	animator.EnableRootMotion("root");
 	animator.SetModelSceneView(&model->GetModelResource()->GetSceneView());
 	animator.SetEntryState("walk");
@@ -194,7 +207,7 @@ void Player::Update()
 	CollisionVsEnemy();
 
 	// アニメーション更新
-	UpdateAnimation();
+	UpdateAnimationParam();
 
 	// 姿勢行列更新
 	UpdateTransform();
@@ -207,8 +220,26 @@ void Player::Render(bool isShadow)
 	model->Render(transform, &keyFrame, isShadow);
 }
 
-void Player::DrawDebugImGui(int number)
-{
+void Player::DrawDebugImGui(int number) {
+
+	auto DrawVector = [](ImDrawList* drawList, ImVec2 startPos, ImVec2 endPos, ImU32 color, float thickness) {
+		drawList->AddLine(startPos, endPos, color, thickness);
+
+		// 矢印の先端を描画
+		float arrowSize = 10.0f;
+		ImVec2 direction = ImVec2(endPos.x - startPos.x, endPos.y - startPos.y);
+		float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+		if (length > 0.0f) {
+			direction.x /= length;
+			direction.y /= length;
+		}
+		ImVec2 left = ImVec2(-direction.y, direction.x);
+		ImVec2 right = ImVec2(direction.y, -direction.x);
+		ImVec2 arrowLeft = ImVec2(endPos.x - direction.x * arrowSize + left.x * arrowSize, endPos.y - direction.y * arrowSize + left.y * arrowSize);
+		ImVec2 arrowRight = ImVec2(endPos.x - direction.x * arrowSize + right.x * arrowSize, endPos.y - direction.y * arrowSize + right.y * arrowSize);
+		drawList->AddTriangleFilled(endPos, arrowLeft, arrowRight, color);
+	};
+
 	ImGui::Begin("Player");
 	{
 		ImGui::DragFloat("emissive", &GetModel()->data.emissivePower, 0.01f);
@@ -251,7 +282,14 @@ void Player::DrawDebugImGui(int number)
 				if(const float* val = std::get_if<float>(&data)) ImGui::Text("%s: %f", name.c_str(),*val);
 				if(const bool* val = std::get_if<bool>(&data)) ImGui::Text("%s: %s", name.c_str(), *val ? "true" : "false");
 				if(const int* val = std::get_if<int>(&data)) ImGui::Text("%s: %d", name.c_str(),*val);
-				if(const XMFLOAT2* val = std::get_if<XMFLOAT2>(&data)) ImGui::Text("%s: %f,%f", name.c_str(),val->x, val->y);
+				if (const XMFLOAT2* val = std::get_if<XMFLOAT2>(&data)) {
+					ImGui::Text("%s: %f,%f", name.c_str(), val->x, val->y);
+
+					ImVec2 window_pos = ImGui::GetWindowPos();
+					ImVec2 window_size = ImGui::GetWindowSize();
+					ImVec2 center = ImVec2(window_pos.x + window_size.x / 2, window_pos.y + window_size.y / 2);
+					DrawVector(ImGui::GetWindowDrawList(), center, ImVec2(center.x + val->x * 100,center.y + -val->y * 100), IM_COL32(0,255,0,255), 2.f);
+				}
 			}
 		}
 #endif
@@ -270,24 +308,27 @@ void Player::DrawDebugImGui(int number)
 	animator.AnimationEditor();
 }
 
-void Player::UpdateAnimation() {
+void Player::UpdateAnimationParam() {
 	Vector2 move = GetInputMap<XMFLOAT2>("Move");
-	Vector3 v = { velocity.x,0,velocity.z };
-	v.Normalize();
+	//velocity.
+	debug[u8"方向"] = move.vec_;
+	XMStoreFloat2(&move.vec_,XMVector2TransformCoord(XMLoadFloat2(&move.vec_),XMMatrixRotationZ(XMConvertToRadians(this->angle.y))));
 
-	XMStoreFloat3(&v.vec_,XMVector3Transform(XMLoadFloat3(&v.vec_),XMMatrixRotationY(XMConvertToRadians(angle.y))));
-	v *= move.Length();
+	//float ang = atan2f(move.y , move.x);
+	// float len = move.Length();
+	// move = { cosf(angle.y) * move.x,sinf(angle.y)x * move.y };
 
-	if (!GetInputMap<bool>("Run")) {
-		animator.SetParameter("moveX", v.x);
-		animator.SetParameter("moveY", v.z);
+	debug[u8"角度"] = angle.y;
+
+	if (false) {
+		animator.SetParameter("moveX", -move.y);
+		animator.SetParameter("moveY", move.x);
 	}
 	else {
-		// float len = v.Length();
-		// if (len > 1) len = 1;
-		//
-		// animator.SetParameter("moveX", len);
-		// animator.SetParameter("moveY", 0.f);
+		float len = move.Length();
+		if (len > 1) len = 1;
+		animator.SetParameter("moveX", 0.f);
+		animator.SetParameter("moveY", len);
 	}
 }
 
@@ -313,7 +354,8 @@ void Player::Input()
 	if (inputMoveData.LengthSq() > 1)inputMoveData.Normalize();
 	if (XMFLOAT2* move = std::get_if<XMFLOAT2>(&inputMap["Move"])) {
 		Vector2 v1 = *move;
-		inputMoveData = v1.Length() <= inputMoveData.Length() ?
+		const float i = INFINITY;
+		inputMoveData = v1.Length() < inputMoveData.Length() ?
 			inputMoveData * Math::Lerp(v1.Length(), inputMoveData.Length(), frameDt) :
 			v1 * Math::Lerp( inputMoveData.Length(),v1.Length(), frameDt);
 	}
@@ -351,7 +393,15 @@ void Player::Input()
 	// 攻撃の入力した時点で次の入力をする
 	if (bool* endAttack = std::get_if<bool>(&inputMap["EndAttack"])) {
 		bool attack = *endAttack||animator.GetEndMotion() ? inputAttackData : false;
-		if (attack)attackTimer = 0.5f;
+		if (attack) {
+			attackTimer = constant.inputReceptionTime;
+			if (ability.attackCount >= constant.maxAttackCombo) {
+				attack = false;
+				attackTimer = 0;
+			}
+			ability.attackCount++;
+		}
+		if (*endAttack) ability.attackCount = 0;
 		inputMap["Attack"] = attack;
 		animator.SetParameter("attack", attack);
 	}

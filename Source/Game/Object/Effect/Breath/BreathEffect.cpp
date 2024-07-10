@@ -147,4 +147,6 @@ void BreathEffect::Emit()
 	cylinderObject->SetAngle(angle);
 	cylinderObject->ReSetLifeTime();
 
+	AudioManager::Instance().PlayMusic(MUSIC_LABEL::Breath);
+
 }

@@ -230,10 +230,16 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze, PlayerCam
 	case SpecialState::UpMusic:
 		{
 			lifeTimer += deltaTime;
-			
+
+#if SPECIAL_AUDIO_DELAY
 			if(AudioManager::Instance().GetSoundState(MUSIC_LABEL::BATTLE2) == DirectX::SoundState::PAUSED)
 			{
 				AudioManager::Instance().ResumeMusic(MUSIC_LABEL::BATTLE2);
+#else
+			if (!AudioManager::Instance().IsInUseMusic(MUSIC_LABEL::BATTLE2))
+			{
+				AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE2);
+#endif
 
 				// ‰¼’u‚«m
 				Emitter* emitter                           = new Emitter();

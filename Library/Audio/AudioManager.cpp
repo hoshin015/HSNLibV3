@@ -24,6 +24,7 @@ void AudioManager::Initialize()
 	LoadMusic(MUSIC_LABEL::BATTLE1, L"Data/Audio/Battle1.wav");
 	LoadMusic(MUSIC_LABEL::BATTLE2, L"Data/Audio/Battle2.wav");
 	LoadMusic(MUSIC_LABEL::Fire1, L"Data/Audio/Fire1.wav");
+	LoadMusic(MUSIC_LABEL::Breath, L"Data/Audio/Breath.wav");
 	LoadMusic(MUSIC_LABEL::MonsterRoar1, L"Data/Audio/MonsterRoar1.wav");
 	LoadMusic(MUSIC_LABEL::NovaNoise1, L"Data/Audio/NovaNoise1.wav");
 	LoadMusic(MUSIC_LABEL::NovaNoise2, L"Data/Audio/NovaNoise2.wav");

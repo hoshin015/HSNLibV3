@@ -152,10 +152,12 @@ void SceneTest::Initialize()
 	AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
 	AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
 
+#if SPECIAL_AUDIO_DELAY
 	AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE2, true);
 	AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE2, 0.0f);
 	stopSoundTimer = false;
 	soundTimer = 0.0f;
+#endif
 }
 
 void SceneTest::Finalize()
@@ -390,6 +392,7 @@ void SceneTest::Update()
 	BreathEffect::Instance().Update();
 	SpecialEffect::Instance().Update(radialBlur.get(), heatHaze.get(), &playerCamera);
 
+#if SPECIAL_AUDIO_DELAY
 	// sound
 	if(!stopSoundTimer)
 	{
@@ -400,7 +403,7 @@ void SceneTest::Update()
 			stopSoundTimer = true;
 		}
 	}
-	
+#endif
 }
 
 void SceneTest::Render()

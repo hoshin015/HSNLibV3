@@ -4,6 +4,8 @@
 #include "../../../../../Library/Graphics/HeatHaze.h"
 #include "../../../../Camera/CameraDerived.h"
 
+#define SPECIAL_AUDIO_DELAY 0
+
 class SpecialEffect
 {
 private:

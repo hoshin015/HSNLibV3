@@ -17,6 +17,8 @@ enum class MUSIC_LABEL
 	Fire1,
 	MonsterRoar1,
 
+	Breath,
+
 	NovaNoise1,
 	NovaNoise2,
 

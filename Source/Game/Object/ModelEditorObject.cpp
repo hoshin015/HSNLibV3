@@ -3,7 +3,8 @@
 
 void ModelEditorObject::Update()
 {
-	UpdateSe();
+	if(!model->GetModelResource()->GetAnimationClips().empty())
+		UpdateSe();
 
 	// アニメーション更新
 	UpdateAnimation();

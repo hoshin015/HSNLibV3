@@ -20,7 +20,6 @@ enum class PlayerAnimNum
 class Player : public AnimatedObject
 {
 public:
-
 	// ƒQ[ƒ€’†•Ï“®‚·‚é’l
 	struct AbilityStatus {
 		float hp        = 10;

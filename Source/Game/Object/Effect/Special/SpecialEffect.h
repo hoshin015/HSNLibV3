@@ -25,7 +25,7 @@ public:
 	}
 
 	// XV
-	void Update(RadialBlur* radialBlur, HeatHaze* heatHaze, PlayerCamera* playerCamera);
+	void Update(RadialBlur* radialBlur, HeatHaze* heatHaze);
 
 	// •`‰æ
 	void Render();

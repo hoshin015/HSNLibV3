@@ -1,8 +1,9 @@
 #pragma once
 
 #include "../../Library/Math/Matrix.h"
-
 #include "../../Base/AnimatedObject.h"
+#include "../../Library/Easing.h"
+#include "../../Library/Graphics/RadialBlur.h"
 
 template<typename T>
 class BehaviorTree;
@@ -20,7 +21,7 @@ private:
 public:
 	static Enemy& Instance()
 	{
-		static Enemy instance("Data/Fbx/Monster/gaoanimal_5.model");
+		static Enemy instance("Data/Fbx/Monster/gaoanimal_6.model");
 		return instance;
 	}
 
@@ -103,6 +104,22 @@ private:
 	float flinchValue;	// 怯み値
 
 	bool alive;
+
+
+public:
+	// --- 大咆哮用のステータス ---
+	RadialBlur* radialBlur;
+	float bigRoarTimer = 0.0f;
+	Easing::EasingValue bigRoarRadialUpSampling =
+	{
+		0.7f, 1.2f,
+		1.0f, 16.0f
+	};
+	Easing::EasingValue bigRoarRadialDownSampling =
+	{
+		1.2f, 1.7f,
+		16.0f, 1.0f
+	};
 
 public:
 	Quaternion quaternion_;

@@ -38,6 +38,7 @@ void Enemy::Initialize()
 	InitializeBehaviorTree();
 
 	position = { 0, 0, 0 };
+	velocity = { 0.0f, 0.0f, 0.0f };
 
 	foundPlayer = false;
 
@@ -80,17 +81,6 @@ void Enemy::Update()
 	if (alive && hp < 0.0f)
 	{
 		OnDead();
-	}
-
-
-	if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::P))
-	{
-		Matrix R;
-		R.MakeRotationFromQuaternion(quaternion_);
-		Vector3 front = R.v_[2].xyz();
-		float atan = atan2(front.z, front.x);
-		float theta = DirectX::XMConvertToDegrees(atan);
-		PlayFireBress(theta);
 	}
 
 
@@ -234,6 +224,30 @@ void Enemy::DrawDebug()
 	DebugPrimitive::Instance().AddSphere(moveTargetPosition_.vec_, 1.0f, { 0.3f, 0.3f, 1.0f, 1.0f });
 }
 
+
+// --- ˆÚ“®ˆ— ---
+void Enemy::UpdateMove(float elapsedTime)
+{
+	float elapsedFrame = (60.0f / (1.0f / elapsedTime));
+
+	// --- …•½‘¬—Íˆ— ---
+	UpdateHorizontalVelocity(elapsedTime, elapsedFrame);
+
+	// --- …•½ˆÚ“®ˆ— ---
+	UpdateHorizontalMove(elapsedTime, elapsedFrame);
+}
+
+
+// --- …•½‘¬—Íˆ— ---
+void Enemy::UpdateHorizontalVelocity(float elapsedTime, float elapsedFrame)
+{
+}
+
+
+// --- …•½ˆÚ“®ˆ— ---
+void Enemy::UpdateHorizontalMove(float elapsedTime, float elapsedFrame)
+{
+}
 
 // --- ƒvƒŒƒCƒ„[‚ðŒ©‚Â‚¯‚½‚© ---
 bool Enemy::SearchPlayer()

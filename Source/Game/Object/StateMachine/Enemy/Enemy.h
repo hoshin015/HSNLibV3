@@ -56,6 +56,9 @@ public:
 	void DrawDebugGui();
 	void DrawDebug();
 
+	void UpdateMove(float elapsedTime);
+	void UpdateHorizontalVelocity(float elapsedTime, float elapsedFrame);
+	void UpdateHorizontalMove(float elapsedTime, float elapsedFrame);
 	bool SearchPlayer();
 	void RotateToTargetVec(const DirectX::XMFLOAT3& targetVec, float t, const Vector3* tempFront = nullptr);
 	void ClampPosition(float range);
@@ -91,6 +94,8 @@ private:
 	float rushEndSpeed = 4.0f;
 	float rushChargeTimer = 1.25f;
 	float whileRushTimer = 2.5f;
+
+	Vector3 velocity;
 
 
 	// --- ステータス関連 ---

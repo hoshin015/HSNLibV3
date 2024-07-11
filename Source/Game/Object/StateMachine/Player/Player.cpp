@@ -279,6 +279,7 @@ void Player::Update()
 	CollisionVsEnemy();
 
 	// アニメーション更新
+	//SetAnimatorKeyFrame(keyFrame);
 	UpdateAnimationParam();
 
 	// 姿勢行列更新
@@ -288,8 +289,8 @@ void Player::Update()
 void Player::Render(bool isShadow)
 {
 	// Animatorを使ったモーション
-	ModelResource::KeyFrame keyFrame = animator.PlayAnimation(Timer::Instance().DeltaTime());
-	model->Render(transform, &keyFrame, isShadow);
+	animatorKeyFrame = animator.PlayAnimation(Timer::Instance().DeltaTime());
+	model->Render(transform, &animatorKeyFrame, isShadow);
 }
 
 void Player::DrawDebugImGui(int number) {

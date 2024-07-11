@@ -17,13 +17,13 @@ void BreathEffect::Initialize()
 {
 	crossPlaneObject = std::make_unique<BreathCrossPlane>("Data/Fbx/Breath/CrossPlane/CrossPlane.model");
 	crossPlaneObject->SetPos({0, 3, 0});
-	crossPlaneObject->SetScale({6, 80, 6});
+	crossPlaneObject->SetScale({6, 140, 6});
 	crossPlaneObject->SetAngle({90, 0, 0});
 
 
 	cylinderObject = std::make_unique<BreathCylinder>("Data/Fbx/Breath/Cylinder/Cylinder.model");
 	cylinderObject->SetPos({0, 3, 0});
-	cylinderObject->SetScale({3.6, 80, 3.6});
+	cylinderObject->SetScale({3.6, 140, 3.6});
 	cylinderObject->SetAngle({90, 0, 0});
 	cylinderObject->GetModel()->dissolveConstant.dissolveThreshold = 0.2f;
 	cylinderObject->GetModel()->dissolveConstant.edgeThreshold     = 0.3f;
@@ -97,7 +97,7 @@ void BreathEffect::LightningGenerateUpdate()
 			float cos_r = cosf(r);
 			float sin_r = -sinf(r);
 
-			float length = static_cast<float>(rand() % 75);
+			float length = static_cast<float>(rand() % 130);
 
 			float rLength = 2.1f;
 

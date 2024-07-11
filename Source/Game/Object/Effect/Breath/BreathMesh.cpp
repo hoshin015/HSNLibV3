@@ -11,13 +11,13 @@ void BreathCrossPlane::Update()
 
 	// 開始スケール
 	float scale = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, crossPlaneStartScale);
-	SetScale({ scale, 80, scale });
+	SetScale({ scale, 140, scale });
 
 	// 終了スケール
 	if(lifeTimer > crossPlaneEndScale.startTime)
 	{
 		float scale = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, crossPlaneEndScale);
-		SetScale({ scale, 80, scale });
+		SetScale({ scale, 140, scale });
 	}
 
 	GetModel()->dissolveConstant.dissolveThreshold = 0.01f;
@@ -45,13 +45,13 @@ void BreathCylinder::Update()
 
 	// 開始スケール
 	float scale = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, cylinderStartScale);
-	SetScale({ scale, 80, scale });
+	SetScale({ scale, 140, scale });
 
 	// 終了スケール
 	if (lifeTimer > cylinderEndScale.startTime)
 	{
 		float scale = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, cylinderEndScale);
-		SetScale({ scale, 80, scale });
+		SetScale({ scale, 140, scale });
 	}
 
 	// 終了ディゾルブ値

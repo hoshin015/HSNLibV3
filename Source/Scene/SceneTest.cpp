@@ -34,6 +34,7 @@
 // --- UserInterface ---
 #include "../UserInterface//UiPause.h"
 #include "../UserInterface/DamageTextManager.h"
+#include "../UserInterface/UiGame.h"
 
 
 void SceneTest::Initialize()
@@ -143,6 +144,7 @@ void SceneTest::Initialize()
 	//EmitterManager::Instance().Register(emitter0);
 
 	UiPause::Instance().Initialize();
+	UiGame::Instance().Initialize();
 
 	LightningEffect::Instance().Initialize();
 	RockEffect::Instance().Initialize();
@@ -182,6 +184,7 @@ void SceneTest::Update()
 
 
 	if (UiPause::Instance().Update()) return;
+	UiGame::Instance().Update();
 
 	// --- effectManager処理 ---
 	EffectManager::Instance().Update();
@@ -568,11 +571,14 @@ void SceneTest::Render()
 	// ======　ブルームなしの描画　======　
 
 	// ここでスプライト描画
+	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
+
 	//sprTest->Render();
 	//sprTest2->Render();
 	//sprTest3->Render();
 
 	//UiPause::Instance().Render();
+	UiGame::Instance().Render();
 
 	// ここで文字描画
 	DamageTextManager::Instance().Render();
@@ -586,6 +592,8 @@ void SceneTest::Render()
 	DrawDebugGUI();
 
 	ImGuiManager::Instance().Console();
+
+	UiGame::Instance().DrawDebugImGui();
 
 	Player::Instance().DrawDebugImGui(0);
 	Enemy::Instance().DrawDebugImGui(0);

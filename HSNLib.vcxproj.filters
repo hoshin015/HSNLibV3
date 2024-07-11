@@ -484,6 +484,9 @@
     <ClCompile Include="Source\Game\Object\Effect\Rock\RockEffect.cpp">
       <Filter>2_Source\Game\Object\Effect\Rock</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UserInterface\UiGame.cpp">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -847,6 +850,9 @@
       <Filter>1_HSNLib\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Source\UserInterface\UiTitle.h">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UserInterface\UiGame.h">
       <Filter>2_Source\UserInterface</Filter>
     </ClInclude>
   </ItemGroup>

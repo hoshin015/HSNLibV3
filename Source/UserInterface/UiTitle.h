@@ -33,7 +33,6 @@ public:
 	// debugGui
 	void DrawDebugImGui();
 
-
 private:
 	bool isStageRender = true;			// タイトルステージ描画フラグ
 	bool isCharacterRender = false;		// タイトルキャラクター描画フラグ

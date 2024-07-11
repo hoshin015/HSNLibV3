@@ -609,8 +609,9 @@ void Player::CalcDodgeVelocity() {
 #if 1 // TODO::RootMotion‚ðŽg‚¤‚È‚çÁ‚·
 	float dt = Timer::Instance().DeltaTime();
 	Vector2 move = { velocity.x,velocity.z };
+	float rad = XMConvertToRadians(angle.y);
 
-	if(move.LengthSq() == 0) move = -camera->GetFrontVec().xz();
+	if(move.LengthSq() == 0) move = -Vector2(sinf(rad),cosf(rad));
 	move.Normalize();
 
 	Vector2 vel = move * constant.dodgePower * dt;
@@ -620,7 +621,7 @@ void Player::CalcDodgeVelocity() {
 
 	ability.dodgeTimer -= dt;
 
-	XMStoreFloat2(&move.vec_,XMVector2TransformCoord(XMLoadFloat2(&move.vec_),XMMatrixRotationZ(XMConvertToRadians(angle.y))));
+	XMStoreFloat2(&move.vec_,XMVector2TransformCoord(XMLoadFloat2(&move.vec_),XMMatrixRotationZ(rad)));
 	animator.SetParameter("moveX", move.x);
 	animator.SetParameter("moveY", move.y);
 

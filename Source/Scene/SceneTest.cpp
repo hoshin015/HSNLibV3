@@ -105,16 +105,16 @@ void SceneTest::Initialize()
 	//blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");
 
 	// --- StaticObject ‰Šú‰» ---
-	testStatic = std::make_unique<TestStatic>("Data/Fbx/StaticAlbino/StaticAlbino.model");
+	// testStatic = std::make_unique<TestStatic>("Data/Fbx/StaticAlbino/StaticAlbino.model");
 
 	// --- Sprite ‰Šú‰» ---
-	sprTest  = std::make_unique<Sprite>("Data/Texture/bomb/bomb.sprite");
-	sprTest2 = std::make_unique<Sprite>("Data/Texture/Icon.sprite");
-	sprTest2->SetPos({200, 100});
-	sprTest3 = std::make_unique<Sprite>("Data/Texture/Nessie.sprite");
-	sprTest3->SetPos({500, 100});
-	sprTest3->SetScale({0.2, 0.2});
-	sprTest3->UpdateAnimation();
+	// sprTest  = std::make_unique<Sprite>("Data/Texture/bomb/bomb.sprite");
+	// sprTest2 = std::make_unique<Sprite>("Data/Texture/Icon.sprite");
+	// sprTest2->SetPos({200, 100});
+	// sprTest3 = std::make_unique<Sprite>("Data/Texture/Nessie.sprite");
+	// sprTest3->SetPos({500, 100});
+	// sprTest3->SetScale({0.2, 0.2});
+	// sprTest3->UpdateAnimation();
 
 
 	Enemy::Instance().Initialize();

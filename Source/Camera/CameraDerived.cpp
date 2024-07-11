@@ -202,7 +202,13 @@ void PlayerCamera::OnFixedCursor(float deltaTime)
 	
 	// --- カーソルの座標を取得して中央との差分をとる ---
 	curCursorPos = { input.GetCursorPosXFloat(), input.GetCursorPosYFloat() };
-	const Vector2 cursorDelta = curCursorPos - Vector2{ 640.0f, 360.0f };
+	Vector2 cursorDelta = curCursorPos - Vector2{ 640.0f, 360.0f };
+
+	// コントローラ対応
+	if(input.IsGamePadConnected()) {
+		cursorDelta = { input.GetThumSticksRightX(),-input.GetThumSticksRightY() };
+		cursorDelta *= 200;
+	}
 
 	// --- 縦の角度をクランプ ---
 	verticalAngle = (std::max)(-90.0f, (std::min)(verticalAngle, 90.0f));

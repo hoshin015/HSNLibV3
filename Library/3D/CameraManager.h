@@ -24,6 +24,8 @@ public:
 
 	void SetCurrentCamera(const char* key);
 
+	bool IsCurrentCamera(const char* key) { return cameraMap[key] == currentCamera; }
+
 	void Initialize();
 
 	void Update();

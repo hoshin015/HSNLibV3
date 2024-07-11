@@ -29,19 +29,24 @@ public:
 		float attackCount = 0;
 		float attackTimer = 0;
 		float dodgeTimer = 0;
+		float notAcceptTimer = 0;
 	};
 
 	// ŠO•”—vˆö(ImGui‚Æ‚©)‚Å‚Ì‚Ý•Ï“®‚·‚é’l
 	struct ConstantStatus {
 		float maxHp = 10;
+
 		float shiftDashTimer = 0.4f;
 		float walkSpeed = 3;
 		float dashSpeed = 6;
 		float dashDeadZone = 0.7f;
-		float dodgePower = 5;
+
+		float dodgePower = 15;
 		float dodgeTime = 0.5f;
+
 		float maxAttackCombo = 4;
-		float inputReceptionTime = 0.2f;
+		float attackReceptionTime = 0.1f;
+		float notAcceptTime = 0.1f;
 	};
 
 private:
@@ -145,4 +150,5 @@ public:
 
 	AbilityStatus& AbilityStatus() { return ability; }
 	ConstantStatus& ConstantStatus() { return constant; }
+	Animator& GetAnimator() { return animator; }
 };

@@ -112,12 +112,12 @@ public:
 	float bigRoarTimer = 0.0f;
 	Easing::EasingValue bigRoarRadialUpSampling =
 	{
-		0.7f, 1.2f,
+		1.0f, 2.0f,
 		1.0f, 16.0f
 	};
 	Easing::EasingValue bigRoarRadialDownSampling =
 	{
-		1.2f, 1.7f,
+		2.0f, 3.0f,
 		16.0f, 1.0f
 	};
 

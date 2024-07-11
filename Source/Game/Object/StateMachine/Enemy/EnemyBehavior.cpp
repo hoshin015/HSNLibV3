@@ -7,6 +7,7 @@
 
 #include "../Player/Player.h"
 #include "../../../../../Library/Timer.h"
+#include "../../../../../Library/3D/CameraManager.h"
 
 
 // --- 追跡行動の判定 ---
@@ -394,17 +395,27 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 			owner_->radialBlur->SetBlurPower(0.02f);
 			owner_->radialBlur->SetIsRadial(true);
 		}
-		if(owner_->radialBlur->GetIsRadial() && owner_->bigRoarRadialDownSampling.endTime > owner_->bigRoarTimer)
+		if(owner_->radialBlur->GetIsRadial() && owner_->bigRoarRadialDownSampling.endTime < owner_->bigRoarTimer)
 		{
 			owner_->radialBlur->SetIsRadial(false);
 		}
 
 		// sampling 増減処理
-		owner_->radialBlur->SetSamplingCount(Easing::GetNowParam(Easing::OutQuad<float>, owner_->bigRoarTimer, owner_->bigRoarRadialUpSampling));
-		if(owner_->bigRoarRadialDownSampling.startTime < owner_->bigRoarTimer)
+		float sampCount;
+		sampCount = Easing::GetNowParam(Easing::OutQuad<float>, owner_->bigRoarTimer, owner_->bigRoarRadialUpSampling);
+		if (owner_->bigRoarRadialDownSampling.startTime < owner_->bigRoarTimer)
 		{
-			owner_->radialBlur->SetSamplingCount(Easing::GetNowParam(Easing::OutQuad<float>, owner_->bigRoarTimer, owner_->bigRoarRadialDownSampling));
+			sampCount = Easing::GetNowParam(Easing::OutQuad<float>, owner_->bigRoarTimer, owner_->bigRoarRadialDownSampling);
 		}
+		owner_->radialBlur->SetSamplingCount(static_cast<float>(static_cast<int>(sampCount)));
+
+		// 座標計算
+		DirectX::XMFLOAT3 bonePos = Enemy::Instance().GetBonePosition("sitaago");
+		DirectX::XMFLOAT2 ndc = Math::ScreenToNdcPos(Math::WorldToScreenPos(bonePos, CameraManager::Instance().GetCamera().get()));
+		ndc.x = (ndc.x + 1.0f) / 2.0f;
+		ndc.y = (ndc.y + 1.0f) / 2.0f;
+		owner_->radialBlur->SetBlurPosition(ndc);
+
 
 
 		// --- アニメーションが終わったら ---

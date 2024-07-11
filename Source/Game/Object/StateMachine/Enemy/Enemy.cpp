@@ -284,7 +284,7 @@ void Enemy::UpdateHorizontalVelocity(float elapsedTime, float elapsedFrame)
 
 			// --- ˆÚ“®ƒxƒNƒgƒ‹•ûŒü‚É‰Á‘¬ ---
 			this->velocity.x += moveVec.x * acceleration;
-			this->velocity.z += moveVec.z * acceleration;
+			this->velocity.z += moveVec.y * acceleration;
 		}
 
 

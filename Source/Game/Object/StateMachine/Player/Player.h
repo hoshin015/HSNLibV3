@@ -64,6 +64,7 @@ public:
 	
 	// 入力データ取得
 	void Input();
+	void InputAttack();
 	// 歩行移動量計算
 	void CalcWalkVelocity();
 	// 走り移動量計算

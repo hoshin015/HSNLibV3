@@ -12,7 +12,7 @@ int APIENTRY wWinMain(
 	_In_ int nCmdShow)
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(619477);	// 引数で指定した回数メモリが確保されたらプログラムを止める
+	_CrtSetBreakAlloc(23350);	// 引数で指定した回数メモリが確保されたらプログラムを止める
 
 	Framework& framework = Framework::Instance();
 	// 初期化

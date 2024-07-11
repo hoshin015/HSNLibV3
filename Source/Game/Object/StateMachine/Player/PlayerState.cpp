@@ -50,6 +50,8 @@ void PlayerIdleState::Enter()
 
 void PlayerIdleState::Execute()
 {
+	owner->Input();
+
 	// ‘–‚èˆÚ“®—ÊŒvŽZ
 	owner->CalcWalkVelocity();
 
@@ -96,6 +98,8 @@ void PlayerWalkState::Enter()
 
 void PlayerWalkState::Execute()
 {
+	owner->Input();
+
 	// •àsˆÚ“®—ÊŒvŽZ
 	owner->CalcWalkVelocity();
 
@@ -144,6 +148,8 @@ void PlayerRunState::Enter()
 
 void PlayerRunState::Execute()
 {
+	owner->Input();
+
 	// ‘–‚èˆÚ“®—ÊŒvŽZ
 	owner->CalcRunVelocity();
 
@@ -189,10 +195,13 @@ void PlayerRunState::Exit()
 void PlayerAttackState::Enter()
 {
 	owner->PlayAnimation(static_cast<int>(PlayerAnimNum::Attack), false);
+	owner->SetInputMap("Attack", false);
 }
 
 void PlayerAttackState::Execute()
 {
+	owner->InputAttack();
+
 	if(owner->GetInputMap<bool>("EndAttack"))
 	{
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));

@@ -76,27 +76,6 @@ private:
 public:
 	Animator() = default;
 
-	// template<typename T>
-	// void AddObject(T& obj) {
-	// 	if constexpr (std::is_same_v<T, Motion>)
-	// 		_states.emplace_back(
-	// 			State{std::make_shared<Motion>(std::forward<Motion>(obj)), State::ObjectType::MOTION, 1}
-	// 		);
-	// 	if constexpr (std::is_same_v<T, BlendTree>)
-	// 		_states.emplace_back(
-	// 			State{std::make_shared<BlendTree>(std::forward<BlendTree>(obj)), State::ObjectType::BLEND_TREE, 1}
-	// 		);
-	// }
-
-	// template<typename... Any>
-	// void AddAnimation(
-	// 	ModelResource::SceneView* sceneView,
-	// 	Any&...                   any
-	// ) {
-	// 	_sceneView = sceneView;
-	// 	(AddObject(any), ...);
-	// }
-
 	void AddState(const std::string& name, const State& state) { _states[name] = state; }
 
 	void SetModelSceneView(ModelResource::SceneView* sceneView) { _sceneView = sceneView; }
@@ -115,9 +94,11 @@ public:
 	}
 
 	State&                   GetState(const std::string& name) { return _states[name]; }
+	const State*             GetCurrentState() const { return _currentState; }
 	const DirectX::XMFLOAT3& GetVelocity() const { return _velocity; }
-	float                    GetTimer() const { return _timer; }
-	bool                     GetEndMotion() const { return _isEndMotion; }
+
+	float GetTimer() const { return _timer; }
+	bool  GetEndMotion() const { return _isEndMotion; }
 
 	ModelResource::KeyFrame PlayAnimation(float elapsedTime);
 

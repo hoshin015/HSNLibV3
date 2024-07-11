@@ -354,7 +354,6 @@ void Player::Input()
 	if (inputMoveData.LengthSq() > 1)inputMoveData.Normalize();
 	if (XMFLOAT2* move = std::get_if<XMFLOAT2>(&inputMap["Move"])) {
 		Vector2 v1 = *move;
-		const float i = INFINITY;
 		inputMoveData = v1.Length() < inputMoveData.Length() ?
 			inputMoveData * Math::Lerp(v1.Length(), inputMoveData.Length(), frameDt) :
 			v1 * Math::Lerp( inputMoveData.Length(),v1.Length(), frameDt);
@@ -384,33 +383,43 @@ void Player::Input()
 	{
 		inputAttackData = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::x);
 	}
-	// inputMap["Attack"] = inputAttackData;
-	// animator.SetParameter("attack", inputAttackData);
 
-	static float attackTimer = 0;
-	//if(inputAttackData) attackTimer = 0.5f;
+	inputMap["Attack"] = inputAttackData;
+
 
 	// UŒ‚‚Ì“ü—Í‚µ‚½Žž“_‚ÅŽŸ‚Ì“ü—Í‚ð‚·‚é
-	if (bool* endAttack = std::get_if<bool>(&inputMap["EndAttack"])) {
-		bool attack = *endAttack||animator.GetEndMotion() ? inputAttackData : false;
-		if (attack) {
-			attackTimer = constant.inputReceptionTime;
-			if (ability.attackCount >= constant.maxAttackCombo) {
-				attack = false;
-				attackTimer = 0;
-			}
-			ability.attackCount++;
-		}
-		if (*endAttack) ability.attackCount = 0;
-		inputMap["Attack"] = attack;
-		animator.SetParameter("attack", attack);
-	}
+	// static bool inputAttack = false;
+	// if (bool* endAttack = std::get_if<bool>(&inputMap["EndAttack"])) {
+	// 	bool attack = *endAttack || animator.GetEndMotion() ? inputAttackData: false;
+	// 	if (attack) {
+	// 		attackTimer = constant.inputReceptionTime;
+	// 		if (ability.attackCount >= constant.maxAttackCombo) {
+	// 			attack      = false;
+	// 			attackTimer = 0;
+	// 		}
+	// 	}
+	// 	if (*endAttack) ability.attackCount = 0;
+	// 	if (ability.attackCount == 0) {
+	// 		inputMap["Attack"] = attack;
+	// 		animator.SetParameter("attack", attack);
+	// 		if(attack) ability.attackCount++;
+	// 	}
+	// 	else {
+	// 		if(attack)inputAttack = true;
+	// 		inputMap["Attack"] = inputAttack && animator.GetEndMotion();
+	// 		animator.SetParameter("attack", inputAttack && animator.GetEndMotion());
+	// 		if (inputAttack && animator.GetEndMotion()) {
+	// 			ability.attackCount++;
+	// 			inputAttack = false;
+	// 		}
+	// 	}
+	// }
 	//else inputMap["Attack"] = false;
-
-	if(animator.GetEndMotion()) attackTimer -= dt;
-	inputMap["EndAttack"] = attackTimer <= 0;
-	animator.SetParameter("endAttack", attackTimer <= 0);
-	debug[u8"UŒ‚ŽžŠÔ"] = attackTimer;
+	//
+	// if(animator.GetEndMotion()) attackTimer -= dt;
+	// inputMap["EndAttack"] = attackTimer <= 0;
+	// animator.SetParameter("endAttack", attackTimer <= 0);
+	// debug[u8"UŒ‚ŽžŠÔ"] = attackTimer;
 	//animator.GetVelocity()
 
 	// --- ‰ñ”ð ---
@@ -431,6 +440,14 @@ void Player::Input()
 	// 	inputDrinkData = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::x);
 	// }
 	// inputMap["Drink"] = inputDrinkData;
+}
+
+void Player::InputAttack() {
+	InputManager& input = InputManager::Instance();
+	float dt = Timer::Instance().DeltaTime();
+	float frameDt = dt * 10;
+
+
 }
 
 // ˆÚ“®—ÊŒvŽZ

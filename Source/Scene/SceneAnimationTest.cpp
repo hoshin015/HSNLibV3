@@ -14,9 +14,9 @@ void SceneAnimationTest::DrawDebugGUI() {
 	DrawMenuBar();
 	ImGuiManager::Instance().DisplayPerformanceStats();
 
-	float& rate   = _animator.GetParameter<float>("x");
-	bool&  attack = _animator.GetParameter<bool>("attack");
-	bool&  end    = _animator.GetParameter<bool>("end");
+	float rate   = _animator.GetParameter<float>("x");
+	bool  attack = _animator.GetParameter<bool>("attack");
+	bool  end    = _animator.GetParameter<bool>("end");
 	if (ImGui::Begin("Animator")) {
 		ImGui::DragFloat("rate", &rate, 0.001f, 0, 1);
 		ImGui::Checkbox("attack", &attack);
@@ -31,7 +31,7 @@ void SceneAnimationTest::DrawDebugGUI() {
 }
 
 void SceneAnimationTest::Initialize() {
-	_model                                            = std::make_shared<AnimatedModel>("Data/Fbx/gaoanimal/gaoanimal_3.model");
+	_model                                            = std::make_shared<AnimatedModel>("Data/Fbx/RootMotionTest/test.model");
 	std::vector<ModelResource::Animation>& animations = _model->GetModelResource()->GetAnimationClips();
 
 	// Animator::BlendTree blendTree;
@@ -59,20 +59,19 @@ void SceneAnimationTest::Initialize() {
 
 	Animator::Motion motion;
 	motion.animationSpeed = 1;
-	motion.motion         = &animations[4];
+	motion.motion         = &animations[0];
 
 	Animator::State rootMotion;
 	rootMotion.object = std::make_shared<Animator::Motion>(std::forward<Animator::Motion>(motion));
 	rootMotion.type   = Animator::State::MOTION;
-	rootMotion.transitions.emplace_back(
+	rootMotion.transitions =
  	STATE_FUNC(animator) {
- 		if (bool& attack = animator.GetParameter<bool>("attack")) {
+ 		if (bool attack = animator.GetParameter<bool>("attack")) {
  			attack = false;
  			return &animator.GetState("attack");
  		}
  		return nullptr;
- 	}
- );
+ 	};
 
 	Animator::Motion attackMoiton;
 	attackMoiton.animationSpeed = 1;
@@ -81,21 +80,20 @@ void SceneAnimationTest::Initialize() {
 	Animator::State attack;
 	attack.object = Animator::MakeObjPointer(attackMoiton);
 	attack.type   = Animator::State::MOTION;
-	attack.transitions.emplace_back(
+	attack.transitions =
 		STATE_FUNC(animator) {
 			if (animator.GetState("attack").GetObj<Animator::Motion>()->endMotion) {
-				return &animator.GetState("rootMotion");
+				return &animator.GetState("move");
 			}
 			return nullptr;
-		}
-	);
+		};
 
 	_animator.SetModelSceneView(&_model->GetModelResource()->GetSceneView());
 	_animator.SetParameter("x", 0.f);
 	_animator.SetParameter("y", 0.f);
 	_animator.SetParameter("attack", false);
 	_animator.SetParameter("end", false);
-	//_animator.EnableRootMotion("Root");
+	_animator.EnableRootMotion("kosi");
 	//_animator.AddState("move",move);
 	_animator.AddState("rootMotion", rootMotion);
 	_animator.AddState("attack", attack);
@@ -121,6 +119,7 @@ void SceneAnimationTest::Initialize() {
 	_transform.scale    = {1.f, 1.f, 1.f};
 	_transform.position = {0, 0, 0};
 	XMStoreFloat4(&_transform.quaternion, XMQuaternionRotationRollPitchYaw(0, 0, 0));
+
 }
 
 void SceneAnimationTest::Finalize() { LightManager::Instance().Clear(); }
@@ -129,6 +128,7 @@ void SceneAnimationTest::Update() {
 #if USE_IMGUI
 	ImGuiManager::Instance().Update();
 #endif
+
 
 	InputManager& input = InputManager::Instance();
 

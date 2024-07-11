@@ -257,11 +257,15 @@ void PlayerDrinkState::Exit()
 }
 
 void PlayerDodgeState::Enter() {
-	
+	owner->AbilityStatus().dodgeTimer = owner->ConstantStatus().dodgeTime;
 }
 
 void PlayerDodgeState::Execute() {
 	owner->CalcDodgeVelocity();
+
+	if (owner->AbilityStatus().dodgeTimer < 0) {
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
+	}
 
 	// ‰ñ“]
 	owner->Turn();

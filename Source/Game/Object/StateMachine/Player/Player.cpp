@@ -354,9 +354,8 @@ void Player::Input()
 	if (inputMoveData.LengthSq() > 1)inputMoveData.Normalize();
 	if (XMFLOAT2* move = std::get_if<XMFLOAT2>(&inputMap["Move"])) {
 		Vector2 v1 = *move;
-		inputMoveData = v1.Length() < inputMoveData.Length() ?
-			inputMoveData * Math::Lerp(v1.Length(), inputMoveData.Length(), frameDt) :
-			v1 * Math::Lerp( inputMoveData.Length(),v1.Length(), frameDt);
+		inputMoveData =
+			inputMoveData * Math::Lerp(v1.Length(), inputMoveData.Length(), frameDt);
 	}
 
 	inputMap["Move"] = inputMoveData.vec_;
@@ -385,6 +384,8 @@ void Player::Input()
 	}
 
 	inputMap["Attack"] = inputAttackData;
+	animator.SetParameter("attack", inputAttackData);
+	if(inputAttackData)ability.attackTimer = 0.2f;
 
 
 	// UŒ‚‚Ì“ü—Í‚µ‚½Žž“_‚ÅŽŸ‚Ì“ü—Í‚ð‚·‚é
@@ -420,7 +421,7 @@ void Player::Input()
 	// inputMap["EndAttack"] = attackTimer <= 0;
 	// animator.SetParameter("endAttack", attackTimer <= 0);
 	// debug[u8"UŒ‚ŽžŠÔ"] = attackTimer;
-	//animator.GetVelocity()
+	// animator.GetVelocity()
 
 	// --- ‰ñ”ð ---
 	bool dodge = input.GetKeyPressed(DirectX::Keyboard::Space);
@@ -429,7 +430,7 @@ void Player::Input()
 		dodge = input.GetGamePadButtonPress(GAMEPADBUTTON_STATE::a);
 
 	inputMap["Dodge"] = dodge;
-	if (dodge)inputMap["DodgeMove"] = inputMoveData.vec_;
+	//if (dodge) ability.dodgeTimer = constant.dodgeTime;
 
 	// // --- ƒhƒŠƒ“ƒN ---
 	// bool inputDrinkData = InputManager::Instance().GetKeyPressed(DirectX::Keyboard::E);
@@ -447,6 +448,29 @@ void Player::InputAttack() {
 	float dt = Timer::Instance().DeltaTime();
 	float frameDt = dt * 10;
 
+	// --- UŒ‚ ---
+	bool inputAttackData = input.GetKeyPressed(DirectX::Keyboard::Enter);
+
+	// ƒRƒ“ƒgƒ[ƒ‰[‘Î‰ž
+	if (input.IsGamePadConnected() && !inputAttackData) {
+		inputAttackData = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::x);
+	}
+	inputMap["Attack"] = inputAttackData;
+
+	if(inputAttackData) {
+		ability.attackCount++;
+		if (ability.attackCount >= constant.maxAttackCombo) ability.attackTimer = 0;
+	}
+
+	if (animator.GetEndMotion()) ability.attackTimer -= dt;
+	inputMap["EndAttack"] = ability.attackTimer <= 0 && animator.GetEndMotion();
+	animator.SetParameter("endAttack", ability.attackTimer <= 0 && animator.GetEndMotion());
+	debug[u8"UŒ‚ŽžŠÔ"] = ability.attackTimer;
+
+	if(ability.attackTimer <= 0 && animator.GetEndMotion()) {
+		ability.attackTimer = 0;
+		ability.attackCount = 0;
+	}
 
 }
 
@@ -528,17 +552,19 @@ void Player::CalcRunVelocity()
 void Player::CalcDodgeVelocity() {
 #if 1 // TODO::RootMotion‚ðŽg‚¤‚È‚çÁ‚·
 	float dt = Timer::Instance().DeltaTime();
-	const XMFLOAT2& move = GetInputMap<XMFLOAT2>("DodgeMove");
-	Vector3 vec;
+	Vector2 move = { velocity.x,velocity.z };
+	move.Normalize();
 
-	vec.x += camera->GetFrontVec().x * move.y;
-	vec.z += camera->GetFrontVec().z * move.y;
-	vec.x += camera->GetRightVec().x * move.x;
-	vec.z += camera->GetRightVec().z * move.x;
+	if(move.LengthSq() == 0) {
+		move = -camera->GetFrontVec().xz();
+	}
 
-	vec *= ability.moveSpeed * constant.dodgePower * dt;
+	move *= constant.dodgePower * dt;
 
-	velocity += vec.vec_;
+	velocity.x += move.x;
+	velocity.z += move.y;
+
+	ability.dodgeTimer -= dt;
 #else
 	velocity += animator.GetVelocity();
 

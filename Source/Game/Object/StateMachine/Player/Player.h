@@ -27,6 +27,8 @@ public:
 		float strength  = 1;
 		float moveSpeed = 3;
 		float attackCount = 0;
+		float attackTimer = 0;
+		float dodgeTimer = 0;
 	};
 
 	// ŠO•”—vˆö(ImGui‚Æ‚©)‚Å‚Ì‚Ý•Ï“®‚·‚é’l
@@ -37,6 +39,7 @@ public:
 		float dashSpeed = 6;
 		float dashDeadZone = 0.7f;
 		float dodgePower = 5;
+		float dodgeTime = 0.5f;
 		float maxAttackCombo = 4;
 		float inputReceptionTime = 0.2f;
 	};

@@ -104,17 +104,6 @@ void SceneTest::Initialize()
 	// --- AnimatedObject 初期化 ---
 	//blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");
 
-	// --- StaticObject 初期化 ---
-	testStatic = std::make_unique<TestStatic>("Data/Fbx/StaticAlbino/StaticAlbino.model");
-
-	// --- Sprite 初期化 ---
-	sprTest  = std::make_unique<Sprite>("Data/Texture/bomb/bomb.sprite");
-	sprTest2 = std::make_unique<Sprite>("Data/Texture/Icon.sprite");
-	sprTest2->SetPos({200, 100});
-	sprTest3 = std::make_unique<Sprite>("Data/Texture/Nessie.sprite");
-	sprTest3->SetPos({500, 100});
-	sprTest3->SetScale({0.2, 0.2});
-	sprTest3->UpdateAnimation();
 
 
 	Enemy::Instance().Initialize();
@@ -210,17 +199,9 @@ void SceneTest::Update()
 	// ステージ更新
 	StageManager::Instance().Update();
 
-	testStatic->Update();
-
 	Enemy::Instance().Update();
 
 	Player::Instance().Update();
-	//blendTestPlayer->Update();
-
-	sprTest->SetAngle(sprTest->GetAngle() + 180 * Timer::Instance().DeltaTime());
-	sprTest->UpdateAnimation();
-
-	sprTest3->SetAngle(sprTest->GetAngle() + 180 * Timer::Instance().DeltaTime());
 
 	DamageTextManager::Instance().Update();
 
@@ -398,7 +379,7 @@ void SceneTest::Update()
 	LightningEffect::Instance().Update();
 	RockEffect::Instance().Update();
 	BreathEffect::Instance().Update();
-	SpecialEffect::Instance().Update(radialBlur.get(), heatHaze.get(), &playerCamera);
+	SpecialEffect::Instance().Update(radialBlur.get(), heatHaze.get());
 
 #if SPECIAL_AUDIO_DELAY
 	// sound
@@ -499,9 +480,7 @@ void SceneTest::Render()
 			Enemy::Instance().DrawDebugPrimitive();
 			Player::Instance().DrawDebugPrimitive();
 		}
-		Enemy::Instance().DrawDebugPrimitive();
 		Enemy::Instance().DrawDebug();
-		Player::Instance().DrawDebugPrimitive();
 		DebugPrimitive::Instance().Render();
 
 		skyMap->Render();
@@ -578,10 +557,6 @@ void SceneTest::Render()
 
 	// ここでスプライト描画
 	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
-
-	//sprTest->Render();
-	//sprTest2->Render();
-	//sprTest3->Render();
 
 	//UiPause::Instance().Render();
 	UiGame::Instance().Render();

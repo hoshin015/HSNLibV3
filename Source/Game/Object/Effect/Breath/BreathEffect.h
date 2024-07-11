@@ -51,9 +51,9 @@ private:
 	bool isBreath = false;
 
 	float lifeTimer = 0.0f;
-	float lifeTime  = 3.0f;
+	float lifeTime  = 4.0f;
 
-	float endTime = 2.8f;
+	float endTime = 2.0f;
 
 	float lightningTimer = 0.0f;
 	float lightningTime  = 0.01f;

@@ -20,7 +20,7 @@ private:
 public:
 	static Enemy& Instance()
 	{
-		static Enemy instance("Data/Fbx/Monster/gaoanimal_5.model");
+		static Enemy instance("Data/Fbx/Monster/gaoanimal_6.model");
 		return instance;
 	}
 

@@ -6,9 +6,10 @@
 #include "../../../../../Library/Math/Math.h"
 #include "../../../../../Library/3D/LightManager.h"
 #include "../Lightning/LightningEffect.h"
+#include "../../../../../Library/3D/CameraManager.h"
 
 // XV
-void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze, PlayerCamera* playerCamera)
+void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 {
 	if (!isSpecialEffect) return;
 
@@ -126,7 +127,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze, PlayerCam
 			}
 			radialBlur->SetSamplingCount(static_cast<float>(static_cast<int>(sampCount)));
 
-			DirectX::XMFLOAT2 ndc = Math::ScreenToNdcPos(Math::WorldToScreenPos({ 0,0,0 }, playerCamera));
+			DirectX::XMFLOAT2 ndc = Math::ScreenToNdcPos(Math::WorldToScreenPos({ 0,0,0 }, CameraManager::Instance().GetCamera().get()));
 			ndc.x = (ndc.x + 1.0f) / 2.0f;
 			ndc.y = (ndc.y + 1.0f) / 2.0f;
 			radialBlur->SetBlurPosition(ndc);
@@ -165,8 +166,9 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze, PlayerCam
 			if (lifeTimer >= firstNovaTime)
 			{
 				// ƒJƒƒ‰—h‚ç‚µ
-				playerCamera->SetShakePower(2);
-				playerCamera->SetTimer(chargeNovaTime);
+				auto ptr = dynamic_cast<PlayerCamera*>(CameraManager::Instance().GetCamera().get());
+				ptr->SetShakePower(2);
+				ptr->SetTimer(chargeNovaTime);
 
 				radialBlur->SetIsRadial(false);
 				lifeTimer         = 0.0f;

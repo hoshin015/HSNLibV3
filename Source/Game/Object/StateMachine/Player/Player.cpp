@@ -311,14 +311,14 @@ void Player::DrawDebugImGui(int number) {
 void Player::UpdateAnimationParam() {
 	Vector2 move = GetInputMap<XMFLOAT2>("Move");
 	//velocity.
-	debug[u8"•ûŒü"] = move.vec_;
+	//debug[u8"•ûŒü"] = move.vec_;
 	XMStoreFloat2(&move.vec_,XMVector2TransformCoord(XMLoadFloat2(&move.vec_),XMMatrixRotationZ(XMConvertToRadians(this->angle.y))));
 
 	//float ang = atan2f(move.y , move.x);
 	// float len = move.Length();
 	// move = { cosf(angle.y) * move.x,sinf(angle.y)x * move.y };
 
-	debug[u8"Šp“x"] = angle.y;
+	//debug[u8"Šp“x"] = angle.y;
 
 	if (false) {
 		animator.SetParameter("moveX", -move.y);
@@ -465,7 +465,7 @@ void Player::InputAttack() {
 	if (animator.GetEndMotion()) ability.attackTimer -= dt;
 	inputMap["EndAttack"] = ability.attackTimer <= 0 && animator.GetEndMotion();
 	animator.SetParameter("endAttack", ability.attackTimer <= 0 && animator.GetEndMotion());
-	debug[u8"UŒ‚ŽžŠÔ"] = ability.attackTimer;
+	//debug[u8"UŒ‚ŽžŠÔ"] = ability.attackTimer;
 
 	if(ability.attackTimer <= 0 && animator.GetEndMotion()) {
 		ability.attackTimer = 0;

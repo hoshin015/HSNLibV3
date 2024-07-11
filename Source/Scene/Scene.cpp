@@ -35,6 +35,10 @@ void Scene::DrawMenuBar()
 				{
 					SceneManager::Instance().ChangeScene(new SceneAnimationTest);
 				}
+				if (ImGui::MenuItem("Result"))
+				{
+					SceneManager::Instance().ChangeScene(new SceneResult);
+				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();

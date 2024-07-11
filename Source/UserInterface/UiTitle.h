@@ -30,6 +30,8 @@ public:
 	// 描画
 	void Render();
 
+	// debugGui
+	void DrawDebugImGui();
 
 private:
 	bool isStageRender = true;			// タイトルステージ描画フラグ
@@ -40,25 +42,98 @@ public:
 	bool GetIsCharacterRender() { return isCharacterRender; }
 
 private:
+	void SetAllOffRender();
+
+private:
+	std::vector<Sprite*> sprites;
+
 	// タイトルUI状態管理用
 	enum class UiTitleState
 	{
-		Title,
-		TitleToSelectMenu,
-		SelectMenuToTitle,
-		SelectMenu,
-		SelectMenuToLevel,
-		Level,
-		LevelToTitle,
+		Init,
+		ToTitle1,
+		ToTitle2,
+		Title1,
+		Title2,
+		TitleToSelectMenu1,
+		TitleToSelectMenu2,
+		SelectMenu1,
+		SelectMenu2,
+		SelectMenuToLevel1,
+		SelectMenuToLevel2,
+		Level1,
+		Level2,
 	};
 	UiTitleState state;
 
 	float titleTimer = 0.0f;
 
+	// --- black ---
+	std::unique_ptr<Sprite> imgBlack;
+	Easing::EasingValue imgBlackToTitleAlpha =
+	{
+		0.0f, 0.3f,
+		1.0f, 0.0f
+	};
+	Easing::EasingValue imgBlackSelectMenuToLevelAlpha =
+	{
+		0.0f, 0.3f,
+		1.0f, 0.0f
+	};
+
+	// --- toTitleMenu ---
+	float toTitleTime = 2.0f;
+	Easing::EasingValue imgTitleLogDissolveThread =
+	{
+		0.0f, 1.5f,
+		0.0f, 1.0f
+	};
+	Easing::EasingValue imgTitleTextDissolveThread =
+	{
+		0.5f, 1.7f,
+		0.0f, 1.0f
+	};
+
+	// --- enter back text ---
+	std::unique_ptr<Sprite> imgEnterText;
+	DirectX::XMFLOAT2 imgEnterTextPos = { 100, 650 };
+	std::unique_ptr<Sprite> imgBackText;
+	DirectX::XMFLOAT2 imgBackTextPos = { 200, 650 };
+
+	Easing::EasingValue imgEnterBackTextTitleToSelectMenuAlpha =
+	{
+		0.7f, 0.9f,
+		0.0f, 1.0f
+	};
+	Easing::EasingValue imgEnterBackTextSelectMenuToLevelAlpha =
+	{
+		0.3f, 0.5f,
+		0.0f, 1.0f
+	};
 
 	// --- titleToSelectMenu ---
 	float titleToSelectMenuTime = 1.0f;
 
+	std::unique_ptr<Sprite> imgTitleLogo;
+	Easing::EasingValue imgTitleLogoAlpha =
+	{
+		0.0f, 0.25f,
+		1.0f, 0.0f
+	};
+	std::unique_ptr<Sprite> imgTitleLogoSmall;
+	Easing::EasingValue imgTitleLogoSmallAlpha =
+	{
+		0.7f, 0.9f,
+		0.0f, 1.0f
+	};
+
+	std::unique_ptr<Sprite> imgTitleText;
+	DirectX::XMFLOAT2 imgTitleTextPos = {640, 360};
+	Easing::EasingValue imgTitleTextAlpha =
+	{
+		0.0f, 0.25f,
+		1.0f, 0.0f
+	};
 
 	std::unique_ptr<Sprite> imgPressAnyButton;
 	Easing::EasingValue imgPressAnyButtonScale =
@@ -115,6 +190,8 @@ private:
 		{50.0f, 300.0f}, {100.0f,300.0}
 	};
 
+
+
 	// --- selectMenu ---
 	enum class SelectMenu
 	{
@@ -134,24 +211,26 @@ private:
 		Easy,
 		Normal,
 		Hard,
-		End,
+		END,
 	};
 	int selectLevel;
 
-	std::unique_ptr<Sprite> imgSelectLevel;
-	DirectX::XMFLOAT2 imgSelectLevelPos = { 200.0f, 100.0f };
-	Easing::EasingValue imgSelectLevelDissolveThread =
+	std::unique_ptr<Sprite> imgSelectLevelBgCover;
+	Easing::EasingValue imgSelectLevelBgCoverDissolveThread =
 	{
-		0.0f, 0.5f,
-		0.0f, 1.5f
+		0.0f, 0.6f,
+		0.0f, 1.0f
 	};
 
+	std::unique_ptr<Sprite> imgSelectLevel;
+	DirectX::XMFLOAT2 imgSelectLevelPos = { 200.0f, 100.0f };
+
 	std::unique_ptr<Sprite> imgEasy;
-	DirectX::XMFLOAT2 imgEasyPos = { 200.0f, 200.0f };
+	DirectX::XMFLOAT2 imgEasyPos = { 200.0f, 250.0f };
 
 	std::unique_ptr<Sprite> imgNormal;
-	DirectX::XMFLOAT2 imgNormalPos = { 200.0f, 300.0f };
+	DirectX::XMFLOAT2 imgNormalPos = { 200.0f, 400.0f };
 
 	std::unique_ptr<Sprite> imgHard;
-	DirectX::XMFLOAT2 imgHardPos = { 200.0f, 400.0f };
+	DirectX::XMFLOAT2 imgHardPos = { 200.0f, 550.0f };
 };

@@ -143,14 +143,14 @@
     <Filter Include="2_Source\Camera">
       <UniqueIdentifier>{2fc77480-982a-477c-bfc0-e2fdd720dacc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="シェーダーファイル\Misc">
-      <UniqueIdentifier>{61c2a66f-6026-4327-8c3f-2282ea33ac85}</UniqueIdentifier>
-    </Filter>
     <Filter Include="2_Source\Game\Object\Effect\Breath">
       <UniqueIdentifier>{a029d405-89d7-45e5-834a-c9d7fbf7af8f}</UniqueIdentifier>
     </Filter>
     <Filter Include="2_Source\Game\Object\Effect\Special">
       <UniqueIdentifier>{27edbc6e-beab-4678-9829-cc673174af4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_HSNLib\Misc">
+      <UniqueIdentifier>{61c2a66f-6026-4327-8c3f-2282ea33ac85}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -161,10 +161,10 @@
       <Filter>1_HSNLib\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Library\AdapterReader.cpp">
-      <Filter>シェーダーファイル\Misc</Filter>
+      <Filter>1_HSNLib\Misc</Filter>
     </ClCompile>
     <ClCompile Include="Library\ErrorLogger.cpp">
-      <Filter>シェーダーファイル\Misc</Filter>
+      <Filter>1_HSNLib\Misc</Filter>
     </ClCompile>
     <ClCompile Include="Library\Framework.cpp">
       <Filter>1_HSNLib</Filter>
@@ -484,6 +484,9 @@
     <ClCompile Include="Source\Game\Object\Effect\Rock\RockEffect.cpp">
       <Filter>2_Source\Game\Object\Effect\Rock</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UserInterface\UiGame.cpp">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClCompile>
     <ClCompile Include="Library\3D\CameraManager.cpp">
       <Filter>1_HSNLib\3D</Filter>
     </ClCompile>
@@ -499,13 +502,13 @@
       <Filter>1_HSNLib\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Library\AdapterReader.h">
-      <Filter>シェーダーファイル\Misc</Filter>
+      <Filter>1_HSNLib\Misc</Filter>
     </ClInclude>
     <ClInclude Include="Library\ErrorLogger.h">
-      <Filter>シェーダーファイル\Misc</Filter>
+      <Filter>1_HSNLib\Misc</Filter>
     </ClInclude>
     <ClInclude Include="Library\Timer.h">
-      <Filter>シェーダーファイル\Misc</Filter>
+      <Filter>1_HSNLib\Misc</Filter>
     </ClInclude>
     <ClInclude Include="Library\Framework.h">
       <Filter>1_HSNLib</Filter>
@@ -544,7 +547,7 @@
       <Filter>1_HSNLib\Effekseer</Filter>
     </ClInclude>
     <ClInclude Include="Library\MemoryLeak.h">
-      <Filter>シェーダーファイル\Misc</Filter>
+      <Filter>1_HSNLib\Misc</Filter>
     </ClInclude>
     <ClInclude Include="Library\Audio\AudioManager.h">
       <Filter>1_HSNLib\Audio</Filter>
@@ -649,7 +652,7 @@
       <Filter>1_HSNLib\Resource\Model</Filter>
     </ClInclude>
     <ClInclude Include="Library\RegisterNum.h">
-      <Filter>シェーダーファイル\Misc</Filter>
+      <Filter>1_HSNLib\Misc</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene\Scene.h">
       <Filter>2_Source\Scene</Filter>
@@ -721,7 +724,7 @@
       <Filter>1_HSNLib\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Library\MyCereal.h">
-      <Filter>シェーダーファイル\Misc</Filter>
+      <Filter>1_HSNLib\Misc</Filter>
     </ClInclude>
     <ClInclude Include="Library\Resource\Sprite\SpriteResource.h">
       <Filter>1_HSNLib\Resource\Sprite</Filter>
@@ -757,7 +760,7 @@
       <Filter>2_Source\UserInterface</Filter>
     </ClInclude>
     <ClInclude Include="Library\Easing.h">
-      <Filter>シェーダーファイル\Misc</Filter>
+      <Filter>1_HSNLib\Misc</Filter>
     </ClInclude>
     <ClInclude Include="Source\UserInterface\UiPause.h">
       <Filter>2_Source\UserInterface</Filter>
@@ -850,6 +853,9 @@
       <Filter>1_HSNLib\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Source\UserInterface\UiTitle.h">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UserInterface\UiGame.h">
       <Filter>2_Source\UserInterface</Filter>
     </ClInclude>
     <ClInclude Include="Library\3D\CameraManager.h">
@@ -1035,6 +1041,12 @@
     </FxCompile>
     <FxCompile Include="Library\Shader\HeatHazePS.hlsl">
       <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\PhongFurPS.hlsl">
+      <Filter>シェーダーファイル\Phong</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\PbrFlowPS.hlsl">
+      <Filter>シェーダーファイル\PbrIbl</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

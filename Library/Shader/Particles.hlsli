@@ -138,12 +138,12 @@ void spawn(uint id, inout Particle p)
 
 			pos2 = normalize(pos2) * pow(rand(seed), 1.0 / 3.0);
 
-			p.position.x = pos.x + pos2.x * 30;
-			p.position.y = pos.y + 5 * rand(seed);
-			p.position.z = pos.z + pos2.z * 30;
+			p.position.x = pos.x + pos2.x * 60;
+			p.position.y = pos.y + 40 * rand(seed);
+			p.position.z = pos.z + pos2.z * 60;
 
 
-			float r = rand(seed) * 360;
+			float r = (rand(seed) * 360) * 3.14 / 180;
 
 			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
 			p.velocity.y        = -1 * particleSpeed;
@@ -239,7 +239,7 @@ void spawn(uint id, inout Particle p)
 
 			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
 
-			float r = rand(seed) * 360;
+			float r = (rand(seed) * 360) * 3.14 / 180;
 
 			// x •ûŒü
 			p.velocity.x = cos(r) * particleSpeed;
@@ -283,7 +283,7 @@ void spawn(uint id, inout Particle p)
 
 			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
 
-			float r = rand(seed) * 360;
+			float r = (rand(seed) * 360) * 3.14 / 180;
 
 			// x •ûŒü
 			p.velocity.x = cos(r) * particleSpeed;
@@ -306,7 +306,7 @@ void spawn(uint id, inout Particle p)
 
 			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
 
-			float r = rand(seed) * 360;
+			float r = (rand(seed) * 360) * 3.14 / 180;
 
 			// x •ûŒü
 			p.velocity.x = cos(r) * particleSpeed;
@@ -342,7 +342,7 @@ void spawn(uint id, inout Particle p)
 	case pk_beamCylinder:
 		{
 			p.position = emitterPosition;
-			float r    = rand(seed) * 360 / 3.14;
+			float r    = (rand(seed) * 360) * 3.14 / 180;
 
 
 			// x •ûŒü
@@ -367,7 +367,7 @@ void spawn(uint id, inout Particle p)
 	case pk_titleSelect:
 		{
 			p.position   = emitterPosition;
-			float r      = rand(seed) * 360 / 3.14;
+			float r      = (rand(seed) * 360) * 3.14 / 180;
 			float length = rand(seed) * 10;
 
 			// x •ûŒü

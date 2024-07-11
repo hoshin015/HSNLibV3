@@ -3,10 +3,37 @@
 #include <Audio.h>
 
 
+//====================================
+#define USE_AUDIO 0
+//====================================
+
 enum class MUSIC_LABEL
 {
 	BGM_TEST = 0,
 	WEAPON,
+	SELECT_MOVE,
+	BATTLE1,
+	BATTLE2,
+	Fire1,
+	MonsterRoar1,
+
+	Breath,
+
+	NovaNoise1,
+	NovaNoise2,
+
+
+	Lightning1,
+	Lightning2,
+	Lightning3,
+	Lightning4,
+	Lightning5,
+	Lightning6,
+	Lightning7,
+	Lightning8,
+	Lightning9,
+	Lightning10,
+	END,
 };
 
 class AudioManager
@@ -42,73 +69,76 @@ public:
 	void Initialize();
 
 	// 音楽の読み込み
-	void LoadMusic(int trackNo, const wchar_t* waveFilename, float volume = 1.0f)
+	void LoadMusic(MUSIC_LABEL trackNo, const wchar_t* waveFilename, float volume = 1.0f)
 	{
-		if (musicData[trackNo].musicInst) musicData[trackNo].musicInst.reset();
-		musicData[trackNo].music.reset(new DirectX::SoundEffect(audioEngine.get(), waveFilename));
-		musicData[trackNo].volume = volume;
+		if (musicData[static_cast<int>(trackNo)].musicInst) musicData[static_cast<int>(trackNo)].musicInst.reset();
+		musicData[static_cast<int>(trackNo)].music.reset(new DirectX::SoundEffect(audioEngine.get(), waveFilename));
+		musicData[static_cast<int>(trackNo)].volume = volume;
 	}
 
 	// 音楽の解放
-	void UnLoadMusic(int trackNo)
+	void UnLoadMusic(MUSIC_LABEL trackNo)
 	{
-		if (musicData[trackNo].musicInst)  musicData[trackNo].musicInst.reset();
-		if (musicData[trackNo].music)  musicData[trackNo].music.reset(nullptr);
+		if (musicData[static_cast<int>(trackNo)].musicInst)  musicData[static_cast<int>(trackNo)].musicInst.reset();
+		if (musicData[static_cast<int>(trackNo)].music)  musicData[static_cast<int>(trackNo)].music.reset(nullptr);
 	}
 
+
 	// 音楽再生
-	void PlayMusic(int trackNo, bool isLoop = false)
+	void PlayMusic(MUSIC_LABEL trackNo, bool isLoop = false)
 	{
-		if (!musicData[trackNo].music) return;
-		musicData[trackNo].musicInst = musicData[trackNo].music->CreateInstance();
-		musicData[trackNo].musicInst->Play(isLoop);
-		musicData[trackNo].musicInst->SetVolume(musicData[trackNo].volume);
+#if USE_AUDIO
+		if (!musicData[static_cast<int>(trackNo)].music) return;
+		musicData[static_cast<int>(trackNo)].musicInst = musicData[static_cast<int>(trackNo)].music->CreateInstance();
+		musicData[static_cast<int>(trackNo)].musicInst->Play(isLoop);
+		musicData[static_cast<int>(trackNo)].musicInst->SetVolume(musicData[static_cast<int>(trackNo)].volume);
+#endif
 	}
 
 	// 音楽停止
-	void StopMusic(int trackNo)
+	void StopMusic(MUSIC_LABEL trackNo)
 	{
-		if (!musicData[trackNo].musicInst) return;
-		musicData[trackNo].musicInst->Stop();
+		if (!musicData[static_cast<int>(trackNo)].musicInst) return;
+		musicData[static_cast<int>(trackNo)].musicInst->Stop();
 	}
 
 	// 音楽ポーズ
-	void PauseMusic(int trackNo)
+	void PauseMusic(MUSIC_LABEL trackNo)
 	{
-		if (!musicData[trackNo].musicInst) return;
-		musicData[trackNo].musicInst->Pause();
+		if (!musicData[static_cast<int>(trackNo)].musicInst) return;
+		musicData[static_cast<int>(trackNo)].musicInst->Pause();
 	}
 
 	// 音楽レジューム
-	void ResumeMusic(int trackNo)
+	void ResumeMusic(MUSIC_LABEL trackNo)
 	{
-		if (!musicData[trackNo].musicInst) return;
-		musicData[trackNo].musicInst->Resume();
+		if (!musicData[static_cast<int>(trackNo)].musicInst) return;
+		musicData[static_cast<int>(trackNo)].musicInst->Resume();
 	}
 
 	// 音楽ボリューム設定
-	void SetMusicVolume(int trackNo, int volume)
+	void SetMusicVolume(MUSIC_LABEL trackNo, float volume)
 	{
-		if (!musicData[trackNo].musicInst) return;
-		musicData[trackNo].musicInst->SetVolume(volume);
-		musicData[trackNo].volume = volume;
+		if (!musicData[static_cast<int>(trackNo)].musicInst) return;
+		musicData[static_cast<int>(trackNo)].musicInst->SetVolume(volume);
+		musicData[static_cast<int>(trackNo)].volume = volume;
 	}
 
 	// 音楽状態取得
-	DirectX::SoundState GetSoundState(int trackNo)
+	DirectX::SoundState GetSoundState(MUSIC_LABEL trackNo)
 	{
-		return musicData[trackNo].musicInst->GetState();
+		return musicData[static_cast<int>(trackNo)].musicInst->GetState();
 	}
 
 	// 音楽ループ状態取得
-	bool IsLoopMusic(int trackNo)
+	bool IsLoopMusic(MUSIC_LABEL trackNo)
 	{
-		return musicData[trackNo].musicInst->IsLooped();
+		return musicData[static_cast<int>(trackNo)].musicInst->IsLooped();
 	}
 
 	// 音楽使用中かどうか
-	bool IsInUseMusic(int trackNo)
+	bool IsInUseMusic(MUSIC_LABEL trackNo)
 	{
-		return musicData[trackNo].music->IsInUse();
+		return musicData[static_cast<int>(trackNo)].music->IsInUse();
 	}
 };

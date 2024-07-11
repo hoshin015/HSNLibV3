@@ -15,3 +15,9 @@ cbuffer DissolveConstant : register(_dissolveConstant)
     float2 dissolvePad;
     float4 edgeColor; // —Î‚ÌF
 };
+
+// addColor
+cbuffer AddColorConstant : register(_addColorConstant)
+{
+    float4 addColor;    // ’Ç‰Á‚ÌF
+}

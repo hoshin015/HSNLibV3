@@ -397,13 +397,13 @@ public:
 
 
 
-    struct EasingValue
-    {
-        float startTime;
-        float endTime;
-        float startValue;
-        float endValue;
-    };
+   // struct EasingValue
+   // {
+   //     float startTime;
+   //     float endTime;
+   //     float startValue;
+   //     float endValue;
+   // };
 
     struct EasingValueVec2
     {
@@ -413,24 +413,33 @@ public:
         DirectX::XMFLOAT2 endValueVec;
     };
 
+    struct EasingValue
+    {
+        float startTime;
+        float endTime;
+        float startValue;
+        float endValue;
+    };
+
     template <typename Ty>
     using EasingFunc = Ty(*)(Ty, Ty, Ty, Ty);
 
-    template <typename Ty>
     // イージングによる現在のパラメータ取得
-    static float GetNowParam(EasingFunc<Ty> func, float time, EasingValue uiEasingValue)
+    template <typename Ty>
+    static float GetNowParam(EasingFunc<Ty> func, float time, EasingValue easingValue)
     {
-        if (time < uiEasingValue.startTime)
+        // 範囲外チェック(返す値は別のにしてもよさそう)
+        if (time < easingValue.startTime)
         {
-            return uiEasingValue.startValue;
+            return easingValue.startValue;
         }
-        if (time > uiEasingValue.endTime)
+        if (time > easingValue.endTime)
         {
-            return uiEasingValue.endValue;
+            return easingValue.endValue;
         }
 
-        return func(time - uiEasingValue.startTime, uiEasingValue.endTime - uiEasingValue.startTime, uiEasingValue.endValue,
-            uiEasingValue.startValue);
+        return func(time - easingValue.startTime, easingValue.endTime - easingValue.startTime, easingValue.endValue,
+            easingValue.startValue);
     }
     // イージングによる現在のパラメータ取得
     template <typename Ty>

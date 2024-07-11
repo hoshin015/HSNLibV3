@@ -34,6 +34,7 @@
 // --- UserInterface ---
 #include "../UserInterface//UiPause.h"
 #include "../UserInterface/DamageTextManager.h"
+#include "../UserInterface/UiGame.h"
 
 
 void SceneTest::Initialize()
@@ -63,18 +64,19 @@ void SceneTest::Initialize()
 
 
 	// --- ステージ初期化 ---
+	float stageScale = 4.0f;
 	StageManager& stageManager = StageManager::Instance();
 #if 0
 	StageMain*    stageMain    = new StageMain("Data/Fbx/ExampleStage/ExampleStage.model");
 #else
 	StageMain*    stageMain    = new StageMain("Data/Fbx/StageMain/StageMain.model");
-	stageMain->SetScale({ 4.0f, 4.0f, 4.0f });
+	stageMain->SetScale({ stageScale, stageScale, stageScale });
 	StageMain* stage = new StageMain("./Data/Fbx/Stage/StageCollision.fbx");
 #endif
 	stageManager.Register(stageMain);
 	stageManager.Register(stage);
 	StageMain* StageFence = new StageMain("Data/Fbx/StageFence/StageFence.model");
-	StageFence->SetScale({ 4.0f, 4.0f, 4.0f });
+	StageFence->SetScale({ stageScale, stageScale, stageScale });
 	stageManager.Register(StageFence);
 	StageMain* stage2 = new StageMain("./Data/Fbx/Stage/StageCollision1.fbx");
 	stageManager.Register(stage2);
@@ -93,6 +95,8 @@ void SceneTest::Initialize()
 	                                          Framework::Instance().GetScreenHeightF());
 	colorFilter = std::make_unique<ColorFilter>(Framework::Instance().GetScreenWidthF(),
 	                                          Framework::Instance().GetScreenHeightF());
+	colorFilter->SetIsColorFilter(true);
+	colorFilter->SetBrightness(2.0f);
 
 	// --- skyMap 初期化 ---
 	skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
@@ -122,32 +126,44 @@ void SceneTest::Initialize()
 	Particle::Instance().Initialize();
 
 	// --- Emitter 登録 ---
-	Emitter* emitter0                           = new Emitter();
-	emitter0->position                          = {0, 3, 3};
-	emitter0->emitterData.duration              = 5.0;
-	emitter0->emitterData.looping               = false;
-	emitter0->emitterData.burstsTime            = 0.1;
-	emitter0->emitterData.burstsCount           = 128;
-	emitter0->emitterData.particleKind          = pk_Dust;
-	emitter0->emitterData.particleLifeTimeMin   = 1.0f;
-	emitter0->emitterData.particleLifeTimeMax   = 1.0f;
-	emitter0->emitterData.particleSpeedMin      = 1.0f;
-	emitter0->emitterData.particleSpeedMax      = 5.0f;
-	emitter0->emitterData.particleSizeMin       = {0.1f, 0.1f};
-	emitter0->emitterData.particleSizeMax       = {0.4f, 0.4f};
-	emitter0->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
-	emitter0->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
-	emitter0->emitterData.particleGravity       = 1;
-	emitter0->emitterData.particleBillboardType = 0;
-	emitter0->emitterData.particleTextureType   = 0;
-	emitter0->emitterData.burstsOneShot   = 1;
-	EmitterManager::Instance().Register(emitter0);
+	//Emitter* emitter0                           = new Emitter();
+	//emitter0->position                          = {0, 3, 3};
+	//emitter0->emitterData.duration              = 5.0;
+	//emitter0->emitterData.looping               = false;
+	//emitter0->emitterData.burstsTime            = 0.1;
+	//emitter0->emitterData.burstsCount           = 128;
+	//emitter0->emitterData.particleKind          = pk_Dust;
+	//emitter0->emitterData.particleLifeTimeMin   = 1.0f;
+	//emitter0->emitterData.particleLifeTimeMax   = 1.0f;
+	//emitter0->emitterData.particleSpeedMin      = 1.0f;
+	//emitter0->emitterData.particleSpeedMax      = 5.0f;
+	//emitter0->emitterData.particleSizeMin       = {0.1f, 0.1f};
+	//emitter0->emitterData.particleSizeMax       = {0.4f, 0.4f};
+	//emitter0->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
+	//emitter0->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
+	//emitter0->emitterData.particleGravity       = 1;
+	//emitter0->emitterData.particleBillboardType = 0;
+	//emitter0->emitterData.particleTextureType   = 0;
+	//emitter0->emitterData.burstsOneShot   = 1;
+	//EmitterManager::Instance().Register(emitter0);
 
 	UiPause::Instance().Initialize();
+	UiGame::Instance().Initialize();
 
 	LightningEffect::Instance().Initialize();
 	RockEffect::Instance().Initialize();
 	BreathEffect::Instance().Initialize();
+
+	// テスト
+	AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
+	AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
+
+#if SPECIAL_AUDIO_DELAY
+	AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE2, true);
+	AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE2, 0.0f);
+	stopSoundTimer = false;
+	soundTimer = 0.0f;
+#endif
 }
 
 void SceneTest::Finalize()
@@ -156,6 +172,9 @@ void SceneTest::Finalize()
 	LightManager::Instance().Clear();
 	EmitterManager::Instance().Clear();
 	Enemy::Instance().Finalize();
+
+	AudioManager::Instance().StopMusic(MUSIC_LABEL::BATTLE1);
+	AudioManager::Instance().StopMusic(MUSIC_LABEL::BATTLE2);
 }
 
 void SceneTest::Update()
@@ -169,6 +188,7 @@ void SceneTest::Update()
 
 
 	if (UiPause::Instance().Update()) return;
+	UiGame::Instance().Update();
 
 	// --- effectManager処理 ---
 	EffectManager::Instance().Update();
@@ -242,9 +262,10 @@ void SceneTest::Update()
 	}
 	if (InputManager::Instance().GetKeyPressed(Keyboard::F3))
 	{
-		for(int i = 0; i < 3; i++)
+		for(int i = 0; i < 1; i++)
 		{
-			DirectX::XMFLOAT3 rPos = { (rand() % 24) - 12.0f, 0, rand() % 24 - 12.0f };
+			DirectX::XMFLOAT3 rPos = { (rand() % 40) - 20.0f, 0, rand() % 40 - 20.0f };
+			//DirectX::XMFLOAT3 rPos = { 0,0,0};
 			LightningEffect::Instance().Emit(rPos);
 		}
 	}
@@ -377,7 +398,20 @@ void SceneTest::Update()
 	LightningEffect::Instance().Update();
 	RockEffect::Instance().Update();
 	BreathEffect::Instance().Update();
-	SpecialEffect::Instance().Update(radialBlur.get(), heatHaze.get());
+	SpecialEffect::Instance().Update(radialBlur.get(), heatHaze.get(), &playerCamera);
+
+#if SPECIAL_AUDIO_DELAY
+	// sound
+	if(!stopSoundTimer)
+	{
+		soundTimer += Timer::Instance().DeltaTime();
+		if (soundTimer >= 48)
+		{
+			AudioManager::Instance().PauseMusic(MUSIC_LABEL::BATTLE2);
+			stopSoundTimer = true;
+		}
+	}
+#endif
 }
 
 void SceneTest::Render()
@@ -506,9 +540,9 @@ void SceneTest::Render()
 	frameBuffer->DeActivate();
 
 
-
 	// ポストエフェクトをかけるたびにこれを更新する
 	ID3D11ShaderResourceView* useSrv = frameBuffer->shaderResourceViews[0].Get();
+	//bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 
 	// ====== colorFilter =====
 	if(colorFilter->GetIsColorFilter())
@@ -516,21 +550,21 @@ void SceneTest::Render()
 		colorFilter->Make(useSrv);
 		useSrv = colorFilter->GetSrv();
 	}
-
+	
 	// ====== heatHaze =====
 	if(heatHaze->GetIsHeatHaze())
 	{
 		heatHaze->Make(useSrv);
 		useSrv = heatHaze->GetSrv();
 	}
-
+	
 	// ====== ラジアルブラー ======
 	if(radialBlur->GetIsRadial())
 	{
 		radialBlur->Make(useSrv);
 		useSrv = radialBlur->GetSrv();
 	}
-
+	
 	// ====== ブルーム処理しての描画 ======
 	bloom->Make(useSrv);
 	ID3D11ShaderResourceView* shvs[2] =
@@ -543,11 +577,14 @@ void SceneTest::Render()
 	// ======　ブルームなしの描画　======　
 
 	// ここでスプライト描画
+	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
+
 	//sprTest->Render();
 	//sprTest2->Render();
 	//sprTest3->Render();
 
 	//UiPause::Instance().Render();
+	UiGame::Instance().Render();
 
 	// ここで文字描画
 	DamageTextManager::Instance().Render();
@@ -561,6 +598,8 @@ void SceneTest::Render()
 	DrawDebugGUI();
 
 	ImGuiManager::Instance().Console();
+
+	UiGame::Instance().DrawDebugImGui();
 
 	Player::Instance().DrawDebugImGui(0);
 	Enemy::Instance().DrawDebugImGui(0);

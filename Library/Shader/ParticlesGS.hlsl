@@ -177,9 +177,9 @@ void main(
 	float2      particleScale = float2(p.scale.x, p.scale.y);
 
 	// Šp“x
-	float setAngle = p.angle / 3.14;
+    float setAngle = p.angle * 3.14 / 180;
 
-	// billboardType ‚ª velocity ‚È‚ç velocity ‚Ì•ûŒü‚ÉŒü‚¯‚é
+	// billboardType ‚ª velocity ‚È‚ç velocity ‚Ì•ûŒü‚É‰ñ“]‚³‚¹‚é
 	if (p.billboardType == bt_Velocity)
 	{
 		// ndc À•WŒn‚Ì velocity ‚ğŒvZ
@@ -239,6 +239,5 @@ void main(
 
 		output.Append(element);
 	}
-
 	output.RestartStrip();
 }

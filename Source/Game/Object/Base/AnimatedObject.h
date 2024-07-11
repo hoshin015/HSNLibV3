@@ -37,6 +37,12 @@ protected:
 	// ダメージフラグのクリア
 	void ClearAnimSphereCollisionDamagedFlag();
 
+	// 効果音更新
+	void UpdateSe();
+
+	// 効果音フラグのクリア
+	void ClearSeFlag();
+
 public:
 	DirectX::XMFLOAT3 GetBonePosition(std::string boneName);
 

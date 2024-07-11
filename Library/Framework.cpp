@@ -32,7 +32,7 @@ bool Framework::Initialize(HINSTANCE hInstance)
 #endif
 
 	// --- InputManager ‰Šú‰» ---
-	InputManager::Instance().Initialize(hwnd);
+	InputManager::Instance().Initialize(&hwnd);
 
 	// --- AudioManager ‰Šú‰» ---
 	AudioManager::Instance().Initialize();

@@ -1,5 +1,6 @@
 #pragma once
 #include "OperatorXMFloat3.h"
+#include "../3D/CameraBase.h"
 
 class Math
 {
@@ -13,7 +14,10 @@ public:
 
 	// ワールド座標からスクリーン座標への変換
 	static DirectX::XMFLOAT2 WorldToScreenPos(DirectX::XMFLOAT3 worldPosition);
-
+	// ワールド座標からスクリーン座標への変換
+	static DirectX::XMFLOAT2 WorldToScreenPos(DirectX::XMFLOAT3 worldPosition, CameraBase* camera);
+	// スクリーン座標からNDC座標への変換
+	static DirectX::XMFLOAT2 ScreenToNdcPos(DirectX::XMFLOAT2 screenPosition);
 
 
 	// ========================= XMFloat3 =========================

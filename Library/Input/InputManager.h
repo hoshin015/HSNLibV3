@@ -74,7 +74,7 @@ private:
 
 public:
 	// 初期化処理
-	void Initialize(HWND hwnd);
+	void Initialize(HWND* hwnd);
 
 	// 更新処理
 	void Update();
@@ -91,7 +91,7 @@ public:
 	float GetCursorPosXFloat() { return static_cast<float>(mouseState.x); }
 	float GetCursorPosYFloat() { return static_cast<float>(mouseState.y); }
 	// マウスの座標設定(Window内)
-	void SetCursorPos(int x, int y);
+	void SetCursorPosition(int x, int y);
 
 
 	// マウスのホイール値取得

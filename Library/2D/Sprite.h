@@ -131,8 +131,16 @@ private:
 		DirectX::XMFLOAT4 edgeColor = { 0.0, 0.0, 1.0, 1.0 }; // エッジの色
 	};
 
+	// addColor
+	Microsoft::WRL::ComPtr<ID3D11Buffer> spriteAddColorConstantBuffer;
+	struct SpriteAddColorConstant
+	{
+		DirectX::XMFLOAT4 addColor = { 0.0, 0.0, 0.0, 1.0 }; // 追加する色
+	};
+
 public:
 	SpriteDissolveConstant spriteDissolveConstant;
+	SpriteAddColorConstant spriteAddColorConstant;
 	// ディゾルブテクスチャの設定
 	void SetDissolveTexture(const wchar_t* filename);
 };

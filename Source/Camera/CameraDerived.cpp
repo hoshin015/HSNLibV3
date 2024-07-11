@@ -23,9 +23,9 @@ void PlayerCamera::Initialize()
 
 	// 勝手に range 変えてます
 	//range = 13.0f;
-	range = 30.0f;
+	range = 28.0f;
 
-	height = 3.0f;
+	height = 6.0f;
 	fixedCursor = true;
 	
 	// --- カメラ位置と目標の設定 ---
@@ -73,9 +73,9 @@ void PlayerCamera::Update()
 		Vector3 shakeIntensity = { 1.0f, 1.0f, 1.0f };
 		if (timer > 0.0f)
 		{
-			shakeOffset = rightVec * (((rand() % 100) / 100.0f) - 0.5f) * shakeIntensity.x;
-			shakeOffset += upVec * (((rand() % 100) / 100.0f) - 0.5f) * shakeIntensity.y;
-			shakeOffset += frontVec * (((rand() % 100) / 100.0f) - 0.5f) * shakeIntensity.z;
+			shakeOffset = rightVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * shakeIntensity.x;
+			shakeOffset = upVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * shakeIntensity.y;
+			shakeOffset = frontVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * shakeIntensity.z;
 		}
 		
 		else
@@ -197,12 +197,12 @@ void PlayerCamera::OnFixedCursor(float deltaTime)
 
 	// --- 中央に固定 ---
 		// Todo : 位置がモニターの左上の座標なのでどうにかする
-	SetCursorPos(640, 360);
-	// input.SetCursorPos(640, 360);
-
+	//SetCursorPos(640, 360);
+	input.SetCursorPosition(640, 360);
+	
 	// --- カーソルの座標を取得して中央との差分をとる ---
 	curCursorPos = { input.GetCursorPosXFloat(), input.GetCursorPosYFloat() };
-	const Vector2 cursorDelta = curCursorPos - Vector2{ 320.0f, 180.0f };
+	const Vector2 cursorDelta = curCursorPos - Vector2{ 640.0f, 360.0f };
 
 	// --- 縦の角度をクランプ ---
 	verticalAngle = (std::max)(-90.0f, (std::min)(verticalAngle, 90.0f));

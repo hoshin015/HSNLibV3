@@ -79,6 +79,11 @@ Sprite::Sprite(const char* filename, const char* pixelShaderPath, const char* ve
 	hr = device->CreateBuffer(&bufferDesc, nullptr, spriteDissolveConstantBuffer.ReleaseAndGetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
 
+	// spriteAddColorConstantBuffer
+	bufferDesc.ByteWidth = sizeof(SpriteAddColorConstant);
+	hr = device->CreateBuffer(&bufferDesc, nullptr, spriteAddColorConstantBuffer.ReleaseAndGetAddressOf());
+	_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
+
 
 	// リソースの取得
 	spriteResource = ResourceManager::Instance().LoadSpriteResource(filename);
@@ -250,6 +255,9 @@ void Sprite::Render()
 	//---　< 定数バッファのバインド > ---
 	dc->UpdateSubresource(spriteDissolveConstantBuffer.Get(), 0, 0, &spriteDissolveConstant, 0, 0);
 	dc->PSSetConstantBuffers(_dissolveConstant, 1, spriteDissolveConstantBuffer.GetAddressOf());
+
+	dc->UpdateSubresource(spriteAddColorConstantBuffer.Get(), 0, 0, &spriteAddColorConstant, 0, 0);
+	dc->PSSetConstantBuffers(_addColorConstant, 1, spriteAddColorConstantBuffer.GetAddressOf());
 
 	//--- < プリミティブタイプおよにデータ順序に関する情報のバインド > ---
 	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

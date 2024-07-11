@@ -66,5 +66,7 @@ public:
 
 	DissolveConstant dissolveConstant;
 
+
+	// Œø‰Ê‰¹‚Ìƒtƒ‰ƒO
 private:
 };

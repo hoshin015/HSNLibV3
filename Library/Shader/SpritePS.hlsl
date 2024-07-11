@@ -14,5 +14,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     // ƒfƒBƒ]ƒ‹ƒuˆ—
     dissolve(color, dissolveThreshold, edgeThreshold, edgeColor, dissolveTexture, samplerStates[_anisotropicSampler], pin.texcoord);
 
+    color.rgb += (addColor.rgb * addColor.a);
+
     return float4(color.rgb, alpha) * pin.color;
 }

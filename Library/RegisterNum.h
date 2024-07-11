@@ -60,6 +60,7 @@
 #define _emitterConstant	7		// エミッターのデータ
 #define _uvScrollConstant	8		// uvスクロールのデータ
 #define _dissolveConstant	9		// ディゾルブのデータ
+#define _addColorConstant	10		// 追加カラーのデータ
 
 #define _luminanceExtractionConstant	5	// 高輝度抽出用
 #define _gaussianConstant				5	// ガウシアンフィルタ用
@@ -86,6 +87,12 @@
 
 // dissolve
 #define _dissolveTexture	5
+
+// fur
+#define _furTexture			5
+
+// flow
+#define _flowTexture		5
 
 // ibl (事前計算テクスチャ)
 #define  _IEM	33		// Pre-filtered Irradiance Environment Map (IEM)
@@ -133,6 +140,7 @@
 #define _emitterConstant	b7		// エミッターのデータ
 #define _uvScrollConstant	b8		// uvスクロールのデータ
 #define _dissolveConstant	b9		// ディゾルブのデータ
+#define _addColorConstant	b10		// 追加カラーのデータ
 
 #define _luminanceExtractionConstant	b5	// 高輝度抽出用
 #define _gaussianConstant				b5	// ガウシアンフィルタ用
@@ -159,6 +167,12 @@
 
 // dissolve
 #define _dissolveTexture	t5
+
+// fur
+#define _furTexture			t5
+
+// flow
+#define _flowTexture		t5
 
 // ibl (事前計算テクスチャ)
 #define  _IEM	t33		// Pre-filtered Irradiance Environment Map (IEM)

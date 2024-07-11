@@ -166,7 +166,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze, PlayerCam
 			{
 				// ƒJƒƒ‰—h‚ç‚µ
 				playerCamera->SetShakePower(2);
-				playerCamera->SetTimer(chargeNovaTime);
+				playerCamera->SetShakeTimer(chargeNovaTime);
 
 				radialBlur->SetIsRadial(false);
 				lifeTimer         = 0.0f;

@@ -68,19 +68,17 @@ void PlayerCamera::Update()
 
 
 
-		timer -= deltaTime;
 		Vector3 shakeOffset;
-		Vector3 shakeIntensity = { 1.0f, 1.0f, 1.0f };
-		if (timer > 0.0f)
+		Vector3 shakeIntensity = { 10.0f, 10.0f, 1.0f };
+		if (shakeTimer > 0.0f)
 		{
-			shakeOffset = rightVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * shakeIntensity.x;
-			shakeOffset = upVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * shakeIntensity.y;
-			shakeOffset = frontVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * shakeIntensity.z;
+			shakeTimer -= deltaTime;
+			shakeOffset = OnShake(shakeIntensity);
 		}
 		
 		else
 		{
-			timer = 0.0f;
+			shakeTimer = 0.0f;
 			shakeOffset = Vector3::Zero_;
 		}
 
@@ -140,7 +138,7 @@ void PlayerCamera::DrawDebugGui()
 		fixedCursor = !fixedCursor;
 
 	if (ImGui::Button(u8"シェイク", { 100.0f, 30.0f }))
-		timer = 0.3f;
+		shakeTimer = 0.3f;
 
 
 	ImGui::BulletText(u8"カーソル");
@@ -219,6 +217,16 @@ void PlayerCamera::OnFixedCursor(float deltaTime)
 	else if (horizontalAngle < 0.0f)
 		horizontalAngle += 360.0f;
 
+}
+
+
+Vector3 PlayerCamera::OnShake(const Vector3& intensity)
+{
+	Vector3 result;
+	result = rightVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.x;
+	result = upVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.y;
+	result = frontVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.z;
+	return result;
 }
 
 

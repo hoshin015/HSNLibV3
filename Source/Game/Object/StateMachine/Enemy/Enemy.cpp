@@ -7,6 +7,7 @@
 
 #include "../../Library/Timer.h"
 #include "../../Library/Math/Math.h"
+#include "../../Library/Math/Collision.h"
 
 #include "../../Library/Input/InputManager.h"
 
@@ -15,6 +16,8 @@
 #include "../../Library/Particle/EmitterManager.h"
 
 #include "EnemyBehavior.h"
+
+#include "../../../../Camera/CameraDerived.h"
 
 #include "../Player/Player.h"
 
@@ -78,9 +81,6 @@ void Enemy::Update()
 	// アニメーション更新
 	UpdateAnimation();
 
-	// 姿勢行列更新
-	//UpdateTransform();
-
 	// --- 位置の制限 ---
 	ClampPosition(75.0f);
 
@@ -90,27 +90,8 @@ void Enemy::Update()
 	}
 
 
-	// スケール変更
-	Matrix MS;
-	Vector3 modelScale = Vector3::Unit_ * model->GetModelResource()->GetScale();
-	MS.MakeScaling(modelScale);
-
-	// 軸変換行列
-	Matrix C = model->GetModelResource()->GetCoordinateSystemTransform();
-
-	// スケール行列を作成
-	Matrix S;
-	S.MakeScaling(GetScale());
-	// 回転行列を作成
-	Matrix R;
-	R.MakeRotationFromQuaternion(quaternion_);
-	// 位置行列を作成
-	Matrix T;
-	T.MakeTranslation(GetPos());
-
-	// ４つの行列を組み合わせ、ワールド行列を作成
-	Matrix W = MS * S * R * T * C;
-	transform = W.mat_;
+	// --- 姿勢行列作成 ---
+	Transform();
 }
 
 
@@ -238,6 +219,72 @@ void Enemy::DrawDebug()
 	DebugPrimitive::Instance().AddCylinder(position, middleRange, 2.0f, { 0.0f, 1.0f, 0.0f, 1.0f });
 	DebugPrimitive::Instance().AddCylinder(position, longRange, 5.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
 	DebugPrimitive::Instance().AddSphere(moveTargetPosition_.vec_, 1.0f, { 0.3f, 0.3f, 1.0f, 1.0f });
+}
+
+
+void Enemy::Transform()
+{
+	// スケール変更
+	Matrix MS;
+	Vector3 modelScale = Vector3::Unit_ * model->GetModelResource()->GetScale();
+	MS.MakeScaling(modelScale);
+
+	// 軸変換行列
+	Matrix C = model->GetModelResource()->GetCoordinateSystemTransform();
+
+	// スケール行列を作成
+	Matrix S;
+	S.MakeScaling(GetScale());
+	// 回転行列を作成
+	Matrix R;
+	R.MakeRotationFromQuaternion(quaternion_);
+	// 位置行列を作成
+	Matrix T;
+	T.MakeTranslation(GetPos());
+
+	// ４つの行列を組み合わせ、ワールド行列を作成
+	Matrix W = MS * S * R * T * C;
+	transform = W.mat_;
+}
+
+
+void Enemy::CollisionVSPlayer()
+{
+	// --- 敵の攻撃の球 ---
+	for (auto& enemySphere : model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSphereCollisions)
+	{
+		// --- アニメーションが範囲外だったら次へ ---
+		if (currentKeyFrame < enemySphere.startFrame || currentKeyFrame > enemySphere.endFrame) continue;
+
+		if (enemySphere.isDamaged)
+			break;
+
+
+		// --- プレイヤーの球 ---
+		for (auto& playerSphere : Player::Instance().GetModel()->GetModelResource()->GetSkeletonSphereCollisions())
+		{
+			// --- 敵の球の座標を取得 ---
+			Vector3 enemyBonePosition = enemySphere.position;
+			enemyBonePosition = (enemySphere.bindBoneName == "") ? enemyBonePosition + position : GetBonePosition(enemySphere.bindBoneName);
+
+			// --- プレイヤーの球の座標を取得 ---
+			Vector3 playerBonePosition = Player::Instance().GetPos();
+			playerBonePosition = (playerSphere.name == "") ? playerBonePosition + playerSphere.position : Player::Instance().GetBonePosition(playerSphere.name);
+
+
+			Vector3 dummy;
+			if (Collision::IntersectSphereVsSphere(enemyBonePosition.vec_, enemySphere.radius, playerBonePosition.vec_, playerSphere.radius, dummy.vec_))
+			{
+				EnableAnimSphereCollisionDamagedFlag();
+
+				// --- ここに当たった時の処理を書く ---
+				auto camera = std::dynamic_pointer_cast<PlayerCamera>(CameraManager::Instance().GetCamera());
+				if (camera)
+					camera->SetShakeTimer(1.0f);
+				break;
+			}
+		}
+	}
 }
 
 
@@ -481,56 +528,56 @@ void Enemy::InitializeBehaviorTree()
 			// --- 遠距離 ---
 			aiTree_->AddNode("Attack", "LongRange", 0, BT_SelectRule::Random, /*new EnemyLongRangeJudgment(this)*/nullptr, nullptr);
 			{
-				// --- ブレス → 威嚇 ---
-				aiTree_->AddNode("LongRange", "Bless_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
-				{
-					aiTree_->AddNode("Bless_Threat", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
-					aiTree_->AddNode("Bless_Threat", "Bless", 0, BT_SelectRule::Non, nullptr, new EnemyBlessAction(this));
-					aiTree_->AddNode("Bless_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
-				}
+				//// --- ブレス → 威嚇 ---
+				//aiTree_->AddNode("LongRange", "Bless_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+				//{
+				//	aiTree_->AddNode("Bless_Threat", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+				//	aiTree_->AddNode("Bless_Threat", "Bless", 0, BT_SelectRule::Non, nullptr, new EnemyBlessAction(this));
+				//	aiTree_->AddNode("Bless_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
+				//}
 
-				// --- 突進 → 威嚇 ---
-				aiTree_->AddNode("LongRange", "Rush_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
-				{
-					aiTree_->AddNode("Rush_Threat", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
-					aiTree_->AddNode("Rush_Threat", "Rush", 0, BT_SelectRule::Non, nullptr, new EnemyRushAction(this));
-					aiTree_->AddNode("Rush_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
-				}
+				//// --- 突進 → 威嚇 ---
+				//aiTree_->AddNode("LongRange", "Rush_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+				//{
+				//	aiTree_->AddNode("Rush_Threat", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+				//	aiTree_->AddNode("Rush_Threat", "Rush", 0, BT_SelectRule::Non, nullptr, new EnemyRushAction(this));
+				//	aiTree_->AddNode("Rush_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
+				//}
 
 				// --- 普通に接近 ---
 				aiTree_->AddNode("LongRange", "Pursuit", 0, BT_SelectRule::Non, nullptr, new EnemyPursuitAction(this));
 			}
 
 
-			// --- 中距離 ---
-			aiTree_->AddNode("Attack", "MiddleRange", 0, BT_SelectRule::Random, new EnemyMiddleRangeJudgment(this), nullptr);
-			{
-				// --- 軸合わせ → 踏み込み噛みつき → 踏みつけ or タックル or 威嚇 ---
-				aiTree_->AddNode("MiddleRange", "Turn_RushingBite_Any", 0, BT_SelectRule::Sequence, nullptr, nullptr);
-				{
-					aiTree_->AddNode("Turn_RushingBite_Any", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
-					aiTree_->AddNode("Turn_RushingBite_Any", "RushingBite", 0, BT_SelectRule::Non, nullptr, new EnemyRushingBiteAction(this));
-					aiTree_->AddNode("Turn_RushingBite_Any", "AfterAction", 0, BT_SelectRule::Non, nullptr, new EnemyAfterRushingBiteAction(this));
-				}
+			//// --- 中距離 ---
+			//aiTree_->AddNode("Attack", "MiddleRange", 0, BT_SelectRule::Random, new EnemyMiddleRangeJudgment(this), nullptr);
+			//{
+			//	// --- 軸合わせ → 踏み込み噛みつき → 踏みつけ or タックル or 威嚇 ---
+			//	aiTree_->AddNode("MiddleRange", "Turn_RushingBite_Any", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+			//	{
+			//		aiTree_->AddNode("Turn_RushingBite_Any", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+			//		aiTree_->AddNode("Turn_RushingBite_Any", "RushingBite", 0, BT_SelectRule::Non, nullptr, new EnemyRushingBiteAction(this));
+			//		aiTree_->AddNode("Turn_RushingBite_Any", "AfterAction", 0, BT_SelectRule::Non, nullptr, new EnemyAfterRushingBiteAction(this));
+			//	}
 
-				// --- 軸合わせ → 掬い上げ ---
-				aiTree_->AddNode("MiddleRange", "Turn_ScoopUp", 0, BT_SelectRule::Sequence, nullptr, nullptr);
-				{
-					aiTree_->AddNode("Turn_ScoopUp", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
-					aiTree_->AddNode("Turn_ScoopUp", "ScoopUp", 0, BT_SelectRule::Non, nullptr, new EnemyScoopUpAction(this));
-				}
-			}
+			//	// --- 軸合わせ → 掬い上げ ---
+			//	aiTree_->AddNode("MiddleRange", "Turn_ScoopUp", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+			//	{
+			//		aiTree_->AddNode("Turn_ScoopUp", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+			//		aiTree_->AddNode("Turn_ScoopUp", "ScoopUp", 0, BT_SelectRule::Non, nullptr, new EnemyScoopUpAction(this));
+			//	}
+			//}
 
 
 			// --- 近距離 ---
 			aiTree_->AddNode("Attack", "ShortRange", 0, BT_SelectRule::Random, new EnemyShortRangeJudgment(this), nullptr);
 			{
-				// --- 踏みつけ → 威嚇 ---
-				aiTree_->AddNode("ShortRange", "Stamp_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
-				{
-					aiTree_->AddNode("Stamp_Threat", "Stamp", 0, BT_SelectRule::Non, nullptr, new EnemyStampAction(this));
-					aiTree_->AddNode("Stamp_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
-				}
+				//// --- 踏みつけ → 威嚇 ---
+				//aiTree_->AddNode("ShortRange", "Stamp_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+				//{
+				//	aiTree_->AddNode("Stamp_Threat", "Stamp", 0, BT_SelectRule::Non, nullptr, new EnemyStampAction(this));
+				//	aiTree_->AddNode("Stamp_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
+				//}
 
 				// --- 軸合わせ → 噛みつき ---
 				aiTree_->AddNode("ShortRange", "AxisAlignment_Bite", 0, BT_SelectRule::Sequence, nullptr, nullptr);
@@ -539,11 +586,11 @@ void Enemy::InitializeBehaviorTree()
 					aiTree_->AddNode("AxisAlignment_Bite", "Bite", 0, BT_SelectRule::Non, nullptr, new EnemyBiteAction(this));
 				}
 
-				// --- 尻尾回転 ---
-				aiTree_->AddNode("ShortRange", "TailAttack", 0, BT_SelectRule::Non, nullptr, new EnemyTailAttack(this));
+				//// --- 尻尾回転 ---
+				//aiTree_->AddNode("ShortRange", "TailAttack", 0, BT_SelectRule::Non, nullptr, new EnemyTailAttack(this));
 
 				// --- 噛みつき ---
-				aiTree_->AddNode("ShortRange", "Bite", 0, BT_SelectRule::Non, new EnemyFrontJudgment(this), new EnemyBiteAction(this));
+				//aiTree_->AddNode("ShortRange", "Bite", 0, BT_SelectRule::Non, new EnemyFrontJudgment(this), new EnemyBiteAction(this));
 			}
 		}
 
@@ -581,7 +628,6 @@ void Enemy::FinalizeBehaviorTree()
 
 	activeNode_ = nullptr;
 }
-
 
 void Enemy::UpdateBehaviorTree(float elapsedTime)
 {

@@ -20,7 +20,7 @@ private:
 public:
 	static Enemy& Instance()
 	{
-		static Enemy instance("Data/Fbx/Monster/gaoanimal_5.model");
+		static Enemy instance("Data/Fbx/Monster/gaoanimal_6.model");
 		return instance;
 	}
 
@@ -56,6 +56,8 @@ public:
 	void DrawDebugGui();
 	void DrawDebug();
 
+	void Transform();
+	void CollisionVSPlayer();
 	void UpdateMove(float elapsedTime);
 	void UpdateHorizontalVelocity(float elapsedTime, float elapsedFrame);
 	void UpdateHorizontalMove(float elapsedTime, float elapsedFrame);

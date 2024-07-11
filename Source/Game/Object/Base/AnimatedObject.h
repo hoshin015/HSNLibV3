@@ -24,6 +24,12 @@ public:
 
 	// アニメーションブレンド
 	void BlendAnimation(const ModelResource::KeyFrame* keyFrames[2], float factor, ModelResource::KeyFrame& keyFrame);
+
+	// ダメージフラグのクリア
+	void ClearAnimSphereCollisionDamagedFlag();
+
+	// すべてのダメージフラグをtrueに
+	void EnableAnimSphereCollisionDamagedFlag();
 protected:
 	// 姿勢行列更新
 	void UpdateTransform() override;
@@ -33,9 +39,6 @@ protected:
 
 	//
 	void UpdateBlendAnimation();
-
-	// ダメージフラグのクリア
-	void ClearAnimSphereCollisionDamagedFlag();
 
 	// 効果音更新
 	void UpdateSe();

@@ -216,6 +216,7 @@ void SceneTest::Update()
 
 	Player::Instance().Update();
 	//blendTestPlayer->Update();
+	Enemy::Instance().CollisionVSPlayer();
 
 	sprTest->SetAngle(sprTest->GetAngle() + 180 * Timer::Instance().DeltaTime());
 	sprTest->UpdateAnimation();

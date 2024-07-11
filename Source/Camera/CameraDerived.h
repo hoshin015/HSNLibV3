@@ -6,7 +6,7 @@
 class PlayerCamera : public CameraBase
 {
 public:
-	void SetTimer(const float timer) { this->timer = timer; }
+	void SetShakeTimer(const float timer) { this->shakeTimer = timer; }
 	void SetShakePower(const float power) { shakePower = power; }
 
 	void Initialize() override;
@@ -16,6 +16,7 @@ public:
 
 	void OnSetCamera();
 	void OnFixedCursor(float deltaTime);	// カーソルを固定しているときに呼ばれる
+	Vector3 OnShake(const Vector3& intensity);
 	void CalcPositionFromAngle(const Vector3& position);	// 角度から位置を計算
 
 private:
@@ -25,8 +26,8 @@ private:
 	float range;					// カメラの目標からの距離
 	float height;					// プレイヤーの高さ
 	bool  fixedCursor = true;		// 中央にカーソルを固定するか
-	float timer = 0.0f;
 
+	float shakeTimer = 0.0f;
 	float shakePower = 100.0f;		// 画面を揺らす力
 
 	// --- Lerp減衰用 ---

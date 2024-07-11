@@ -665,11 +665,7 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	// --- 突進終わり ---
 	case 3:
 	{
-		// --- 正面へ移動 ---
-		Vector3 position = owner_->GetPos();
-		position += owner_->targetVec * owner_->GetRushEndSpeed() * elapsedTime;
-		owner_->SetPos(position.vec_);
-
+		owner_->Move(owner_->targetVec, owner_->GetRushEndSpeed());
 		break;
 	}
 
@@ -809,9 +805,7 @@ BT_ActionState EnemyRushingBiteAction::Run(float elapsedTime)
 		R.MakeRotationFromQuaternion(owner_->quaternion_);
 		Vector3 front = R.v_[2].xyz();
 
-		Vector3 position = owner_->GetPos();
-		position += front * 0.15f;
-		owner_->SetPos(position.vec_);
+		owner_->Move(front * 0.15f, 0.5f);
 	}
 
 	// --- アニメーションが終わったら終了 ---
@@ -944,9 +938,7 @@ BT_ActionState EnemyAfterRushingBiteAction::Run(float elapsedTime)
 			R.MakeRotationFromQuaternion(owner_->quaternion_);
 			Vector3 right = R.v_[0].xyz();
 
-			Vector3 position = owner_->GetPos();
-			position += right * 0.1f;
-			owner_->SetPos(position.vec_);
+			owner_->Move(right, 0.1f);
 		}
 
 		// --- アニメーションが終わったら終了 ---
@@ -971,9 +963,7 @@ BT_ActionState EnemyAfterRushingBiteAction::Run(float elapsedTime)
 			R.MakeRotationFromQuaternion(owner_->quaternion_);
 			Vector3 left = -R.v_[0].xyz();
 
-			Vector3 position = owner_->GetPos();
-			position += left * 0.1f;
-			owner_->SetPos(position.vec_);
+			owner_->Move(left, 0.1f);
 		}
 
 		// --- アニメーションが終わったら終了 ---
@@ -1142,9 +1132,7 @@ BT_ActionState EnemyScoopUpAction::Run(float elapsedTime)
 		R.MakeRotationFromQuaternion(owner_->quaternion_);
 		Vector3 front = R.v_[2].xyz();
 
-		Vector3 position = owner_->GetPos();
-		position += front * 5.0f * elapsedTime;
-		owner_->SetPos(position.vec_);
+		owner_->Move(front, 5.0f);
 
 		if (owner_->GetAnimationEndFlag())
 		{

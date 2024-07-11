@@ -2,6 +2,8 @@
 
 #include "../../External/ImGui/imgui.h"
 
+#include "../../Library/3D/CameraManager.h"
+
 #include "../../Library/Timer.h"
 
 #include "../../Library/Input/InputManager.h"
@@ -75,7 +77,7 @@ void PlayerCamera::Update()
 			shakeOffset = upVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * shakeIntensity.y;
 			shakeOffset = frontVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * shakeIntensity.z;
 		}
-
+		
 		else
 		{
 			timer = 0.0f;
@@ -97,6 +99,14 @@ void PlayerCamera::Update()
 		// --- 仮の壁とのレイキャスト ---
 		HitResult result;
 		if (StageManager::Instance().RayCast(1, target.vec_, position.vec_, result))
+		{
+			currentPosition = result.position;
+			position = result.position;
+		}
+
+		// --- 待機場所 ---
+		result = {};
+		if (StageManager::Instance().RayCast(3, target.vec_, position.vec_, result))
 		{
 			currentPosition = result.position;
 			position = result.position;
@@ -227,7 +237,7 @@ void PlayerCamera::CalcPositionFromAngle(const Vector3& position)
 void LockOnCamera::Initialize()
 {
 	height = 7.0f;
-	range = 15.5f;
+	range = 30.0f;
 }
 
 void LockOnCamera::Update()
@@ -243,9 +253,9 @@ void LockOnCamera::Update()
 	case 1:
 	{
 		Vector3 playerPos = Player::Instance().GetPos();	// プレイヤーの位置
-		//Vector3 enemyPos = Enemy::Instance().GetPos();		// 目標の位置
+		Vector3 enemyPos = Enemy::Instance().GetPos();		// 目標の位置
 		prevTarget = target;
-		Vector3 enemyPos = Enemy::Instance().GetBonePosition("atama");
+		//Vector3 enemyPos = Enemy::Instance().GetBonePosition("atama");
 
 		// --- 前回との移動量が小さかったら更新しない ---
 		//float l = Vector3(prevTarget - enemyPos).Length();
@@ -287,4 +297,61 @@ void LockOnCamera::DrawDebugGui()
 	ImGui::DragFloat(u8"距離", &range, 0.1f);
 
 	ImGui::End();
+}
+
+
+
+void EnemyDeadCamera::Initialize()
+{
+}
+
+void EnemyDeadCamera::Update()
+{
+	switch(state)
+	{
+	case 0:
+
+		timer = 3.0f;
+
+		state++;
+		break;
+
+
+	case 1:
+	{
+		Vector3 headPos = Enemy::Instance().GetBonePosition("atama");
+		target = headPos;	// 目標
+
+		Vector3 enemyPosition = Enemy::Instance().GetPos();
+		Vector3 vec = headPos - enemyPosition;
+		vec.Normalize();
+
+		position = enemyPosition + vec * 25.0f;
+
+		if (position.y < 1.0f)
+			position.y = 1.0f;
+
+		CameraBase::Update();
+
+
+		float elapsedTime = Timer::Instance().DeltaTime();
+		timer -= elapsedTime;
+		if (timer < 0.0f)
+		{
+			CameraManager::Instance().SetCurrentCamera("PlayerCamera");
+		}
+		break;
+	}
+
+
+	}
+}
+
+void EnemyDeadCamera::UpdateConstants()
+{
+	CameraBase::UpdateConstants();
+}
+
+void EnemyDeadCamera::DrawDebugGui()
+{
 }

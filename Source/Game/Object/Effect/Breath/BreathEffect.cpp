@@ -4,6 +4,15 @@
 #include "../../../../../Library/Particle/EmitterManager.h"
 #include "../../../../../Library/Input/InputManager.h"
 
+
+void BreathEffect::SetPosition(const DirectX::XMFLOAT3& position)
+{
+	this->position = position;
+	crossPlaneObject->SetPos(position);
+	cylinderObject->SetPos(position);
+}
+
+
 void BreathEffect::Initialize()
 {
 	crossPlaneObject = std::make_unique<BreathCrossPlane>("Data/Fbx/Breath/CrossPlane/CrossPlane.model");
@@ -136,7 +145,7 @@ void BreathEffect::Emit()
 
 	lifeTimer = 0.0f;
 
-	angle.y = rand() % 360;
+	//angle.y = rand() % 360;
 	//angle.x = rand() % 360;
 	//angle.z = rand() % 360;
 

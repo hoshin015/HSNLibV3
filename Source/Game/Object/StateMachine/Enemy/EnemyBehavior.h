@@ -14,11 +14,16 @@ enum class MonsterAnimation
 	ROAR,
 	ROAR_BIG,
 	IDLE,
+	ROTATION,
 	BITE_1,
 	BITE_2,
 	STAND_UP,
 	DEAD,
-	TACKLE,
+	SCOOP_UP,
+	TACKLE_LEFT,
+	TACKLE_RIGHT,
+	TURN_LEFT,
+	TURN_RIGHT,
 	RUSH,
 	WALK_LEFT,
 	WALK_FOWARD,
@@ -122,11 +127,51 @@ public:
 
 
 
+// ===== íÜãóó£ÇÃîªíË ======================================================================================================================================================
+class EnemyMiddleRangeJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyMiddleRangeJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
 // ===== ãﬂãóó£ÇÃîªíË ======================================================================================================================================================
 class EnemyShortRangeJudgment final : public JudgmentBase<Enemy>
 {
 public:
 	EnemyShortRangeJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
+// ===== ãØÇ›ÇÃîªíË ======================================================================================================================================================
+class EnemyFlinchJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyFlinchJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
+// ===== éÄñSîªíË ======================================================================================================================================================
+class EnemyDeadJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyDeadJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
+// ===== ê≥ñ ÇÃîªíË ======================================================================================================================================================
+class EnemyFrontJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyFrontJudgment(Enemy* owner) : JudgmentBase(owner) {}
 	bool Judgment() override;
 };
 
@@ -197,5 +242,65 @@ class EnemyBiteAction final : public ActionBase<Enemy>
 {
 public:
 	EnemyBiteAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== ì•Ç›çûÇ›äöÇ›Ç¬Ç´çsìÆ ======================================================================================================================================================
+class EnemyRushingBiteAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyRushingBiteAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== ì•Ç›çûÇ›äöÇ›Ç¬Ç´å„ÇÃçsìÆ ======================================================================================================================================================
+class EnemyAfterRushingBiteAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyAfterRushingBiteAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== ãØÇ›çsìÆ ======================================================================================================================================================
+class EnemyFlinchAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyFlinchAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== éÄñSçsìÆ ======================================================================================================================================================
+class EnemyDeadAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyDeadAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== êKîˆâÒì]çsìÆ ======================================================================================================================================================
+class EnemyTailAttack final : public ActionBase<Enemy>
+{
+public:
+	EnemyTailAttack(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== ãdÇ¢è„Ç∞çsìÆ ======================================================================================================================================================
+class EnemyScoopUpAction final : public ActionBase<Enemy>
+{
+public:
+	EnemyScoopUpAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };

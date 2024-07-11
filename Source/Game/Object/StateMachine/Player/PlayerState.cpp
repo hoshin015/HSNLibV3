@@ -50,6 +50,8 @@ void PlayerIdleState::Enter()
 
 void PlayerIdleState::Execute()
 {
+	owner->Input();
+
 	// ‘–‚èˆÚ“®—ÊŒvŽZ
 	owner->CalcWalkVelocity();
 
@@ -96,6 +98,8 @@ void PlayerWalkState::Enter()
 
 void PlayerWalkState::Execute()
 {
+	owner->Input();
+
 	// •àsˆÚ“®—ÊŒvŽZ
 	owner->CalcWalkVelocity();
 
@@ -116,7 +120,8 @@ void PlayerWalkState::Execute()
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Drink));
 	}
 
-	
+	if (owner->GetInputMap<bool>("Dodge"))
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Dodge));
 
 	// ‰ñ“]
 	owner->Turn();
@@ -143,6 +148,8 @@ void PlayerRunState::Enter()
 
 void PlayerRunState::Execute()
 {
+	owner->Input();
+
 	// ‘–‚èˆÚ“®—ÊŒvŽZ
 	owner->CalcRunVelocity();
 
@@ -167,6 +174,9 @@ void PlayerRunState::Execute()
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Drink));
 	}
 
+	if (owner->GetInputMap<bool>("Dodge"))
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Dodge));
+
 	// ‰ñ“]
 	owner->Turn();
 
@@ -185,14 +195,20 @@ void PlayerRunState::Exit()
 void PlayerAttackState::Enter()
 {
 	owner->PlayAnimation(static_cast<int>(PlayerAnimNum::Attack), false);
+	owner->SetInputMap("Attack", false);
 }
 
 void PlayerAttackState::Execute()
 {
-	if(owner->GetAnimationEndFlag())
+	owner->InputAttack();
+
+	if(owner->GetInputMap<bool>("EndAttack"))
 	{
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
 	}
+
+	owner->CalcRootAnimationVelocity();
+	owner->Move();
 }
 
 void PlayerAttackState::Exit()
@@ -238,4 +254,26 @@ void PlayerDrinkState::Execute()
 
 void PlayerDrinkState::Exit()
 {
+}
+
+void PlayerDodgeState::Enter() {
+	owner->AbilityStatus().dodgeTimer = owner->ConstantStatus().dodgeTime;
+}
+
+void PlayerDodgeState::Execute() {
+	owner->CalcDodgeVelocity();
+
+	if (owner->AbilityStatus().dodgeTimer < 0) {
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
+	}
+
+	// ‰ñ“]
+	owner->Turn();
+
+	// ˆÚ“®
+	owner->Move();
+}
+
+void PlayerDodgeState::Exit() {
+	
 }

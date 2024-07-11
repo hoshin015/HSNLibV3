@@ -39,6 +39,7 @@ void Enemy::Initialize()
 
 	position = { 0, 0, 0 };
 	velocity = { 0.0f, 0.0f, 0.0f };
+	moveVec = { 0.0f, 0.0f, 0.0f };
 
 	foundPlayer = false;
 
@@ -66,8 +67,13 @@ void Enemy::Finalize()
 
 void Enemy::Update()
 {
+	float elapsedTime = Timer::Instance().DeltaTime();
+
 	// --- ビヘイビアツリーの更新 ---
-	UpdateBehaviorTree(Timer::Instance().DeltaTime());
+	UpdateBehaviorTree(elapsedTime);
+
+	// --- 移動処理 ---
+	UpdateMove(elapsedTime);
 
 	// アニメーション更新
 	UpdateAnimation();
@@ -241,13 +247,71 @@ void Enemy::UpdateMove(float elapsedTime)
 // --- 水平速力処理 ---
 void Enemy::UpdateHorizontalVelocity(float elapsedTime, float elapsedFrame)
 {
+	Vector2 velocity = this->velocity.xz();
+	float length = velocity.Length();
+
+	// --- 速度があれば減速 ---
+	if (length > 0.0f)
+	{
+		// --- 抵抗力 ---
+		float friction = this->friction * elapsedFrame;
+		if (length > friction)
+		{
+			velocity.Normalize();
+
+			// --- 減速処理 ---
+			this->velocity.x -= velocity.x * friction;
+			this->velocity.z -= velocity.y * friction;
+		}
+
+		else
+		{
+			this->velocity.x = 0.0f;
+			this->velocity.z = 0.0f;
+		}
+	}
+
+
+	// --- 最大速度を越えていないなら加速 ---
+	if (length <= maxSpeed)
+	{
+		Vector2 moveVec = this->moveVec.xz();
+		float moveVecLength = moveVec.Length();
+		if (moveVecLength > 0.0f)
+		{
+			// --- 加速度 ---
+			float acceleration = this->acceleration * elapsedFrame;
+
+			// --- 移動ベクトル方向に加速 ---
+			this->velocity.x += moveVec.x * acceleration;
+			this->velocity.z += moveVec.z * acceleration;
+		}
+
+
+		// --- 最大速度制限 ---
+		Vector2 updatedVelocity = this->velocity.xz();
+		float updatedLength = updatedVelocity.Length();
+
+		// --- 最大速度を越えていたら制限 ---
+		if (updatedLength > maxSpeed)
+		{
+			this->velocity.x = (this->velocity.x / updatedLength) * maxSpeed;
+			this->velocity.z = (this->velocity.z / updatedLength) * maxSpeed;
+		}
+	}
+
+
+	moveVec.x = moveVec.z = 0.0f;
 }
 
 
 // --- 水平移動処理 ---
 void Enemy::UpdateHorizontalMove(float elapsedTime, float elapsedFrame)
 {
+	Vector2 vec = velocity.xz();
+	//float length =
 }
+
 
 // --- プレイヤーを見つけたか ---
 bool Enemy::SearchPlayer()

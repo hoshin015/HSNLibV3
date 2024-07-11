@@ -96,6 +96,10 @@ private:
 	float whileRushTimer = 2.5f;
 
 	Vector3 velocity;
+	Vector3 moveVec;
+	float acceleration = 3.0f;
+	float friction = 0.2f;
+	float maxSpeed = 5.0f;
 
 
 	// --- ステータス関連 ---

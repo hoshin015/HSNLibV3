@@ -852,7 +852,6 @@ BT_ActionState EnemyAfterRushingBiteAction::Run(float elapsedTime)
 		return BT_ActionState::Failed;
 
 
-
 	switch (step)
 	{
 	case 0:

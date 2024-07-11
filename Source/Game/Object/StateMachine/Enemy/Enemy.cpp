@@ -278,9 +278,7 @@ void Enemy::CollisionVSPlayer()
 				EnableAnimSphereCollisionDamagedFlag();
 
 				// --- ‚±‚±‚É“–‚½‚Á‚½‚Ìˆ—‚ğ‘‚­ ---
-				auto camera = std::dynamic_pointer_cast<PlayerCamera>(CameraManager::Instance().GetCamera());
-				if (camera)
-					camera->SetShakeTimer(1.0f);
+				CameraManager::Instance().shakeTimer = 1.0f;
 				break;
 			}
 		}

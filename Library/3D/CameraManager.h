@@ -31,6 +31,9 @@ public:
 	void Register(std::string key, std::shared_ptr<CameraBase> camera);
 
 
+	float shakeTimer;
+
+
 private:
 	std::unordered_map<std::string, std::shared_ptr<CameraBase>> cameraMap;
 	std::shared_ptr<CameraBase> currentCamera = nullptr;

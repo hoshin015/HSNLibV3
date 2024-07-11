@@ -70,17 +70,19 @@ void PlayerCamera::Update()
 
 		Vector3 shakeOffset;
 		Vector3 shakeIntensity = { 10.0f, 10.0f, 1.0f };
-		if (shakeTimer > 0.0f)
+		auto& manager = CameraManager::Instance();
+		if (manager.shakeTimer > 0.0f)
 		{
-			shakeTimer -= deltaTime;
+			manager.shakeTimer -= deltaTime;
 			shakeOffset = OnShake(shakeIntensity);
 		}
 		
 		else
 		{
-			shakeTimer = 0.0f;
+			manager.shakeTimer = 0.0f;
 			shakeOffset = Vector3::Zero_;
 		}
+
 
 
 		// --- 床に埋まらないように制限 ---
@@ -138,7 +140,7 @@ void PlayerCamera::DrawDebugGui()
 		fixedCursor = !fixedCursor;
 
 	if (ImGui::Button(u8"シェイク", { 100.0f, 30.0f }))
-		shakeTimer = 0.3f;
+		CameraManager::Instance().shakeTimer = 0.3f;
 
 
 	ImGui::BulletText(u8"カーソル");
@@ -216,7 +218,6 @@ void PlayerCamera::OnFixedCursor(float deltaTime)
 
 	else if (horizontalAngle < 0.0f)
 		horizontalAngle += 360.0f;
-
 }
 
 
@@ -284,7 +285,26 @@ void LockOnCamera::Update()
 		if (position.y < 1.0f)
 			position.y = 1.0f;
 
-		CameraBase::Update();
+
+
+		// --- カメラシェイク ---
+		Vector3 shakeOffset;
+		Vector3 shakeIntensity = { 10.0f, 10.0f, 1.0f };
+		auto& manager = CameraManager::Instance();
+		if (manager.shakeTimer > 0.0f)
+		{
+			manager.shakeTimer -= Timer::Instance().DeltaTime();
+			shakeOffset = OnShake(shakeIntensity);
+		}
+
+		else
+		{
+			manager.shakeTimer = 0.0f;
+			shakeOffset = Vector3::Zero_;
+		}
+
+
+		CameraBase::Update(position + shakeOffset, target, up, fov, nearZ, farZ, aspect);
 
 		break;
 	}
@@ -304,8 +324,21 @@ void LockOnCamera::DrawDebugGui()
 	ImGui::DragFloat(u8"高さ", &height, 0.1f);
 	ImGui::DragFloat(u8"距離", &range, 0.1f);
 
+	if (ImGui::Button(u8"シェイク", { 100.0f, 30.0f }))
+		CameraManager::Instance().shakeTimer = 0.3f;
+
 	ImGui::End();
 }
+
+Vector3 LockOnCamera::OnShake(const Vector3& intensity)
+{
+	Vector3 result;
+	result = rightVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.x;
+	result = upVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.y;
+	result = frontVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.z;
+	return result;
+}
+
 
 
 

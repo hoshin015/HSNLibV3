@@ -5,6 +5,7 @@
 #include "../Rock/RockEffect.h"
 #include "../../../../../Library/Math/Math.h"
 #include "../../../../../Library/3D/LightManager.h"
+#include "../../../../../Library/3D/CameraManager.h"
 #include "../Lightning/LightningEffect.h"
 
 // XV
@@ -166,7 +167,8 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze, PlayerCam
 			{
 				// ƒJƒƒ‰—h‚ç‚µ
 				playerCamera->SetShakePower(2);
-				playerCamera->SetShakeTimer(chargeNovaTime);
+				//playerCamera->SetShakeTimer(chargeNovaTime);
+				CameraManager::Instance().shakeTimer = chargeNovaTime;
 
 				radialBlur->SetIsRadial(false);
 				lifeTimer         = 0.0f;

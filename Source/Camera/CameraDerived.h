@@ -6,7 +6,7 @@
 class PlayerCamera : public CameraBase
 {
 public:
-	void SetShakeTimer(const float timer) { this->shakeTimer = timer; }
+	//void SetShakeTimer(const float timer) { this->shakeTimer = timer; }
 	void SetShakePower(const float power) { shakePower = power; }
 
 	void Initialize() override;
@@ -27,7 +27,6 @@ private:
 	float height;					// プレイヤーの高さ
 	bool  fixedCursor = true;		// 中央にカーソルを固定するか
 
-	float shakeTimer = 0.0f;
 	float shakePower = 100.0f;		// 画面を揺らす力
 
 	// --- Lerp減衰用 ---
@@ -47,6 +46,8 @@ public:
 	void UpdateConstants() override;
 	void DrawDebugGui() override;
 
+	Vector3 OnShake(const Vector3& intensity);
+
 private:
 	int state;		// ステート
 
@@ -55,6 +56,7 @@ private:
 
 	float t = 0.3f;	// 補完量
 	Vector3 prevTarget;	// 前回の目標の位置
+	float shakePower = 100.0f;		// 画面を揺らす力
 };
 
 

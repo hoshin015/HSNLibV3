@@ -9,7 +9,7 @@
 //=======================================
 #if _DEBUG
 #define USE_IMGUI			1
-#define SHOW_PERFORMANCE	1
+#define SHOW_PERFORMANCE	0
 #endif
 //=======================================
 

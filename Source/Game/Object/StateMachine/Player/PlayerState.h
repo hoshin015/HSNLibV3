@@ -86,3 +86,14 @@ public:
 	void Execute() override;
 	void Exit() override;
 };
+
+// ドリンクステートオブジェクト
+class PlayerDodgeState : public State<Player> {
+public:
+	PlayerDodgeState(Player* owner) : State<Player>(owner) {}
+	~PlayerDodgeState() override {};
+
+	void Enter() override;
+	void Execute() override;
+	void Exit() override;
+};

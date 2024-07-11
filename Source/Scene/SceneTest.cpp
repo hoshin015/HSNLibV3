@@ -107,6 +107,8 @@ void SceneTest::Initialize()
 
 
 	Enemy::Instance().Initialize();
+	Enemy::Instance().radialBlur = radialBlur.get();
+
 	Player::Instance().Initialize();
 	Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());	// ¡‚ÌƒJƒƒ‰‚ğİ’è
 	Player::Instance().SetPos({ 0.0f, 0.0f, 100.0f });

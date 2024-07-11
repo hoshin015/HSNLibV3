@@ -1,10 +1,12 @@
 #include "EnemyBehavior.h"
 
+#include "../../../../../Library/Graphics/RadialBlur.h"
 #include "../../Library/Math/Math.h"
 
 #include "../../Effect/Breath/BreathEffect.h"
 
 #include "../Player/Player.h"
+#include "../../../../../Library/Timer.h"
 
 
 // --- 追跡行動の判定 ---
@@ -369,12 +371,10 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 		return BT_ActionState::Failed;
 
 
-
 	switch (step)
 	{
 		// --- 初期設定 ---
 	case 0:
-
 		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROAR_BIG), false);
 		owner_->SetFoundPlayer(true); // プレイヤーを発見
 
@@ -383,6 +383,29 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 
 		// --- メイン処理 ---
 	case 1:
+
+		// --- radialBlur 処理 ---
+		owner_->bigRoarTimer += Timer::Instance().DeltaTime();
+
+		// radialBlur ON OFF
+		if(!owner_->radialBlur->GetIsRadial() && owner_->bigRoarRadialUpSampling.startTime < owner_->bigRoarTimer)
+		{
+			owner_->radialBlur->SetSamplingCount(0.0f);
+			owner_->radialBlur->SetBlurPower(0.02f);
+			owner_->radialBlur->SetIsRadial(true);
+		}
+		if(owner_->radialBlur->GetIsRadial() && owner_->bigRoarRadialDownSampling.endTime > owner_->bigRoarTimer)
+		{
+			owner_->radialBlur->SetIsRadial(false);
+		}
+
+		// sampling 増減処理
+		owner_->radialBlur->SetSamplingCount(Easing::GetNowParam(Easing::OutQuad<float>, owner_->bigRoarTimer, owner_->bigRoarRadialUpSampling));
+		if(owner_->bigRoarRadialDownSampling.startTime < owner_->bigRoarTimer)
+		{
+			owner_->radialBlur->SetSamplingCount(Easing::GetNowParam(Easing::OutQuad<float>, owner_->bigRoarTimer, owner_->bigRoarRadialDownSampling));
+		}
+
 
 		// --- アニメーションが終わったら ---
 		if (owner_->GetAnimationEndFlag())

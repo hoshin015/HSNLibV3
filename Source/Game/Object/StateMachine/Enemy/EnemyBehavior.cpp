@@ -421,6 +421,7 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 		// --- アニメーションが終わったら ---
 		if (owner_->GetAnimationEndFlag())
 		{
+			owner_->bigRoarTimer = 0.0f;	// ラジアルブラー用タイマーをリセット
 			step = 0;
 			return BT_ActionState::Complete;
 		}

@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include "Math.h"
+
+#include "../Framework.h"
 #include "../3D/Camera.h"
 #include "../Graphics/Graphics.h"
 
@@ -68,6 +70,67 @@ DirectX::XMFLOAT2 Math::WorldToScreenPos(DirectX::XMFLOAT3 worldPosition)
 	DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
 
 	return screenPosition;
+}
+
+DirectX::XMFLOAT2 Math::WorldToScreenPos(DirectX::XMFLOAT3 worldPosition, CameraBase* camera)
+{
+	ID3D11DeviceContext* dc = Graphics::Instance().GetDeviceContext();
+
+	DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPosition);
+
+	// ビューポート
+	D3D11_VIEWPORT viewport;
+	UINT numViewports = 1;
+	dc->RSGetViewports(&numViewports, &viewport);
+
+	// 変換行列
+	DirectX::XMFLOAT4X4 V;
+	DirectX::XMStoreFloat4x4(&V, camera->GetView());
+	DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&V);
+	DirectX::XMFLOAT4X4 P;
+	DirectX::XMStoreFloat4x4(&P, camera->GetProjection());
+	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&P);
+	DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
+
+	// ワールド座標からスクリーン座標への変換
+	DirectX::XMVECTOR ScreenPosition = DirectX::XMVector3Project(
+		WorldPosition,
+		viewport.TopLeftX,
+		viewport.TopLeftY,
+		viewport.Width,
+		viewport.Height,
+		viewport.MinDepth,
+		viewport.MaxDepth,
+		Projection,
+		View,
+		World
+	);
+
+	// スクリーン座標
+	DirectX::XMFLOAT2 screenPosition;
+	DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
+
+	return screenPosition;
+}
+
+//--------------------------------------------
+//	スクリーン座標からndc座標への変換
+//--------------------------------------------
+// screenPosition	: 変換したいワールド座標
+DirectX::XMFLOAT2 Math::ScreenToNdcPos(DirectX::XMFLOAT2 screenPosition)
+{
+	// 0 ~ 1 に変換
+	DirectX::XMFLOAT2 ndc =
+	{
+		screenPosition.x / Framework::Instance().GetScreenWidthF(),
+		screenPosition.y / Framework::Instance().GetScreenHeightF()
+	};
+
+	// -1 ~ 1 に変換
+	ndc.x = ndc.x * 2.0f - 1.0f;
+	ndc.y = ndc.y * 2.0f - 1.0f;
+
+	return ndc;
 }
 
 

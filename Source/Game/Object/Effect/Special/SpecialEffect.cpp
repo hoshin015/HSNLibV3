@@ -126,6 +126,11 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze, PlayerCam
 			}
 			radialBlur->SetSamplingCount(static_cast<float>(static_cast<int>(sampCount)));
 
+			DirectX::XMFLOAT2 ndc = Math::ScreenToNdcPos(Math::WorldToScreenPos({ 0,0,0 }, playerCamera));
+			ndc.x = (ndc.x + 1.0f) / 2.0f;
+			ndc.y = (ndc.y + 1.0f) / 2.0f;
+			radialBlur->SetBlurPosition(ndc);
+
 			// --- heatHaze ---
 			float heatHazeMaxShift =
 				Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, firstNovaHeatHazeMaxShiftUp);
@@ -242,26 +247,26 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze, PlayerCam
 #endif
 
 				// ‰¼’u‚«m
-				Emitter* emitter                           = new Emitter();
-				emitter->position                          = {0, 3, 3};
-				emitter->emitterData.duration              = 5.0;
-				emitter->emitterData.looping               = false;
-				emitter->emitterData.burstsTime            = 0.1;
-				emitter->emitterData.burstsCount           = 128;
-				emitter->emitterData.particleKind          = pk_Dust;
-				emitter->emitterData.particleLifeTimeMin   = 1.0f;
-				emitter->emitterData.particleLifeTimeMax   = 1.0f;
-				emitter->emitterData.particleSpeedMin      = 1.0f;
-				emitter->emitterData.particleSpeedMax      = 5.0f;
-				emitter->emitterData.particleSizeMin       = {0.1f, 0.1f};
-				emitter->emitterData.particleSizeMax       = {0.4f, 0.4f};
-				emitter->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
-				emitter->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
-				emitter->emitterData.particleGravity       = 1;
-				emitter->emitterData.particleBillboardType = 0;
-				emitter->emitterData.particleTextureType   = 0;
-				emitter->emitterData.burstsOneShot   = 1;
-				EmitterManager::Instance().Register(emitter);
+				//Emitter* emitter                           = new Emitter();
+				//emitter->position                          = {0, 3, 3};
+				//emitter->emitterData.duration              = 5.0;
+				//emitter->emitterData.looping               = false;
+				//emitter->emitterData.burstsTime            = 0.1;
+				//emitter->emitterData.burstsCount           = 128;
+				//emitter->emitterData.particleKind          = pk_Dust;
+				//emitter->emitterData.particleLifeTimeMin   = 1.0f;
+				//emitter->emitterData.particleLifeTimeMax   = 1.0f;
+				//emitter->emitterData.particleSpeedMin      = 1.0f;
+				//emitter->emitterData.particleSpeedMax      = 5.0f;
+				//emitter->emitterData.particleSizeMin       = {0.1f, 0.1f};
+				//emitter->emitterData.particleSizeMax       = {0.4f, 0.4f};
+				//emitter->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
+				//emitter->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
+				//emitter->emitterData.particleGravity       = 1;
+				//emitter->emitterData.particleBillboardType = 0;
+				//emitter->emitterData.particleTextureType   = 0;
+				//emitter->emitterData.burstsOneShot   = 1;
+				//EmitterManager::Instance().Register(emitter);
 			}
 			AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE2, Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, soundUpValue));
 

@@ -25,6 +25,8 @@ public:
 	void SetBlurPower(float blurPower) { this->radialBlurConstants.blurPower = blurPower; }
 	void SetSamplingCount(float samplingCount) { this->radialBlurConstants.samplingCount = samplingCount; }
 
+	void SetBlurPosition(DirectX::XMFLOAT2 center) { radialBlurConstants.blurCenter = center; }
+
 private:
 	bool isRadial = false;
 

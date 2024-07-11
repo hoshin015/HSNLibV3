@@ -59,6 +59,7 @@ public:
 	void UpdateMove(float elapsedTime);
 	void UpdateHorizontalVelocity(float elapsedTime, float elapsedFrame);
 	void UpdateHorizontalMove(float elapsedTime, float elapsedFrame);
+	void Move(const Vector3& vec, const float speed);
 	bool SearchPlayer();
 	void RotateToTargetVec(const DirectX::XMFLOAT3& targetVec, float t, const Vector3* tempFront = nullptr);
 	void ClampPosition(float range);
@@ -99,7 +100,7 @@ private:
 	Vector3 moveVec;
 	float acceleration = 3.0f;
 	float friction = 0.2f;
-	float maxSpeed = 5.0f;
+	float maxSpeed = 0.0f;
 
 
 	// --- ステータス関連 ---

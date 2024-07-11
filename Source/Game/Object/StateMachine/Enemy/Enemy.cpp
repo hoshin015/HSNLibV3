@@ -178,6 +178,16 @@ void Enemy::DrawDebugGui()
 
 	ImGui::Begin(u8"敵");
 
+	if (ImGui::TreeNode(u8"移動関連"))
+	{
+		ImGui::DragFloat3(u8"速度", &velocity.x);
+		ImGui::DragFloat3(u8"移動ベクトル", &moveVec.x);
+		ImGui::DragFloat(u8"加速度", &acceleration);
+		ImGui::DragFloat(u8"摩擦", &friction);
+		ImGui::DragFloat(u8"最大速度", &maxSpeed);
+		ImGui::TreePop();
+	}
+
 	ImGui::DragFloat(u8"HP", &hp, 1.0f);
 	ImGui::DragFloat(u8"怯み値", &flinchValue, 1.0f);
 	ImGui::Separator();
@@ -309,7 +319,25 @@ void Enemy::UpdateHorizontalVelocity(float elapsedTime, float elapsedFrame)
 void Enemy::UpdateHorizontalMove(float elapsedTime, float elapsedFrame)
 {
 	Vector2 vec = velocity.xz();
-	//float length =
+	float length = vec.Length();
+
+	// --- 移動量があれば ---
+	if (length > 0.0f)
+	{
+		Vector3 updatedPosition;
+		Vector3 position = this->position;
+		updatedPosition = position + velocity * elapsedTime;
+
+		this->position = updatedPosition.vec_;
+	}
+}
+
+
+// --- 移動 ---
+void Enemy::Move(const Vector3& vec, const float speed)
+{
+	moveVec = vec;
+	maxSpeed = speed;
 }
 
 

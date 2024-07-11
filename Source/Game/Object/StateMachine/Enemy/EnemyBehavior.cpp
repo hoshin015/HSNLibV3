@@ -62,8 +62,7 @@ BT_ActionState EnemyPursuitAction::Run(float elapsedTime)
 		// --- 位置の更新 ---
 		const float moveSpeed = owner_->runSpeed_ * elapsedTime;
 		DirectX::XMFLOAT3 moveVec = vec * moveSpeed;
-		enemyPosition += moveVec;
-		owner_->SetPos(enemyPosition);
+		owner_->Move(moveVec, owner_->runSpeed_);
 
 
 		// --- プレイヤーに近づいたら ---
@@ -169,8 +168,7 @@ BT_ActionState EnemyWanderAction::Run(float elapsedTime)
 		moveVec.Normalize();
 		owner_->RotateToTargetVec(moveVec.vec_, 0.3f);
 		moveVec *= owner_->walkSpeed_ * elapsedTime;
-		position = position + moveVec;
-		owner_->SetPos(position.vec_);
+		owner_->Move(moveVec, owner_->walkSpeed_);
 
 
 		// --- プレイヤーを見つけたら ---
@@ -652,9 +650,7 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	case 2:
 	{
 		// --- 正面へ移動 ---
-		Vector3 position = owner_->GetPos();
-		position += owner_->targetVec * owner_->GetRushSpeed() * elapsedTime;
-		owner_->SetPos(position.vec_);
+		owner_->Move(owner_->targetVec, owner_->GetRushSpeed());
 
 		owner_->runTimer_ -= elapsedTime;
 		if (owner_->runTimer_ < 0.0f)

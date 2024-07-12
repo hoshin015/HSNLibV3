@@ -1,6 +1,7 @@
 #include "Animator.h"
 
 #include "../../../External/ImGui/imgui_internal.h"
+#include "../../Math/Vector.h"
 using namespace DirectX;
 
 inline XMFLOAT3 operator-(XMFLOAT3& a, XMFLOAT3& b) {
@@ -132,7 +133,9 @@ ModelResource::KeyFrame Animator::BlendUpdate(BlendTree* blend, const float time
 		}
 	}
 	if (totalWeight > 0) for (float& weight: weights) { weight /= totalWeight; }
-	if (motions.empty()) motions.emplace_back(&blend->motions[0]);
+	if (motions.empty()) {
+		motions.emplace_back(&blend->motions[0]);
+	}
 
 	const float                          animationRate = time / blend->maxSeconds;
 	std::vector<ModelResource::KeyFrame> keyFrames;

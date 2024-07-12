@@ -33,3 +33,18 @@ void RockEffect::Emit(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 vel, DirectX::XMF
 	rock->SetUpdateType(RockData::RockFuncEnum::Default);
 	rockMesh1->Register(rock);
 }
+
+// ƒƒbƒN’Ç‰Á
+void RockEffect::Emit(RockEmitter rockEmitter)
+{
+	RockData* rock = new RockData();
+	rock->SetPos(rockEmitter.position);
+	rock->SetAngle(rockEmitter.angle);
+	rock->SetScale(rockEmitter.scale);
+	rock->SetVeloicty(rockEmitter.velocity);
+	rock->SetGravity(rockEmitter.gravity);
+	rock->SetLifeTime(rockEmitter.lifeTime);
+	rock->SetColor({ 1.0, 1.0, 1.0, 1 });
+	rock->SetUpdateType(RockData::RockFuncEnum::Default);
+	rockMesh1->Register(rock);
+}

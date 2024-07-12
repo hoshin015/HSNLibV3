@@ -69,15 +69,12 @@ void SceneTest::Initialize()
 #if 0
 	StageMain*    stageMain    = new StageMain("Data/Fbx/ExampleStage/ExampleStage.model");
 #else
-	StageMain*    stageMain    = new StageMain("Data/Fbx/StageMain/StageMain.model");
+	StageMain*    stageMain    = new StageMain("Data/Fbx/AfterStage/AfterStage.model");
 	stageMain->SetScale({ stageScale, stageScale, stageScale });
 	StageMain* stage = new StageMain("./Data/Fbx/Stage/StageCollision.fbx");
 #endif
 	stageManager.Register(stageMain);
 	stageManager.Register(stage);
-	StageMain* StageFence = new StageMain("Data/Fbx/StageFence/StageFence.model");
-	StageFence->SetScale({ stageScale, stageScale, stageScale });
-	stageManager.Register(StageFence);
 	StageMain* stage2 = new StageMain("./Data/Fbx/Stage/StageCollision1.fbx");
 	stageManager.Register(stage2);
 
@@ -438,7 +435,6 @@ void SceneTest::Render()
 				shadow->SetAnimatedShader(); // animated object の影描画開始
 				//StageManager::Instance().Render(true);
 				StageManager::Instance().Render(0, true);
-				StageManager::Instance().Render(2, true);
 				Enemy::Instance().Render(true);
 
 				Player::Instance().Render(true);
@@ -468,7 +464,6 @@ void SceneTest::Render()
 		// ここに不透明オブジェクトの描画
 		//StageManager::Instance().Render();
 		StageManager::Instance().Render(0, false);
-		StageManager::Instance().Render(2, false);
 
 		//testStatic->Render();
 		Enemy::Instance().Render();

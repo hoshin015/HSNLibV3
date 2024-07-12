@@ -7,6 +7,7 @@
 #include "SceneSpriteEditor.h"
 #include "SceneLoading.h"
 #include "SceneAnimationTest.h"
+#include "SceneResult.h"
 
 // シーンマネージャー
 class SceneManager

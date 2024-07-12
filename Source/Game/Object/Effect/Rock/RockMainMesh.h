@@ -86,6 +86,9 @@ public:
 
 	// val1
 	void SetVal1(Easing::EasingValue v) { val1 = v; }
+
+	// gravity
+	void SetGravity(float g) { gravity = g; }
 };
 
 // Rock ‚Ü‚Æ‚ß‚éƒNƒ‰ƒX

@@ -73,7 +73,7 @@ void RockMainMesh::Update()
 {
 	int index = 0;
 
-	// lightning データ更新
+	// rock データ更新
 	for (auto& data : rockInfo)
 	{
 		// --- 行列更新と寿更新 ---

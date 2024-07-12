@@ -173,6 +173,7 @@
   <ItemGroup>
     <ClCompile Include="Library\Graphics\ColorFilter.cpp" />
     <ClCompile Include="Library\Graphics\HeatHaze.cpp" />
+    <ClCompile Include="Source\Scene\SceneResult.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\Breath\BreathEffect.cpp" />
     <ClCompile Include="Library\3D\CameraBase.cpp" />
     <ClCompile Include="Library\3D\CameraManager.cpp" />
@@ -287,6 +288,7 @@
   <ItemGroup>
     <ClInclude Include="Library\Graphics\ColorFilter.h" />
     <ClInclude Include="Library\Graphics\HeatHaze.h" />
+    <ClInclude Include="Source\Scene\SceneResult.h" />
     <ClInclude Include="Source\Game\Object\Effect\Breath\BreathEffect.h" />
     <ClInclude Include="Library\3D\CameraBase.h" />
     <ClInclude Include="Library\3D\CameraManager.h" />

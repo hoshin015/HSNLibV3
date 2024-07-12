@@ -858,7 +858,7 @@ void Player::CollisionVsEnemy()
 				emitter->emitterData.particleSpeedMin = 15.0f;
 				emitter->emitterData.particleSpeedMax = 30.0f;
 				emitter->emitterData.particleSizeMin = { 0.25f, 0.005f };
-				emitter->emitterData.particleSizeMax = { 2.0f, 0.1f };
+				emitter->emitterData.particleSizeMax = { 8.0f, 0.05f };
 				emitter->emitterData.particleColorMin = { 3.5, 3.5, 0.8, 1 };
 				emitter->emitterData.particleColorMax = { 6.0, 6.0, 0.8, 1 };
 				emitter->emitterData.particleGravity = 20;

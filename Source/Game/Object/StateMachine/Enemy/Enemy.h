@@ -121,5 +121,8 @@ public:
 	float walkSpeed_ = 7.0f;
 	float runSpeed_ = 10.0f;
 
+	int actionCount;
+	int roarNeededActionCount;	// ™ôšK‚É•K—v‚Ès“®‚Ì”
+
 	void DrawDebugImGui(int number);
 };

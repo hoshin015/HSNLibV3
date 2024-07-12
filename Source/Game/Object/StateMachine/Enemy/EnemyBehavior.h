@@ -39,6 +39,8 @@ public:
 	BT_ActionState Run(float elapsedTime) override { return BT_ActionState::Complete; };
 
 	bool IsInterrupted();
+	void OnEndAction();	// s“®‚ªI‚í‚Á‚½‚ÌŒãˆ—
+	void ResetActionCount();
 };
 
 
@@ -184,6 +186,21 @@ public:
 	EnemyFrontJudgment(Enemy* owner) : JudgmentBase(owner) {}
 	bool Judgment() override;
 };
+
+
+
+// ===== ‘å™ôšK‚Ì”»’è ======================================================================================================================================================
+class EnemyBigRoarJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyBigRoarJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
+
+
 
 
 

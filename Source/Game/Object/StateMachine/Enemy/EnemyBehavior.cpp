@@ -18,6 +18,21 @@ bool EnemyBaseBehavior::IsInterrupted()
 }
 
 
+void EnemyBaseBehavior::OnEndAction()
+{
+	step = 0;
+	owner_->runTimer_ = 0.0f;
+	owner_->actionCount++;	// 行動回数を加算
+}
+
+
+void EnemyBaseBehavior::ResetActionCount()
+{
+	owner_->roarNeededActionCount = 25 + (rand() % 10) - 5;
+	owner_->actionCount = 0;
+}
+
+
 
 
 // --- 追跡行動の判定 ---
@@ -172,7 +187,7 @@ BT_ActionState EnemyWanderAction::Run(float elapsedTime)
 		// --- 目標との距離が近くなったら ---
 		if (moveVec.Length() < 1.0f)
 		{
-			step = 0;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 
@@ -187,7 +202,7 @@ BT_ActionState EnemyWanderAction::Run(float elapsedTime)
 		// --- プレイヤーを見つけたら ---
 		if (owner_->SearchPlayer())
 		{
-			step = 0;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 
@@ -232,8 +247,7 @@ BT_ActionState EnemyIdleAction::Run(float elapsedTime)
 			float wanderRange = owner_->GetWanderRange();
 			owner_->moveTargetPosition_ = { cosf(theta) * wanderRange, 0.0f, sinf(theta) * wanderRange };
 
-			owner_->runTimer_ = 0.0f;
-			step = 0;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 
@@ -241,8 +255,7 @@ BT_ActionState EnemyIdleAction::Run(float elapsedTime)
 		// --- プレイヤーを見つけたら ---
 		if (owner_->SearchPlayer())
 		{
-			owner_->runTimer_ = 0.0f;
-			step = 0;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 
@@ -371,6 +384,20 @@ bool EnemyFrontJudgment::Judgment()
 
 
 
+// ===== 大咆哮の判定 ======================================================================================================================================================
+bool EnemyBigRoarJudgment::Judgment()
+{
+	if (owner_->actionCount > owner_->roarNeededActionCount)
+		return true;
+
+	return false;
+}
+
+
+
+
+
+
 
 // ===== 大咆哮の行動 ======================================================================================================================================================
 BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
@@ -398,7 +425,8 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 		// --- アニメーションが終わったら ---
 		if (owner_->GetAnimationEndFlag())
 		{
-			step = 0;
+			OnEndAction();
+			ResetActionCount();
 			return BT_ActionState::Complete;
 		}
 
@@ -445,7 +473,7 @@ BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 			float dot = front.Dot(vec);
 			if (dot > 0.99f)
 			{
-				step = 0;
+				OnEndAction();
 				return BT_ActionState::Complete;
 			}
 		}
@@ -488,14 +516,14 @@ BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 		dot = front.Dot(targetVec);
 		if (dot > 0.99f)
 		{
-			step = 0;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 
 
 		if (owner_->GetAnimationEndFlag())
 		{
-			step = 0;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 #else
@@ -572,7 +600,7 @@ BT_ActionState EnemyBlessAction::Run(float elapsedTime)
 		// --- アニメーションが終わったら終了 ---
 		if (owner_->GetAnimationEndFlag())
 		{
-			step = 0;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 
@@ -607,7 +635,7 @@ BT_ActionState EnemyThreatAction::Run(float elapsedTime)
 		// --- アニメーションが終わったら終了 ---
 		if (owner_->GetAnimationEndFlag())
 		{
-			step = 0;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 
@@ -687,8 +715,7 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	// --- アニメーションが終わったら終了 ---
 	if (owner_->GetAnimationEndFlag())
 	{
-		step = 0;
-		owner_->runTimer_ = 0.0f;
+		OnEndAction();
 		return BT_ActionState::Complete;
 	}
 
@@ -735,7 +762,7 @@ BT_ActionState EnemyStampAction::Run(float elapsedTime)
 		// --- アニメーションが終わったら終了 ---
 		if (owner_->GetAnimationEndFlag())
 		{
-			step = 0;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 
@@ -781,7 +808,7 @@ BT_ActionState EnemyBiteAction::Run(float elapsedTime)
 		// --- アニメーションが終わったら終了 ---
 		if (owner_->GetAnimationEndFlag())
 		{
-			step = 0;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 
@@ -845,7 +872,7 @@ BT_ActionState EnemyRushingBiteAction::Run(float elapsedTime)
 	// --- アニメーションが終わったら終了 ---
 	if (owner_->GetAnimationEndFlag())
 	{
-		step = 0;
+		OnEndAction();
 		return BT_ActionState::Complete;
 	}
 
@@ -933,7 +960,7 @@ BT_ActionState EnemyAfterRushingBiteAction::Run(float elapsedTime)
 		// --- アニメーションが終わったら終了 ---
 		if (owner_->GetAnimationEndFlag())
 		{
-			step = 0;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 
@@ -956,8 +983,7 @@ BT_ActionState EnemyAfterRushingBiteAction::Run(float elapsedTime)
 		// --- アニメーションが終わったら終了 ---
 		if (owner_->GetAnimationEndFlag())
 		{
-			step = 0;
-			owner_->runTimer_ = 0.0f;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 
@@ -981,8 +1007,7 @@ BT_ActionState EnemyAfterRushingBiteAction::Run(float elapsedTime)
 		// --- アニメーションが終わったら終了 ---
 		if (owner_->GetAnimationEndFlag())
 		{
-			step = 0;
-			owner_->runTimer_ = 0.0f;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 
@@ -1042,8 +1067,7 @@ BT_ActionState EnemyFlinchAction::Run(float elapsedTime)
 
 		if (owner_->GetAnimationEndFlag())
 		{
-			owner_->runTimer_ = 0.0f;
-			step = 0;
+			OnEndAction();
 			owner_->SetFlinchValue(100.0f); // Todo : 怯み値仮
 			return BT_ActionState::Complete;
 		}
@@ -1096,7 +1120,7 @@ BT_ActionState EnemyTailAttack::Run(float elapsedTime)
 
 		if (owner_->GetAnimationEndFlag())
 		{
-			step = 0;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 
@@ -1148,7 +1172,7 @@ BT_ActionState EnemyScoopUpAction::Run(float elapsedTime)
 
 		if (owner_->GetAnimationEndFlag())
 		{
-			step = 0;
+			OnEndAction();
 			return BT_ActionState::Complete;
 		}
 		break;

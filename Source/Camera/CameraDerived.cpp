@@ -106,7 +106,7 @@ void PlayerCamera::Update()
 
 		// --- ‘Ò‹@êŠ ---
 		result = {};
-		if (StageManager::Instance().RayCast(3, target.vec_, position.vec_, result))
+		if (StageManager::Instance().RayCast(2, target.vec_, position.vec_, result))
 		{
 			currentPosition = result.position;
 			position = result.position;

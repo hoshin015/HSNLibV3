@@ -565,6 +565,8 @@ void Player::InputAttack() {
 		if (at) ability.attackTimer = constant.attackReceptionTime;
 		else ability.attackTimer -= dt;
 		at = false;
+		ClearAnimSphereCollisionDamagedFlag();
+		ClearSeFlag();
 	}
 
 	inputMap["EndAttack"] = ability.attackTimer <= 0 && animator.GetEndMotion();
@@ -838,7 +840,9 @@ void Player::CollisionVsEnemy()
 				collisionPoint)
 				)
 			{
-				playerAnimSphereCollision.isDamaged = true;
+				for (auto && collision: anim) {
+					collision.isDamaged = true;
+				}
 
 				ConsoleData::Instance().logs.push_back("Damage!");
 

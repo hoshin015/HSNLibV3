@@ -716,7 +716,8 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 				rock.position = Enemy::Instance().GetBonePosition("sitaago_end");
 				rock.angle = { Math::RandomRange(0,359), Math::RandomRange(0,359),Math::RandomRange(0,359) };
 				rock.scale = { Math::RandomRange(0.25,0.5), Math::RandomRange(0.25,0.5),Math::RandomRange(0.25,0.5) };
-				rock.velocity = { Math::RandomRange(-6,6), Math::RandomRange(1,5), Math::RandomRange(-6,6) };
+				float r = Math::RandomRange(5, 10);
+				rock.velocity = {Math::RandomRange(-3,3),Math::RandomRange(1,3),Math::RandomRange(-3,3)};
 				rock.gravity = 10;
 				rock.lifeTime = 3;
 				RockEffect::Instance().Emit(rock);
@@ -744,7 +745,7 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 		position += owner_->targetVec * owner_->GetRushEndSpeed() * elapsedTime;
 		owner_->SetPos(position.vec_);
 
-		// 岩生成
+		// 岩生成(1度のみの生成するように bool で管理)
 		if(!isEndRock)
 		{
 			rockNowTimer += Timer::Instance().DeltaTime();
@@ -752,15 +753,34 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 			{
 				for (int i = 0; i < 30; i++)
 				{
+					// --- 敵の方向ベクトル取得 ---
+					DirectX::XMFLOAT4X4 T = owner_->GetTransform();
+					DirectX::XMMATRIX Transform = DirectX::XMLoadFloat4x4(&T);
+					DirectX::XMFLOAT3 front;
+					DirectX::XMFLOAT3 right;
+					DirectX::XMStoreFloat3(&front, Transform.r[2]);
+					DirectX::XMStoreFloat3(&right, Transform.r[0]);
+
 					// 岩エフェクト生成
 					RockEffect::RockEmitter rock;
 					rock.position = Enemy::Instance().GetBonePosition("sitaago_end");
 					rock.angle = { Math::RandomRange(0,359), Math::RandomRange(0,359),Math::RandomRange(0,359) };
-					rock.scale = { Math::RandomRange(0.25,1.0), Math::RandomRange(0.25,1.0),Math::RandomRange(0.25,1.0) };
-					rock.velocity = { Math::RandomRange(-6,6), Math::RandomRange(10,20), Math::RandomRange(-6,6) };
-					rock.gravity = 20;
+					rock.angle = { Math::RandomRange(0,359), Math::RandomRange(0,359),Math::RandomRange(0,359) };
+					rock.scale = { Math::RandomRange(0.25,0.5), Math::RandomRange(0.25,0.5),Math::RandomRange(0.25,0.5) };
+					float rFront = Math::RandomRange(5, 10);
+					float rRight = Math::RandomRange(-3, 3);
+					float power = Math::RandomRange(1, 3);
+					rock.velocity = {
+						(rFront * front.x + rRight * right.x) * power,
+						Math::RandomRange(15,30),
+						(rFront * front.z + rRight * right.z) * power
+					};
+					rock.gravity = 30;
 					rock.lifeTime = 10;
 					RockEffect::Instance().Emit(rock);
+
+					rockTimer -= rockTime;
+
 				}
 				isEndRock = true;
 			}
@@ -1210,9 +1230,11 @@ BT_ActionState EnemyTailAttack::Run(float elapsedTime)
 				// 岩エフェクト生成
 				RockEffect::RockEmitter rock;
 				rock.position = Enemy::Instance().GetBonePosition("sippo_end");
+				rock.position.y = 0.0f;	// 地面に生成
 				rock.angle = { Math::RandomRange(0,359), Math::RandomRange(0,359),Math::RandomRange(0,359) };
 				rock.scale = { Math::RandomRange(0.25,0.5), Math::RandomRange(0.25,0.5),Math::RandomRange(0.25,0.5) };
-				rock.velocity = { Math::RandomRange(-2,2), Math::RandomRange(1,3), Math::RandomRange(-2,2) };
+				float r = Math::RandomRange(5, 10);
+				rock.velocity = {Math::RandomRange(-3,3), Math::RandomRange(1,3), Math::RandomRange(-3,3)};
 				rock.gravity = 10;
 				rock.lifeTime = 3;
 				RockEffect::Instance().Emit(rock);

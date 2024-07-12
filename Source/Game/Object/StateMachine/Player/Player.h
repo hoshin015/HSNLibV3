@@ -58,7 +58,7 @@ private:
 public:
 	static Player& Instance()
 	{
-		static Player instance("Data/Fbx/GaoPlayer/gaoplayer_3.model");
+		static Player instance("Data/Fbx/GaoPlayer/gaoplayer_5.model");
 		return instance;
 	}
 

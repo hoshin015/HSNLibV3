@@ -384,6 +384,7 @@ DirectX::XMFLOAT3 AnimatedObject::GetBonePosition(std::string boneName)
 		}
 	}
 
+
 	// ˆê’v‚·‚éƒ{[ƒ“‚ª‚È‚¢ê‡ 0,0,0 ‚ğ•Ô‚·
 	return { 0,0,0 };
 }

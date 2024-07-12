@@ -1,6 +1,7 @@
 #include "Player.h"
 
 #include "PlayerState.h"
+#include "../../../../../Library/3D/CameraManager.h"
 #include "../../Library/Input/InputManager.h"
 #include "../../Library/3D/Camera.h"
 #include "../../Library/Timer.h"
@@ -82,6 +83,26 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	attack4.threshold = { 1,0 };
 	attack4.loop = false;
 
+	Animator::Motion dodgeMae;
+	dodgeMae.motion = &animation[8];
+	dodgeMae.animationSpeed = 0.2f;
+	dodgeMae.threshold = { 0,1 };
+
+	Animator::Motion dodgeUsiro;
+	dodgeUsiro.motion = &animation[10];
+	dodgeUsiro.animationSpeed = 0.2f;
+	dodgeUsiro.threshold = { 0,-1 };
+
+	Animator::Motion dodgeLeft;
+	dodgeLeft.motion = &animation[9];
+	dodgeLeft.animationSpeed = 0.2f;
+	dodgeLeft.threshold = { -1,0 };
+
+	Animator::Motion dodgeRight;
+	dodgeRight.motion = &animation[7];
+	dodgeRight.animationSpeed = 0.2f;
+	dodgeRight.threshold = { 1,0 };
+
 	Animator::BlendTree walkTree;
 	walkTree.motions.emplace_back(idle);
 	walkTree.motions.emplace_back(walkMae);
@@ -99,6 +120,16 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	runTree.parameters[0] = "moveX";
 	runTree.parameters[1] = "moveY";
 
+	Animator::BlendTree dodgeTree;
+	dodgeTree.motions.emplace_back(idle);
+	dodgeTree.motions.emplace_back(dodgeMae);
+	dodgeTree.motions.emplace_back(dodgeUsiro);
+	dodgeTree.motions.emplace_back(dodgeLeft);
+	dodgeTree.motions.emplace_back(dodgeRight);
+	dodgeTree.maxSeconds = 1.033333f;
+	dodgeTree.parameters[0] = "moveX";
+	dodgeTree.parameters[1] = "moveY";
+
 	Animator::State walkState;
 	walkState.object = Animator::MakeObjPointer(walkTree);
 	walkState.type = Animator::State::BLEND_TREE;
@@ -109,6 +140,9 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 
 		if (animator.GetParameter<bool>("attack"))
 			return &animator.GetState("attack1");
+
+		if (animator.GetParameter<bool>("dodge"))
+			return &animator.GetState("dodge");
 
 		return nullptr;
 		};
@@ -124,6 +158,9 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 		if (animator.GetParameter<bool>("attack"))
 			return &animator.GetState("attack1");
 
+		if (animator.GetParameter<bool>("dodge"))
+			return &animator.GetState("dodge");
+
 		return nullptr;
 		};
 
@@ -132,10 +169,15 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	attack1State.type = Animator::State::MOTION;
 	attack1State.transitions = STATE_FUNC(animator) {
 		if (animator.GetParameter<bool>("endAttack"))
-			return &animator.GetState("walk");
+			return !animator.GetParameter<bool>("run") ?
+			&animator.GetState("walk") :
+			&animator.GetState("run");
 
 		if (animator.GetParameter<bool>("attack"))
 			return &animator.GetState("attack2");
+
+		if (animator.GetParameter<bool>("dodge"))
+			return &animator.GetState("dodge");
 
 		return nullptr;
 	};
@@ -145,10 +187,15 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	attack2State.type = Animator::State::MOTION;
 	attack2State.transitions = STATE_FUNC(animator) {
 		if (animator.GetParameter<bool>("endAttack"))
-			return &animator.GetState("walk");
+			return !animator.GetParameter<bool>("run") ?
+			&animator.GetState("walk") :
+			&animator.GetState("run");
 
 		if (animator.GetParameter<bool>("attack"))
 			return &animator.GetState("attack3");
+
+		if (animator.GetParameter<bool>("dodge"))
+			return &animator.GetState("dodge");
 
 		return nullptr;
 	};
@@ -158,10 +205,16 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	attack3State.type = Animator::State::MOTION;
 	attack3State.transitions = STATE_FUNC(animator) {
 		if (animator.GetParameter<bool>("endAttack"))
-			return &animator.GetState("walk");
+			return !animator.GetParameter<bool>("run") ?
+			&animator.GetState("walk") :
+			&animator.GetState("run");
 
 		if (animator.GetParameter<bool>("attack"))
 			return &animator.GetState("attack4");
+
+		if (animator.GetParameter<bool>("dodge"))
+			return &animator.GetState("dodge");
+
 		return nullptr;
 	};
 
@@ -170,7 +223,27 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	attack4State.type = Animator::State::MOTION;
 	attack4State.transitions = STATE_FUNC(animator) {
 		if (animator.GetParameter<bool>("endAttack"))
-			return &animator.GetState("walk");
+			return !animator.GetParameter<bool>("run") ?
+			&animator.GetState("walk") :
+			&animator.GetState("run");
+
+		if (animator.GetParameter<bool>("dodge"))
+			return &animator.GetState("dodge");
+
+		return nullptr;
+	};
+
+	Animator::State dodgeState;
+	dodgeState.object = Animator::MakeObjPointer(dodgeTree);
+	dodgeState.type = Animator::State::BLEND_TREE;
+	dodgeState.transitions =
+		STATE_FUNC(animator) {
+		if (animator.GetParameter<bool>("endDodge")) {
+			return !animator.GetParameter<bool>("run")?
+				&animator.GetState("walk"):
+				&animator.GetState("run");
+		}
+
 		return nullptr;
 	};
 
@@ -180,6 +253,7 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	animator.AddState("attack2", attack2State);
 	animator.AddState("attack3", attack3State);
 	animator.AddState("attack4", attack4State);
+	animator.AddState("dodge", dodgeState);
 	animator.EnableRootMotion("root");
 	animator.SetModelSceneView(&model->GetModelResource()->GetSceneView());
 	animator.SetEntryState("walk");
@@ -197,8 +271,6 @@ void Player::Initialize()
 void Player::Update()
 {
 	// 入力データ取得
-	Input();
-
 
 	// ステートマシン更新
 	stateMachine->Update();
@@ -207,6 +279,7 @@ void Player::Update()
 	CollisionVsEnemy();
 
 	// アニメーション更新
+	//SetAnimatorKeyFrame(keyFrame);
 	UpdateAnimationParam();
 
 	// 姿勢行列更新
@@ -216,8 +289,8 @@ void Player::Update()
 void Player::Render(bool isShadow)
 {
 	// Animatorを使ったモーション
-	ModelResource::KeyFrame keyFrame = animator.PlayAnimation(Timer::Instance().DeltaTime());
-	model->Render(transform, &keyFrame, isShadow);
+	animatorKeyFrame = animator.PlayAnimation(Timer::Instance().DeltaTime());
+	model->Render(transform, &animatorKeyFrame, isShadow);
 }
 
 void Player::DrawDebugImGui(int number) {
@@ -264,8 +337,11 @@ void Player::DrawDebugImGui(int number) {
 
 			if(ImGui::TreeNode(u8"定数値")) {
 				ImGui::DragFloat(u8"最大体力", &constant.maxHp);
+				ImGui::DragFloat(u8"歩き速度", &constant.walkSpeed,0.01f);
 				ImGui::DragFloat(u8"ダッシュ移行時間", &constant.shiftDashTimer,0.01f);
 				ImGui::DragFloat(u8"ダッシュ倍率", &constant.dashSpeed,0.01f);
+				ImGui::DragFloat(u8"回避強さ", &constant.dodgePower,0.01f);
+				ImGui::DragFloat(u8"回避時間", &constant.dodgeTime,0.01f);
 
 				static float rate = constant.dashDeadZone * 100;
 				if(ImGui::SliderFloat(u8"ダッシュデットゾーン", &rate,0,100,"%.0f%%"))
@@ -309,27 +385,16 @@ void Player::DrawDebugImGui(int number) {
 }
 
 void Player::UpdateAnimationParam() {
-	Vector2 move = GetInputMap<XMFLOAT2>("Move");
+	//Vector2 move = GetInputMap<XMFLOAT2>("Move");
 	//velocity.
 	//debug[u8"方向"] = move.vec_;
-	XMStoreFloat2(&move.vec_,XMVector2TransformCoord(XMLoadFloat2(&move.vec_),XMMatrixRotationZ(XMConvertToRadians(this->angle.y))));
+	//XMStoreFloat2(&move.vec_,XMVector2TransformCoord(XMLoadFloat2(&move.vec_),XMMatrixRotationZ(XMConvertToRadians(this->angle.y))));
 
 	//float ang = atan2f(move.y , move.x);
 	// float len = move.Length();
 	// move = { cosf(angle.y) * move.x,sinf(angle.y)x * move.y };
 
 	//debug[u8"角度"] = angle.y;
-
-	if (false) {
-		animator.SetParameter("moveX", -move.y);
-		animator.SetParameter("moveY", move.x);
-	}
-	else {
-		float len = move.Length();
-		if (len > 1) len = 1;
-		animator.SetParameter("moveX", 0.f);
-		animator.SetParameter("moveY", len);
-	}
 }
 
 // 入力データ取得
@@ -375,7 +440,7 @@ void Player::Input()
 	animator.SetParameter("run", inputRunData);
 
 	// --- 攻撃 ---
-	bool inputAttackData = input.GetKeyPressed(DirectX::Keyboard::Enter);
+	bool inputAttackData = input.GetMousePressed(MOUSEBUTTON_STATE::leftButton);
 
 	// コントローラー対応
 	if (input.IsGamePadConnected() && !inputAttackData)
@@ -385,43 +450,6 @@ void Player::Input()
 
 	inputMap["Attack"] = inputAttackData;
 	animator.SetParameter("attack", inputAttackData);
-	if(inputAttackData)ability.attackTimer = 0.2f;
-
-
-	// 攻撃の入力した時点で次の入力をする
-	// static bool inputAttack = false;
-	// if (bool* endAttack = std::get_if<bool>(&inputMap["EndAttack"])) {
-	// 	bool attack = *endAttack || animator.GetEndMotion() ? inputAttackData: false;
-	// 	if (attack) {
-	// 		attackTimer = constant.inputReceptionTime;
-	// 		if (ability.attackCount >= constant.maxAttackCombo) {
-	// 			attack      = false;
-	// 			attackTimer = 0;
-	// 		}
-	// 	}
-	// 	if (*endAttack) ability.attackCount = 0;
-	// 	if (ability.attackCount == 0) {
-	// 		inputMap["Attack"] = attack;
-	// 		animator.SetParameter("attack", attack);
-	// 		if(attack) ability.attackCount++;
-	// 	}
-	// 	else {
-	// 		if(attack)inputAttack = true;
-	// 		inputMap["Attack"] = inputAttack && animator.GetEndMotion();
-	// 		animator.SetParameter("attack", inputAttack && animator.GetEndMotion());
-	// 		if (inputAttack && animator.GetEndMotion()) {
-	// 			ability.attackCount++;
-	// 			inputAttack = false;
-	// 		}
-	// 	}
-	// }
-	//else inputMap["Attack"] = false;
-	//
-	// if(animator.GetEndMotion()) attackTimer -= dt;
-	// inputMap["EndAttack"] = attackTimer <= 0;
-	// animator.SetParameter("endAttack", attackTimer <= 0);
-	// debug[u8"攻撃時間"] = attackTimer;
-	// animator.GetVelocity()
 
 	// --- 回避 ---
 	bool dodge = input.GetKeyPressed(DirectX::Keyboard::Space);
@@ -430,6 +458,7 @@ void Player::Input()
 		dodge = input.GetGamePadButtonPress(GAMEPADBUTTON_STATE::a);
 
 	inputMap["Dodge"] = dodge;
+	animator.SetParameter("dodge", dodge);
 	//if (dodge) ability.dodgeTimer = constant.dodgeTime;
 
 	// // --- ドリンク ---
@@ -441,6 +470,17 @@ void Player::Input()
 	// 	inputDrinkData = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::x);
 	// }
 	// inputMap["Drink"] = inputDrinkData;
+
+	if (!CameraManager::Instance().IsCurrentCamera("LockOnCamera")||inputRunData) {
+		float len = inputMoveData.Length();
+		if (len > 1) len = 1;
+		animator.SetParameter("moveX", 0.f);
+		animator.SetParameter("moveY", len);
+	}
+	else if(!dodge) {
+		animator.SetParameter("moveX", inputMoveData.x);
+		animator.SetParameter("moveY", inputMoveData.y);
+	}
 }
 
 void Player::InputAttack() {
@@ -449,23 +489,41 @@ void Player::InputAttack() {
 	float frameDt = dt * 10;
 
 	// --- 攻撃 ---
-	bool inputAttackData = input.GetKeyPressed(DirectX::Keyboard::Enter);
+	inputMap["Attack"] = false;
+	animator.SetParameter("attack", false);
+	static bool at = false;
+	bool inputAttackData = input.GetMousePressed(MOUSEBUTTON_STATE::leftButton);
 
 	// コントローラー対応
 	if (input.IsGamePadConnected() && !inputAttackData) {
 		inputAttackData = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::x);
 	}
-	inputMap["Attack"] = inputAttackData;
 
-	if(inputAttackData) {
+	if(inputAttackData && !at) {
+		at = true;
 		ability.attackCount++;
 		if (ability.attackCount >= constant.maxAttackCombo) ability.attackTimer = 0;
 	}
 
-	if (animator.GetEndMotion()) ability.attackTimer -= dt;
+	if (animator.GetEndMotion()) {
+		inputMap["Attack"] = at;
+		animator.SetParameter("attack", at);
+		if (at) ability.attackTimer = constant.attackReceptionTime;
+		else ability.attackTimer -= dt;
+		at = false;
+	}
+
 	inputMap["EndAttack"] = ability.attackTimer <= 0 && animator.GetEndMotion();
 	animator.SetParameter("endAttack", ability.attackTimer <= 0 && animator.GetEndMotion());
-	//debug[u8"攻撃時間"] = ability.attackTimer;
+
+	// --- 回避 ---
+	bool dodge = input.GetKeyPressed(DirectX::Keyboard::Space);
+
+	if (input.IsGamePadConnected() && !dodge)
+		dodge = input.GetGamePadButtonPress(GAMEPADBUTTON_STATE::a);
+
+	if (ability.notAcceptTimer <= 0)inputMap["Dodge"] = dodge;
+	else ability.notAcceptTimer -= dt;
 
 	if(ability.attackTimer <= 0 && animator.GetEndMotion()) {
 		ability.attackTimer = 0;
@@ -553,18 +611,22 @@ void Player::CalcDodgeVelocity() {
 #if 1 // TODO::RootMotionを使うなら消す
 	float dt = Timer::Instance().DeltaTime();
 	Vector2 move = { velocity.x,velocity.z };
+	float rad = XMConvertToRadians(angle.y);
+
+	if(move.LengthSq() == 0) move = -Vector2(sinf(rad),cosf(rad));
 	move.Normalize();
 
-	if(move.LengthSq() == 0) {
-		move = -camera->GetFrontVec().xz();
-	}
+	Vector2 vel = move * constant.dodgePower * dt;
 
-	move *= constant.dodgePower * dt;
-
-	velocity.x += move.x;
-	velocity.z += move.y;
+	velocity.x += vel.x;
+	velocity.z += vel.y;
 
 	ability.dodgeTimer -= dt;
+
+	XMStoreFloat2(&move.vec_,XMVector2TransformCoord(XMLoadFloat2(&move.vec_),XMMatrixRotationZ(rad)));
+	animator.SetParameter("moveX", move.x);
+	animator.SetParameter("moveY", move.y);
+
 #else
 	velocity += animator.GetVelocity();
 
@@ -583,20 +645,28 @@ void Player::CalcRootAnimationVelocity() {
 // 移動している方向に向く
 void Player::Turn()
 {
+	Vector3 vel;
+
+	CameraManager& camera = CameraManager::Instance();
+	if (camera.IsCurrentCamera("LockOnCamera")&&!GetInputMap<bool>("Run")) {
+		vel = Vector3(Enemy::Instance().GetPos()) - Vector3(position);
+	}
+	else vel = velocity;
+
 	// 移動していなければ return 
-	if (Float3Length(velocity) < 0.0001f) return;
+	if (vel.Length() < 0.0001f) return;
+	vel.Normalize();
 
 	// プレイヤーの前方向ベクトルを取得(sinf, cosf を使用しているため勝手に単位ベクトルになっている)
-	DirectX::XMFLOAT3 front =
+	Vector3 front =
 	{
 		sinf(DirectX::XMConvertToRadians(angle.y)),
 		0,
 		cosf(DirectX::XMConvertToRadians(angle.y))
 	};
 	// 移動方向の単位ベクトル取得
-	DirectX::XMVECTOR N_VELOCITY = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&velocity));
-	DirectX::XMFLOAT3 normalizeVelocity;
-	DirectX::XMStoreFloat3(&normalizeVelocity, N_VELOCITY);
+
+	DirectX::XMFLOAT3 normalizeVelocity = vel.vec_;
 
 	// 内積を計算して回転角度を求める
 	float dot      = (front.x * normalizeVelocity.x) + (front.z * normalizeVelocity.z);

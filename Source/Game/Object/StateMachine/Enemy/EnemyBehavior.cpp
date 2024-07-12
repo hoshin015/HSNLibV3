@@ -8,6 +8,7 @@
 #include "../Player/Player.h"
 #include "../../../../../Library/Timer.h"
 #include "../../../../../Library/3D/CameraManager.h"
+#include "../../Effect/Rock/RockEffect.h"
 
 
 // --- 追跡行動の判定 ---
@@ -1120,16 +1121,49 @@ BT_ActionState EnemyTailAttack::Run(float elapsedTime)
 	if (owner_->IsDown() || owner_->IsDead())
 		return BT_ActionState::Failed;
 
+
+	//	--- 岩生成用変数 ---
+	static float rockNowTimer = 0.0f;
+	static float rockTimer = 0.0f;
+	const static float rockTime = 0.005f;
+	const static float rockStartTime = 1.35f;
+	const static float rockEndTime = 2.0f;
+
+
 	switch (step)
 	{
 	case 0:
 		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROTATION), false);
+
+		rockNowTimer = 0.0f;
+		rockTimer = 0.0f;
 
 		step++;
 		break;
 
 
 	case 1:
+		
+		rockNowTimer += Timer::Instance().DeltaTime();
+		if(rockStartTime < rockNowTimer && rockNowTimer < rockEndTime)
+		{
+			rockTimer += Timer::Instance().DeltaTime();
+			while (rockTimer > rockTime)
+			{
+				// 岩エフェクト生成
+				RockEffect::RockEmitter rock;
+				rock.position = Enemy::Instance().GetBonePosition("sippo_end");
+				rock.angle = { Math::RandomRange(0,359), Math::RandomRange(0,359),Math::RandomRange(0,359) };
+				rock.scale = { Math::RandomRange(0.25,0.5), Math::RandomRange(0.25,0.5),Math::RandomRange(0.25,0.5) };
+				rock.velocity = { Math::RandomRange(-2,2), Math::RandomRange(1,3), Math::RandomRange(-2,2) };
+				rock.gravity = 10;
+				rock.lifeTime = 3;
+				RockEffect::Instance().Emit(rock);
+
+				rockTimer -= rockTime;
+			}
+		}
+		
 
 		if (owner_->GetAnimationEndFlag())
 		{

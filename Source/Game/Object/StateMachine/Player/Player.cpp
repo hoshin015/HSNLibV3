@@ -15,6 +15,8 @@
 #include "../../../../../Library/Resource/Model/Animator.h"
 #include "../../../../UserInterface/DamageTextManager.h"
 
+#include "../../Source/Camera/CameraDerived.h"
+
 Player::Player(const char* filePath) : AnimatedObject(filePath)
 {
 	stateMachine = std::make_unique<StateMachine<Player>>();
@@ -30,78 +32,83 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	auto& animation = model->GetModelResource()->GetAnimationClips();
 
 	Animator::Motion idle;
-	idle.motion = &animation[1];
+	idle.motion = &animation[3];
 	idle.animationSpeed = 0.15f;
 	idle.threshold = { 0,0 };
 
 	Animator::Motion walkMae;
-	walkMae.motion = &animation[12];
+	walkMae.motion = &animation[16];
 	walkMae.animationSpeed = 0.2f;
 	walkMae.threshold = { 0,1 };
 
 	Animator::Motion walkUsiro;
-	walkUsiro.motion = &animation[14];
+	walkUsiro.motion = &animation[18];
 	walkUsiro.animationSpeed = 0.2f;
 	walkUsiro.threshold = { 0,-1 };
 
 	Animator::Motion walkLeft;
-	walkLeft.motion = &animation[11];
+	walkLeft.motion = &animation[15];
 	walkLeft.animationSpeed = 0.2f;
 	walkLeft.threshold = { -1,0 };
 
 	Animator::Motion walkRight;
-	walkRight.motion = &animation[13];
+	walkRight.motion = &animation[17];
 	walkRight.animationSpeed = 0.2f;
 	walkRight.threshold = { 1,0 };
 
 	Animator::Motion runMotion;
-	runMotion.motion = &animation[6];
+	runMotion.motion = &animation[9];
 	runMotion.animationSpeed = 0.2f;
 	runMotion.threshold = { 0,1 };
 
 	Animator::Motion attack1;
-	attack1.motion = &animation[2];
+	attack1.motion = &animation[4];
 	attack1.animationSpeed = 0.2f;
 	attack1.threshold = { 1,0 };
 	attack1.loop = false;
+	attack1.animationIndex = 4;
 
 	Animator::Motion attack2;
-	attack2.motion = &animation[3];
+	attack2.motion = &animation[5];
 	attack2.animationSpeed = 0.2f;
 	attack2.threshold = { 1,0 };
 	attack2.loop = false;
+	attack2.animationIndex = 5;
+
 
 	Animator::Motion attack3;
-	attack3.motion = &animation[4];
+	attack3.motion = &animation[6];
 	attack3.animationSpeed = 0.2f;
 	attack3.threshold = { 1,0 };
 	attack3.loop = false;
+	attack3.animationIndex = 6;
 
 	Animator::Motion attack4;
-	attack4.motion = &animation[5];
+	attack4.motion = &animation[7];
 	attack4.animationSpeed = 0.2f;
 	attack4.threshold = { 1,0 };
 	attack4.loop = false;
+	attack4.animationIndex = 7;
 
 	Animator::Motion dodgeMae;
-	dodgeMae.motion = &animation[8];
+	dodgeMae.motion = &animation[12];
 	dodgeMae.animationSpeed = 0.2f;
 	dodgeMae.threshold = { 0,1 };
 
 	Animator::Motion dodgeUsiro;
-	dodgeUsiro.motion = &animation[10];
+	dodgeUsiro.motion = &animation[14];
 	dodgeUsiro.animationSpeed = 0.2f;
 	dodgeUsiro.threshold = { 0,-1 };
 
 	Animator::Motion dodgeLeft;
-	dodgeLeft.motion = &animation[9];
+	dodgeLeft.motion = &animation[11];
 	dodgeLeft.animationSpeed = 0.2f;
-	dodgeLeft.threshold = { -1,0 };
+	dodgeLeft.threshold = { 1,0 };
 
 	Animator::Motion dodgeRight;
-	dodgeRight.motion = &animation[7];
+	dodgeRight.motion = &animation[13];
 	dodgeRight.animationSpeed = 0.2f;
-	dodgeRight.threshold = { 1,0 };
+	dodgeRight.threshold = { -1,0 };
 
 	Animator::BlendTree walkTree;
 	walkTree.motions.emplace_back(idle);
@@ -271,6 +278,51 @@ void Player::Initialize()
 void Player::Update()
 {
 	// 入力データ取得
+	// --- カメラ関連 ---
+	static bool cameraFlag = true;
+	InputManager& input = InputManager::Instance();
+	bool lockOn = input.GetMousePressed(MOUSEBUTTON_STATE::rightButton);
+	if(input.IsGamePadConnected()&&!lockOn) {
+		lockOn = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::rightStick);
+	}
+
+	if (lockOn) {
+		// --- プレイヤーカメラをセット ---
+		if (!cameraFlag) {
+			auto camera = CameraManager::Instance().GetCamera();
+			Vector3 position = camera->GetCurrentPosition();
+			Vector3 target = camera->GetTarget();
+			CameraManager::Instance().SetCurrentCamera("PlayerCamera");
+			auto ptr = std::dynamic_pointer_cast<PlayerCamera>(CameraManager::Instance().GetCamera());
+			ptr->OnSetCamera();
+			//camera = &playerCamera;
+			//playerCamera.OnSetCamera();
+			Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());
+
+			cameraFlag = !cameraFlag;
+		}
+
+		// --- ロックオンカメラをセット ---
+		else {
+			if (!Enemy::Instance().IsDead()) {
+				auto camera = CameraManager::Instance().GetCamera();
+				Vector3 position = camera->GetPosition();
+				Vector3 target = camera->GetTarget();
+				CameraManager::Instance().SetCurrentCamera("LockOnCamera");
+				camera = CameraManager::Instance().GetCamera();
+				camera->Initialize();
+				//camera = &lockOnCamera;
+				//camera->Initialize();
+
+				camera->SetPosition(position);
+				camera->SetCurrentPosition(position);
+				camera->SetTarget(target);
+				Player::Instance().SetCamera(camera.get());
+
+				cameraFlag = !cameraFlag;
+			}
+		}
+	}
 
 	// ステートマシン更新
 	stateMachine->Update();
@@ -290,6 +342,8 @@ void Player::Render(bool isShadow)
 {
 	// Animatorを使ったモーション
 	animatorKeyFrame = animator.PlayAnimation(Timer::Instance().DeltaTime());
+	currentKeyFrame = animator.GetKeyFrameIndex();
+	currentAnimationIndex = animator.GetMotionIndex();
 	model->Render(transform, &animatorKeyFrame, isShadow);
 }
 
@@ -455,7 +509,7 @@ void Player::Input()
 	bool dodge = input.GetKeyPressed(DirectX::Keyboard::Space);
 
 	if (input.IsGamePadConnected() && !dodge)
-		dodge = input.GetGamePadButtonPress(GAMEPADBUTTON_STATE::a);
+		dodge = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
 
 	inputMap["Dodge"] = dodge;
 	animator.SetParameter("dodge", dodge);
@@ -520,7 +574,7 @@ void Player::InputAttack() {
 	bool dodge = input.GetKeyPressed(DirectX::Keyboard::Space);
 
 	if (input.IsGamePadConnected() && !dodge)
-		dodge = input.GetGamePadButtonPress(GAMEPADBUTTON_STATE::a);
+		dodge = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
 
 	if (ability.notAcceptTimer <= 0)inputMap["Dodge"] = dodge;
 	else ability.notAcceptTimer -= dt;
@@ -738,8 +792,11 @@ void Player::CollisionVsEnemy()
 			}
 		}
 
+		// TODO:攻撃
 		// ===== 自分の攻撃と敵の体の当たり判定 =====
-		for(auto& playerAnimSphereCollision : model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSphereCollisions)
+
+		auto& anim = model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSphereCollisions;
+		for(auto& playerAnimSphereCollision : anim)
 		{
 			// 既にダメージを与えているかチェック
 			if (playerAnimSphereCollision.isDamaged) continue;

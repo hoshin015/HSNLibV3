@@ -7,6 +7,19 @@
 #include "../Player/Player.h"
 
 
+
+// ===== “G‹¤’Ê‚Ìˆ— ======================================================================================================================================================
+bool EnemyBaseBehavior::IsInterrupted()
+{
+	if (owner_->IsDown() || owner_->IsDead())
+		return true;
+
+	return false;
+}
+
+
+
+
 // --- ’ÇÕs“®‚Ì”»’è ---
 bool EnemyPursuitJudgment::Judgment()
 {
@@ -134,7 +147,7 @@ bool EnemyWanderJudgment::Judgment()
 BT_ActionState EnemyWanderAction::Run(float elapsedTime)
 {	
 	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
-	if (owner_->IsDown() || owner_->IsDead())
+	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
 
@@ -190,7 +203,7 @@ BT_ActionState EnemyWanderAction::Run(float elapsedTime)
 BT_ActionState EnemyIdleAction::Run(float elapsedTime)
 {
 	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
-	if (owner_->IsDown() || owner_->IsDead())
+	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
 
@@ -363,7 +376,7 @@ bool EnemyFrontJudgment::Judgment()
 BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 {
 	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
-	if (owner_->IsDown() || owner_->IsDead())
+	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
 
@@ -402,7 +415,7 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 {
 	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
-	if (owner_->IsDown() || owner_->IsDead())
+	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
 	switch (step)
@@ -519,7 +532,7 @@ BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 BT_ActionState EnemyBlessAction::Run(float elapsedTime)
 {
 	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
-	if (owner_->IsDown() || owner_->IsDead())
+	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
 
@@ -575,7 +588,7 @@ BT_ActionState EnemyBlessAction::Run(float elapsedTime)
 BT_ActionState EnemyThreatAction::Run(float elapsedTime)
 {
 	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
-	if (owner_->IsDown() || owner_->IsDead())
+	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
 
@@ -610,7 +623,7 @@ BT_ActionState EnemyThreatAction::Run(float elapsedTime)
 BT_ActionState EnemyRushAction::Run(float elapsedTime)
 {
 	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
-	if (owner_->IsDown() || owner_->IsDead())
+	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
 
@@ -689,7 +702,7 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 BT_ActionState EnemyStampAction::Run(float elapsedTime)
 {
 	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
-	if (owner_->IsDown() || owner_->IsDead())
+	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
 
@@ -738,7 +751,7 @@ BT_ActionState EnemyStampAction::Run(float elapsedTime)
 BT_ActionState EnemyBiteAction::Run(float elapsedTime)
 {
 	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
-	if (owner_->IsDown() || owner_->IsDead())
+	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
 
@@ -784,7 +797,7 @@ BT_ActionState EnemyBiteAction::Run(float elapsedTime)
 BT_ActionState EnemyRushingBiteAction::Run(float elapsedTime)
 {
 	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
-	if (owner_->IsDown() || owner_->IsDead())
+	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
 
@@ -848,7 +861,7 @@ BT_ActionState EnemyRushingBiteAction::Run(float elapsedTime)
 BT_ActionState EnemyAfterRushingBiteAction::Run(float elapsedTime)
 {
 	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
-	if (owner_->IsDown() || owner_->IsDead())
+	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
 
@@ -1067,7 +1080,7 @@ BT_ActionState EnemyDeadAction::Run(float elapsedTime)
 BT_ActionState EnemyTailAttack::Run(float elapsedTime)
 {
 	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
-	if (owner_->IsDown() || owner_->IsDead())
+	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
 	switch (step)
@@ -1099,7 +1112,7 @@ BT_ActionState EnemyTailAttack::Run(float elapsedTime)
 BT_ActionState EnemyScoopUpAction::Run(float elapsedTime)
 {	
 	// --- ƒ_ƒEƒ“/Ž€–Sˆ— ---
-	if (owner_->IsDown() || owner_->IsDead())
+	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
 	switch (step)

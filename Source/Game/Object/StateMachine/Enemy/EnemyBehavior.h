@@ -32,6 +32,16 @@ enum class MonsterAnimation
 };
 
 
+class EnemyBaseBehavior : public ActionBase<Enemy>
+{
+public:
+	EnemyBaseBehavior(Enemy* owner) : ActionBase(owner) {}
+	BT_ActionState Run(float elapsedTime) override { return BT_ActionState::Complete; };
+
+	bool IsInterrupted();
+};
+
+
 // --- 追跡行動の判定 ---
 class EnemyPursuitJudgment final : public JudgmentBase<Enemy>
 {
@@ -42,10 +52,10 @@ public:
 
 
 // --- 追跡行動 ---
-class EnemyPursuitAction final : public ActionBase<Enemy>
+class EnemyPursuitAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyPursuitAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyPursuitAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
@@ -89,19 +99,19 @@ public:
 
 
 // --- 徘徊行動 ---
-class EnemyWanderAction final : public ActionBase<Enemy>
+class EnemyWanderAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyWanderAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyWanderAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
 
 // --- 待機行動 ---
-class EnemyIdleAction final : public ActionBase<Enemy>
+class EnemyIdleAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyIdleAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyIdleAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
@@ -178,129 +188,129 @@ public:
 
 
 // ===== 大咆哮の行動 ======================================================================================================================================================
-class EnemyBigRoarAction final : public ActionBase<Enemy>
+class EnemyBigRoarAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyBigRoarAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyBigRoarAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
 
 
 // ===== 軸合わせの行動 ======================================================================================================================================================
-class EnemyAxisAlignmentAction final : public ActionBase<Enemy>
+class EnemyAxisAlignmentAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyAxisAlignmentAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyAxisAlignmentAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
 
 
 // ===== ブレスの行動 ======================================================================================================================================================
-class EnemyBlessAction final : public ActionBase<Enemy>
+class EnemyBlessAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyBlessAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyBlessAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
 
 
 // ===== 威嚇行動 ======================================================================================================================================================
-class EnemyThreatAction final : public ActionBase<Enemy>
+class EnemyThreatAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyThreatAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyThreatAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
 
 
 // ===== 突進行動 ======================================================================================================================================================
-class EnemyRushAction final : public ActionBase<Enemy>
+class EnemyRushAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyRushAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyRushAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
 
 
 // ===== 踏みつけ行動 ======================================================================================================================================================
-class EnemyStampAction final : public ActionBase<Enemy>
+class EnemyStampAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyStampAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyStampAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
 
 
 // ===== 噛みつき行動 ======================================================================================================================================================
-class EnemyBiteAction final : public ActionBase<Enemy>
+class EnemyBiteAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyBiteAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyBiteAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
 
 
 // ===== 踏み込み噛みつき行動 ======================================================================================================================================================
-class EnemyRushingBiteAction final : public ActionBase<Enemy>
+class EnemyRushingBiteAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyRushingBiteAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyRushingBiteAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
 
 
 // ===== 踏み込み噛みつき後の行動 ======================================================================================================================================================
-class EnemyAfterRushingBiteAction final : public ActionBase<Enemy>
+class EnemyAfterRushingBiteAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyAfterRushingBiteAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyAfterRushingBiteAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
 
 
 // ===== 怯み行動 ======================================================================================================================================================
-class EnemyFlinchAction final : public ActionBase<Enemy>
+class EnemyFlinchAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyFlinchAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyFlinchAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
 
 
 // ===== 死亡行動 ======================================================================================================================================================
-class EnemyDeadAction final : public ActionBase<Enemy>
+class EnemyDeadAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyDeadAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyDeadAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
 
 
 // ===== 尻尾回転行動 ======================================================================================================================================================
-class EnemyTailAttack final : public ActionBase<Enemy>
+class EnemyTailAttack final : public EnemyBaseBehavior
 {
 public:
-	EnemyTailAttack(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyTailAttack(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 
 
 
 // ===== 掬い上げ行動 ======================================================================================================================================================
-class EnemyScoopUpAction final : public ActionBase<Enemy>
+class EnemyScoopUpAction final : public EnemyBaseBehavior
 {
 public:
-	EnemyScoopUpAction(Enemy* owner) : ActionBase<Enemy>(owner) {}
+	EnemyScoopUpAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };

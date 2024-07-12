@@ -337,6 +337,7 @@ void Player::DrawDebugImGui(int number) {
 
 			if(ImGui::TreeNode(u8"定数値")) {
 				ImGui::DragFloat(u8"最大体力", &constant.maxHp);
+				ImGui::DragFloat(u8"歩き速度", &constant.walkSpeed,0.01f);
 				ImGui::DragFloat(u8"ダッシュ移行時間", &constant.shiftDashTimer,0.01f);
 				ImGui::DragFloat(u8"ダッシュ倍率", &constant.dashSpeed,0.01f);
 				ImGui::DragFloat(u8"回避強さ", &constant.dodgePower,0.01f);
@@ -439,7 +440,7 @@ void Player::Input()
 	animator.SetParameter("run", inputRunData);
 
 	// --- 攻撃 ---
-	bool inputAttackData = input.GetKeyPressed(DirectX::Keyboard::Enter);
+	bool inputAttackData = input.GetMousePressed(MOUSEBUTTON_STATE::leftButton);
 
 	// コントローラー対応
 	if (input.IsGamePadConnected() && !inputAttackData)
@@ -491,7 +492,7 @@ void Player::InputAttack() {
 	inputMap["Attack"] = false;
 	animator.SetParameter("attack", false);
 	static bool at = false;
-	bool inputAttackData = input.GetKeyPressed(DirectX::Keyboard::Enter);
+	bool inputAttackData = input.GetMousePressed(MOUSEBUTTON_STATE::leftButton);
 
 	// コントローラー対応
 	if (input.IsGamePadConnected() && !inputAttackData) {

@@ -36,8 +36,8 @@ public:
 		float maxHp = 10;
 
 		float shiftDashTimer = 0.4f;
-		float walkSpeed = 3;
-		float dashSpeed = 6;
+		float walkSpeed = 5;
+		float dashSpeed = 15;
 		float dashDeadZone = 0.7f;
 
 		float dodgePower = 15;

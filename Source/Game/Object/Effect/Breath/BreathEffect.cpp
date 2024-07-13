@@ -168,13 +168,15 @@ void BreathEffect::LightningGenerateUpdate()
 			l->SetUpdateType(LightningData::LightningFuncEnum::BreathCylinder);
 			l->SetColor({20.8, 2.8, 2.5, 1});
 
-			if (rand() % 2)
+			int rLightning = rand() % 6;
+			switch (rLightning)
 			{
-				LightningEffect::Instance().lightningMesh4->Register(l);
-			}
-			else
-			{
-				LightningEffect::Instance().lightningMesh5->Register(l);
+			case 0: LightningEffect::Instance().lightningMesh4->Register(l); break;
+			case 1: LightningEffect::Instance().lightningMesh5->Register(l); break;
+			case 2: LightningEffect::Instance().lightningMesh6->Register(l); break;
+			case 3: LightningEffect::Instance().lightningMesh7->Register(l); break;
+			case 4: LightningEffect::Instance().lightningMesh8->Register(l); break;
+			case 5: LightningEffect::Instance().lightningMesh9->Register(l); break;
 			}
 		}
 

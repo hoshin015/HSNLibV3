@@ -249,26 +249,26 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 #endif
 
 				// ‰¼’u‚«m
-				//Emitter* emitter                           = new Emitter();
-				//emitter->position                          = {0, 3, 3};
-				//emitter->emitterData.duration              = 5.0;
-				//emitter->emitterData.looping               = false;
-				//emitter->emitterData.burstsTime            = 0.1;
-				//emitter->emitterData.burstsCount           = 128;
-				//emitter->emitterData.particleKind          = pk_Dust;
-				//emitter->emitterData.particleLifeTimeMin   = 1.0f;
-				//emitter->emitterData.particleLifeTimeMax   = 1.0f;
-				//emitter->emitterData.particleSpeedMin      = 1.0f;
-				//emitter->emitterData.particleSpeedMax      = 5.0f;
-				//emitter->emitterData.particleSizeMin       = {0.1f, 0.1f};
-				//emitter->emitterData.particleSizeMax       = {0.4f, 0.4f};
-				//emitter->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
-				//emitter->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
-				//emitter->emitterData.particleGravity       = 1;
-				//emitter->emitterData.particleBillboardType = 0;
-				//emitter->emitterData.particleTextureType   = 0;
-				//emitter->emitterData.burstsOneShot   = 1;
-				//EmitterManager::Instance().Register(emitter);
+				Emitter* emitter                           = new Emitter();
+				emitter->position                          = {0, 3, 3};
+				emitter->emitterData.duration              = 5.0;
+				emitter->emitterData.looping               = false;
+				emitter->emitterData.burstsTime            = 0.1;
+				emitter->emitterData.burstsCount           = 128;
+				emitter->emitterData.particleKind          = pk_Dust;
+				emitter->emitterData.particleLifeTimeMin   = 1.0f;
+				emitter->emitterData.particleLifeTimeMax   = 1.0f;
+				emitter->emitterData.particleSpeedMin      = 1.0f;
+				emitter->emitterData.particleSpeedMax      = 5.0f;
+				emitter->emitterData.particleSizeMin       = {0.1f, 0.1f};
+				emitter->emitterData.particleSizeMax       = {0.4f, 0.4f};
+				emitter->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
+				emitter->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
+				emitter->emitterData.particleGravity       = 1;
+				emitter->emitterData.particleBillboardType = 0;
+				emitter->emitterData.particleTextureType   = 0;
+				emitter->emitterData.burstsOneShot   = 1;
+				EmitterManager::Instance().Register(emitter);
 			}
 			AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE2, Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, soundUpValue));
 
@@ -335,7 +335,7 @@ void SpecialEffect::GenerateLightning()
 
 		float life = rand() % 1 * 0.3f + 0.1f;
 		l->SetLifeTime(life);
-		float s = (rand() % 1) * 1.0f + 0.5f;
+		float s = (rand() % 1) * 5.0f + 1.5f;
 		l->SetScale({s + rand() % 3, s, s});
 
 		l->SetAngle({
@@ -347,13 +347,15 @@ void SpecialEffect::GenerateLightning()
 		l->SetUpdateType(LightningData::LightningFuncEnum::Bottom);
 		l->SetColor({20.8, 2.8, 2.5, 1});
 
-		if (rand() % 2)
+		int rLightning = rand() % 6;
+		switch (rLightning)
 		{
-			LightningEffect::Instance().lightningMesh4->Register(l);
-		}
-		else
-		{
-			LightningEffect::Instance().lightningMesh5->Register(l);
+		case 0: LightningEffect::Instance().lightningMesh4->Register(l); break;
+		case 1: LightningEffect::Instance().lightningMesh5->Register(l); break;
+		case 2: LightningEffect::Instance().lightningMesh6->Register(l); break;
+		case 3: LightningEffect::Instance().lightningMesh7->Register(l); break;
+		case 4: LightningEffect::Instance().lightningMesh8->Register(l); break;
+		case 5: LightningEffect::Instance().lightningMesh9->Register(l); break;
 		}
 	}
 }

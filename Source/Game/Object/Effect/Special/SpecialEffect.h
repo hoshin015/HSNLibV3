@@ -88,7 +88,7 @@ private:
 	float               rockIntervalTimer      = 0.0f;
 	float               rockIntervalTime       = 0.1f;
 	float               lightningIntervalTimer = 0.0f;
-	float               lightningIntervalTime  = 0.1f;
+	float               lightningIntervalTime  = 0.05f;
 
 	Easing::EasingValue chargeNovaHeatHazeMaxShiftDown =
 	{

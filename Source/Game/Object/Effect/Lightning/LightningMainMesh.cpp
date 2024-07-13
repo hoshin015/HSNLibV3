@@ -1,5 +1,6 @@
 #include "LightningMainMesh.h"
 #include "../../../../../Library/Timer.h"
+#include "../../StateMachine/Enemy/Enemy.h"
 
 
 
@@ -47,6 +48,12 @@ void LightningData::LightningBreathCylinderUpdate()
 {
 	float deltaTime = Timer::Instance().DeltaTime();
 	//position.z += 10 * deltaTime;
+}
+
+void LightningData::LightnignHeadAuraUpdate()
+{
+	DirectX::XMFLOAT3 pos = Enemy::Instance().GetBonePosition("sitaago_end");
+	position = pos;
 }
 
 

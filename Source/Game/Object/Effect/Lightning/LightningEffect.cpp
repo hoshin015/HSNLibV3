@@ -14,6 +14,10 @@ void LightningEffect::Initialize()
 	lightningMesh3 = std::make_unique<LightningMesh1>("Data/Fbx/Lightning/Area/LightningArea.model");
 	lightningMesh4 = std::make_unique<LightningMesh1>("Data/Fbx/Lightning/Bottom/1/bottomLightning.model");
 	lightningMesh5 = std::make_unique<LightningMesh1>("Data/Fbx/Lightning/Bottom/2/bottomLightning.model");
+	lightningMesh6 = std::make_unique<LightningMesh1>("Data/Fbx/Lightning/Bottom/3/bottomLightning.model");
+	lightningMesh7 = std::make_unique<LightningMesh1>("Data/Fbx/Lightning/Bottom/4/bottomLightning.model");
+	lightningMesh8 = std::make_unique<LightningMesh1>("Data/Fbx/Lightning/Bottom/5/bottomLightning.model");
+	lightningMesh9 = std::make_unique<LightningMesh1>("Data/Fbx/Lightning/Bottom/6/bottomLightning.model");
 
 	damageRadius = 2.0f;
 	damage = 20.0f;
@@ -228,6 +232,10 @@ void LightningEffect::Update()
 	lightningMesh3->Update();
 	lightningMesh4->Update();
 	lightningMesh5->Update();
+	lightningMesh6->Update();
+	lightningMesh7->Update();
+	lightningMesh8->Update();
+	lightningMesh9->Update();
 }
 
 void LightningEffect::Render(bool isShadow)
@@ -237,6 +245,10 @@ void LightningEffect::Render(bool isShadow)
 	lightningMesh3->Render(isShadow);
 	lightningMesh4->Render(isShadow);
 	lightningMesh5->Render(isShadow);
+	lightningMesh6->Render(isShadow);
+	lightningMesh7->Render(isShadow);
+	lightningMesh8->Render(isShadow);
+	lightningMesh9->Render(isShadow);
 }
 
 void LightningEffect::Emit(DirectX::XMFLOAT3 pos)

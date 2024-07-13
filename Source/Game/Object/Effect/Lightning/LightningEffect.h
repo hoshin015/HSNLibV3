@@ -45,6 +45,10 @@ public:
 	std::unique_ptr<LightningMesh1> lightningMesh3;
 	std::unique_ptr<LightningMesh1> lightningMesh4;
 	std::unique_ptr<LightningMesh1> lightningMesh5;
+	std::unique_ptr<LightningMesh1> lightningMesh6;
+	std::unique_ptr<LightningMesh1> lightningMesh7;
+	std::unique_ptr<LightningMesh1> lightningMesh8;
+	std::unique_ptr<LightningMesh1> lightningMesh9;
 private:
 	float lifeTime = 10.0f;
 

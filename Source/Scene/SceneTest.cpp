@@ -379,6 +379,29 @@ void SceneTest::Update()
 		SpecialEffect::Instance().Emit();
 	}
 
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F11))
+	{
+		LightningData* l = new LightningData();
+		l->SetLifeTime(0.1f);
+		l->SetEmissivePower(2.0f);
+		float rScale = rand() % 1 + 0.25f;
+		l->SetScale({ rScale, 0.5, rScale });
+		l->SetColor({ 1.5, 0.8, 0.8, 1 });
+		l->SetAngle({ static_cast<float>(rand() % 360), static_cast<float>(rand() % 360), static_cast<float>(rand() % 360) });
+		l->SetUpdateType(LightningData::LightningFuncEnum::HeadAura);
+		int rLightning = rand() % 6;
+		switch (rLightning)
+		{
+		case 0: LightningEffect::Instance().lightningMesh4->Register(l); break;
+		case 1: LightningEffect::Instance().lightningMesh5->Register(l); break;
+		case 2: LightningEffect::Instance().lightningMesh6->Register(l); break;
+		case 3: LightningEffect::Instance().lightningMesh7->Register(l); break;
+		case 4: LightningEffect::Instance().lightningMesh8->Register(l); break;
+		case 5: LightningEffect::Instance().lightningMesh9->Register(l); break;
+		}
+	}
+
+
 	LightningEffect::Instance().Update();
 	RockEffect::Instance().Update();
 	BreathEffect::Instance().Update();
@@ -480,8 +503,8 @@ void SceneTest::Render()
 		{
 			Enemy::Instance().DrawDebugPrimitive();
 			Player::Instance().DrawDebugPrimitive();
+			EffectDamageManager::Instance().Render();
 		}
-		EffectDamageManager::Instance().Render();
 		Enemy::Instance().DrawDebug();
 		DebugPrimitive::Instance().Render();
 

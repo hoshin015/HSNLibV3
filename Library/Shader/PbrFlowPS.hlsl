@@ -127,7 +127,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     directionSpecular += SpecularIBL(N, E, roughness, F0, lutGgx, specularPmrem, samplerStates[_linearSampler]);
 
 	// 色生成(エミッシブもここで追加)
-    float3 finalColor = directionDiffuse + directionSpecular + emissiveColor;
+    float3 finalColor = directionDiffuse + directionSpecular + (emissiveColor * 3.0f);
     finalColor *= pin.color.rgb;
     finalColor = pow(finalColor, 1.0f / GammaFactor);
     return float4(finalColor, albedoColor.a);

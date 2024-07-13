@@ -283,6 +283,7 @@ void LockOnCamera::Update()
 		//	break;
 
 		target = enemyPos;	// 目標
+		target.y += 3.0f;
 
 		// 敵とプレイヤーとカメラを一直線に並べる
 		Vector3 vec = playerPos - enemyPos;	// 敵からプレイヤーへのベクトル

@@ -23,7 +23,7 @@ void PlayerCamera::Initialize()
 
 	// 勝手に range 変えてます
 	//range = 13.0f;
-	range = 28.0f;
+	range = 18.0f;
 
 	height = 6.0f;
 	fixedCursor = true;
@@ -33,6 +33,7 @@ void PlayerCamera::Initialize()
 	Vector3 playerVelocity = Vector3::Normalize(Player::Instance().GetVelocity());	// プレイヤーの移動ベクトル
 	Vector3 offset = { playerVelocity.x, height, playerVelocity.z };
 	target = position + offset;
+	currentTarget = target;
 }
 
 
@@ -49,9 +50,11 @@ void PlayerCamera::Update()
 	{
 		float deltaTime = Timer::Instance().DeltaTime();
 
-		Vector3 playerPos = Player::Instance().GetPos();	// プレイヤーの座標
+		Player& player = Player::Instance();
+		Vector3 playerPos = player.GetPos();	// プレイヤーの座標
 		Vector3 offset = { 0.0f, height, 0.0f };
-		target = playerPos + offset;
+		Vector3 velocity = player.GetVelocity();
+		target = playerPos + offset + Vector3::Normalize(velocity) * 2.0f/* * 500.0f * velocity.Length()*/;
 
 
 		// --- カーソルを固定するか ---
@@ -65,6 +68,7 @@ void PlayerCamera::Update()
 
 		// --- 今の位置を本来あるべき位置へ補完し続ける ---
 		currentPosition = Vector3::Lerp(currentPosition, position, t);
+		currentTarget = Vector3::Lerp(currentTarget, target, 0.1f);
 
 
 
@@ -104,17 +108,17 @@ void PlayerCamera::Update()
 			position = result.position;
 		}
 
-		// --- 待機場所 ---
-		result = {};
-		if (StageManager::Instance().RayCast(3, target.vec_, position.vec_, result))
-		{
-			currentPosition = result.position;
-			position = result.position;
-		}
+		//// --- 待機場所 ---
+		//result = {};
+		//if (StageManager::Instance().RayCast(3, target.vec_, position.vec_, result))
+		//{
+		//	currentPosition = result.position;
+		//	position = result.position;
+		//}
 
 
 		// --- カメラ情報の更新 ---
-		CameraBase::Update(currentPosition + shakeOffset, target, up, fov, nearZ, farZ, aspect);
+		CameraBase::Update(currentPosition/*position*/ + shakeOffset, currentTarget, up, fov, nearZ, farZ, aspect);
 
 		break;
 	}
@@ -230,6 +234,7 @@ void PlayerCamera::OnFixedCursor(float deltaTime)
 Vector3 PlayerCamera::OnShake(const Vector3& intensity)
 {
 	Vector3 result;
+	float shakePower = CameraManager::Instance().shakePower;
 	result = rightVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.x;
 	result = upVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.y;
 	result = frontVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.z;
@@ -252,7 +257,7 @@ void PlayerCamera::CalcPositionFromAngle(const Vector3& position)
 void LockOnCamera::Initialize()
 {
 	height = 7.0f;
-	range = 30.0f;
+	range = 18.0f;
 }
 
 void LockOnCamera::Update()
@@ -310,7 +315,8 @@ void LockOnCamera::Update()
 		}
 
 
-		CameraBase::Update(position + shakeOffset, target, up, fov, nearZ, farZ, aspect);
+		currentPosition = position;
+		CameraBase::Update(currentPosition + shakeOffset, target, up, fov, nearZ, farZ, aspect);
 
 		break;
 	}
@@ -339,6 +345,7 @@ void LockOnCamera::DrawDebugGui()
 Vector3 LockOnCamera::OnShake(const Vector3& intensity)
 {
 	Vector3 result;
+	float shakePower = CameraManager::Instance().shakePower;
 	result = rightVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.x;
 	result = upVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.y;
 	result = frontVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.z;

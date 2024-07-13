@@ -26,7 +26,9 @@ void EnemyBaseBehavior::OnEndAction()
 {
 	step = 0;
 	owner_->runTimer_ = 0.0f;
-	owner_->actionCount++;	// 行動回数を加算
+
+	if (owner_->IsFoundPlayer())
+		owner_->actionCount++;	// 行動回数を加算
 }
 
 
@@ -71,6 +73,7 @@ BT_ActionState EnemyPursuitAction::Run(float elapsedTime)
 	case 0:
 
 		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);	// アニメーションの設定
+		owner_->runTimer_ = 5.0f;
 
 		step++;
 		break;
@@ -96,11 +99,18 @@ BT_ActionState EnemyPursuitAction::Run(float elapsedTime)
 		DirectX::XMFLOAT3 moveVec = vec * moveSpeed;
 		owner_->Move(moveVec, owner_->runSpeed_);
 
+		owner_->runTimer_ -= elapsedTime;
+		if (owner_->runTimer_ < 0.0f)
+		{
+			OnEndAction();
+			return BT_ActionState::Failed;
+		}
+
 
 		// --- プレイヤーに近づいたら ---
 		if (length < 10.0f)
 		{
-			step = 0;
+			OnEndAction();
 			return BT_ActionState::Complete;    // 追跡完了
 		}
 
@@ -391,7 +401,7 @@ bool EnemyFrontJudgment::Judgment()
 // ===== 大咆哮の判定 ======================================================================================================================================================
 bool EnemyBigRoarJudgment::Judgment()
 {
-	if (owner_->actionCount > owner_->roarNeededActionCount)
+	if (owner_->IsFoundPlayer() && owner_->actionCount > owner_->roarNeededActionCount)
 		return true;
 
 	return false;
@@ -399,6 +409,83 @@ bool EnemyBigRoarJudgment::Judgment()
 
 
 
+// ===== 足元の判定 ======================================================================================================================================================
+bool EnemyFootJudgment::Judgment()
+{
+	Vector3 position = owner_->GetPos();
+	Vector3 vec = position - Player::Instance().GetPos();
+	float length = vec.Length();
+	if (length < 3.0f)
+		return true;
+
+	return false;
+}
+
+
+// ===== 左右の判定 ======================================================================================================================================================
+bool EnemyRightJudgment::Judgment()
+{
+	Matrix R;
+	R.MakeRotationFromQuaternion(owner_->quaternion_);
+	Vector3 right = R.v_[0].xyz();
+	Vector3 vec = Player::Instance().GetPos();
+	vec = vec - owner_->GetPos();
+	vec.Normalize();
+	float dot = right.Dot(vec);
+
+	// --- 正面 ---
+	if (dot > 0.5f || dot < -0.5f)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+
+// ===== 踏み込み噛みつきが終わったかの判定 ======================================================================================================================================================
+bool EnemyEndRushingBiteJudgment::Judgment()
+{
+	if (owner_->endRushingBite)
+	{
+		owner_->endRushingBite = false;
+		return true;
+	}
+
+	return false;
+}
+
+
+
+// ===== 後ろの判定 ======================================================================================================================================================
+bool EnemyBehindJudgment::Judgment()
+{
+	Vector3 front = owner_->GetFrontVec();
+	Vector3 vec = Vector3(Player::Instance().GetPos()) - owner_->GetPos();
+	vec.Normalize();
+	float dot = front.Dot(vec);
+	if (dot < 0.0f)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+
+// ===== 覚醒の判定 ======================================================================================================================================================
+bool EnemyAwakeJudgment::Judgment()
+{
+	if (!owner_->IsAwake() && owner_->GetHP() < owner_->GetMaxHP() * 0.5f)
+	{
+		owner_->SetAwake(true);
+		return true;
+	}
+
+	return false;
+}
 
 
 
@@ -416,7 +503,6 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 		// --- 初期設定 ---
 	case 0:
 		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROAR_BIG), false);
-		owner_->SetFoundPlayer(true); // プレイヤーを発見
 
 		step++;
 		break;
@@ -463,7 +549,6 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 			OnEndAction();
 			ResetActionCount();
 			owner_->bigRoarTimer = 0.0f;	// ラジアルブラー用タイマーをリセット
-			step = 0;
 			return BT_ActionState::Complete;
 		}
 
@@ -774,11 +859,6 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	// --- 突進終わり ---
 	case 3:
 	{
-		// --- 正面へ移動 ---
-		Vector3 position = owner_->GetPos();
-		position += owner_->targetVec * owner_->GetRushEndSpeed() * elapsedTime;
-		owner_->SetPos(position.vec_);
-
 		if(!isEndRock)
 		{
 			for(int i = 0; i < 100; i++)
@@ -837,8 +917,9 @@ BT_ActionState EnemyStampAction::Run(float elapsedTime)
 	case 1:
 
 		owner_->runTimer_ -= elapsedTime;
-		if (owner_->runTimer_ < 0.0f)
+		if (owner_->runTimer_ < 0.0f)	// 踏みつけた時
 		{
+			CameraManager::Instance().shakeTimer = 0.5f;
 			owner_->PlayRockEffect();
 			owner_->runTimer_ = 0.0f;
 			step++;
@@ -918,7 +999,6 @@ BT_ActionState EnemyRushingBiteAction::Run(float elapsedTime)
 		return BT_ActionState::Failed;
 
 
-
 	switch (step)
 	{
 	case 0:
@@ -963,6 +1043,7 @@ BT_ActionState EnemyRushingBiteAction::Run(float elapsedTime)
 	if (owner_->GetAnimationEndFlag())
 	{
 		OnEndAction();
+		owner_->endRushingBite = true;
 		return BT_ActionState::Complete;
 	}
 
@@ -1303,6 +1384,149 @@ BT_ActionState EnemyScoopUpAction::Run(float elapsedTime)
 
 	}
 
+
+	return BT_ActionState::Run;
+}
+
+
+
+// ===== タックル ======================================================================================================================================================
+BT_ActionState EnemyTackleAction::Run(float elapsedTime)
+{
+	// --- ダウン/死亡処理 ---
+	if (IsInterrupted())
+		return BT_ActionState::Failed;
+
+
+	switch (step)
+	{
+	case 0:
+
+		// --- この時点で 踏みつけ 左右タックル 威嚇 何もしない を決める ---
+	{
+		// --- 正面と右方向の取得 ---
+		Matrix R;
+		R.MakeRotationFromQuaternion(owner_->quaternion_);
+		Vector3 right = R.v_[0].xyz();
+
+		Vector3 playerPos = Player::Instance().GetPos();
+		Vector3 vec = playerPos - owner_->GetPos();
+		float length = vec.Length();
+		vec.Normalize();
+
+
+		// --- 右方向との内積 ---
+		float dotR = right.Dot(vec);
+		if (dotR > 0.5f)	// 横にいたらタックル
+		{
+			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TACKLE_RIGHT), false);
+			step = 1;
+			owner_->runTimer_ = 0.25f;
+			break;
+		}
+
+		else if (dotR < -0.5f)
+		{
+			// --- 右タックル ---
+			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TACKLE_LEFT), false);
+			step = 2;
+			owner_->runTimer_ = 0.25f;
+			break;
+		}
+
+		break;
+	}
+
+	case 1:	// 右タックル
+	{
+		owner_->runTimer_ -= elapsedTime;
+
+		if (owner_->runTimer_ < 0.0f)
+		{
+			Matrix R;
+			R.MakeRotationFromQuaternion(owner_->quaternion_);
+			Vector3 right = R.v_[0].xyz();
+
+			owner_->Move(right, 0.1f);
+		}
+
+		// --- アニメーションが終わったら終了 ---
+		if (owner_->GetAnimationEndFlag())
+		{
+			OnEndAction();
+			return BT_ActionState::Complete;
+		}
+
+		break;
+	}
+
+
+	case 2:	// 左タックル
+	{
+		owner_->runTimer_ -= elapsedTime;
+
+		if (owner_->runTimer_ < 0.0f)
+		{
+			Matrix R;
+			R.MakeRotationFromQuaternion(owner_->quaternion_);
+			Vector3 left = -R.v_[0].xyz();
+
+			owner_->Move(left, 0.1f);
+		}
+
+		// --- アニメーションが終わったら終了 ---
+		if (owner_->GetAnimationEndFlag())
+		{
+			OnEndAction();
+			return BT_ActionState::Complete;
+		}
+
+		break;
+	}
+
+	}
+
+	return BT_ActionState::Run;
+}
+
+
+
+// ===== 中央へ移動 ======================================================================================================================================================
+BT_ActionState EnemyMoveCenterAction::Run(float elapsedTime)
+{	
+	// --- ダウン/死亡処理 ---
+	if (IsInterrupted())
+		return BT_ActionState::Failed;
+
+	switch (step)
+	{
+	case 0:
+
+		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
+		step++;
+
+		break;
+
+
+	case 1:
+	{
+		Vector3 moveVec = Vector3(0.0f, 0.0f, 0.0f) - owner_->GetPos();
+		if (moveVec.Length() < 1.0f)
+		{
+			OnEndAction();
+			return BT_ActionState::Complete;
+		}
+
+		moveVec.Normalize();
+
+		owner_->RotateToTargetVec(moveVec.vec_, 0.1f);
+		Vector3 front = owner_->GetFrontVec();
+		owner_->Move(front, owner_->runSpeed_);
+
+		break;
+	}
+
+	}
 
 	return BT_ActionState::Run;
 }

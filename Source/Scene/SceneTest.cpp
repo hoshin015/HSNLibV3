@@ -71,15 +71,16 @@ void SceneTest::Initialize()
 #else
 	StageMain*    stageMain    = new StageMain("Data/Fbx/StageMain/StageMain.model");
 	stageMain->SetScale({ stageScale, stageScale, stageScale });
-	StageMain* stage = new StageMain("./Data/Fbx/Stage/StageCollision.fbx");
+	StageMain* stage = new StageMain("./Data/Fbx/Stage/StageCollision2.model");
+	stage->GetModel()->GetModelResource()->SetScale(4.0f);
 #endif
 	stageManager.Register(stageMain);
 	stageManager.Register(stage);
 	StageMain* StageFence = new StageMain("Data/Fbx/StageFence/StageFence.model");
 	StageFence->SetScale({ stageScale, stageScale, stageScale });
 	stageManager.Register(StageFence);
-	StageMain* stage2 = new StageMain("./Data/Fbx/Stage/StageCollision1.fbx");
-	stageManager.Register(stage2);
+	//StageMain* stage2 = new StageMain("./Data/Fbx/Stage/StageCollision1.fbx");
+	//stageManager.Register(stage2);
 
 	// --- buffer Œn‰Šú‰» ---
 	bitBlockTransfer = std::make_unique<FullScreenQuad>();
@@ -636,7 +637,10 @@ void SceneTest::DrawDebugGUI()
 				Vector3 target = camera->GetTarget();
 				CameraManager::Instance().SetCurrentCamera("PlayerCamera");
 				auto ptr = std::dynamic_pointer_cast<PlayerCamera>(CameraManager::Instance().GetCamera());
-				ptr->OnSetCamera();
+				ptr->SetCurrentPosition(position);
+				ptr->SetTarget(target);
+				ptr->currentTarget = target;
+				//ptr->OnSetCamera();
 				//camera = &playerCamera;
 				//playerCamera.OnSetCamera();
 				Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());

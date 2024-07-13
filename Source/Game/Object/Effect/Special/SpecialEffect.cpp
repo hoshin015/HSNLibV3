@@ -167,9 +167,8 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 			if (lifeTimer >= firstNovaTime)
 			{
 				// ƒJƒƒ‰—h‚ç‚µ
-				playerCamera->SetShakePower(2);
-				//playerCamera->SetShakeTimer(chargeNovaTime);
 				CameraManager::Instance().shakeTimer = chargeNovaTime;
+				CameraManager::Instance().shakePower = 2.0f;
 
 				radialBlur->SetIsRadial(false);
 				lifeTimer         = 0.0f;

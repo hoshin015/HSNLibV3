@@ -159,6 +159,17 @@ public:
 
 
 
+// ===== 足元の判定 ======================================================================================================================================================
+class EnemyFootJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyFootJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
+
 // ===== 怯みの判定 ======================================================================================================================================================
 class EnemyFlinchJudgment final : public JudgmentBase<Enemy>
 {
@@ -189,11 +200,51 @@ public:
 
 
 
+// ===== 左右の判定 ======================================================================================================================================================
+class EnemyRightJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyRightJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
+// ===== 後ろの判定 ======================================================================================================================================================
+class EnemyBehindJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyBehindJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
 // ===== 大咆哮の判定 ======================================================================================================================================================
 class EnemyBigRoarJudgment final : public JudgmentBase<Enemy>
 {
 public:
 	EnemyBigRoarJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
+// ===== 踏み込み噛みつきが終わったかの判定 ======================================================================================================================================================
+class EnemyEndRushingBiteJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyEndRushingBiteJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
+// ===== 覚醒の判定 ======================================================================================================================================================
+class EnemyAwakeJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyAwakeJudgment(Enemy* owner) : JudgmentBase(owner) {}
 	bool Judgment() override;
 };
 
@@ -329,5 +380,25 @@ class EnemyScoopUpAction final : public EnemyBaseBehavior
 {
 public:
 	EnemyScoopUpAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== タックル ======================================================================================================================================================
+class EnemyTackleAction final : public EnemyBaseBehavior
+{
+public:
+	EnemyTackleAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== 中央へ移動 ======================================================================================================================================================
+class EnemyMoveCenterAction final : public EnemyBaseBehavior
+{
+public:
+	EnemyMoveCenterAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };

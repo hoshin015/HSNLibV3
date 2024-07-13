@@ -53,10 +53,13 @@ void Enemy::Initialize()
 
 
 	// --- ƒXƒe[ƒ^ƒX‚ÌÝ’è ---
-	hp = 1000.0f;
+	maxHP = 1000.0f;
+	hp = maxHP;
 	flinchValue = 100.0f;
 
 	alive = true;
+	awake = false;
+	endRushingBite = false;
 
 	actionCount = 0;
 
@@ -182,8 +185,12 @@ void Enemy::DrawDebugGui()
 
 	ImGui::Text(u8"s“®‰ñ” : %d", actionCount);
 	ImGui::Text(u8"™ôšK‚É•K—v‚Ès“®‰ñ” : %d", roarNeededActionCount);
+	ImGui::Text(u8"UŒ‚‰ñ” : %d", attackCount);
 	ImGui::DragFloat(u8"HP", &hp, 1.0f);
 	ImGui::DragFloat(u8"‹¯‚Ý’l", &flinchValue, 1.0f);
+	Vector3 playerPosition = Player::Instance().GetPos();
+	float playerLength = playerPosition.Length();
+	ImGui::Text(u8"ƒvƒŒƒCƒ„[‚Ì^‚ñ’†‚©‚ç‚Ì‹——£ : %f", playerLength);
 	ImGui::Separator();
 
 	ImGui::DragFloat3(u8"ƒXƒP[ƒ‹", &scale.x);
@@ -199,7 +206,6 @@ void Enemy::DrawDebugGui()
 	float theta = DirectX::XMConvertToDegrees(atan);
 	ImGui::Text(u8"Šp“x :%f", theta);
 
-	Vector3 playerPosition = Player::Instance().GetPos();
 	Vector3 vec = playerPosition - position;
 	vec.Normalize();
 
@@ -216,12 +222,13 @@ void Enemy::DrawDebugGui()
 
 void Enemy::DrawDebug()
 {
+//	DebugPrimitive::Instance().AddCylinder(position, 3.0f, 1.0f, { 1.0f, 0.0f, 0.0f, 1.0f });
 	DebugPrimitive::Instance().AddCylinder(position, searchRange_, 1.0f, { 1.0f, 0.0f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddCylinder({}, wanderRange, 5.0f, { 0.3f, 0.3f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddCylinder(position, shortRange, 2.0f, { 1.0f, 0.0f, 0.0f, 1.0f });
-	DebugPrimitive::Instance().AddCylinder(position, middleRange, 2.0f, { 0.0f, 1.0f, 0.0f, 1.0f });
-	DebugPrimitive::Instance().AddCylinder(position, longRange, 5.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddSphere(moveTargetPosition_.vec_, 1.0f, { 0.3f, 0.3f, 1.0f, 1.0f });
+//	DebugPrimitive::Instance().AddCylinder({}, wanderRange, 5.0f, { 0.3f, 0.3f, 1.0f, 1.0f });
+//	DebugPrimitive::Instance().AddCylinder(position, shortRange, 2.0f, { 1.0f, 0.0f, 0.0f, 1.0f });
+//	DebugPrimitive::Instance().AddCylinder(position, middleRange, 2.0f, { 0.0f, 1.0f, 0.0f, 1.0f });
+//	DebugPrimitive::Instance().AddCylinder(position, longRange, 5.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
+//	DebugPrimitive::Instance().AddSphere(moveTargetPosition_.vec_, 1.0f, { 0.3f, 0.3f, 1.0f, 1.0f });
 }
 
 
@@ -282,6 +289,10 @@ void Enemy::CollisionVSPlayer()
 
 				// --- ‚±‚±‚É“–‚½‚Á‚½Žž‚Ìˆ—‚ð‘‚­ ---
 				CameraManager::Instance().shakeTimer = 1.0f;
+				attackCount++;
+
+				Player::Instance().AbilityStatus().hp -= attackPower;
+
 				break;
 			}
 		}
@@ -399,7 +410,7 @@ bool Enemy::SearchPlayer()
 
 	// --- ’†‰›‚©‚ç—£‚ê‚Ä‚¢‚½‚ç ---
 	float playerLength = playerPosition.Length();
-	if (playerLength > 80.0f)
+	if (playerLength > 81.0f)
 		return false;
 
 	// --- ‹——£‚ª’T’m”ÍˆÍ“à‚È‚ç ---
@@ -414,6 +425,7 @@ bool Enemy::SearchPlayer()
 
 		if (dot > 0.0f)
 		{
+			foundPlayer = true;
 			return true;
 		}
 	}
@@ -495,6 +507,20 @@ void Enemy::PlayFireBress(float angle)
 
 
 
+enum
+{
+	FIND,
+	DEAD,
+	FLINCH,
+	AWAKE,
+	END_RUSHING_BITE,
+	BIG_ROAR,
+	BATTLE,
+	SCOUT,
+};
+
+
+
 // --- ƒrƒwƒCƒrƒAƒcƒŠ[‚Ì‰Šú‰» ---
 void Enemy::InitializeBehaviorTree()
 {
@@ -507,93 +533,143 @@ void Enemy::InitializeBehaviorTree()
 
 
 	// --- Å‰‚Ì”­Œ©Žž ---
-	aiTree_->AddNode("Root", "Find", 0, BT_SelectRule::Sequence, new EnemyBattleInitJudgment(this), nullptr);
+	aiTree_->AddNode("Root", "Find", FIND, BT_SelectRule::Sequence, new EnemyBattleInitJudgment(this), nullptr);
 	{
 		aiTree_->AddNode("Find", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
 		aiTree_->AddNode("Find", "BigRoar", 0, BT_SelectRule::Non, nullptr, new EnemyBigRoarAction(this));
 	}
 
 	// --- Ž€–S ---
-	aiTree_->AddNode("Root", "Dead", 1, BT_SelectRule::Non, new EnemyDeadJudgment(this), new EnemyDeadAction(this));
+	aiTree_->AddNode("Root", "Dead", DEAD, BT_SelectRule::Non, new EnemyDeadJudgment(this), new EnemyDeadAction(this));
 
 	// --- ‹¯‚Ý ---
-	aiTree_->AddNode("Root", "Flinch", 2, BT_SelectRule::Non, new EnemyFlinchJudgment(this), new EnemyFlinchAction(this));
+	aiTree_->AddNode("Root", "Flinch", FLINCH, BT_SelectRule::Non, new EnemyFlinchJudgment(this), new EnemyFlinchAction(this));
+
+
+	// --- ŠoÁˆÚs ---
+	aiTree_->AddNode("Root", "Awake", AWAKE, BT_SelectRule::Sequence, new EnemyAwakeJudgment(this), nullptr);
+	{
+		aiTree_->AddNode("Awake", "BigRoar", 0, BT_SelectRule::Non, nullptr, new EnemyBigRoarAction(this));
+		aiTree_->AddNode("Awake", "Move", 0, BT_SelectRule::Non, nullptr, new EnemyMoveCenterAction(this));
+		aiTree_->AddNode("Awake", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+		aiTree_->AddNode("Awake", "Awake", 0, BT_SelectRule::Non, nullptr, new EnemyBigRoarAction(this));
+	}
+
+
+	// --- “¥‚Ýž‚ÝŠš‚Ý‚Â‚«I‚í‚ès“® ---
+	aiTree_->AddNode("Root", "EndRushingBite", END_RUSHING_BITE, BT_SelectRule::Priority, new EnemyEndRushingBiteJudgment(this), nullptr);
+	{
+		// --- ‘«Œ³‚É‚¢‚½‚ç“¥‚Ý‚Â‚¯ ---
+		aiTree_->AddNode("EndRushingBite", "Stamp", 0, BT_SelectRule::Non, new EnemyFootJudgment(this), new EnemyStampAction(this));
+
+		// --- ‰¡‚É‚¢‚½‚çƒ^ƒbƒNƒ‹ ---
+		aiTree_->AddNode("EndRushingBite", "Tackle", 1, BT_SelectRule::Non, new EnemyRightJudgment(this), new EnemyTackleAction(this));
+
+		// --- Œã‚ë‚É‚¢‚½‚ç ---
+		aiTree_->AddNode("EndRushingBite", "TailAttack", 2, BT_SelectRule::Non, new EnemyBehindJudgment(this), new EnemyTailAttack(this));
+	}
 
 	// --- ‘å™ôšK ---
-	aiTree_->AddNode("Root", "BigRoar", 3, BT_SelectRule::Non, new EnemyBigRoarJudgment(this), new EnemyBigRoarAction(this));
+	aiTree_->AddNode("Root", "BigRoar", BIG_ROAR, BT_SelectRule::Non, new EnemyBigRoarJudgment(this), new EnemyBigRoarAction(this));
 
 	// --- í“¬ƒm[ƒh ---
-	aiTree_->AddNode("Root", "Battle", 4, BT_SelectRule::Priority, new EnemyBattleJudgment(this), nullptr);
+	aiTree_->AddNode("Root", "Battle", BATTLE, BT_SelectRule::Priority, new EnemyBattleJudgment(this), nullptr);
 	{
 		// --- UŒ‚ƒm[ƒh ---
-		aiTree_->AddNode("Battle", "Attack", 0, BT_SelectRule::Random, nullptr, nullptr);
+		aiTree_->AddNode("Battle", "Attack", 0, BT_SelectRule::Priority, nullptr, nullptr);
 		{
-			// --- ‰“‹——£ ---
-			aiTree_->AddNode("Attack", "LongRange", 0, BT_SelectRule::Random, /*new EnemyLongRangeJudgment(this)*/nullptr, nullptr);
+			// --- ‘«Œ³UŒ‚ ---
+			aiTree_->AddNode("Attack", "FootAttack", 0, BT_SelectRule::Random, new EnemyFootJudgment(this), nullptr);
 			{
-				// --- ƒuƒŒƒX ¨ ˆÐŠd ---
-				aiTree_->AddNode("LongRange", "Bless_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
-				{
-					aiTree_->AddNode("Bless_Threat", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
-					aiTree_->AddNode("Bless_Threat", "Bless", 0, BT_SelectRule::Non, nullptr, new EnemyBlessAction(this));
-					aiTree_->AddNode("Bless_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
-				}
-
-				// --- “Ëi ¨ ˆÐŠd ---
-				aiTree_->AddNode("LongRange", "Rush_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
-				{
-					aiTree_->AddNode("Rush_Threat", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
-					aiTree_->AddNode("Rush_Threat", "Rush", 0, BT_SelectRule::Non, nullptr, new EnemyRushAction(this));
-					aiTree_->AddNode("Rush_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
-				}
-
-				// --- •’Ê‚ÉÚ‹ß ---
-				aiTree_->AddNode("LongRange", "Pursuit", 0, BT_SelectRule::Non, nullptr, new EnemyPursuitAction(this));
-			}
-
-
-			// --- ’†‹——£ ---
-			aiTree_->AddNode("Attack", "MiddleRange", 0, BT_SelectRule::Random, new EnemyMiddleRangeJudgment(this), nullptr);
-			{
-				// --- Ž²‡‚í‚¹ ¨ “¥‚Ýž‚ÝŠš‚Ý‚Â‚« ¨ “¥‚Ý‚Â‚¯ or ƒ^ƒbƒNƒ‹ or ˆÐŠd ---
-				aiTree_->AddNode("MiddleRange", "Turn_RushingBite_Any", 0, BT_SelectRule::Sequence, nullptr, nullptr);
-				{
-					aiTree_->AddNode("Turn_RushingBite_Any", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
-					aiTree_->AddNode("Turn_RushingBite_Any", "RushingBite", 0, BT_SelectRule::Non, nullptr, new EnemyRushingBiteAction(this));
-					aiTree_->AddNode("Turn_RushingBite_Any", "AfterAction", 0, BT_SelectRule::Non, nullptr, new EnemyAfterRushingBiteAction(this));
-				}
-
-				// --- Ž²‡‚í‚¹ ¨ ‹d‚¢ã‚° ---
-				aiTree_->AddNode("MiddleRange", "Turn_ScoopUp", 0, BT_SelectRule::Sequence, nullptr, nullptr);
-				{
-					aiTree_->AddNode("Turn_ScoopUp", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
-					aiTree_->AddNode("Turn_ScoopUp", "ScoopUp", 0, BT_SelectRule::Non, nullptr, new EnemyScoopUpAction(this));
-				}
-			}
-
-
-			// --- ‹ß‹——£ ---
-			aiTree_->AddNode("Attack", "ShortRange", 0, BT_SelectRule::Random, new EnemyShortRangeJudgment(this), nullptr);
-			{
-				// --- “¥‚Ý‚Â‚¯ ¨ ˆÐŠd ---
-				aiTree_->AddNode("ShortRange", "Stamp_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
-				{
-					aiTree_->AddNode("Stamp_Threat", "Stamp", 0, BT_SelectRule::Non, nullptr, new EnemyStampAction(this));
-					aiTree_->AddNode("Stamp_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
-				}
-
-				// --- Ž²‡‚í‚¹ ¨ Šš‚Ý‚Â‚« ---
-				aiTree_->AddNode("ShortRange", "AxisAlignment_Bite", 0, BT_SelectRule::Sequence, nullptr, nullptr);
-				{
-					aiTree_->AddNode("AxisAlignment_Bite", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
-					aiTree_->AddNode("AxisAlignment_Bite", "Bite", 0, BT_SelectRule::Non, nullptr, new EnemyBiteAction(this));
-				}
+				// --- “¥‚Ý‚Â‚¯ ---
+				aiTree_->AddNode("FootAttack", "Stamp", 0, BT_SelectRule::Non, nullptr, new EnemyStampAction(this));
 
 				// --- K”ö‰ñ“] ---
-				aiTree_->AddNode("ShortRange", "TailAttack", 0, BT_SelectRule::Non, nullptr, new EnemyTailAttack(this));
+				aiTree_->AddNode("FootAttack", "TailAttack", 0, BT_SelectRule::Non, nullptr, new EnemyTailAttack(this));
+			}
 
-				// --- Šš‚Ý‚Â‚« ---
-				aiTree_->AddNode("ShortRange", "Bite", 0, BT_SelectRule::Non, new EnemyFrontJudgment(this), new EnemyBiteAction(this));
+			// --- ‚»‚êˆÈŠO ---
+			aiTree_->AddNode("Attack", "NormalAttack", 1, BT_SelectRule::Random, nullptr, nullptr);
+			{
+				// --- •’Ê‚ÉÚ‹ß ---
+				aiTree_->AddNode("NormalAttack", "Pursuit", 0, BT_SelectRule::Non, nullptr, new EnemyPursuitAction(this));
+
+				// --- ‰“‹——£ ---
+				aiTree_->AddNode("NormalAttack", "LongRange", 0, BT_SelectRule::Random, new EnemyLongRangeJudgment(this)/*nullptr*/, nullptr);
+				{
+					// --- ƒuƒŒƒX ¨ ˆÐŠd ---
+					aiTree_->AddNode("LongRange", "Bless_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+					{
+						aiTree_->AddNode("Bless_Threat", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+						aiTree_->AddNode("Bless_Threat", "Bless", 0, BT_SelectRule::Non, nullptr, new EnemyBlessAction(this));
+						aiTree_->AddNode("Bless_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
+					}
+
+					// --- “Ëi ¨ ˆÐŠd ---
+					aiTree_->AddNode("LongRange", "Rush_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+					{
+						aiTree_->AddNode("Rush_Threat", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+						aiTree_->AddNode("Rush_Threat", "Rush", 0, BT_SelectRule::Non, nullptr, new EnemyRushAction(this));
+						aiTree_->AddNode("Rush_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
+					}
+
+					// --- •’Ê‚ÉÚ‹ß ---
+					aiTree_->AddNode("LongRange", "Turn_Pursuit", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+					{
+						aiTree_->AddNode("Turn_Pursuit", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+						aiTree_->AddNode("Turn_Pursuit", "Pursuit", 0, BT_SelectRule::Non, nullptr, new EnemyPursuitAction(this));
+					}
+				}
+
+
+				// --- ’†‹——£ ---
+				aiTree_->AddNode("NormalAttack", "MiddleRange", 0, BT_SelectRule::Random, new EnemyMiddleRangeJudgment(this), nullptr);
+				{
+					// --- Ž²‡‚í‚¹ ¨ “¥‚Ýž‚ÝŠš‚Ý‚Â‚« ---
+					aiTree_->AddNode("MiddleRange", "Turn_RushingBite", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+					{
+						aiTree_->AddNode("Turn_RushingBite", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+						aiTree_->AddNode("Turn_RushingBite", "RushingBite", 0, BT_SelectRule::Non, nullptr, new EnemyRushingBiteAction(this));
+					}
+
+					// --- Ž²‡‚í‚¹ ¨ ‹d‚¢ã‚° ---
+					aiTree_->AddNode("MiddleRange", "Turn_ScoopUp", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+					{
+						aiTree_->AddNode("Turn_ScoopUp", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+						aiTree_->AddNode("Turn_ScoopUp", "ScoopUp", 0, BT_SelectRule::Non, nullptr, new EnemyScoopUpAction(this));
+					}
+
+					// --- ƒ^ƒbƒNƒ‹ ---
+					aiTree_->AddNode("MiddleRange", "Tackle", 0, BT_SelectRule::Non, new EnemyRightJudgment(this), new EnemyTackleAction(this));
+
+					// --- K”ö‰ñ“] ---
+					aiTree_->AddNode("MiddleRange", "TailAttack", 0, BT_SelectRule::Non, nullptr, new EnemyTailAttack(this));
+				}
+
+
+				// --- ‹ß‹——£ ---
+				aiTree_->AddNode("NormalAttack", "ShortRange", 0, BT_SelectRule::Random, new EnemyShortRangeJudgment(this), nullptr);
+				{
+					// --- “¥‚Ý‚Â‚¯ ¨ ˆÐŠd ---
+					aiTree_->AddNode("ShortRange", "Stamp_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+					{
+						aiTree_->AddNode("Stamp_Threat", "Stamp", 0, BT_SelectRule::Non, nullptr, new EnemyStampAction(this));
+						aiTree_->AddNode("Stamp_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
+					}
+
+					// --- Ž²‡‚í‚¹ ¨ Šš‚Ý‚Â‚« ---
+					aiTree_->AddNode("ShortRange", "AxisAlignment_Bite", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+					{
+						aiTree_->AddNode("AxisAlignment_Bite", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+						aiTree_->AddNode("AxisAlignment_Bite", "Bite", 0, BT_SelectRule::Non, nullptr, new EnemyBiteAction(this));
+					}
+
+					// --- K”ö‰ñ“] ---
+					aiTree_->AddNode("ShortRange", "TailAttack", 0, BT_SelectRule::Non, nullptr, new EnemyTailAttack(this));
+
+					// --- ƒ^ƒbƒNƒ‹ ---
+					aiTree_->AddNode("ShortRange", "Tackle", 0, BT_SelectRule::Non, new EnemyRightJudgment(this), new EnemyTackleAction(this));
+				}
 			}
 		}
 
@@ -604,7 +680,7 @@ void Enemy::InitializeBehaviorTree()
 
 
 	// --- –¢”­Œ©Žžƒm[ƒh ---
-	aiTree_->AddNode("Root", "Scout", 5, BT_SelectRule::Sequence, new EnemyScoutJudgment(this), nullptr);
+	aiTree_->AddNode("Root", "Scout", SCOUT, BT_SelectRule::Sequence, new EnemyScoutJudgment(this), nullptr);
 	{
 		// --- œpœj ---
 		aiTree_->AddNode("Scout", "Wander", 0, BT_SelectRule::Non, new EnemyWanderJudgment(this), new EnemyWanderAction(this));

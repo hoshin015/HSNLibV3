@@ -146,7 +146,7 @@ void spawn(uint id, inout Particle p)
 			float r = (rand(seed) * 360) * 3.14 / 180;
 
 			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
-			p.velocity.y        = -1 * particleSpeed;
+			p.velocity.y        = 1 * particleSpeed;
 			// x •ûŒü
 			particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
 			p.velocity.x  = cos(r) * particleSpeed;

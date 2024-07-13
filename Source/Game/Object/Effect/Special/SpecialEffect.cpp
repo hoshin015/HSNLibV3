@@ -264,7 +264,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 				emitter->emitterData.particleSizeMax       = {0.4f, 0.4f};
 				emitter->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
 				emitter->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
-				emitter->emitterData.particleGravity       = 1;
+				emitter->emitterData.particleGravity       = -1;
 				emitter->emitterData.particleBillboardType = 0;
 				emitter->emitterData.particleTextureType   = 0;
 				emitter->emitterData.burstsOneShot   = 1;

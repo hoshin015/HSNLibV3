@@ -592,7 +592,22 @@ BT_ActionState EnemyBlessAction::Run(float elapsedTime)
 
 	case 2:
 
-		BreathEffect::Instance().SetPosition(Enemy::Instance().GetBonePosition("sitaago"));
+		// --- 敵の方向ベクトル取得 ---
+		DirectX::XMFLOAT4X4 T = owner_->GetTransform();
+		DirectX::XMMATRIX Transform = DirectX::XMLoadFloat4x4(&T);
+		DirectX::XMFLOAT3 front;
+		DirectX::XMFLOAT3 right;
+		DirectX::XMStoreFloat3(&front, Transform.r[2]);
+
+		float positionLength = 2.0f;
+		DirectX::XMFLOAT3 breathPosition = Enemy::Instance().GetBonePosition("sitaago");
+		breathPosition += {
+					(front.x) * positionLength,
+					-1,
+					(front.z) * positionLength
+		};
+
+		BreathEffect::Instance().SetPosition(breathPosition);
 
 		// --- アニメーションが終わったら終了 ---
 		if (owner_->GetAnimationEndFlag())

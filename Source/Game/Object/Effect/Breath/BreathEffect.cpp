@@ -3,6 +3,7 @@
 #include "../../../../../Library/Timer.h"
 #include "../../../../../Library/Particle/EmitterManager.h"
 #include "../../../../../Library/Input/InputManager.h"
+#include "../EffectDamageManager.h"
 
 
 void BreathEffect::SetPosition(const DirectX::XMFLOAT3& position)
@@ -29,6 +30,11 @@ void BreathEffect::Initialize()
 	cylinderObject->GetModel()->dissolveConstant.edgeThreshold     = 0.3f;
 	cylinderObject->GetModel()->dissolveConstant.edgeColor         = {1.0f, 1.0f, 1.0f, 1.0f};
 	cylinderObject->GetModel()->data.emissivePower                 = 2.0f;
+
+	damageTimeStart = 0.1f;
+	damageTimeEnd = 1.5f;
+	damageRadius = 2.0f;
+	damage = 40.0f;
 }
 
 void BreathEffect::Update()
@@ -37,6 +43,44 @@ void BreathEffect::Update()
 
 	float deltaTime = Timer::Instance().DeltaTime();
 	lifeTimer += deltaTime;
+
+	// ダメージ判定
+	if (lifeTimer >= damageTimeStart && lifeTimer <= damageTimeEnd)
+	{
+		// 回転行列の計算
+		DirectX::XMMATRIX RotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(angle.x), DirectX::XMConvertToRadians(angle.y), DirectX::XMConvertToRadians(angle.z));
+		// デフォルトのベクトル（Z軸方向）
+		DirectX::XMVECTOR DefaultForward = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+		DirectX::XMVECTOR DefaultUp = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+		DirectX::XMVECTOR DefaultRight = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+		// 回転行列を適用してベクトルを回転
+		DirectX::XMVECTOR ForwardVector = XMVector3TransformCoord(DefaultForward, RotationMatrix);
+		DirectX::XMVECTOR UpVector = XMVector3TransformCoord(DefaultUp, RotationMatrix);
+		DirectX::XMVECTOR RightVector = XMVector3TransformCoord(DefaultRight, RotationMatrix);
+		DirectX::XMFLOAT3 forward;
+		DirectX::XMFLOAT3 up;
+		DirectX::XMFLOAT3 right;
+		DirectX::XMStoreFloat3(&forward, ForwardVector);
+		DirectX::XMStoreFloat3(&up, UpVector);
+		DirectX::XMStoreFloat3(&right, RightVector);
+
+
+		int sphereNum = 140 / (damageRadius * 2);
+		for(int i = 0; i < sphereNum; i++)
+		{
+			DirectX::XMFLOAT3 pos = position;
+			pos.x += (up.x) * damageRadius * i * 2.0f;
+			pos.z += (up.z) * damageRadius * i * 2.0f;
+
+			EffectDamageManager::EffectCollision effectCollision;
+			EffectDamageManager::EffectCollision::SphereData sphere;
+			sphere.position = pos;
+			sphere.radius = damageRadius;
+			sphere.damage = damage;
+			effectCollision.spheres.emplace_back(sphere);
+			EffectDamageManager::Instance().Register(effectCollision);
+		}
+	}
 
 	if (lifeTimer > lifeTime)
 	{

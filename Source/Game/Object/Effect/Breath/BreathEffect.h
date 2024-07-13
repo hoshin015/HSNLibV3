@@ -61,4 +61,10 @@ private:
 	DirectX::XMFLOAT3 position = {0, 0, 0};
 	DirectX::XMFLOAT3 angle    = {0, 90, 90};
 	DirectX::XMFLOAT4	orientation = {};
+
+	// --- É_ÉÅÅ[ÉWîªíË ---
+	float damageTimeStart;
+	float damageTimeEnd;
+	float damageRadius;
+	float damage;
 };

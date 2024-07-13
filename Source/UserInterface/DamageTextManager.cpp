@@ -1,5 +1,6 @@
 #include "DamageTextManager.h"
 #include "../../Library/Timer.h"
+#include "../../Library/3D/CameraManager.h"
 #include "../../Library/Math/Math.h"
 
 void DamageTextManager::Initialize()
@@ -15,7 +16,7 @@ void DamageTextManager::Update()
 	for (auto& dmgText : damageTexts)
 	{
 		dmgText.timer += deltaTime;
-		dmgText.screenPosition = Math::WorldToScreenPos(dmgText.worldPosition);
+		dmgText.screenPosition = Math::WorldToScreenPos(dmgText.worldPosition, CameraManager::Instance().GetCamera().get());
 		dmgText.screenPosition.x -= dmgText.screenPositionBuffer.x;
 		dmgText.screenPosition.y -= dmgText.screenPositionBuffer.y;
 

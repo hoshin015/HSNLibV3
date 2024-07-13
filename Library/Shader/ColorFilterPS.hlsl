@@ -37,6 +37,9 @@ float4 main(VS_OUT pin) : SV_TARGET
     // コントラスト処理
     float midpoint = pow(0.5, 2.2);
     color.rgb = (color.rgb - midpoint) * contrast + midpoint;
-    
+
+
+    color.rgb = max(color.rgb, 0.0);
+
     return color;
 }

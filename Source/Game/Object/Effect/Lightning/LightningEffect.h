@@ -59,4 +59,10 @@ private:
 	bool isSound = false;
 
 	std::vector<LightningEmitter> lightningEmitters;
+
+	// ダメージ判定を出す時間
+	float damageTimeStart;
+	float damageTimeEnd;
+	float damageRadius;
+	float damage;
 };

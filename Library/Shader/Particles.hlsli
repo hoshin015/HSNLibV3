@@ -171,13 +171,13 @@ void spawn(uint id, inout Particle p)
 			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
 			if (rand(seed) > 0.5)
 				particleSpeed *= -1;
-            p.velocity.x = rand(seed) * particleSpeed;
+            p.velocity.x = rand(seed) * particleSpeed * 2;
 			if (rand(seed) > 0.5)
 				particleSpeed *= -1;
             p.velocity.y = rand(seed) * particleSpeed;
 			if (rand(seed) > 0.5)
 				particleSpeed *= -1;
-            p.velocity.z = rand(seed) * particleSpeed;
+            p.velocity.z = rand(seed) * particleSpeed * 2;
             }
 		break;
     case pk_PlayerAttackHit:

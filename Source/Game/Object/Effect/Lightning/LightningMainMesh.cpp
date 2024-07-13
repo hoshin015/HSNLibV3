@@ -22,6 +22,7 @@ void LightningData::LightningMainUpdate()
 	SetScale(s);
 
 	float ePower = 4 - Easing::InCirc(lifeTimer, lifeTime, 2.0f, 0.0f);
+	//ePower = 1000.0f;
 	SetEmissivePower(ePower);
 
 	float alpha = 1 - Easing::OutBounce(lifeTimer, lifeTime, 1.0f, 0.0f);
@@ -38,6 +39,7 @@ void LightningData::LightningBottomUpdate()
 	SetColor(c);
 
 	float ePower = 4 - Easing::InCirc(lifeTimer, lifeTime, 2.0f, 0.0f);
+	//ePower = 1000.0f;
 	SetEmissivePower(ePower);
 }
 

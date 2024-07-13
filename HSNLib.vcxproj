@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Object\Effect\EffectDamageManager.cpp" />
     <ClCompile Include="Library\Graphics\ColorFilter.cpp" />
     <ClCompile Include="Library\Graphics\HeatHaze.cpp" />
     <ClCompile Include="Source\Scene\SceneResult.cpp" />
@@ -286,6 +287,7 @@
     <ClCompile Include="Source\UserInterface\UiGame.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Object\Effect\EffectDamageManager.h" />
     <ClInclude Include="Library\Graphics\ColorFilter.h" />
     <ClInclude Include="Library\Graphics\HeatHaze.h" />
     <ClInclude Include="Source\Scene\SceneResult.h" />

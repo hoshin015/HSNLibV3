@@ -493,6 +493,9 @@
     <ClCompile Include="Source\Scene\SceneResult.cpp">
       <Filter>2_Source\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\Object\Effect\EffectDamageManager.cpp">
+      <Filter>2_Source\Game\Object\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -866,6 +869,9 @@
     </ClInclude>
     <ClInclude Include="Source\Scene\SceneResult.h">
       <Filter>2_Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Effect\EffectDamageManager.h">
+      <Filter>2_Source\Game\Object\Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

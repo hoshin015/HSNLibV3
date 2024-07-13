@@ -45,6 +45,8 @@ void EffectManager::Update()
 	effekseerManager->Update(Timer::Instance().DeltaTime() * 60.0f);
 }
 
+
+
 // •`‰æˆ—
 void EffectManager::Render(const DirectX::XMFLOAT4X4& view, const DirectX::XMFLOAT4X4& projection)
 {

@@ -1,5 +1,6 @@
 #include "LightningEffect.h"
 
+#include "../EffectDamageManager.h"
 #include "../Rock/RockEffect.h"
 #include "../../../../../Library/Timer.h"
 #include "../../../../../Library/Math/Math.h"
@@ -13,6 +14,11 @@ void LightningEffect::Initialize()
 	lightningMesh3 = std::make_unique<LightningMesh1>("Data/Fbx/Lightning/Area/LightningArea.model");
 	lightningMesh4 = std::make_unique<LightningMesh1>("Data/Fbx/Lightning/Bottom/1/bottomLightning.model");
 	lightningMesh5 = std::make_unique<LightningMesh1>("Data/Fbx/Lightning/Bottom/2/bottomLightning.model");
+
+	damageRadius = 2.0f;
+	damage = 20.0f;
+	damageTimeStart = 1.2f;
+	damageTimeEnd = 1.4f;
 }
 
 void LightningEffect::Update()
@@ -22,6 +28,18 @@ void LightningEffect::Update()
 	int index = 0;
 	for (auto& lightningEmit : lightningEmitters)
 	{
+		// ƒ_ƒ[ƒW”»’è
+		if (lightningEmit.timer >= damageTimeStart && lightningEmit.timer <= damageTimeEnd)
+		{
+			EffectDamageManager::EffectCollision effectCollision;
+			EffectDamageManager::EffectCollision::SphereData sphere;
+			sphere.position = lightningEmit.position;
+			sphere.radius = damageRadius;
+			sphere.damage = damage;
+			effectCollision.spheres.emplace_back(sphere);
+			EffectDamageManager::Instance().Register(effectCollision);
+		}
+
 		if (lightningEmit.addLightning0 && !lightningEmit.addLightning3)
 		{
 			bottomTimer += deltaTime;

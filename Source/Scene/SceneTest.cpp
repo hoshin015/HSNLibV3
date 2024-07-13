@@ -35,6 +35,7 @@
 #include "../UserInterface//UiPause.h"
 #include "../UserInterface/DamageTextManager.h"
 #include "../UserInterface/UiGame.h"
+#include "../Game/Object/Effect/EffectDamageManager.h"
 
 
 void SceneTest::Initialize()
@@ -477,6 +478,7 @@ void SceneTest::Render()
 			Enemy::Instance().DrawDebugPrimitive();
 			Player::Instance().DrawDebugPrimitive();
 		}
+		EffectDamageManager::Instance().Render();
 		Enemy::Instance().DrawDebug();
 		DebugPrimitive::Instance().Render();
 

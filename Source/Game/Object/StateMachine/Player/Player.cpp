@@ -853,15 +853,15 @@ void Player::CollisionVsEnemy()
 				emitter->emitterData.burstsTime = 0.0;
 				emitter->emitterData.burstsCount = 256;
 				emitter->emitterData.particleKind = pk_PlayerAttackSpark;
-				emitter->emitterData.particleLifeTimeMin = 0.4f;
+				emitter->emitterData.particleLifeTimeMin = 0.2f;
 				emitter->emitterData.particleLifeTimeMax = 0.6f;
-				emitter->emitterData.particleSpeedMin = 15.0f;
-				emitter->emitterData.particleSpeedMax = 30.0f;
+				emitter->emitterData.particleSpeedMin = 3.0f;
+				emitter->emitterData.particleSpeedMax = 8.0f;
 				emitter->emitterData.particleSizeMin = { 0.25f, 0.005f };
 				emitter->emitterData.particleSizeMax = { 8.0f, 0.05f };
 				emitter->emitterData.particleColorMin = { 3.5, 3.5, 0.8, 1 };
 				emitter->emitterData.particleColorMax = { 6.0, 6.0, 0.8, 1 };
-				emitter->emitterData.particleGravity = 20;
+				emitter->emitterData.particleGravity = 8;
 				emitter->emitterData.particleBillboardType = 1;
 				emitter->emitterData.particleTextureType = 0;
 				emitter->emitterData.burstsOneShot = true;
@@ -887,7 +887,7 @@ void Player::CollisionVsEnemy()
 				emitter1->emitterData.particleGravity = 20;
 				emitter1->emitterData.particleBillboardType = 2;
 				emitter1->emitterData.particleTextureType = 1;
-				emitter1->emitterData.burstsOneShot = 2;
+				emitter1->emitterData.burstsOneShot = 1;
 
 				emitter1->emitRateTimer = emitter1->emitterData.burstsTime;	// ¶¬‚É”­¶‚·‚é‚æ‚¤‚É‚·‚é
 				EmitterManager::Instance().Register(emitter1);

@@ -210,3 +210,4 @@ float3 SpecularIBL(float3      normal, float3 eyeVector, float roughness, float3
 	float2 envBrdf         = SampleLutGGX(brdfSamplePoint, lutGgxMap, state).rg;
 	return specularLight * (f0 * envBrdf.x + envBrdf.y);
 }
+

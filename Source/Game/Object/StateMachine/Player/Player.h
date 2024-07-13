@@ -41,7 +41,8 @@ public:
 		float dashDeadZone = 0.7f;
 
 		float dodgePower = 15;
-		float dodgeTime = 0.5f;
+		float dodgeLowestTime = 0.5f;
+		float dodgeTime = 1.5f;
 
 		float maxAttackCombo = 4;
 		float attackReceptionTime = 0.1f;
@@ -58,7 +59,7 @@ private:
 public:
 	static Player& Instance()
 	{
-		static Player instance("Data/Fbx/GaoPlayer/gaoplayer_5.model");
+		static Player instance("Data/Fbx/GaoPlayer/gaoplayer_6.model");
 		return instance;
 	}
 
@@ -147,7 +148,7 @@ public:
 
 	void SetInputMap(const std::string& str, const inputData& data) { inputMap[str] = data; }
 
-	AbilityStatus& AbilityStatus() { return ability; }
-	ConstantStatus& ConstantStatus() { return constant; }
+	AbilityStatus& AStatus() { return ability; }
+	ConstantStatus& CStatus() { return constant; }
 	Animator& GetAnimator() { return animator; }
 };

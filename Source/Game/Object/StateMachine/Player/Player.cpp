@@ -49,12 +49,12 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	Animator::Motion walkLeft;
 	walkLeft.motion = &animation[15];
 	walkLeft.animationSpeed = 0.2f;
-	walkLeft.threshold = { -1,0 };
+	walkLeft.threshold = { 1,0 };
 
 	Animator::Motion walkRight;
 	walkRight.motion = &animation[17];
 	walkRight.animationSpeed = 0.2f;
-	walkRight.threshold = { 1,0 };
+	walkRight.threshold = { -1,0 };
 
 	Animator::Motion runMotion;
 	runMotion.motion = &animation[9];
@@ -94,21 +94,25 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	dodgeMae.motion = &animation[12];
 	dodgeMae.animationSpeed = 0.2f;
 	dodgeMae.threshold = { 0,1 };
+	dodgeMae.loop = false;
 
 	Animator::Motion dodgeUsiro;
 	dodgeUsiro.motion = &animation[14];
 	dodgeUsiro.animationSpeed = 0.2f;
 	dodgeUsiro.threshold = { 0,-1 };
+	dodgeUsiro.loop = false;
 
 	Animator::Motion dodgeLeft;
 	dodgeLeft.motion = &animation[11];
 	dodgeLeft.animationSpeed = 0.2f;
 	dodgeLeft.threshold = { 1,0 };
+	dodgeLeft.loop = false;
 
 	Animator::Motion dodgeRight;
 	dodgeRight.motion = &animation[13];
 	dodgeRight.animationSpeed = 0.2f;
 	dodgeRight.threshold = { -1,0 };
+	dodgeRight.loop = false;
 
 	Animator::BlendTree walkTree;
 	walkTree.motions.emplace_back(idle);
@@ -134,8 +138,8 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	dodgeTree.motions.emplace_back(dodgeLeft);
 	dodgeTree.motions.emplace_back(dodgeRight);
 	dodgeTree.maxSeconds = 1.033333f;
-	dodgeTree.parameters[0] = "moveX";
-	dodgeTree.parameters[1] = "moveY";
+	dodgeTree.parameters[0] = "dodgeX";
+	dodgeTree.parameters[1] = "dodgeY";
 
 	Animator::State walkState;
 	walkState.object = Animator::MakeObjPointer(walkTree);
@@ -290,14 +294,14 @@ void Player::Update()
 		// --- プレイヤーカメラをセット ---
 		if (!cameraFlag) {
 			auto camera = CameraManager::Instance().GetCamera();
-			Vector3 position = camera->GetCurrentPosition();
-			Vector3 target = camera->GetTarget();
+			//Vector3 position = camera->GetCurrentPosition();
+			//Vector3 target = camera->GetTarget();
 			CameraManager::Instance().SetCurrentCamera("PlayerCamera");
 			auto ptr = std::dynamic_pointer_cast<PlayerCamera>(CameraManager::Instance().GetCamera());
 			ptr->OnSetCamera();
 			//camera = &playerCamera;
 			//playerCamera.OnSetCamera();
-			Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());
+			SetCamera(CameraManager::Instance().GetCamera().get());
 
 			cameraFlag = !cameraFlag;
 		}
@@ -513,6 +517,12 @@ void Player::Input()
 
 	inputMap["Dodge"] = dodge;
 	animator.SetParameter("dodge", dodge);
+
+	bool dodgeHold = input.GetKeyPress(DirectX::Keyboard::Space);
+	if (input.IsGamePadConnected() && !dodgeHold)
+		dodgeHold = input.GetGamePadButtonPress(GAMEPADBUTTON_STATE::a);
+
+	inputMap["DodgeHold"] = dodgeHold;
 	//if (dodge) ability.dodgeTimer = constant.dodgeTime;
 
 	// // --- ドリンク ---
@@ -680,8 +690,8 @@ void Player::CalcDodgeVelocity() {
 	ability.dodgeTimer -= dt;
 
 	XMStoreFloat2(&move.vec_,XMVector2TransformCoord(XMLoadFloat2(&move.vec_),XMMatrixRotationZ(rad)));
-	animator.SetParameter("moveX", move.x);
-	animator.SetParameter("moveY", move.y);
+	animator.SetParameter("dodgeX", move.x);
+	animator.SetParameter("dodgeY", move.y);
 
 #else
 	velocity += animator.GetVelocity();

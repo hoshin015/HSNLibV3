@@ -12,30 +12,6 @@ inline XMFLOAT3 operator-(XMFLOAT3& a, XMFLOAT3& b) {
 	return result;
 }
 
-// void Animator::AddBlendAnimation(
-// 	const std::string&                               name,
-// 	ModelResource::SceneView*                        sceneView,
-// 	std::initializer_list<ModelResource::Animation*> animations
-// ) {
-// 	BlendTree state;
-// 	state.parameter = {};
-// 	state.timer     = 0;
-// 	_sceneView      = sceneView;
-//
-// 	int   count      = 0;
-// 	int   size       = animations.size() - 1;
-// 	float maxSeconds = 0;
-// 	for (ModelResource::Animation* animation: animations) {
-// 		Motion motion = {animation, count / static_cast<float>(size), 1};
-// 		state.motions.push_back(motion);
-// 		count++;
-// 		if (maxSeconds < animation->secondsLength) maxSeconds = animation->secondsLength;
-// 	}
-//
-// 	state.maxSeconds = maxSeconds;
-// 	_state[name]     = state;
-// }
-
 ModelResource::KeyFrame Animator::BlendKeyFrame(
 	const ModelResource::KeyFrame* first, const ModelResource::KeyFrame* second, const float lerpRate
 ) const {
@@ -107,7 +83,7 @@ ModelResource::KeyFrame Animator::MotionUpdate(Motion* motion, const float rate)
 
 	// TODO::最後のフレームを通過したかの判定をもうちょっと何とかする
 	// このままだとタイミングによっては最後のフレームになっても感知できない
-	_isEndMotion = motion->endMotion = fmodf(rate * motion->animationSpeed, 1) >= .9f;
+	_isEndMotion = motion->endMotion = fmodf(rate * motion->animationSpeed, 1) >= .95f;
 	_currentMotionIndex = motion->animationIndex;
 	_currentKeyFrameIndex = index;
 	return BlendKeyFrame(keyFrames[0], keyFrames[1], lerpRate);
@@ -115,8 +91,8 @@ ModelResource::KeyFrame Animator::MotionUpdate(Motion* motion, const float rate)
 
 ModelResource::KeyFrame Animator::BlendUpdate(BlendTree* blend, const float time) {
 	XMFLOAT2 parameter;
-	parameter.x = std::get<float>(_parameters[blend->parameters[0]]);
-	parameter.y = blend->parameters[1].empty() ? 0 : std::get<float>(_parameters[blend->parameters[1]]);
+	parameter.x = GetParameter<float>(blend->parameters[0]);
+	parameter.y = GetParameter<float>(blend->parameters[1]);
 
 	std::vector<Motion*> motions;
 	std::vector<float>   weights;
@@ -135,6 +111,7 @@ ModelResource::KeyFrame Animator::BlendUpdate(BlendTree* blend, const float time
 	if (totalWeight > 0) for (float& weight: weights) { weight /= totalWeight; }
 	if (motions.empty()) {
 		motions.emplace_back(&blend->motions[0]);
+		weights.emplace_back(1);
 	}
 
 	const float                          animationRate = time / blend->maxSeconds;
@@ -143,10 +120,16 @@ ModelResource::KeyFrame Animator::BlendUpdate(BlendTree* blend, const float time
 	for (auto&& motion: motions) { keyFrames.emplace_back(MotionUpdate(motion, animationRate)); }
 
 	// 重さを求めてそこから線形補間する
-	ModelResource::KeyFrame& result = keyFrames[0];
+	// デフォルトの状態から補間している
+	// Tポーズなどの状態からしたほうがいいけど取得する方法がないからIdle時の0番のKeyFrameから補完する
+	ModelResource::KeyFrame result;
+	if (keyFrames.size() != 1) {
+		result = blend->motions[0].motion->sequence[0];
 
-	const size_t weightSize = weights.size();
-	for (int i = 1; i < weightSize; i++) { result = BlendKeyFrame(&result, &keyFrames[i], weights[i]); }
+		const size_t weightSize = weights.size();
+		for (int i = 0; i < weightSize; i++) { result = BlendKeyFrame(&result, &keyFrames[i], weights[i]); }
+	}
+	else result = keyFrames[0];
 
 	blend->endMotion = animationRate >= .9f;
 	return result;
@@ -243,7 +226,10 @@ ModelResource::KeyFrame Animator::PlayAnimation(float elapsedTime) {
 			_currentState->timer = 0;
 			if(_currentState->type == State::MOTION)_currentState->GetObj<Motion>()->endMotion = false;
 			if (_currentState->type == State::BLEND_TREE) {
-				_currentState->GetObj<BlendTree>()->endMotion = false;
+				auto blendTree = _currentState->GetObj<BlendTree>();
+				blendTree->endMotion = false;
+				for (auto&& motion: blendTree->motions) motion.endMotion = false;
+
 			}
 			_currentState        = _nextState;
 			_nextState           = nullptr;
@@ -272,7 +258,6 @@ void Animator::AnimationEditor() {
 						ImGui::Text(u8"速さ:%f", state.speed);
 						ImGui::Text(u8"時間:%f", state.timer);
 						ImGui::DragFloat(u8"遷移時間", &state.transitionTime, 0.001f);
-
 						ImGui::TreePop();
 					}
 
@@ -285,6 +270,8 @@ void Animator::AnimationEditor() {
 								if (motion.animationSpeed < 0) motion.animationSpeed = 0;
 
 								ImGui::DragFloat2(u8"しきい値", &motion.threshold.x, 0.001f);
+								ImGui::Checkbox(u8"ループ", &motion.loop);
+								ImGui::Checkbox(u8"最終モーション", &motion.endMotion);
 
 								ImGui::TreePop();
 							}
@@ -297,6 +284,9 @@ void Animator::AnimationEditor() {
 						if (ImGui::TreeNode(motion->motion->name.c_str())) {
 							ImGui::DragFloat(u8"アニメーションの速さ", &motion->animationSpeed, 0.001f);
 							if (motion->animationSpeed < 0) motion->animationSpeed = 0;
+
+							ImGui::Checkbox(u8"ループ", &motion->loop);
+							ImGui::Checkbox(u8"最終モーション", &motion->endMotion);
 
 							ImGui::TreePop();
 						}

@@ -379,26 +379,53 @@ void SceneTest::Update()
 		SpecialEffect::Instance().Emit();
 	}
 
+	static float f11TotalTimer = 0.0f;
+	static float f11Timer = 0.0f;
+	static float f11Time = 0.025f;
+
+	if(f11TotalTimer > 0.0f)
+	{
+		f11TotalTimer -= Timer::Instance().DeltaTime();
+		f11Timer += Timer::Instance().DeltaTime();
+		while(f11Timer > f11Time)
+		{
+			f11Timer -= f11Time;
+
+			LightningData* l = new LightningData();
+			l->SetLifeTime(0.2f);
+			l->SetEmissivePower(5.0f);
+			float rScale = Math::RandomRange(0.0f, 0.2f) + 0.05f;
+			l->SetScale({ Math::RandomRange(0.0f, 0.05f) + 0.01f, rScale, rScale });
+			l->SetColor({ 1.5, 0.8, 0.8, 1 });
+			l->SetAngle({ static_cast<float>(rand() % 360), static_cast<float>(rand() % 360), static_cast<float>(rand() % 360) });
+			l->SetUpdateType(LightningData::LightningFuncEnum::HeadAura);
+			l->SetUvScroll({ 0, static_cast<float>(rand() % 1) ,0,0 });
+
+			DirectX::XMFLOAT3 s = Enemy::Instance().GetBonePosition("tosaka");
+			DirectX::XMFLOAT3 e = Enemy::Instance().GetBonePosition("tosaka_end");
+			DirectX::XMVECTOR S = DirectX::XMLoadFloat3(&s);
+			DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&e);
+			DirectX::XMVECTOR L = DirectX::XMVectorSubtract(E, S);
+			float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(L));
+
+			l->SetBufferLength(Math::RandomRange(0.0f, length));
+
+			int rLightning = rand() % 6;
+			switch (rLightning)
+			{
+			case 0: LightningEffect::Instance().lightningMesh4->Register(l); break;
+			case 1: LightningEffect::Instance().lightningMesh5->Register(l); break;
+			case 2: LightningEffect::Instance().lightningMesh6->Register(l); break;
+			case 3: LightningEffect::Instance().lightningMesh7->Register(l); break;
+			case 4: LightningEffect::Instance().lightningMesh8->Register(l); break;
+			case 5: LightningEffect::Instance().lightningMesh9->Register(l); break;
+			}
+		}
+	}
+
 	if (InputManager::Instance().GetKeyPressed(Keyboard::F11))
 	{
-		LightningData* l = new LightningData();
-		l->SetLifeTime(0.1f);
-		l->SetEmissivePower(2.0f);
-		float rScale = rand() % 1 + 0.25f;
-		l->SetScale({ rScale, 0.5, rScale });
-		l->SetColor({ 1.5, 0.8, 0.8, 1 });
-		l->SetAngle({ static_cast<float>(rand() % 360), static_cast<float>(rand() % 360), static_cast<float>(rand() % 360) });
-		l->SetUpdateType(LightningData::LightningFuncEnum::HeadAura);
-		int rLightning = rand() % 6;
-		switch (rLightning)
-		{
-		case 0: LightningEffect::Instance().lightningMesh4->Register(l); break;
-		case 1: LightningEffect::Instance().lightningMesh5->Register(l); break;
-		case 2: LightningEffect::Instance().lightningMesh6->Register(l); break;
-		case 3: LightningEffect::Instance().lightningMesh7->Register(l); break;
-		case 4: LightningEffect::Instance().lightningMesh8->Register(l); break;
-		case 5: LightningEffect::Instance().lightningMesh9->Register(l); break;
-		}
+		f11TotalTimer = 1.0f;
 	}
 
 

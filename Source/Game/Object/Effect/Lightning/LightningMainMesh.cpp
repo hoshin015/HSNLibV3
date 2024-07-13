@@ -1,6 +1,7 @@
 #include "LightningMainMesh.h"
 #include "../../../../../Library/Timer.h"
 #include "../../StateMachine/Enemy/Enemy.h"
+#include "../../../../../Library/Math/Math.h"
 
 
 
@@ -47,12 +48,32 @@ void LightningData::LightningBottomUpdate()
 void LightningData::LightningBreathCylinderUpdate()
 {
 	float deltaTime = Timer::Instance().DeltaTime();
+	uvScroll.y += 3 * Timer::Instance().DeltaTime();
 	//position.z += 10 * deltaTime;
 }
 
 void LightningData::LightnignHeadAuraUpdate()
 {
-	DirectX::XMFLOAT3 pos = Enemy::Instance().GetBonePosition("sitaago_end");
+	color.w = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, headAuraAlphaUp);
+	if(headAuraAlphaDown.startTime <= lifeTimer) color.w = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, headAuraAlphaDown);
+
+	uvScroll.y += 3 * Timer::Instance().DeltaTime();
+
+	DirectX::XMFLOAT3 s = Enemy::Instance().GetBonePosition("tosaka");
+	DirectX::XMFLOAT3 e = Enemy::Instance().GetBonePosition("tosaka_end");
+	DirectX::XMVECTOR S = DirectX::XMLoadFloat3(&s);
+	DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&e);
+	DirectX::XMVECTOR V = DirectX::XMVectorSubtract(E, S);
+	DirectX::XMVECTOR N = DirectX::XMVector3Normalize(V);
+	DirectX::XMFLOAT3 n;
+	DirectX::XMStoreFloat3(&n, N);
+
+	DirectX::XMFLOAT3 pos = 
+	{
+		s.x + n.x * bufferLength,
+		s.y + n.y * bufferLength,
+		s.z + n.z * bufferLength,
+	};
 	position = pos;
 }
 
@@ -112,6 +133,7 @@ void LightningMainMesh::Update()
 		lightningTransforms[index] = data->GetTransform();
 		lightningEmissives[index] = data->GetEmissivePower();
 		lightningColors[index] = data->GetColor();
+		lightningUvScrolls[index] = data->GetUvScroll();
 
 		index++;
 	}
@@ -133,7 +155,7 @@ void LightningMainMesh::Update()
 void LightningMainMesh::Render(bool isShadow)
 {
 	if (lightningInfo.empty()) return;
-	model->Render(lightningInfo.size(), lightningTransforms, lightningEmissives, lightningColors, isShadow);
+	model->Render(lightningInfo.size(), lightningTransforms, lightningEmissives, lightningColors, lightningUvScrolls, isShadow);
 }
 
 

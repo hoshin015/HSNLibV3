@@ -575,6 +575,15 @@ void Enemy::InitializeBehaviorTree()
 	// --- 戦闘ノード ---
 	aiTree_->AddNode("Root", "Battle", BATTLE, BT_SelectRule::Priority, new EnemyBattleJudgment(this), nullptr);
 	{
+		// TODO: デバッグ
+		// --- ブレス → 威嚇 ---
+		aiTree_->AddNode("Battle", "Bless_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+		{
+			aiTree_->AddNode("Bless_Threat", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+			aiTree_->AddNode("Bless_Threat", "Bless", 0, BT_SelectRule::Non, nullptr, new EnemyBlessAction(this));
+			aiTree_->AddNode("Bless_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
+		}
+
 		// --- 攻撃ノード ---
 		aiTree_->AddNode("Battle", "Attack", 0, BT_SelectRule::Priority, nullptr, nullptr);
 		{

@@ -125,4 +125,5 @@ protected:
 	DirectX::XMFLOAT4X4 rockTransforms[MAX_INSTANCE] = {}; // 姿勢行列配列
 	float               rockEmissives[MAX_INSTANCE]  = {}; // エミッシブ力配列
 	DirectX::XMFLOAT4   rockColors[MAX_INSTANCE]     = {}; // カラー配列
+	DirectX::XMFLOAT4   rockUvScrolls[MAX_INSTANCE]     = {}; // uvScroll配列
 };

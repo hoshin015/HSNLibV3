@@ -133,7 +133,8 @@ void BreathEffect::LightningGenerateUpdate()
 	lightningTimer += deltaTime;
 	while (lightningTimer > lightningTime)
 	{
-		for (int i = 0; i < 24; i++)
+		int num = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, lightningNum);
+		for (int i = 0; i < num; i++)
 		{
 			LightningData* l = new LightningData();
 
@@ -167,6 +168,7 @@ void BreathEffect::LightningGenerateUpdate()
 			l->SetEmissivePower(2.0f);
 			l->SetUpdateType(LightningData::LightningFuncEnum::BreathCylinder);
 			l->SetColor({20.8, 2.8, 2.5, 1});
+			l->SetUvScroll({ static_cast<float>(rand() % 1), static_cast<float>(rand() % 1) ,0,0 });
 
 			int rLightning = rand() % 6;
 			switch (rLightning)
@@ -180,7 +182,7 @@ void BreathEffect::LightningGenerateUpdate()
 			}
 		}
 
-		lightningTimer -= 0.2;
+		lightningTimer -= lightningTime;
 	}
 }
 

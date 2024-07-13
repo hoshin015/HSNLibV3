@@ -18,5 +18,6 @@ void TestStatic::Render(bool isShadow)
 {
 	float e = 2;
 	DirectX::XMFLOAT4 c = { 1,1,1,1 };
-	model->Render(instanceNum, m, &e, &c, isShadow);
+	DirectX::XMFLOAT4 uv = { 0.0f,0.0f,0.0f,0.0f};
+	model->Render(instanceNum, m, &e, &c, &uv, isShadow);
 }

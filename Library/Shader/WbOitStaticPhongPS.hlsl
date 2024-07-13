@@ -16,6 +16,8 @@ struct PSOUT
 };
 PSOUT main(VS_OUT pin)
 {
+    pin.texcoord += pin.uvScrolls.xy;
+
 	// ディフューズマップの取得
     float4 diffuseColor = diffuseTexture.Sample(samplerStates[_anisotropicSampler], pin.texcoord);
 #if USE_LinearWorkflow

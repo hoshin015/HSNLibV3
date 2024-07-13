@@ -61,12 +61,15 @@ private:
 
 	float             emissivePower = 1.0f;
 	DirectX::XMFLOAT4 color         = {1, 1, 1, 1};
+	DirectX::XMFLOAT4 uvScroll = { 0,0,0,0 };
 
 	LightningMainMesh* owner;
 
 	LightningFuncEnum updateType = LightningFuncEnum::NO;
 
 	Easing::EasingValue val1;
+
+	float bufferLength;
 
 public:
 	// lifeTime
@@ -84,6 +87,10 @@ public:
 	DirectX::XMFLOAT4 GetColor() { return color; }
 	void              SetColor(DirectX::XMFLOAT4 c) { color = c; }
 
+	// uvScroll
+	DirectX::XMFLOAT4 GetUvScroll() { return uvScroll; }
+	void              SetUvScroll(DirectX::XMFLOAT4 uv) { uvScroll = uv; }
+
 	// msc
 	void SetMSC(DirectX::XMMATRIX MSC);
 
@@ -92,6 +99,21 @@ public:
 
 	// val1
 	void SetVal1(Easing::EasingValue v) { val1 = v; }
+
+	// bufferLength
+	void SetBufferLength(float l) { bufferLength = l; }
+
+private:
+	Easing::EasingValue headAuraAlphaUp =
+	{
+	0.0f, 0.1f,
+	0.0f, 1.0f
+	};
+	Easing::EasingValue headAuraAlphaDown =
+	{
+	0.1f, 0.2f,
+	1.0f, 0.0f
+	};
 };
 
 // lightning まとめるクラス
@@ -128,6 +150,9 @@ protected:
 	DirectX::XMFLOAT4X4 lightningTransforms[MAX_INSTANCE] = {}; // 姿勢行列配列
 	float               lightningEmissives[MAX_INSTANCE]  = {}; // エミッシブ力配列
 	DirectX::XMFLOAT4   lightningColors[MAX_INSTANCE]     = {}; // カラー配列
+	DirectX::XMFLOAT4   lightningUvScrolls[MAX_INSTANCE]			  = {}; // uvスクロール配列
+
+
 };
 
 

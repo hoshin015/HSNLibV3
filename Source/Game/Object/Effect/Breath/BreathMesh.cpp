@@ -22,6 +22,8 @@ void BreathCrossPlane::Update()
 
 	GetModel()->dissolveConstant.dissolveThreshold = 0.01f;
 
+	GetModel()->data.emissivePower = 2.0f;
+
 	// 姿勢行列更新
 	UpdateTransform();
 }
@@ -57,6 +59,7 @@ void BreathCylinder::Update()
 	// 終了ディゾルブ値
 	GetModel()->dissolveConstant.dissolveThreshold = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, cylinderEndDissolveThread);
 
+	GetModel()->data.emissivePower = 2.0f;
 
 	// 姿勢行列更新
 	UpdateTransform();

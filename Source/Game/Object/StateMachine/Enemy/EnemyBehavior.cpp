@@ -8,6 +8,7 @@
 #include "../Player/Player.h"
 #include "../../../../../Library/Timer.h"
 #include "../../../../../Library/3D/CameraManager.h"
+#include "../../Effect/Lightning/LightningEffect.h"
 #include "../../Effect/Rock/RockEffect.h"
 
 
@@ -693,6 +694,8 @@ BT_ActionState EnemyBlessAction::Run(float elapsedTime)
 
 		owner_->runTimer_ = 1.5f;
 		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BLESS), false);
+
+		LightningEffect::Instance().HeadAuraEmit(3.5f);
 
 		step++;
 		break;

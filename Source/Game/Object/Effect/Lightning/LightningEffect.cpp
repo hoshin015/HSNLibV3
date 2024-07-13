@@ -5,6 +5,7 @@
 #include "../../../../../Library/Timer.h"
 #include "../../../../../Library/Math/Math.h"
 #include "../../../../../Library/Particle/EmitterManager.h"
+#include "../../StateMachine/Enemy/Enemy.h"
 
 // ‰Šú‰»
 void LightningEffect::Initialize()
@@ -60,6 +61,7 @@ void LightningEffect::Update()
 				l->SetAngleZ(-(rand() % 90));
 				l->SetUpdateType(LightningData::LightningFuncEnum::Bottom);
 				l->SetColor({20.8, 2.8, 2.5, 1});
+				l->SetUvScroll({ static_cast<float>(rand() % 1), static_cast<float>(rand() % 1) ,0,0 });
 
 				if (rand() % 2)
 				{
@@ -96,6 +98,7 @@ void LightningEffect::Update()
 			l->SetAngleY(rand() % 360);
 			l->SetUpdateType(LightningData::LightningFuncEnum::Main);
 			l->SetColor({20.8, 2.8, 2.5, 1});
+			l->SetUvScroll({ static_cast<float>(rand() % 1), static_cast<float>(rand() % 1) ,0,0 });
 			lightningMesh1->Register(l);
 			LightningData* l2 = new LightningData();
 			l2->SetPos(lightningEmit.position);
@@ -107,6 +110,7 @@ void LightningEffect::Update()
 			l2->SetAngleY(rand() % 360);
 			l2->SetUpdateType(LightningData::LightningFuncEnum::Main);
 			l2->SetColor({20.8, 2.8, 2.5, 1});
+			l2->SetUvScroll({ static_cast<float>(rand() % 1), static_cast<float>(rand() % 1) ,0,0 });
 			lightningMesh2->Register(l2);
 
 			lightningEmit.addLightning0 = true;
@@ -130,6 +134,7 @@ void LightningEffect::Update()
 			l->SetAngleY(rand() % 360);
 			l->SetUpdateType(LightningData::LightningFuncEnum::Main);
 			l->SetColor({20.8, 2.8, 2.5, 1});
+			l->SetUvScroll({ static_cast<float>(rand() % 1), static_cast<float>(rand() % 1) ,0,0 });
 			lightningMesh1->Register(l);
 			LightningData* l2 = new LightningData();
 			l2->SetPos(lightningEmit.position);
@@ -140,6 +145,7 @@ void LightningEffect::Update()
 			l2->SetEmissivePower(4.0f);
 			l2->SetAngleY(rand() % 360);
 			l2->SetColor({20.8, 2.8, 2.5, 1});
+			l2->SetUvScroll({ static_cast<float>(rand() % 1), static_cast<float>(rand() % 1) ,0,0 });
 			lightningMesh1->Register(l2);
 
 			lightningEmit.addLightning1 = true;
@@ -162,6 +168,7 @@ void LightningEffect::Update()
 			l2->SetAngleY(rand() % 360);
 			l2->SetUpdateType(LightningData::LightningFuncEnum::Main);
 			l2->SetColor({20.8, 2.8, 2.5, 1});
+			l2->SetUvScroll({ static_cast<float>(rand() % 1), static_cast<float>(rand() % 1) ,0,0 });
 			lightningMesh2->Register(l2);
 
 			lightningEmit.addLightning2 = true;
@@ -184,6 +191,7 @@ void LightningEffect::Update()
 			l2->SetUpdateType(LightningData::LightningFuncEnum::Main);
 			l2->SetAngleY(rand() % 360);
 			l2->SetColor({20.8, 2.8, 2.5, 1});
+			l2->SetUvScroll({ static_cast<float>(rand() % 1), static_cast<float>(rand() % 1) ,0,0 });
 			lightningMesh2->Register(l2);
 
 			lightningEmit.addLightning3 = true;
@@ -224,6 +232,48 @@ void LightningEffect::Update()
 			continue;
 		}
 		index++;
+	}
+
+	// headAura
+	if(headAuraTimer > 0.0f)
+	{
+		headAuraIntervalTimer += deltaTime;
+		headAuraTimer -= deltaTime;
+
+		while (headAuraIntervalTimer > headAuraIntervalTime)
+		{
+			headAuraIntervalTimer -= headAuraIntervalTime;
+
+			LightningData* l = new LightningData();
+			l->SetLifeTime(0.2f);
+			l->SetEmissivePower(5.0f);
+			float rScale = Math::RandomRange(0.0f, 0.2f) + 0.05f;
+			l->SetScale({ Math::RandomRange(0.0f, 0.05f) + 0.01f, rScale, rScale });
+			l->SetColor({ 1.5, 0.8, 0.8, 1 });
+			l->SetAngle({ static_cast<float>(rand() % 360), static_cast<float>(rand() % 360), static_cast<float>(rand() % 360) });
+			l->SetUpdateType(LightningData::LightningFuncEnum::HeadAura);
+			l->SetUvScroll({ 0, static_cast<float>(rand() % 1) ,0,0 });
+
+			DirectX::XMFLOAT3 s = Enemy::Instance().GetBonePosition("tosaka");
+			DirectX::XMFLOAT3 e = Enemy::Instance().GetBonePosition("tosaka_end");
+			DirectX::XMVECTOR S = DirectX::XMLoadFloat3(&s);
+			DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&e);
+			DirectX::XMVECTOR L = DirectX::XMVectorSubtract(E, S);
+			float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(L));
+
+			l->SetBufferLength(Math::RandomRange(0.0f, length));
+
+			int rLightning = rand() % 6;
+			switch (rLightning)
+			{
+			case 0: lightningMesh4->Register(l); break;
+			case 1: lightningMesh5->Register(l); break;
+			case 2: lightningMesh6->Register(l); break;
+			case 3: lightningMesh7->Register(l); break;
+			case 4: lightningMesh8->Register(l); break;
+			case 5: lightningMesh9->Register(l); break;
+			}
+		}
 	}
 
 
@@ -289,6 +339,11 @@ void LightningEffect::Emit(DirectX::XMFLOAT3 pos)
 		lightningEmitter.position = pos;
 		lightningEmitters.push_back(lightningEmitter);
 	}
+}
+
+void LightningEffect::HeadAuraEmit(float time)
+{
+	headAuraTimer = time;
 }
 
 void LightningEffect::PlayLightningSound()

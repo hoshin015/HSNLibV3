@@ -53,10 +53,16 @@ private:
 	float lifeTimer = 0.0f;
 	float lifeTime  = 4.0f;
 
-	float endTime = 2.0f;
+	float endTime = 1.7f;
 
 	float lightningTimer = 0.0f;
-	float lightningTime  = 0.01f;
+	float lightningTime  = 0.0025f;
+
+	Easing::EasingValue lightningNum =
+	{
+		1.4, 1.7,
+		2.0f, 0.0f,
+	};
 
 	DirectX::XMFLOAT3 position = {0, 0, 0};
 	DirectX::XMFLOAT3 angle    = {0, 90, 90};

@@ -21,6 +21,7 @@ struct VS_OUT
 	float2 texcoord : TEXCOORD;
 	float4 color : COLOR;
 	float4 emissivePower : EMISSIVE_POWER;
+    float4 uvScrolls : UV_SCROLL;
 };
 
 // BONE ÇÃç≈ëÂêî
@@ -44,6 +45,7 @@ cbuffer ObjectConstant : register(_objectConstant)
 	row_major float4x4 worldTransforms[MAX_INSTANCE];
 	float4             emissivePowers[MAX_INSTANCE];
 	float4             colors[MAX_INSTANCE];
+    float4			   uvScrollls[MAX_INSTANCE];
 }
 
 // ÉâÉCÉgÇÃèÓïÒ

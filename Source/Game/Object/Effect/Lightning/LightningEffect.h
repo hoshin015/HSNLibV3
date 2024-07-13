@@ -26,6 +26,9 @@ public:
 	// ライトニング追加
 	void Emit(DirectX::XMFLOAT3 pos);
 
+	// HeadAura
+	void HeadAuraEmit(float time);
+
 	void PlayLightningSound();
 
 	struct LightningEmitter
@@ -69,4 +72,9 @@ private:
 	float damageTimeEnd;
 	float damageRadius;
 	float damage;
+
+	// headAura
+	float headAuraIntervalTime = 0.025f;
+	float headAuraIntervalTimer = 0.0f;
+	float headAuraTimer = 0.0f;
 };

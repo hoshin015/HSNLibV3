@@ -24,6 +24,7 @@ VS_OUT main(VS_IN vin)
     vout.color = colors[vin.instanceId];
 
     vout.emissivePower.x = emissivePowers[vin.instanceId].x;
+    vout.uvScrolls = uvScrollls[vin.instanceId];
     
     return vout;
 }

@@ -108,7 +108,7 @@ void RockMainMesh::Update()
 void RockMainMesh::Render(bool isShadow)
 {
 	if (rockInfo.empty()) return;
-	model->Render(rockInfo.size(), rockTransforms, rockEmissives, rockColors, isShadow);
+	model->Render(rockInfo.size(), rockTransforms, rockEmissives, rockColors, rockUvScrolls, isShadow);
 }
 
 void RockMainMesh::Register(RockData* rockData)

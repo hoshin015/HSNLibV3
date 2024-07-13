@@ -69,18 +69,15 @@ void SceneTest::Initialize()
 #if 0
 	StageMain*    stageMain    = new StageMain("Data/Fbx/ExampleStage/ExampleStage.model");
 #else
-	StageMain*    stageMain    = new StageMain("Data/Fbx/StageMain/StageMain.model");
+	StageMain*    stageMain    = new StageMain("Data/Fbx/AfterStage/AfterStage.model");
 	stageMain->SetScale({ stageScale, stageScale, stageScale });
 	StageMain* stage = new StageMain("./Data/Fbx/Stage/StageCollision2.model");
 	stage->GetModel()->GetModelResource()->SetScale(4.0f);
 #endif
 	stageManager.Register(stageMain);
 	stageManager.Register(stage);
-	StageMain* StageFence = new StageMain("Data/Fbx/StageFence/StageFence.model");
-	StageFence->SetScale({ stageScale, stageScale, stageScale });
-	stageManager.Register(StageFence);
-	//StageMain* stage2 = new StageMain("./Data/Fbx/Stage/StageCollision1.fbx");
-	//stageManager.Register(stage2);
+	StageMain* stage2 = new StageMain("./Data/Fbx/Stage/StageCollision1.fbx");
+	stageManager.Register(stage2);
 
 	// --- buffer 系初期化 ---
 	bitBlockTransfer = std::make_unique<FullScreenQuad>();
@@ -441,7 +438,6 @@ void SceneTest::Render()
 				shadow->SetAnimatedShader(); // animated object の影描画開始
 				//StageManager::Instance().Render(true);
 				StageManager::Instance().Render(0, true);
-				StageManager::Instance().Render(2, true);
 				Enemy::Instance().Render(true);
 
 				Player::Instance().Render(true);
@@ -471,7 +467,6 @@ void SceneTest::Render()
 		// ここに不透明オブジェクトの描画
 		//StageManager::Instance().Render();
 		StageManager::Instance().Render(0, false);
-		StageManager::Instance().Render(2, false);
 
 		//testStatic->Render();
 		Enemy::Instance().Render();
@@ -623,8 +618,46 @@ void SceneTest::DrawDebugGUI()
 		float length = playerPos.Length();
 		ImGui::Text(u8"プレイヤーの中心からの距離 : %f", length);
 
-
 		// --- カメラ関連 ---
+		// static bool cameraFlag = true;
+		// InputManager& input = InputManager::Instance();
+		// if (input.GetKeyPressed(DirectX::Keyboard::Keys::L)) {
+		// 	// --- プレイヤーカメラをセット ---
+		// 	if (!cameraFlag) {
+		// 		auto camera = CameraManager::Instance().GetCamera();
+		// 		Vector3 position = camera->GetCurrentPosition();
+		// 		Vector3 target = camera->GetTarget();
+		// 		CameraManager::Instance().SetCurrentCamera("PlayerCamera");
+		 		auto ptr = std::dynamic_pointer_cast<PlayerCamera>(CameraManager::Instance().GetCamera());
+		// 		ptr->OnSetCamera();
+		// 		//camera = &playerCamera;
+		// 		//playerCamera.OnSetCamera();
+		// 		Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());
+		//
+		// 		cameraFlag = !cameraFlag;
+		// 	}
+		//
+		// 	// --- ロックオンカメラをセット ---
+		// 	else {
+		// 		if (!Enemy::Instance().IsDead()) {
+		// 			auto camera = CameraManager::Instance().GetCamera();
+		// 			Vector3 position = camera->GetPosition();
+		// 			Vector3 target = camera->GetTarget();
+		// 			CameraManager::Instance().SetCurrentCamera("LockOnCamera");
+		// 			camera = CameraManager::Instance().GetCamera();
+		// 			camera->Initialize();
+		// 			//camera = &lockOnCamera;
+		// 			//camera->Initialize();
+		//
+		// 			camera->SetPosition(position);
+		// 			camera->SetCurrentPosition(position);
+		// 			camera->SetTarget(target);
+		// 			Player::Instance().SetCamera(camera.get());
+		//
+		// 			cameraFlag = !cameraFlag;
+		// 		}
+		// 	}
+		// }
 		static bool cameraFlag = true;
 		InputManager& input = InputManager::Instance();
 		if (input.GetKeyPressed(DirectX::Keyboard::Keys::L))

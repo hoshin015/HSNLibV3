@@ -96,7 +96,7 @@ float rand(inout float seed)
 void spawn(uint id, inout Particle p)
 {
 	float _id  = float(id);
-	float seed = _id;
+	float seed = _id * nowTime;
 
 	// ‹¤’Ê
 	p.isActive = true;
@@ -171,16 +171,22 @@ void spawn(uint id, inout Particle p)
 			float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
 			if (rand(seed) > 0.5)
 				particleSpeed *= -1;
-			p.velocity.x = seed * particleSpeed;
+            p.velocity.x = rand(seed) * particleSpeed;
 			if (rand(seed) > 0.5)
 				particleSpeed *= -1;
-			p.velocity.y = seed * particleSpeed;
+            p.velocity.y = rand(seed) * particleSpeed;
 			if (rand(seed) > 0.5)
 				particleSpeed *= -1;
-			p.velocity.z = seed * particleSpeed;
-		}
+            p.velocity.z = rand(seed) * particleSpeed;
+            }
 		break;
-	case 2:
+    case pk_PlayerAttackHit:
+	    {
+            p.position = emitterPosition;
+            p.velocity = float3(0, 0, 0);
+            p.angle = (rand(seed) * 360);
+	    }
+        break;
 	case 3:
 		{
 			p.position = emitterPosition;

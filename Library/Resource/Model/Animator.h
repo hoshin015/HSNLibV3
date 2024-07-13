@@ -16,6 +16,7 @@ public:
 		ModelResource::Animation* motion         = nullptr;
 		DirectX::XMFLOAT2         threshold      = {};
 		float                     animationSpeed = 1;
+		int                       animationIndex = 0;
 		bool                      endMotion      = false;
 		bool                      loop           = true;
 	};
@@ -62,6 +63,9 @@ private:
 
 	float _timer;
 
+	int _currentMotionIndex = 0;
+	int _currentKeyFrameIndex = 0;
+
 	bool _rootMotionEnabled = false;
 	bool _isEndMotion       = false;
 
@@ -98,6 +102,8 @@ public:
 	const DirectX::XMFLOAT3& GetVelocity() const { return _velocity; }
 
 	float GetTimer() const { return _timer; }
+	int GetMotionIndex() const { return _currentMotionIndex; }
+	int GetKeyFrameIndex() const { return _currentKeyFrameIndex; }
 	bool  GetEndMotion() const { return _isEndMotion; }
 
 	ModelResource::KeyFrame PlayAnimation(float elapsedTime);

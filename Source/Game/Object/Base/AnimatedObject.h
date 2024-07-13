@@ -53,6 +53,7 @@ protected:
 	std::unique_ptr<AnimatedModel> model;
 
 	// --- アニメーションフラグ ---
+	ModelResource::KeyFrame animatorKeyFrame;//Animatorから取得したKeyFrame
 	ModelResource::KeyFrame keyFrame;                       // 使用されるキーフレーム
 	int                     currentKeyFrame         = 0;    // 現在のフレーム
 	int                     currentAnimationIndex   = 0;    // 現在再生中のアニメーション番号
@@ -88,6 +89,7 @@ public:
 	bool GetAnimationEndFlag() { return animationEndFlag; }
 
 	void SetKeyFrame(ModelResource::KeyFrame kf) { keyFrame = kf; }
+	void SetAnimatorKeyFrame(const ModelResource::KeyFrame& key) { animatorKeyFrame = key; }
 	void SetCurrentKeyFrame(int kf) { currentKeyFrame = kf; }
 	void SetCurrentAnimationIndex(int index) { currentAnimationIndex = index; }
 	void SetCurrentAnimationSeconds(float s) { currentAnimationSeconds = s; }

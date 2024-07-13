@@ -72,6 +72,8 @@ void PlayerIdleState::Execute()
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Drink));
 	}
 
+	if (owner->GetInputMap<bool>("Dodge"))
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Dodge));
 
 	// ‰ñ“]
 	owner->Turn();
@@ -161,10 +163,6 @@ void PlayerRunState::Execute()
 	{
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
 	}
-	if (Float3Length(owner->GetVelocity()) < 0.001f)
-	{
-		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
-	}
 	if (owner->GetInputMap<bool>("Attack"))
 	{
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Attack));
@@ -194,8 +192,11 @@ void PlayerRunState::Exit()
 
 void PlayerAttackState::Enter()
 {
-	owner->PlayAnimation(static_cast<int>(PlayerAnimNum::Attack), false);
-	owner->SetInputMap("Attack", false);
+	//owner->PlayAnimation(static_cast<int>(PlayerAnimNum::Attack), false);
+	//owner->SetInputMap("Attack", false);
+	//owner->GetAnimator().SetParameter("attack", false);
+	owner->AbilityStatus().attackTimer = owner->ConstantStatus().attackReceptionTime;
+	owner->AbilityStatus().notAcceptTimer = owner->ConstantStatus().notAcceptTime;
 }
 
 void PlayerAttackState::Execute()
@@ -258,6 +259,7 @@ void PlayerDrinkState::Exit()
 
 void PlayerDodgeState::Enter() {
 	owner->AbilityStatus().dodgeTimer = owner->ConstantStatus().dodgeTime;
+	owner->GetAnimator().SetParameter("endDodge", false);
 }
 
 void PlayerDodgeState::Execute() {
@@ -265,15 +267,15 @@ void PlayerDodgeState::Execute() {
 
 	if (owner->AbilityStatus().dodgeTimer < 0) {
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
+		owner->GetAnimator().SetParameter("endDodge", true);
 	}
 
 	// ‰ñ“]
-	owner->Turn();
+	//owner->Turn();
 
 	// ˆÚ“®
 	owner->Move();
 }
 
 void PlayerDodgeState::Exit() {
-	
 }

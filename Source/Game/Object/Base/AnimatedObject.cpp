@@ -369,7 +369,7 @@ DirectX::XMFLOAT3 AnimatedObject::GetBonePosition(std::string boneName)
 				ModelResource::Animation& animationClip = model->GetModelResource()->GetAnimationClips().
 					at(currentAnimationIndex);
 
-				ModelResource::KeyFrame& keyframe = animationClip.sequence.at(currentKeyFrame);
+				ModelResource::KeyFrame& keyframe = animatorKeyFrame.nodes.empty()? animationClip.sequence.at(currentKeyFrame) : animatorKeyFrame;
 
 				int nodeCount = keyframe.nodes.size();
 				for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)

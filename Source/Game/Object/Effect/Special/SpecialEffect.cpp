@@ -7,9 +7,10 @@
 #include "../../../../../Library/3D/LightManager.h"
 #include "../../../../../Library/3D/CameraManager.h"
 #include "../Lightning/LightningEffect.h"
+#include "../../../../../Library/3D/CameraManager.h"
 
 // XV
-void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze, PlayerCamera* playerCamera)
+void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 {
 	if (!isSpecialEffect) return;
 
@@ -127,7 +128,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze, PlayerCam
 			}
 			radialBlur->SetSamplingCount(static_cast<float>(static_cast<int>(sampCount)));
 
-			DirectX::XMFLOAT2 ndc = Math::ScreenToNdcPos(Math::WorldToScreenPos({ 0,0,0 }, playerCamera));
+			DirectX::XMFLOAT2 ndc = Math::ScreenToNdcPos(Math::WorldToScreenPos({ 0,0,0 }, CameraManager::Instance().GetCamera().get()));
 			ndc.x = (ndc.x + 1.0f) / 2.0f;
 			ndc.y = (ndc.y + 1.0f) / 2.0f;
 			radialBlur->SetBlurPosition(ndc);

@@ -22,12 +22,12 @@
 #include "../../Library/3D/CameraManager.h"
 
 
-// テストシーン
-class SceneTest : public Scene
+// リザルトシーン
+class SceneResult : public Scene
 {
 public:
-	SceneTest() {}
-	~SceneTest() override {};
+	SceneResult() {}
+	~SceneResult() override {};
 
 	// 初期化
 	void Initialize() override;
@@ -44,28 +44,8 @@ public:
 private:
 	// デバッグ描画
 	void DrawDebugGUI();
+
 private:
-	std::unique_ptr<FrameBuffer> frameBuffer;
-	std::unique_ptr<FullScreenQuad> bitBlockTransfer;
-	std::unique_ptr<Bloom> bloom;
-	std::unique_ptr<Shadow> shadow;
-	std::unique_ptr<WbOitBuffer> wbOitBuffer;
-	std::unique_ptr<RadialBlur> radialBlur;
-	std::unique_ptr<HeatHaze> heatHaze;
-	std::unique_ptr<ColorFilter> colorFilter;
+	std::unique_ptr<Sprite> sprBackground;
 
-	std::unique_ptr<SkyMap> skyMap;
-
-	std::unique_ptr<TestStatic> testStatic;
-
-	std::unique_ptr<BlendTestPlayer> blendTestPlayer;
-
-	bool showCollision = false;
-
-	CameraBase* camera;
-	PlayerCamera playerCamera;
-	LockOnCamera lockOnCamera;
-
-	bool stopSoundTimer = false;
-	float soundTimer = 0.0f;
 };

@@ -1,10 +1,14 @@
 #include "EnemyBehavior.h"
 
+#include "../../../../../Library/Graphics/RadialBlur.h"
 #include "../../Library/Math/Math.h"
 
 #include "../../Effect/Breath/BreathEffect.h"
 
 #include "../Player/Player.h"
+#include "../../../../../Library/Timer.h"
+#include "../../../../../Library/3D/CameraManager.h"
+#include "../../Effect/Rock/RockEffect.h"
 
 
 
@@ -407,12 +411,10 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 		return BT_ActionState::Failed;
 
 
-
 	switch (step)
 	{
 		// --- 初期設定 ---
 	case 0:
-
 		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROAR_BIG), false);
 		owner_->SetFoundPlayer(true); // プレイヤーを発見
 
@@ -422,11 +424,46 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 		// --- メイン処理 ---
 	case 1:
 
+		// --- radialBlur 処理 ---
+		owner_->bigRoarTimer += Timer::Instance().DeltaTime();
+
+		// radialBlur ON OFF
+		if(!owner_->radialBlur->GetIsRadial() && owner_->bigRoarRadialUpSampling.startTime < owner_->bigRoarTimer)
+		{
+			owner_->radialBlur->SetSamplingCount(0.0f);
+			owner_->radialBlur->SetBlurPower(0.02f);
+			owner_->radialBlur->SetIsRadial(true);
+		}
+		if(owner_->radialBlur->GetIsRadial() && owner_->bigRoarRadialDownSampling.endTime < owner_->bigRoarTimer)
+		{
+			owner_->radialBlur->SetIsRadial(false);
+		}
+
+		// sampling 増減処理
+		float sampCount;
+		sampCount = Easing::GetNowParam(Easing::OutQuad<float>, owner_->bigRoarTimer, owner_->bigRoarRadialUpSampling);
+		if (owner_->bigRoarRadialDownSampling.startTime < owner_->bigRoarTimer)
+		{
+			sampCount = Easing::GetNowParam(Easing::OutQuad<float>, owner_->bigRoarTimer, owner_->bigRoarRadialDownSampling);
+		}
+		owner_->radialBlur->SetSamplingCount(static_cast<float>(static_cast<int>(sampCount)));
+
+		// 座標計算
+		DirectX::XMFLOAT3 bonePos = Enemy::Instance().GetBonePosition("sitaago");
+		DirectX::XMFLOAT2 ndc = Math::ScreenToNdcPos(Math::WorldToScreenPos(bonePos, CameraManager::Instance().GetCamera().get()));
+		ndc.x = (ndc.x + 1.0f) / 2.0f;
+		ndc.y = (ndc.y + 1.0f) / 2.0f;
+		owner_->radialBlur->SetBlurPosition(ndc);
+
+
+
 		// --- アニメーションが終わったら ---
 		if (owner_->GetAnimationEndFlag())
 		{
 			OnEndAction();
 			ResetActionCount();
+			owner_->bigRoarTimer = 0.0f;	// ラジアルブラー用タイマーをリセット
+			step = 0;
 			return BT_ActionState::Complete;
 		}
 
@@ -654,7 +691,13 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
-
+	//	--- 岩生成用変数 ---
+	static float rockNowTimer = 0.0f;
+	static float rockTimer = 0.0f;
+	const static float rockTime = 0.005f;
+	const static float rockStartTime = 0.3f;
+	const static float rockEndTime = 10.0f;
+	static bool isEndRock = false;
 
 	switch (step)
 	{
@@ -668,6 +711,10 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 			R.MakeRotationFromQuaternion(owner_->quaternion_);
 			owner_->targetVec = R.v_[2].xyz();
 		}
+
+		rockNowTimer = 0.0f;
+		rockTimer = 0.0f;
+		isEndRock = false;
 
 		step++;
 		break;
@@ -693,6 +740,27 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 		// --- 正面へ移動 ---
 		owner_->Move(owner_->targetVec, owner_->GetRushSpeed());
 
+		// --- 岩生成 ---
+		rockNowTimer += Timer::Instance().DeltaTime();
+		if (rockStartTime < rockNowTimer && rockNowTimer < rockEndTime)
+		{
+			rockTimer += Timer::Instance().DeltaTime();
+			while (rockTimer > rockTime)
+			{
+				// 岩エフェクト生成
+				RockEffect::RockEmitter rock;
+				rock.position = Enemy::Instance().GetBonePosition("sitaago_end");
+				rock.angle = { Math::RandomRange(0,359), Math::RandomRange(0,359),Math::RandomRange(0,359) };
+				rock.scale = { Math::RandomRange(0.25,0.5), Math::RandomRange(0.25,0.5),Math::RandomRange(0.25,0.5) };
+				rock.velocity = { Math::RandomRange(-6,6), Math::RandomRange(1,5), Math::RandomRange(-6,6) };
+				rock.gravity = 10;
+				rock.lifeTime = 3;
+				RockEffect::Instance().Emit(rock);
+
+				rockTimer -= rockTime;
+			}
+		}
+
 		owner_->runTimer_ -= elapsedTime;
 		if (owner_->runTimer_ < 0.0f)
 		{
@@ -706,6 +774,28 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	// --- 突進終わり ---
 	case 3:
 	{
+		// --- 正面へ移動 ---
+		Vector3 position = owner_->GetPos();
+		position += owner_->targetVec * owner_->GetRushEndSpeed() * elapsedTime;
+		owner_->SetPos(position.vec_);
+
+		if(!isEndRock)
+		{
+			for(int i = 0; i < 100; i++)
+			{
+				// 岩エフェクト生成
+				RockEffect::RockEmitter rock;
+				rock.position = Enemy::Instance().GetBonePosition("sitaago_end");
+				rock.angle = { Math::RandomRange(0,359), Math::RandomRange(0,359),Math::RandomRange(0,359) };
+				rock.scale = { Math::RandomRange(0.25,0.5), Math::RandomRange(0.25,0.5),Math::RandomRange(0.25,0.5) };
+				rock.velocity = { Math::RandomRange(-6,6), Math::RandomRange(4,10), Math::RandomRange(-6,6) };
+				rock.gravity = 10;
+				rock.lifeTime = 3;
+				RockEffect::Instance().Emit(rock);
+			}
+			isEndRock = true;
+		}
+
 		owner_->Move(owner_->targetVec, owner_->GetRushEndSpeed());
 		break;
 	}
@@ -1107,16 +1197,49 @@ BT_ActionState EnemyTailAttack::Run(float elapsedTime)
 	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
+
+	//	--- 岩生成用変数 ---
+	static float rockNowTimer = 0.0f;
+	static float rockTimer = 0.0f;
+	const static float rockTime = 0.005f;
+	const static float rockStartTime = 1.35f;
+	const static float rockEndTime = 2.0f;
+
+
 	switch (step)
 	{
 	case 0:
 		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROTATION), false);
+
+		rockNowTimer = 0.0f;
+		rockTimer = 0.0f;
 
 		step++;
 		break;
 
 
 	case 1:
+		// --- 岩生成 ---
+		rockNowTimer += Timer::Instance().DeltaTime();
+		if(rockStartTime < rockNowTimer && rockNowTimer < rockEndTime)
+		{
+			rockTimer += Timer::Instance().DeltaTime();
+			while (rockTimer > rockTime)
+			{
+				// 岩エフェクト生成
+				RockEffect::RockEmitter rock;
+				rock.position = Enemy::Instance().GetBonePosition("sippo_end");
+				rock.angle = { Math::RandomRange(0,359), Math::RandomRange(0,359),Math::RandomRange(0,359) };
+				rock.scale = { Math::RandomRange(0.25,0.5), Math::RandomRange(0.25,0.5),Math::RandomRange(0.25,0.5) };
+				rock.velocity = { Math::RandomRange(-2,2), Math::RandomRange(1,3), Math::RandomRange(-2,2) };
+				rock.gravity = 10;
+				rock.lifeTime = 3;
+				RockEffect::Instance().Emit(rock);
+
+				rockTimer -= rockTime;
+			}
+		}
+		
 
 		if (owner_->GetAnimationEndFlag())
 		{

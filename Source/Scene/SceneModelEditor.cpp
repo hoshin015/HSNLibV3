@@ -302,6 +302,8 @@ void SceneModelEditor::DrawDebugGUI()
 													DWORD color = 0xFFFFFFFF;
 													// normal
 													if (textureIndex == 1) color = 0xFFFF7F7F;
+													// metallicRaughness
+													if (textureIndex == 2) color = 0xFF000000;
 													// emissive & dissolve
 													if (textureIndex == 3 || textureIndex == 5) color = 0x00000000;
 													LoadFbx::Instance().MakeDummyTexture(

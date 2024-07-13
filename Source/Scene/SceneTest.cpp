@@ -72,7 +72,8 @@ void SceneTest::Initialize()
 #else
 	StageMain*    stageMain    = new StageMain("Data/Fbx/AfterStage/AfterStage.model");
 	stageMain->SetScale({ stageScale, stageScale, stageScale });
-	StageMain* stage = new StageMain("./Data/Fbx/Stage/StageCollision.fbx");
+	StageMain* stage = new StageMain("./Data/Fbx/Stage/StageCollision2.model");
+	stage->GetModel()->GetModelResource()->SetScale(4.0f);
 #endif
 	stageManager.Register(stageMain);
 	stageManager.Register(stage);
@@ -202,6 +203,8 @@ void SceneTest::Update()
 	Enemy::Instance().Update();
 
 	Player::Instance().Update();
+	//blendTestPlayer->Update();
+	Enemy::Instance().CollisionVSPlayer();
 
 	DamageTextManager::Instance().Update();
 
@@ -657,6 +660,52 @@ void SceneTest::DrawDebugGUI()
 		// 		}
 		// 	}
 		// }
+		static bool cameraFlag = true;
+		InputManager& input = InputManager::Instance();
+		if (input.GetKeyPressed(DirectX::Keyboard::Keys::L))
+		{
+			// --- プレイヤーカメラをセット ---
+			if (!cameraFlag)
+			{
+				auto camera = CameraManager::Instance().GetCamera();
+				Vector3 position = camera->GetCurrentPosition();
+				Vector3 target = camera->GetTarget();
+				CameraManager::Instance().SetCurrentCamera("PlayerCamera");
+				auto ptr = std::dynamic_pointer_cast<PlayerCamera>(CameraManager::Instance().GetCamera());
+				ptr->SetCurrentPosition(position);
+				ptr->SetTarget(target);
+				ptr->currentTarget = target;
+				//ptr->OnSetCamera();
+				//camera = &playerCamera;
+				//playerCamera.OnSetCamera();
+				Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());
+
+				cameraFlag = !cameraFlag;
+			}
+
+			// --- ロックオンカメラをセット ---
+			else
+			{
+				if(!Enemy::Instance().IsDead())
+				{
+					auto camera = CameraManager::Instance().GetCamera();
+					Vector3 position = camera->GetPosition();
+					Vector3 target = camera->GetTarget();
+					CameraManager::Instance().SetCurrentCamera("LockOnCamera");
+					camera = CameraManager::Instance().GetCamera();
+					camera->Initialize();
+					//camera = &lockOnCamera;
+					//camera->Initialize();
+
+					camera->SetPosition(position);
+					camera->SetCurrentPosition(position);
+					camera->SetTarget(target);
+					Player::Instance().SetCamera(camera.get());
+
+					cameraFlag = !cameraFlag;
+				}
+			}
+		}
 	}
 	ImGui::End();
 }

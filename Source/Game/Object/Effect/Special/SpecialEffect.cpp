@@ -5,6 +5,7 @@
 #include "../Rock/RockEffect.h"
 #include "../../../../../Library/Math/Math.h"
 #include "../../../../../Library/3D/LightManager.h"
+#include "../../../../../Library/3D/CameraManager.h"
 #include "../Lightning/LightningEffect.h"
 #include "../../../../../Library/3D/CameraManager.h"
 
@@ -166,9 +167,8 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 			if (lifeTimer >= firstNovaTime)
 			{
 				// ƒJƒƒ‰—h‚ç‚µ
-				auto ptr = dynamic_cast<PlayerCamera*>(CameraManager::Instance().GetCamera().get());
-				ptr->SetShakePower(2);
-				ptr->SetTimer(chargeNovaTime);
+				CameraManager::Instance().shakeTimer = chargeNovaTime;
+				CameraManager::Instance().shakePower = 2.0f;
 
 				radialBlur->SetIsRadial(false);
 				lifeTimer         = 0.0f;

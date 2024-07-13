@@ -35,6 +35,9 @@ void CameraManager::SetCurrentCamera(const char* key)
 
 void CameraManager::Initialize()
 {
+	shakeTimer = 0.0f;
+	shakePower = 100.0f;
+
 	Register("PlayerCamera", std::make_shared<PlayerCamera>());
 	Register("LockOnCamera", std::make_shared<LockOnCamera>());
 	Register("EnemyDeadCamera", std::make_shared<EnemyDeadCamera>());

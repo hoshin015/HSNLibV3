@@ -70,7 +70,7 @@ protected:
 	float farZ = 500.0f;	// 最遠距離
 #else
 	// 勝手に変えてます by ttoka
-	float fov = 30.0f;		// 視野角 ( 度数法 )
+	float fov = 45.0f;		// 視野角 ( 度数法 )
 	float nearZ = 1.0f;	// 最近距離
 	float farZ = 1000.0f;	// 最遠距離
 

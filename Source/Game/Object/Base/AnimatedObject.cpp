@@ -313,6 +313,14 @@ void AnimatedObject::ClearAnimSphereCollisionDamagedFlag()
 	}
 }
 
+void AnimatedObject::EnableAnimSphereCollisionDamagedFlag()
+{
+	for (auto& playerAnimSphereCollision : model->GetModelResource()->GetAnimationClips().at(currentAnimationIndex).animSphereCollisions)
+	{
+		playerAnimSphereCollision.isDamaged = true;
+	}
+}
+
 // Œø‰Ê‰¹XV
 void AnimatedObject::UpdateSe()
 {

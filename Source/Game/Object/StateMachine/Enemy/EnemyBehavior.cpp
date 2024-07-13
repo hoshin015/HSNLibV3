@@ -868,20 +868,6 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 			rockNowTimer += Timer::Instance().DeltaTime();
 			if (rockStartTime_3 < rockNowTimer && rockNowTimer < rockEndTime_3)
 			{
-				// 岩エフェクト生成
-				RockEffect::RockEmitter rock;
-				rock.position = Enemy::Instance().GetBonePosition("sitaago_end");
-				rock.angle = { Math::RandomRange(0,359), Math::RandomRange(0,359),Math::RandomRange(0,359) };
-				rock.scale = { Math::RandomRange(0.25,0.5), Math::RandomRange(0.25,0.5),Math::RandomRange(0.25,0.5) };
-				rock.velocity = { Math::RandomRange(-6,6), Math::RandomRange(4,10), Math::RandomRange(-6,6) };
-				rock.gravity = 10;
-				rock.lifeTime = 3;
-				RockEffect::Instance().Emit(rock);
-			}
-			isEndRock = true;
-		}
-
-		owner_->Move(owner_->targetVec, owner_->GetRushEndSpeed());
 				for (int i = 0; i < 30; i++)
 				{
 					// --- 敵の方向ベクトル取得 ---
@@ -912,14 +898,15 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 
 					rockTimer -= rockTime;
 				}
-				isEndRock = true;
 			}
+			isEndRock = true;
+		}
+
+		owner_->Move(owner_->targetVec, owner_->GetRushEndSpeed());
 			
 		}
 
 		break;
-	}
-
 	}
 
 	// --- アニメーションが終わったら終了 ---

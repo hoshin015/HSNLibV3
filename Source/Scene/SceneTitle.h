@@ -2,7 +2,9 @@
 #include <memory>
 // --- Library ---
 #include "../../Library/2D/Sprite.h"
+#include "../../Library/Graphics/FullScreenQuad.h"
 #include "../../Library/Graphics/FrameBuffer.h"
+#include "../../Library/Graphics/WbOitBuffer.h"
 #include "../../Library/3D/SkyMap.h"
 // --- Scene ---
 #include "Scene.h"
@@ -34,7 +36,9 @@ public:
 	void DrawDebugGUI();
 
 private:
+	std::unique_ptr<FullScreenQuad> bitBlockTransfer;
 	std::unique_ptr<FrameBuffer> frameBuffer;
+	std::unique_ptr<WbOitBuffer> wbOitBuffer;
 	std::unique_ptr<TestAnimated> titlePlayer;
 	std::unique_ptr<TestAnimated> titleFloor;
 

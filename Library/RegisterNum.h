@@ -125,7 +125,7 @@
 
 // Gpu Particle (ここは別のテクスチャで更新しないようにする)
 #define _particlesTexture		20
-#define _perlinNoiseTexture		21
+#define _screenParticleTexture	21
 
 
 // --- hlsl ---
@@ -203,7 +203,7 @@
 
 // Gpu Particle (ここは別のテクスチャで更新しないようにする)
 #define _particlesTexture		t20
-#define _perlinNoiseTexture		t21
+#define _screenParticleTexture	t21
 
 #endif
 

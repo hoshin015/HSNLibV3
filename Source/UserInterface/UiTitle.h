@@ -8,6 +8,98 @@ class UiTitle
 private:
 	UiTitle()
 	{
+		imgBlack = std::make_unique<Sprite>("Data/Texture/Black.png");
+		sprites.emplace_back(imgBlack.get());
+
+		imgEnterText = std::make_unique<Sprite>("Data/Texture/Text/enterText.png");
+		imgEnterText->SetIsRender(false);
+		imgEnterText->SetColorA(0.0f);
+		imgEnterText->SetPos(imgEnterTextPos);
+		sprites.emplace_back(imgEnterText.get());
+		imgBackText = std::make_unique<Sprite>("Data/Texture/Text/backText.png");
+		imgBackText->SetIsRender(false);
+		imgBackText->SetColorA(0.0f);
+		imgBackText->SetPos(imgBackTextPos);
+		sprites.emplace_back(imgBackText.get());
+
+
+		imgTitleLogo = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/TitleLogo.png");
+		imgTitleLogo->SetDissolveTexture(L"Data/Texture/Noise/DirtGradient.png");
+		sprites.emplace_back(imgTitleLogo.get());
+		imgTitleLogoSmall = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/TitleLogoSmall.png");
+		imgTitleLogoSmall->SetIsRender(false);
+		imgTitleLogoSmall->SetColorA(0.0f);
+		sprites.emplace_back(imgTitleLogoSmall.get());
+
+		imgPressAnyButton = std::make_unique<Sprite>("Data/Texture/Text/PressAnyButton.sprite");
+		imgPressAnyButton->UpdateAnimation();
+		imgPressAnyButton->SetPos({ 640, 550 });
+		sprites.emplace_back(imgPressAnyButton.get());
+
+		imgTitleText = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/titleText.sprite");
+		imgTitleText->SetDissolveTexture(L"Data/Texture/Noise/DirtGradient2.png");
+		imgTitleText->UpdateAnimation();
+		imgTitleText->SetPos(imgTitleTextPos);
+		sprites.emplace_back(imgTitleText.get());
+
+		imgBgCover = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/BgCover.png");
+		imgBgCover->SetPos({ 0, 0 });
+		imgBgCover->SetIsRender(false);
+		imgBgCover->SetColorA(0.0f);
+		sprites.emplace_back(imgBgCover.get());
+
+		imgGameStart = std::make_unique<Sprite>("Data/Texture/Text/GameStart.sprite");
+		imgGameStart->UpdateAnimation();
+		imgGameStart->SetIsRender(false);
+		sprites.emplace_back(imgGameStart.get());
+
+		imgOptions = std::make_unique<Sprite>("Data/Texture/Text/Options.sprite");
+		imgOptions->UpdateAnimation();
+		imgOptions->SetIsRender(false);
+		sprites.emplace_back(imgOptions.get());
+
+		imgQuit = std::make_unique<Sprite>("Data/Texture/Text/Quit.sprite");
+		imgQuit->UpdateAnimation();
+		imgQuit->SetIsRender(false);
+		sprites.emplace_back(imgQuit.get());
+
+		imgSelectBar = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/selectBar.sprite");
+		imgSelectBar->UpdateAnimation();
+		imgSelectBar->SetIsRender(false);
+		imgSelectBar->SetPos({ 100.0f, 100.0 });
+		sprites.emplace_back(imgSelectBar.get());
+
+
+		imgSelectLevelBgCover = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/levelSelectBgCover.png");
+		imgSelectLevelBgCover->SetIsRender(false);
+		imgSelectLevelBgCover->SetDissolveTexture(L"Data/Texture/Noise/GrungeMap.png");
+		imgSelectLevelBgCover->spriteDissolveConstant.edgeThreshold = 0.0f;
+		imgSelectLevelBgCover->spriteDissolveConstant.edgeColor = { 0.2f, 0.2f, 1.0f, 1.0f };
+		sprites.emplace_back(imgSelectLevelBgCover.get());
+
+		imgSelectLevel = std::make_unique<Sprite>("Data/Texture/Text/LevelSelect.sprite");
+		imgSelectLevel->UpdateAnimation();
+		imgSelectLevel->SetIsRender(false);
+		imgSelectLevel->SetPos(imgSelectLevelPos);
+		sprites.emplace_back(imgSelectLevel.get());
+
+		imgEasy = std::make_unique<Sprite>("Data/Texture/Text/Easy.sprite");
+		imgEasy->UpdateAnimation();
+		imgEasy->SetIsRender(false);
+		imgEasy->SetPos(imgEasyPos);
+		sprites.emplace_back(imgEasy.get());
+
+		imgNormal = std::make_unique<Sprite>("Data/Texture/Text/normal.sprite");
+		imgNormal->UpdateAnimation();
+		imgNormal->SetIsRender(false);
+		imgNormal->SetPos(imgNormalPos);
+		sprites.emplace_back(imgNormal.get());
+
+		imgHard = std::make_unique<Sprite>("Data/Texture/Text/hard.sprite");
+		imgHard->UpdateAnimation();
+		imgHard->SetIsRender(false);
+		imgHard->SetPos(imgHardPos);
+		sprites.emplace_back(imgHard.get());
 	};
 
 	~UiTitle()

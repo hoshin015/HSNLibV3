@@ -47,6 +47,10 @@ public:
 	void Initialize();
 	void Update();
 	void Render();
+	void ScreenRender();
+
+	// バッファ作成
+	void CreateUavBuffer();
 
 	// 数指定のパーティクル起動
 	void Emit(int num);
@@ -72,7 +76,9 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11VertexShader>   vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader>    pixelShader;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader>    screenPixelShader;
 	Microsoft::WRL::ComPtr<ID3D11GeometryShader> geometryShader;
+	Microsoft::WRL::ComPtr<ID3D11GeometryShader> screenGeometryShader;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>    inputLayout;
 	Microsoft::WRL::ComPtr<ID3D11ComputeShader>  initCs;
 	Microsoft::WRL::ComPtr<ID3D11ComputeShader>  updateCs;
@@ -81,5 +87,5 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer>         constantBuffer;
 
 	std::unique_ptr<Sprite> sprParticles;
-	std::unique_ptr<Sprite> sprPerlinNoise;
+	std::unique_ptr<Sprite> sprScreenParticles;
 };

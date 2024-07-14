@@ -21,6 +21,8 @@
 // --- UserInterface ---
 #include "../UserInterface/UiTitle.h"
 #include "../../Library/3D/LightManager.h"
+#include "../../Library/Particle/Particle.h"
+#include "../../Library/Particle/EmitterManager.h"
 
 void SceneTitle::Initialize()
 {
@@ -61,15 +63,23 @@ void SceneTitle::Initialize()
 	titleFloor->SetPos({ -2, 3, 5 });
 	titleFloor->SetScale({ 40, 40, 40 });
 
-	frameBuffer = std::make_unique<FrameBuffer>(frameWork->GetScreenWidthF(), frameWork->GetScreenHeightF());
+	// frameBuffer
+	bitBlockTransfer = std::make_unique<FullScreenQuad>();
+	frameBuffer = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
+		Framework::Instance().GetScreenHeightF(), true);
+	wbOitBuffer = std::make_unique<WbOitBuffer>(Framework::Instance().GetScreenWidthF(),
+		Framework::Instance().GetScreenHeightF());
 
 	UiTitle::Instance().Initialize();
+
+	Particle::Instance().Initialize();
 }
 
 void SceneTitle::Finalize()
 {
 	StageManager::Instance().Clear();
 	LightManager::Instance().Clear();
+	EmitterManager::Instance().Clear();
 }
 
 void SceneTitle::Update()
@@ -103,8 +113,35 @@ void SceneTitle::Update()
 	{
 		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
 	}
+	// テストエミッター
+	if (InputManager::Instance().GetKeyPressed(Keyboard::F1))
+	{
+		Emitter* emitter0                           = new Emitter();
+		emitter0->position                          = {100, 100, 0};
+		emitter0->emitterData.duration              = 5.0;
+		emitter0->emitterData.looping               = false;
+		emitter0->emitterData.burstsTime            = 0.1;
+		emitter0->emitterData.burstsCount           = 1;
+		emitter0->emitterData.particleKind          = pk_titleSelect;
+		emitter0->emitterData.particleLifeTimeMin   = 1.0f;
+		emitter0->emitterData.particleLifeTimeMax   = 2.0f;
+		emitter0->emitterData.particleSpeedMin      = 0.0f;
+		emitter0->emitterData.particleSpeedMax      = 0.0f;
+		emitter0->emitterData.particleSizeMin       = {30.0f, 30.0f};
+		emitter0->emitterData.particleSizeMax       = {30.0f, 30.0f};
+		emitter0->emitterData.particleColorMin      = {1.0, 1.0, 1.0, 1};
+		emitter0->emitterData.particleColorMax      = {1.0, 1.0, 1.0, 1};
+		emitter0->emitterData.particleGravity       = 1;
+		emitter0->emitterData.particleBillboardType = 0;
+		emitter0->emitterData.particleTextureType   = 0;
+		emitter0->emitterData.burstsOneShot = 1;
+		EmitterManager::Instance().Register(emitter0);
+	}
 
 	UiTitle::Instance().Update();
+
+	EmitterManager::Instance().Update();
+	Particle::Instance().Update();
 
 #if USE_IMGUI
 #endif
@@ -134,29 +171,64 @@ void SceneTitle::Render()
 	LightManager::Instance().UpdateConstants();
 
 
-	// rasterizerStateの設定
-	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
-	// depthStencilStateの設定
-	gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
-	// blendStateの設定
-	gfx->SetBlend(BLEND_STATE::ALPHA);
-
-
-	// ここに不透明オブジェクトの描画
-	if (UiTitle::Instance().GetIsStageRender())
+	// ====== 不透明描画 ======
+	frameBuffer->Clear(gfx->GetBgColor());
+	frameBuffer->Activate();
 	{
-		StageManager::Instance().Render();
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
+		gfx->SetBlend(BLEND_STATE::ALPHA);
+
+		// ここに不透明オブジェクトの描画
+		// ここに不透明オブジェクトの描画
+		if (UiTitle::Instance().GetIsStageRender())
+		{
+			StageManager::Instance().Render();
+			skyMap->Render();
+		}
+		if (UiTitle::Instance().GetIsCharacterRender())
+		{
+			titlePlayer->Render();
+			titleFloor->NoAnimRender();
+		}
 		skyMap->Render();
+
+		// UI 描画
+		UiTitle::Instance().Render();
 	}
-	if (UiTitle::Instance().GetIsCharacterRender())
+	frameBuffer->DeActivate();
+
+	// ====== 半透明描画 ======
+	wbOitBuffer->Clear();
+	wbOitBuffer->Activate(frameBuffer->depthStencilView.Get());
 	{
-		titlePlayer->Render();
-		titleFloor->NoAnimRender();
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_TRUE_SOLID);
+
+		// ここに半透明オブジェクトの描画
+		Particle::Instance().ScreenRender();
 	}
+	wbOitBuffer->DeActivate();
 
+	// ====== 不透明・半透明の統合 ======
+	frameBuffer->Activate();
+	{
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
+		gfx->SetBlend(BLEND_STATE::ALPHA);
 
-	// UI 描画
-	UiTitle::Instance().Render();
+		ID3D11ShaderResourceView* srvs[2] =
+		{
+			wbOitBuffer->shaderResourceViews[_accumTexture].Get(),
+			wbOitBuffer->shaderResourceViews[_revealTexture].Get(),
+		};
+		bitBlockTransfer->blit(srvs, 0, ARRAYSIZE(srvs), wbOitBuffer->GetWbOitPS());
+	}
+	frameBuffer->DeActivate();
+
+	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
+	
+
+	
 
 #if USE_IMGUI
 	// --- デバッグ描画 ---

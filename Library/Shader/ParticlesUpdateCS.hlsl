@@ -5,7 +5,6 @@ RWStructuredBuffer<Particle> particleBuffer : register(u0);
 AppendStructuredBuffer<uint> deadList : register(u1);
 
 SamplerState samplerStates[_samplerNum] : register(s0);
-Texture2D    perlinNoiseTexture : register(_perlinNoiseTexture);
 
 [numthreads(THREAD_NUM_X, 1, 1)]
 void main(uint3 DTid : SV_DispatchThreadID)
@@ -21,28 +20,6 @@ void main(uint3 DTid : SV_DispatchThreadID)
 		{
 		case pk_Dust:
 			{
-				// TODO: perlinNoise で滑らかに動かす
-#if 0
-				// パーリンノイズのテクスチャから値を取得するためのUV座標
-				float2 uv = frac(float2(p.position.x, p.position.z) * 0.01 + float2(random(id) * 0.01, random(id) * 0.01));
-				// IDで調整して正規化
-
-				// パーリンノイズの値を取得
-				float noiseX = perlinNoiseTexture.SampleLevel(samplerStates[_pointSampler], uv, 0).r;
-				float noiseY = perlinNoiseTexture.SampleLevel(samplerStates[_pointSampler], uv + float2(0.1, 0.1), 0).r;
-				float noiseZ = perlinNoiseTexture.SampleLevel(samplerStates[_pointSampler], uv + float2(0.2, 0.2), 0).r;
-				float noiseA = perlinNoiseTexture.SampleLevel(samplerStates[_pointSampler], uv + float2(0.3, 0.3), 0).r;
-
-				// パーティクルの速度を更新
-				p.velocity.x += (noiseX - 0.5) * p.speed; // ノイズ値を中心に移動
-				p.velocity.y += (noiseY - 0.5) * p.speed;
-				p.velocity.z += (noiseZ - 0.5) * p.speed;
-
-				p.angle += (noiseA - 0.5) * 0.1;
-
-				// パーティクルの位置を更新
-				//p.position += p.velocity * 0.1; // 移動速度を調整
-#endif
 				p.position += p.velocity * deltaTime;
 
 				// x

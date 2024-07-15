@@ -41,6 +41,11 @@ public:
 private:
 	bool isSpecialEffect = false; // ‹N“®’†‚©‚Ç‚¤‚©
 
+	// damage
+	bool isDamaged = false;
+	float damageRadius = 10.0f;
+	float damage = 1000.0f;
+
 	bool isPlayChargeSound = false;
 	float playChargeSoundTime = 8.5f;
 	

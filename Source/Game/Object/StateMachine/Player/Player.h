@@ -24,7 +24,7 @@ public:
 	struct AbilityStatus {
 		float hp        = 10;
 		float strength  = 1;
-		float moveSpeed = 3;
+		float moveSpeed = 7;
 		float attackCount = 0;
 		float attackTimer = 0;
 		float dodgeTimer = 0;
@@ -37,10 +37,10 @@ public:
 
 		float shiftDashTimer = 0.4f;
 		float walkSpeed = 5;
-		float dashSpeed = 15;
+		float dashSpeed = 2.4f;
 		float dashDeadZone = 0.7f;
 
-		float dodgePower = 15;
+		float dodgePower = 24;
 		float dodgeLowestTime = 0.5f;
 		float dodgeTime = 1.5f;
 
@@ -79,6 +79,8 @@ public:
 	void CalcRunVelocity();
 	// âÒî
 	void CalcDodgeVelocity();
+	// çUåÇ
+	void CalcAttackVelocity();
 
 	// RootAnimation
 	void CalcRootAnimationVelocity();

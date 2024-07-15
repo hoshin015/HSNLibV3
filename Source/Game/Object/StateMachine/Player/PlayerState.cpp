@@ -208,6 +208,7 @@ void PlayerAttackState::Execute()
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
 	}
 
+	owner->CalcAttackVelocity();
 	owner->CalcRootAnimationVelocity();
 	owner->Move();
 }
@@ -273,6 +274,11 @@ void PlayerDodgeState::Execute() {
 	if ((owner->AStatus().dodgeTimer < dodgeLowTimer&& !owner->GetInputMap<bool>("DodgeHold"))||
 		owner->AStatus().dodgeTimer < 0) {
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
+		if (Vector2 move = owner->GetInputMap<DirectX::XMFLOAT2>("Move");
+			move.Length() > owner->CStatus().dashDeadZone) {
+			owner->SetInputMap("Run", true);
+			owner->GetAnimator().SetParameter("run", true);
+		}
 		owner->GetAnimator().SetParameter("endDodge", true);
 	}
 

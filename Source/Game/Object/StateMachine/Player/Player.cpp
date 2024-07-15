@@ -38,22 +38,22 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 
 	Animator::Motion walkMae;
 	walkMae.motion = &animation[16];
-	walkMae.animationSpeed = 0.2f;
+	walkMae.animationSpeed = 0.27f;
 	walkMae.threshold = { 0,1 };
 
 	Animator::Motion walkUsiro;
 	walkUsiro.motion = &animation[18];
-	walkUsiro.animationSpeed = 0.2f;
+	walkUsiro.animationSpeed = 0.27f;
 	walkUsiro.threshold = { 0,-1 };
 
 	Animator::Motion walkLeft;
 	walkLeft.motion = &animation[15];
-	walkLeft.animationSpeed = 0.2f;
+	walkLeft.animationSpeed = 0.27f;
 	walkLeft.threshold = { 1,0 };
 
 	Animator::Motion walkRight;
 	walkRight.motion = &animation[17];
-	walkRight.animationSpeed = 0.2f;
+	walkRight.animationSpeed = 0.27f;
 	walkRight.threshold = { -1,0 };
 
 	Animator::Motion runMotion;
@@ -389,6 +389,8 @@ void Player::DrawDebugImGui(int number) {
 				ImGui::DragFloat(u8"ëÃóÕ", &ability.hp, 1);
 				ImGui::DragFloat(u8"çUåÇóÕ", &ability.strength, 0.1f);
 				ImGui::DragFloat(u8"à⁄ìÆë¨ìx", &ability.moveSpeed, 0.1f);
+				ImGui::DragFloat(u8"çUåÇéûä‘", &ability.attackTimer,0.1f);
+				ImGui::DragFloat(u8"çUåÇâÒêî", &ability.attackCount,0.1f);
 
 				ImGui::TreePop();
 			}
@@ -484,18 +486,23 @@ void Player::Input()
 	inputMap["Move"] = inputMoveData.vec_;
 
 	// --- ëñÇË ---
-	static bool  inputRunData = false;
-	static float runTimer        = 0;
+	// static bool  inputRunData = false;
+	// static float runTimer        = 0;
 
-	if (inputMoveData.Length() > constant.dashDeadZone) runTimer += dt;
-	else runTimer = 0;
+	//if (inputMoveData.Length() > constant.dashDeadZone) runTimer += dt;
+	//else runTimer = 0;
 
-	inputRunData = runTimer >= constant.shiftDashTimer;
+	if (inputMoveData.Length() < constant.dashDeadZone) {
+		inputMap["Run"] = false;
+		animator.SetParameter("run", false);
+	}
 
-	ability.moveSpeed = Math::Lerp(ability.moveSpeed, inputRunData ? constant.dashSpeed : constant.walkSpeed, frameDt);
+	//inputRunData = runTimer >= constant.shiftDashTimer;
 
-	inputMap["Run"] = inputRunData;
-	animator.SetParameter("run", inputRunData);
+	//ability.moveSpeed = Math::Lerp(ability.moveSpeed, inputRunData ? constant.dashSpeed : constant.walkSpeed, frameDt);
+
+	// inputMap["Run"] = inputRunData;
+	// animator.SetParameter("run", inputRunData);
 
 	// --- çUåÇ ---
 	bool inputAttackData = input.GetMousePressed(MOUSEBUTTON_STATE::leftButton);
@@ -535,7 +542,7 @@ void Player::Input()
 	// }
 	// inputMap["Drink"] = inputDrinkData;
 
-	if (!CameraManager::Instance().IsCurrentCamera("LockOnCamera")||inputRunData) {
+	if (!CameraManager::Instance().IsCurrentCamera("LockOnCamera")||GetInputMap<bool>("Run")) {
 		float len = inputMoveData.Length();
 		if (len > 1) len = 1;
 		animator.SetParameter("moveX", 0.f);
@@ -579,8 +586,9 @@ void Player::InputAttack() {
 		ClearSeFlag();
 	}
 
-	inputMap["EndAttack"] = ability.attackTimer <= 0 && animator.GetEndMotion();
-	animator.SetParameter("endAttack", ability.attackTimer <= 0 && animator.GetEndMotion());
+	bool end = ability.attackTimer <= 0 && animator.GetEndMotion();
+	inputMap["EndAttack"] = end;
+	animator.SetParameter("endAttack", end);
 
 	// --- âÒî ---
 	bool dodge = input.GetKeyPressed(DirectX::Keyboard::Space);
@@ -595,6 +603,21 @@ void Player::InputAttack() {
 		ability.attackTimer = 0;
 		ability.attackCount = 0;
 	}
+
+	// --- à⁄ìÆ ---
+	Vector2 inputMoveData;
+	inputMoveData.x = input.GetKeyPress(Keyboard::D) - input.GetKeyPress(Keyboard::A);
+	inputMoveData.y = input.GetKeyPress(Keyboard::W) - input.GetKeyPress(Keyboard::S);
+
+	// ÉRÉìÉgÉçÅ[ÉâÅ[ëŒâû
+	if (input.IsGamePadConnected() && inputMoveData.x == 0 && inputMoveData.y == 0) {
+		inputMoveData.x = input.GetThumSticksLeftX();
+		inputMoveData.y = input.GetThumSticksLeftY();
+	}
+
+	inputMoveData.Normalize();
+
+	inputMap["AttackMove"] = inputMoveData.vec_;
 
 }
 
@@ -660,7 +683,7 @@ void Player::CalcRunVelocity()
 	vel += front * move.y;
 	vel += right * move.x;
 
-	vel *= ability.moveSpeed * deltaTime;
+	vel *= ability.moveSpeed * constant.dashSpeed * deltaTime;
 
 	velocity.x += vel.x;
 	velocity.z += vel.y;
@@ -675,28 +698,90 @@ void Player::CalcRunVelocity()
 
 void Player::CalcDodgeVelocity() {
 #if 1 // TODO::RootMotionÇégÇ§Ç»ÇÁè¡Ç∑
-	float dt = Timer::Instance().DeltaTime();
-	Vector2 move = { velocity.x,velocity.z };
-	float rad = XMConvertToRadians(angle.y);
+	const float dt      = Timer::Instance().DeltaTime();
+	const float frameDt = dt * 10;
+	Vector2     vec     = { velocity.x,velocity.z };
+	float       rad     = XMConvertToRadians(angle.y);
 
-	if(move.LengthSq() == 0) move = -Vector2(sinf(rad),cosf(rad));
-	move.Normalize();
+	if(vec.LengthSq() == 0) vec = -Vector2(sinf(rad),cosf(rad));
+	vec.Normalize();
+	XMVECTOR Vec = XMLoadFloat2(&vec.vec_);
 
-	Vector2 vel = move * constant.dodgePower * dt;
+	// âÒîíÜÇ…à⁄ìÆ
+	Vector2 move = GetInputMap<XMFLOAT2>("Move");
+	if(move.LengthSq() != 0) {
+		move.Normalize();
+
+		Vector2 front = camera->GetFrontVec().xz();
+		Vector2 right = camera->GetRightVec().xz();
+		Vector2 wMove;
+
+		wMove += front * move.y;
+		wMove += right * move.x;
+
+		// debug["wMove"] = wMove.vec_;
+		// debug["Vec"] = vec.vec_;
+
+		XMVECTOR lerp = XMVectorLerp(Vec, XMLoadFloat2(&wMove.vec_), frameDt);
+		lerp = XMVector2Normalize(lerp);
+		XMVECTOR Dot = XMVector2Dot(lerp, Vec);
+		float cross = XMVectorGetX(XMVector2Cross(lerp, Vec));
+		float deg = XMConvertToDegrees(XMVectorGetX(XMVectorACos(Dot)));
+		if (cross < 0) deg *= -1;
+
+		angle.y += deg;
+
+		Vec = lerp;
+		XMStoreFloat2(&vec.vec_, lerp);
+	}
+
+	Vector2 vel = vec * constant.dodgePower * dt;
 
 	velocity.x += vel.x;
 	velocity.z += vel.y;
 
 	ability.dodgeTimer -= dt;
 
-	XMStoreFloat2(&move.vec_,XMVector2TransformCoord(XMLoadFloat2(&move.vec_),XMMatrixRotationZ(rad)));
-	animator.SetParameter("dodgeX", move.x);
-	animator.SetParameter("dodgeY", move.y);
+	XMStoreFloat2(&vec.vec_,XMVector2TransformCoord(Vec,XMMatrixRotationZ(rad)));
+	animator.SetParameter("dodgeX", vec.x);
+	animator.SetParameter("dodgeY", vec.y);
 
 #else
 	velocity += animator.GetVelocity();
 
 #endif
+}
+
+void Player::CalcAttackVelocity() {
+	const float dt = Timer::Instance().DeltaTime();
+	const float frameDt = dt * 2;
+
+	Vector2 move = GetInputMap<XMFLOAT2>("AttackMove");
+	Vector2 vel = { velocity.x,velocity.z };
+	vel.Normalize();
+
+	if (move.LengthSq() <= 0 || vel.LengthSq() <= 0||
+		animator.GetEndMotion()) return;
+
+	XMVECTOR Vel = XMLoadFloat2(&vel.vec_);
+
+	Vector2 front = camera->GetFrontVec().xz();
+	Vector2 right = camera->GetRightVec().xz();
+	Vector2 wMove;
+
+	wMove += front * move.y;
+	wMove += right * move.x;
+	wMove.Normalize();
+
+	XMVECTOR lerp = XMVectorLerp(Vel, XMLoadFloat2(&wMove.vec_), dt/4);
+	//lerp = XMVector2Normalize(lerp);
+
+	XMVECTOR Dot = XMVector2Dot(lerp,Vel);
+	float cross = XMVectorGetX(XMVector2Cross(lerp, Vel));
+	float deg = XMConvertToDegrees(XMVectorGetX(XMVectorACos(Dot)));
+	if (cross < 0) deg *= -1;
+
+	angle.y += deg;
 }
 
 void Player::CalcRootAnimationVelocity() {

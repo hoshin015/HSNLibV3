@@ -285,6 +285,7 @@
     <ClCompile Include="Source\Game\Object\Effect\Special\SpecialEffect.cpp" />
     <ClCompile Include="Source\UserInterface\UiTitle.cpp" />
     <ClCompile Include="Source\UserInterface\UiGame.cpp" />
+    <ClCompile Include="Source\UserInterface\UiClearAfter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Game\Object\Effect\EffectDamageManager.h" />
@@ -412,6 +413,7 @@
     <ClInclude Include="Source\Game\Object\Effect\Special\SpecialEffect.h" />
     <ClInclude Include="Source\UserInterface\UiTitle.h" />
     <ClInclude Include="Source\UserInterface\UiGame.h" />
+    <ClInclude Include="Source\UserInterface\UiClearAfter.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc" />

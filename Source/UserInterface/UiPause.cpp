@@ -58,7 +58,6 @@ bool UiPause::Update()
 				break;
 			}
 
-
 			// •\Ž¦Š®—¹‚µ‚½‚ç‘JˆÚ
 			if (pauseTimer > pauseTotalTime)
 			{

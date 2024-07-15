@@ -36,6 +36,7 @@
 #include "../UserInterface/DamageTextManager.h"
 #include "../UserInterface/UiGame.h"
 #include "../Game/Object/Effect/EffectDamageManager.h"
+#include "../UserInterface/UiClearAfter.h"
 
 
 void SceneTest::Initialize()
@@ -139,6 +140,7 @@ void SceneTest::Initialize()
 
 	UiPause::Instance().Initialize();
 	UiGame::Instance().Initialize();
+	UiClearAfter::Instance().Initialize();
 
 	LightningEffect::Instance().Initialize();
 	RockEffect::Instance().Initialize();
@@ -179,6 +181,7 @@ void SceneTest::Update()
 
 	if (UiPause::Instance().Update()) return;
 	UiGame::Instance().Update();
+	UiClearAfter::Instance().Update();
 
 	// --- effectManagerèàóù ---
 	EffectManager::Instance().Update();
@@ -613,6 +616,7 @@ void SceneTest::Render()
 
 	UiGame::Instance().Render();
 	UiPause::Instance().Render();
+	UiClearAfter::Instance().Render();
 
 	// Ç±Ç±Ç≈ï∂éöï`âÊ
 	DamageTextManager::Instance().Render();
@@ -628,6 +632,7 @@ void SceneTest::Render()
 	ImGuiManager::Instance().Console();
 
 	UiGame::Instance().DrawDebugImGui();
+	UiClearAfter::Instance().DrawDebugImGui();
 
 	Player::Instance().DrawDebugImGui(0);
 	Enemy::Instance().DrawDebugImGui(0);

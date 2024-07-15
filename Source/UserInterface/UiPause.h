@@ -16,15 +16,15 @@ private:
 		sprites.emplace_back(imgPauseText.get());
 		imgResume = std::make_unique<Sprite>("Data/Texture/UserInterface/Pause/resume.sprite");
 		imgResume->UpdateAnimation();
-		imgResume->SetPos({ 400, 550 });
+		imgResume->SetPos({ 500, 550 });
 		sprites.emplace_back(imgResume.get());
 		imgGoTitle = std::make_unique<Sprite>("Data/Texture/UserInterface/Pause/goTitle.sprite");
 		imgGoTitle->UpdateAnimation();
-		imgGoTitle->SetPos({ 700, 550 });
+		imgGoTitle->SetPos({ 800, 550 });
 		sprites.emplace_back(imgGoTitle.get());
 		imgResumeGoTitleSelect = std::make_unique<Sprite>("Data/Texture/UserInterface/Pause/resumeGoTitleSelect.sprite");
 		imgResumeGoTitleSelect->UpdateAnimation();
-		imgResumeGoTitleSelect->SetPos({ 400, 550 });
+		imgResumeGoTitleSelect->SetPos({ 500, 550 });
 		sprites.emplace_back(imgResumeGoTitleSelect.get());
 
 

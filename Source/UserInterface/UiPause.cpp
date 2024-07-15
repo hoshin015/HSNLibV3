@@ -83,7 +83,7 @@ bool UiPause::Update()
 			{
 			case CheckResumeGoTitle::Resume:
 				{
-					imgResumeGoTitleSelect->SetPos({ 400, 550 });
+					imgResumeGoTitleSelect->SetPos({ 500, 550 });
 
 					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter))
 					{
@@ -94,7 +94,7 @@ bool UiPause::Update()
 				break;
 			case CheckResumeGoTitle::GoTitle:
 				{
-					imgResumeGoTitleSelect->SetPos({ 700, 550 });
+					imgResumeGoTitleSelect->SetPos({ 800, 550 });
 
 					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter))
 					{

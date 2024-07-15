@@ -268,6 +268,7 @@ void UiTitle::Update()
 			isEmitterRender = true;
 			imgEmitterTop->SetIsRender(true);
 
+			selectLevel = static_cast<int>(SelectLevel::Easy);
 			titleTimer = 0.0f;
 			state = UiTitleState::Level2;
 		}

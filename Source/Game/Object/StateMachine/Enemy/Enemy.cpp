@@ -291,7 +291,7 @@ void Enemy::CollisionVSPlayer()
 				CameraManager::Instance().shakeTimer = 1.0f;
 				attackCount++;
 
-				Player::Instance().AbilityStatus().hp -= attackPower;
+				Player::Instance().AStatus().hp -= attackPower;
 
 				break;
 			}

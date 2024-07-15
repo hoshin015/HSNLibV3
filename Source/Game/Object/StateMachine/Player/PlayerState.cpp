@@ -75,6 +75,9 @@ void PlayerIdleState::Execute()
 	if (owner->GetInputMap<bool>("Dodge"))
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Dodge));
 
+	if (owner->AStatus().isHitDamage)
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Damage));
+
 	// ‰ñ“]
 	owner->Turn();
 
@@ -125,6 +128,9 @@ void PlayerWalkState::Execute()
 	if (owner->GetInputMap<bool>("Dodge"))
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Dodge));
 
+	if (owner->AStatus().isHitDamage)
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Damage));
+
 	// ‰ñ“]
 	owner->Turn();
 
@@ -174,6 +180,9 @@ void PlayerRunState::Execute()
 
 	if (owner->GetInputMap<bool>("Dodge"))
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Dodge));
+
+	if (owner->AStatus().isHitDamage)
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Damage));
 
 	// ‰ñ“]
 	owner->Turn();
@@ -297,3 +306,11 @@ void PlayerDodgeState::Execute() {
 
 void PlayerDodgeState::Exit() {
 }
+
+void PlayerDamageState::Enter() {}
+
+void PlayerDamageState::Execute() {
+	
+}
+
+void PlayerDamageState::Exit() {}

@@ -190,6 +190,7 @@ BT_ActionState EnemyWanderAction::Run(float elapsedTime)
 
 		//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
 		owner_->GetAnimator().SetNextState("walk_mae");
+		
 		step++;
 		break;
 
@@ -860,7 +861,10 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	case 2:
 	{
 		// --- ê≥ñ Ç÷à⁄ìÆ ---
-		owner_->Move(owner_->targetVec, Vector3(owner_->GetAnimator().GetVelocity()).Length()*40);
+		Vector3 rootMotionVel = owner_->GetAnimator().GetVelocity();
+		rootMotionVel *= 80;
+		float len = rootMotionVel.Length();
+		owner_->Move(owner_->targetVec, len);
 
 		// --- ä‚ê∂ê¨ ---
 		rockNowTimer += Timer::Instance().DeltaTime();

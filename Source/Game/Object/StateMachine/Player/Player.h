@@ -29,6 +29,8 @@ public:
 		float attackTimer = 0;
 		float dodgeTimer = 0;
 		float notAcceptTimer = 0;
+		float hitDamage = 0;
+		bool isHitDamage = false;
 	};
 
 	// 外部要因(ImGuiとか)でのみ変動する値
@@ -82,6 +84,9 @@ public:
 	// 攻撃
 	void CalcAttackVelocity();
 
+	// ダメージ
+	void HitDamaged(float damage);
+
 	// RootAnimation
 	void CalcRootAnimationVelocity();
 
@@ -108,6 +113,7 @@ public:
 		Run,
 		Attack,
 		Dodge,
+		Damage,
 		Drink,
 	};
 

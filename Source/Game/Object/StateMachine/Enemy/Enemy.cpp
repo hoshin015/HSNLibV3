@@ -94,6 +94,8 @@ void Enemy::Initialize()
 		SIZE
 	};
 
+	constexpr auto IntCast = [](auto v) ->int {return static_cast<int>(v); };
+
 	std::vector<ModelResource::Animation>& animations = GetModel()->GetModelResource()->GetAnimationClips();
 
 	std::vector<Animator::Motion> motions;
@@ -108,28 +110,28 @@ void Enemy::Initialize()
 		i++;
 	}
 
-	motions[static_cast<int>(Motion::IDLE)].loop = true;
-	motions[static_cast<int>(Motion::WALK_MAE)].loop = true;
-	motions[static_cast<int>(Motion::WALK_USIRO)].loop = true;
-	motions[static_cast<int>(Motion::WALK_LEFT)].loop = true;
-	motions[static_cast<int>(Motion::WALK_RIGHT)].loop = true;
-	motions[static_cast<int>(Motion::DOWN_TYU)].loop = true;
-	motions[static_cast<int>(Motion::HISSATU_2)].loop = true;
-	motions[static_cast<int>(Motion::TOKOTOKO_LEFT)].loop = true;
-	motions[static_cast<int>(Motion::TOKOTOKO_RIGHT)].loop = true;
+	motions[IntCast(Motion::IDLE)].loop = true;
+	motions[IntCast(Motion::WALK_MAE)].loop = true;
+	motions[IntCast(Motion::WALK_USIRO)].loop = true;
+	motions[IntCast(Motion::WALK_LEFT)].loop = true;
+	motions[IntCast(Motion::WALK_RIGHT)].loop = true;
+	motions[IntCast(Motion::DOWN_TYU)].loop = true;
+	motions[IntCast(Motion::HISSATU_2)].loop = true;
+	motions[IntCast(Motion::TOKOTOKO_LEFT)].loop = true;
+	motions[IntCast(Motion::TOKOTOKO_RIGHT)].loop = true;
 
-	motions[static_cast<int>(Motion::IDLE)].threshold = {0,0};
-	motions[static_cast<int>(Motion::WALK_MAE)].threshold = {0,1};
-	motions[static_cast<int>(Motion::WALK_USIRO)].threshold = {0,-1};
-	motions[static_cast<int>(Motion::WALK_LEFT)].threshold = {-1,0};
-	motions[static_cast<int>(Motion::WALK_RIGHT)].threshold = {1,0};
+	motions[IntCast(Motion::IDLE)].threshold = {0,0};
+	motions[IntCast(Motion::WALK_MAE)].threshold = {0,1};
+	motions[IntCast(Motion::WALK_USIRO)].threshold = {0,-1};
+	motions[IntCast(Motion::WALK_LEFT)].threshold = {-1,0};
+	motions[IntCast(Motion::WALK_RIGHT)].threshold = {1,0};
 
 	Animator::BlendTree walkTree;
-	walkTree.motions.emplace_back(motions[static_cast<int>(Motion::IDLE)]);
-	walkTree.motions.emplace_back(motions[static_cast<int>(Motion::WALK_MAE)]);
-	walkTree.motions.emplace_back(motions[static_cast<int>(Motion::WALK_USIRO)]);
-	walkTree.motions.emplace_back(motions[static_cast<int>(Motion::WALK_LEFT)]);
-	walkTree.motions.emplace_back(motions[static_cast<int>(Motion::WALK_RIGHT)]);
+	walkTree.motions.emplace_back(motions[IntCast(Motion::IDLE)]);
+	walkTree.motions.emplace_back(motions[IntCast(Motion::WALK_MAE)]);
+	walkTree.motions.emplace_back(motions[IntCast(Motion::WALK_USIRO)]);
+	walkTree.motions.emplace_back(motions[IntCast(Motion::WALK_LEFT)]);
+	walkTree.motions.emplace_back(motions[IntCast(Motion::WALK_RIGHT)]);
 	walkTree.parameters[0] = "moveX";
 	walkTree.parameters[1] = "moveY";
 	walkTree.maxSeconds = 1.833333f;
@@ -140,7 +142,7 @@ void Enemy::Initialize()
 	//walkState.transitions;
 
 	std::vector<Animator::State> states;
-	states.resize(static_cast<int>(Motion::SIZE));
+	states.resize(IntCast(Motion::SIZE));
 	i = 0;
 	for (auto&& state: states) {
 		state.object = Animator::MakeObjPointer(motions[i]);
@@ -149,31 +151,31 @@ void Enemy::Initialize()
 		i++;
 	}
 
-	animator.AddState("asidon", states[static_cast<int>(Motion::ASIDON)]);
-	animator.AddState("buresu", states[static_cast<int>(Motion::BURESU)]);
-	animator.AddState("down", states[static_cast<int>(Motion::DOWN)]);
-	animator.AddState("down_tyu", states[static_cast<int>(Motion::DOWN_TYU)]);
-	animator.AddState("hissatu_1", states[static_cast<int>(Motion::HISSATU_1)]);
-	animator.AddState("hissatu_2", states[static_cast<int>(Motion::HISSATU_2)]);
-	animator.AddState("hissatu_3", states[static_cast<int>(Motion::HISSATU_3)]);
-	animator.AddState("hoeru", states[static_cast<int>(Motion::HOERU)]);
-	animator.AddState("hoeru_big", states[static_cast<int>(Motion::HOERU_BIG)]);
-	animator.AddState("idle", states[static_cast<int>(Motion::IDLE)]);
-	animator.AddState("kaiten", states[static_cast<int>(Motion::KAITEN)]);
-	animator.AddState("kamituki_1", states[static_cast<int>(Motion::KAMITUKI_1)]);
-	animator.AddState("kamituki_2", states[static_cast<int>(Motion::KAMITUKI_2)]);
-	animator.AddState("okiru", states[static_cast<int>(Motion::OKIRU)]);
-	animator.AddState("sinu", states[static_cast<int>(Motion::SINU)]);
-	animator.AddState("sukuiage", states[static_cast<int>(Motion::SUKUIAGE)]);
-	animator.AddState("takkuru_left", states[static_cast<int>(Motion::TAKKURU)]);
-	animator.AddState("takkuru_right", states[static_cast<int>(Motion::TAKKURU_RIGHT)]);
-	animator.AddState("tokotoko_left", states[static_cast<int>(Motion::TOKOTOKO_LEFT)]);
-	animator.AddState("tokotoko_right", states[static_cast<int>(Motion::TOKOTOKO_RIGHT)]);
-	animator.AddState("tossin", states[static_cast<int>(Motion::TOSSIN)]);
-	animator.AddState("walk_left", states[static_cast<int>(Motion::WALK_LEFT)]);
-	animator.AddState("walk_mae", states[static_cast<int>(Motion::WALK_MAE)]);
-	animator.AddState("walk_right", states[static_cast<int>(Motion::WALK_RIGHT)]);
-	animator.AddState("walk_usiro", states[static_cast<int>(Motion::WALK_USIRO)]);
+	animator.AddState("asidon", states[IntCast(Motion::ASIDON)]);
+	animator.AddState("buresu", states[IntCast(Motion::BURESU)]);
+	animator.AddState("down", states[IntCast(Motion::DOWN)]);
+	animator.AddState("down_tyu", states[IntCast(Motion::DOWN_TYU)]);
+	animator.AddState("hissatu_1", states[IntCast(Motion::HISSATU_1)]);
+	animator.AddState("hissatu_2", states[IntCast(Motion::HISSATU_2)]);
+	animator.AddState("hissatu_3", states[IntCast(Motion::HISSATU_3)]);
+	animator.AddState("hoeru", states[IntCast(Motion::HOERU)]);
+	animator.AddState("hoeru_big", states[IntCast(Motion::HOERU_BIG)]);
+	animator.AddState("idle", states[IntCast(Motion::IDLE)]);
+	animator.AddState("kaiten", states[IntCast(Motion::KAITEN)]);
+	animator.AddState("kamituki_1", states[IntCast(Motion::KAMITUKI_1)]);
+	animator.AddState("kamituki_2", states[IntCast(Motion::KAMITUKI_2)]);
+	animator.AddState("okiru", states[IntCast(Motion::OKIRU)]);
+	animator.AddState("sinu", states[IntCast(Motion::SINU)]);
+	animator.AddState("sukuiage", states[IntCast(Motion::SUKUIAGE)]);
+	animator.AddState("takkuru_left", states[IntCast(Motion::TAKKURU)]);
+	animator.AddState("takkuru_right", states[IntCast(Motion::TAKKURU_RIGHT)]);
+	animator.AddState("tokotoko_left", states[IntCast(Motion::TOKOTOKO_LEFT)]);
+	animator.AddState("tokotoko_right", states[IntCast(Motion::TOKOTOKO_RIGHT)]);
+	animator.AddState("tossin", states[IntCast(Motion::TOSSIN)]);
+	animator.AddState("walk_left", states[IntCast(Motion::WALK_LEFT)]);
+	animator.AddState("walk_mae", states[IntCast(Motion::WALK_MAE)]);
+	animator.AddState("walk_right", states[IntCast(Motion::WALK_RIGHT)]);
+	animator.AddState("walk_usiro", states[IntCast(Motion::WALK_USIRO)]);
 	//animator.AddState("walk", walkState);
 	animator.SetEntryState("idle");
 	animator.SetModelSceneView(&GetModel()->GetModelResource()->GetSceneView());

@@ -66,7 +66,7 @@ ModelResource::KeyFrame Animator::BlendKeyFrame(
 
 ModelResource::KeyFrame Animator::MotionUpdate(Motion* motion, const float rate) {
 	if(!motion->loop&&motion->endMotion) {
-		//_isEndMotion = motion->endMotion;
+		_isEndMotion = motion->endMotion;
 		int endKey = motion->motion->sequence.size() - 1;
 		return motion->motion->sequence[endKey];
 	}
@@ -217,26 +217,27 @@ ModelResource::KeyFrame Animator::StateUpdate(State* state, float elapsedTime) {
 
 ModelResource::KeyFrame Animator::PlayAnimation(float elapsedTime) {
 	ModelResource::KeyFrame current = StateUpdate(_currentState, elapsedTime);
-	if (_nextState) {
+	if (_nextState && _nextState != _currentState) {
 		_timer += elapsedTime;
 		ModelResource::KeyFrame next = StateUpdate(_nextState, elapsedTime);
 
 		float rate = _nextState->transitionTime > 0 ? _timer / _nextState->transitionTime : 1;
-		current    = BlendKeyFrame(&current, &next, rate);
+		current = BlendKeyFrame(&current, &next, rate);
 		if (rate >= 1.f) {
-			_timer               = 0;
+			_timer = 0;
 			_currentState->timer = 0;
-			if(_currentState->type == State::MOTION)_currentState->GetObj<Motion>()->endMotion = false;
+			if (_currentState->type == State::MOTION)_currentState->GetObj<Motion>()->endMotion = false;
 			if (_currentState->type == State::BLEND_TREE) {
 				auto blendTree = _currentState->GetObj<BlendTree>();
 				blendTree->endMotion = false;
-				for (auto&& motion: blendTree->motions) motion.endMotion = false;
+				for (auto&& motion : blendTree->motions) motion.endMotion = false;
 
 			}
-			_currentState        = _nextState;
-			_nextState           = nullptr;
+			_currentState = _nextState;
+			_nextState = nullptr;
 		}
 	}
+	else _nextState = nullptr;
 
 	return current;
 }
@@ -268,7 +269,7 @@ void Animator::AnimationEditor() {
 
 						for (auto&& motion: blendTree->motions) {
 							if (ImGui::TreeNode(motion.motion->name.c_str())) {
-								ImGui::DragFloat(u8"アニメーションの速さ", &motion.animationSpeed);
+								ImGui::DragFloat(u8"アニメーションの速さ", &motion.animationSpeed,0.001f);
 								if (motion.animationSpeed < 0) motion.animationSpeed = 0;
 
 								ImGui::DragFloat2(u8"しきい値", &motion.threshold.x, 0.001f);

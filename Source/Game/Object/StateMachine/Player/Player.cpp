@@ -301,11 +301,11 @@ void Player::Update()
 		// --- プレイヤーカメラをセット ---
 		if (!cameraFlag) {
 			auto camera = CameraManager::Instance().GetCamera();
-			//Vector3 position = camera->GetCurrentPosition();
-			//Vector3 target = camera->GetTarget();
+			Vector3 p = camera->GetCurrentPosition();
+			Vector3 target = camera->GetTarget();
 			CameraManager::Instance().SetCurrentCamera("PlayerCamera");
 			auto ptr = std::dynamic_pointer_cast<PlayerCamera>(CameraManager::Instance().GetCamera());
-			ptr->SetCurrentPosition(position);
+			ptr->SetCurrentPosition(p);
 			ptr->SetTarget(target);
 			ptr->currentTarget = target;
 			Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());

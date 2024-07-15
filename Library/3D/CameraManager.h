@@ -36,7 +36,7 @@ public:
 
 
 	float shakeTimer;
-	float shakePower;
+	float shakePower = 0.001f;
 
 
 private:

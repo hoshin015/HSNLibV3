@@ -76,6 +76,6 @@ void CameraManager::UpdateShake()
 	if (shakeTimer < 0.0f)
 	{
 		shakeTimer = 0.0f;
-		shakePower = 0.0f;
+		shakePower = 0.001f;
 	}
 }

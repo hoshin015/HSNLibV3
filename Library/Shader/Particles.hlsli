@@ -372,15 +372,17 @@ void spawn(uint id, inout Particle p)
 		break;
 	case pk_titleSelect:
 		{
+			p.scale.y = p.scale.x;
+
 			p.position   = emitterPosition;
-                float r = (rand(seed) * 360) * 3.14 / 180;
-                float length = rand(seed) * 10;
+            float r = (rand(seed) * 360) * 3.14 / 180;
+            float length = rand(seed) * 10;
 			
 			// x •ûŒü
-                p.position.x = p.position.x + cos(r) * length;
+			p.position.x = p.position.x + cos(r) * length;
 			// y •ûŒü
-                p.position.y = p.position.y - sin(r) * length;
-            }
+			p.position.y = p.position.y - sin(r) * length;
+		}
 		break;
 	}
 }

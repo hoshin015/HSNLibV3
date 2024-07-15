@@ -205,7 +205,7 @@ void SceneTitle::Render()
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_TRUE_SOLID);
 
 		// ここに半透明オブジェクトの描画
-		Particle::Instance().ScreenRender();
+		if(UiTitle::Instance().isEmitterRender) Particle::Instance().ScreenRender();
 	}
 	wbOitBuffer->DeActivate();
 

@@ -7,6 +7,7 @@
 #include "../../Library/Particle/Particle.h"
 #include "../../Library/3D/LightManager.h"
 #include "../Scene/SceneManager.h"
+#include "../../Library/Particle/EmitterManager.h"
 
 
 void UiTitle::Initialize()
@@ -35,6 +36,8 @@ void UiTitle::Update()
 			imgTitleText->SetColorA(1.0f);
 			imgPressAnyButton->SetIsRender(true);
 			imgPressAnyButton->SetColorA(1.0f);
+
+			isEmitterRender = false;
 
 			// ステージ非描画
 			isStageRender = true;
@@ -145,8 +148,12 @@ void UiTitle::Update()
 	case UiTitleState::SelectMenu1:
 		{
 			selectMenu = static_cast<int>(SelectMenu::GamePlay);
+			emitterPos = { 80, 100 };
 
+			isEmitterRender = true;
+			imgEmitterTop->SetIsRender(true);
 			imgSelectBar->SetIsRender(true);
+
 			titleTimer = 0.0f;
 			state = UiTitleState::SelectMenu2;
 		}
@@ -175,6 +182,7 @@ void UiTitle::Update()
 			case SelectMenu::GamePlay:
 				{
 					imgSelectBar->SetPos(imgGameStartPos.endValueVec);
+					emitterTargetPos = { 80, 100 };
 
 					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
 					{
@@ -185,6 +193,7 @@ void UiTitle::Update()
 			case SelectMenu::Options:
 				{
 					imgSelectBar->SetPos(imgOptionsPos.endValueVec);
+					emitterTargetPos = { 80, 200 };
 
 					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
 					{
@@ -194,6 +203,7 @@ void UiTitle::Update()
 			case SelectMenu::Quit:
 				{
 					imgSelectBar->SetPos(imgQuitPos.endValueVec);
+					emitterTargetPos = { 80, 300 };
 
 					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
 					{
@@ -201,6 +211,7 @@ void UiTitle::Update()
 				}
 				break;
 			}
+			EmitUpdate();
 		}
 		break;
 	case UiTitleState::SelectMenuToLevel1:
@@ -253,6 +264,10 @@ void UiTitle::Update()
 		break;
 	case UiTitleState::Level1:
 		{
+			emitterPos = { 50, 250 };
+			isEmitterRender = true;
+			imgEmitterTop->SetIsRender(true);
+
 			titleTimer = 0.0f;
 			state = UiTitleState::Level2;
 		}
@@ -266,10 +281,12 @@ void UiTitle::Update()
 
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::W))
 			{
+				emitterMoveTimer = 0.0f;
 				selectLevel--;
 			}
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::S))
 			{
+				emitterMoveTimer = 0.0f;
 				selectLevel++;
 			}
 			selectLevel = (selectLevel + static_cast<int>(SelectLevel::END)) % static_cast<int>(SelectLevel::END);
@@ -278,6 +295,8 @@ void UiTitle::Update()
 			{
 			case SelectLevel::Easy:
 				{
+				emitterTargetPos = { 50, 250 };
+
 				imgEasy->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
 				imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
 				imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
@@ -289,6 +308,8 @@ void UiTitle::Update()
 				break;
 			case SelectLevel::Normal:
 				{
+				emitterTargetPos = { 50, 400 };
+
 				imgEasy->spriteAddColorConstant.addColor = { 0,0,0,1 };
 				imgNormal->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
 				imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
@@ -300,6 +321,8 @@ void UiTitle::Update()
 				break;
 			case SelectLevel::Hard:
 				{
+				emitterTargetPos = { 50, 550 };
+
 				imgEasy->spriteAddColorConstant.addColor = { 0,0,0,1 };
 				imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
 				imgHard->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
@@ -310,6 +333,7 @@ void UiTitle::Update()
 				}
 				break;
 			}
+			EmitUpdate();
 		}
 		break;
 	}
@@ -339,6 +363,10 @@ void UiTitle::Render()
 	imgBackText->Render();
 
 	imgBlack->Render();
+
+
+	// sprite
+	imgEmitterTop->Render();
 }
 
 void UiTitle::DrawDebugImGui()
@@ -356,5 +384,47 @@ void UiTitle::SetAllOffRender()
 	for(auto* sprite: sprites)
 	{
 		sprite->SetIsRender(false);
+	}
+	isEmitterRender = false;
+}
+
+void UiTitle::EmitUpdate()
+{
+	// emitterTargetPos までの移動
+	emitterMoveTimer += Timer::Instance().DeltaTime() * 0.02f;
+	if (emitterMoveTimer > 1.0f)emitterMoveTimer = 1.0f;
+	DirectX::XMVECTOR EPOS = DirectX::XMLoadFloat2(&emitterPos);
+	DirectX::XMVECTOR TargetEPOS = DirectX::XMLoadFloat2(&emitterTargetPos);
+	DirectX::XMVECTOR V = DirectX::XMVectorLerp(EPOS, TargetEPOS, emitterMoveTimer);
+	DirectX::XMStoreFloat2(&emitterPos, V);
+	imgEmitterTop->SetPos(emitterPos);
+
+
+	uiEmitterTimer += Timer::Instance().DeltaTime();
+
+	while(uiEmitterTimer > uiEmitterTime)
+	{
+		uiEmitterTimer -= uiEmitterTime;
+
+		Emitter* emitter0 = new Emitter();
+		emitter0->position = { emitterPos.x, emitterPos.y , 0 };
+		emitter0->emitterData.duration = 5.0;
+		emitter0->emitterData.looping = false;
+		emitter0->emitterData.burstsTime = 0.1;
+		emitter0->emitterData.burstsCount = 1;
+		emitter0->emitterData.particleKind = pk_titleSelect;
+		emitter0->emitterData.particleLifeTimeMin = 0.25f;
+		emitter0->emitterData.particleLifeTimeMax = 0.8f;
+		emitter0->emitterData.particleSpeedMin = 0.0f;
+		emitter0->emitterData.particleSpeedMax = 0.0f;
+		emitter0->emitterData.particleSizeMin = { 5.0f, 10.0f };
+		emitter0->emitterData.particleSizeMax = { 20.0f, 20.0f };
+		emitter0->emitterData.particleColorMin = { 1.0, 2.0, 2.0, 1 };
+		emitter0->emitterData.particleColorMax = { 1.0, 2.0, 2.0, 1 };
+		emitter0->emitterData.particleGravity = 1;
+		emitter0->emitterData.particleBillboardType = 0;
+		emitter0->emitterData.particleTextureType = 0;
+		emitter0->emitterData.burstsOneShot = 2;
+		EmitterManager::Instance().Register(emitter0);
 	}
 }

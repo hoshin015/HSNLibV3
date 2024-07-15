@@ -100,6 +100,15 @@ private:
 		imgHard->SetIsRender(false);
 		imgHard->SetPos(imgHardPos);
 		sprites.emplace_back(imgHard.get());
+
+
+		// eitter
+		imgEmitterTop = std::make_unique<Sprite>("Data/Texture/Effect/particle0.sprite");
+		imgEmitterTop->UpdateAnimation();
+		imgEmitterTop->SetScale({ 0.07,0.07 });
+		imgEmitterTop->SetColor({ 1.0,2.0,2.0,0.5 });
+		imgEmitterTop->SetIsRender(false);
+		sprites.emplace_back(imgEmitterTop.get());
 	};
 
 	~UiTitle()
@@ -325,4 +334,18 @@ private:
 
 	std::unique_ptr<Sprite> imgHard;
 	DirectX::XMFLOAT2 imgHardPos = { 200.0f, 550.0f };
+
+
+private:
+	std::unique_ptr<Sprite> imgEmitterTop;
+
+	float uiEmitterTimer = 0.0f;
+	float uiEmitterTime = 0.03f;
+	DirectX::XMFLOAT2 emitterPos = { 0,0 };
+	DirectX::XMFLOAT2 emitterTargetPos = { 0,0 };
+	float emitterMoveTimer = 0.0f;
+
+	void EmitUpdate();
+public:
+	bool isEmitterRender = false;
 };

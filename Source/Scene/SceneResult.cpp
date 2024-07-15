@@ -84,6 +84,14 @@ void SceneResult::Update()
 	float scale = Easing::GetNowParam(Easing::OutBounce<float>, resultTimer, rankScale);
 	sprRankS->SetScale({ scale, scale });
 	sprGoTitle->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, goTitleAlpha));
+
+	if(resultTimer > resultTime)
+	{
+		if(InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter))
+		{
+			SceneManager::Instance().ChangeScene(new SceneTitle);
+		}
+	}
 }
 
 void SceneResult::Render()

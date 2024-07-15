@@ -55,6 +55,7 @@ private:
 
 
 	float resultTimer = 0.0f;
+	float resultTime = 4.0f;
 
 	Easing::EasingValue blackAlpha =
 	{

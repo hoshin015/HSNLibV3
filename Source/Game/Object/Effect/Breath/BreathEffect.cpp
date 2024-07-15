@@ -89,6 +89,8 @@ void BreathEffect::Update()
 			// --- プレイヤーの球 ---
 			for (auto& playerSphere : Player::Instance().GetModel()->GetModelResource()->GetSkeletonSphereCollisions())
 			{
+				if(isDamaged) continue;
+
 				// --- プレイヤーの球の座標を取得 ---
 				Vector3 playerBonePosition = Player::Instance().GetPos();
 				playerBonePosition = (playerSphere.name == "") ? playerBonePosition + playerSphere.position : Player::Instance().GetBonePosition(playerSphere.name);

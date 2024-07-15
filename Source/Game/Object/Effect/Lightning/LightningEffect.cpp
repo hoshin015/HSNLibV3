@@ -6,6 +6,10 @@
 #include "../../../../../Library/Math/Math.h"
 #include "../../../../../Library/Particle/EmitterManager.h"
 #include "../../StateMachine/Enemy/Enemy.h"
+#include "../../StateMachine/Player/Player.h"
+#include "../../../../../External/ImGui/imgui.h"
+#include "../../../../../Library/Math/Collision.h"
+#include "../../../../../Library/3D/CameraManager.h"
 
 // 初期化
 void LightningEffect::Initialize()
@@ -34,7 +38,7 @@ void LightningEffect::Update()
 	for (auto& lightningEmit : lightningEmitters)
 	{
 		// ダメージ判定
-		if (lightningEmit.timer >= damageTimeStart && lightningEmit.timer <= damageTimeEnd)
+		if (!lightningEmit.isDamaged && lightningEmit.timer >= damageTimeStart && lightningEmit.timer <= damageTimeEnd)
 		{
 			EffectDamageManager::EffectCollision effectCollision;
 			EffectDamageManager::EffectCollision::SphereData sphere;
@@ -43,6 +47,40 @@ void LightningEffect::Update()
 			sphere.damage = damage;
 			effectCollision.spheres.emplace_back(sphere);
 			EffectDamageManager::Instance().Register(effectCollision);
+
+			// プレイヤーとの衝突判定
+			// --- プレイヤーの球 ---
+			for (auto& playerSphere : Player::Instance().GetModel()->GetModelResource()->GetSkeletonSphereCollisions())
+			{
+				if(lightningEmit.isDamaged) continue;
+
+				// --- プレイヤーの球の座標を取得 ---
+				Vector3 playerBonePosition = Player::Instance().GetPos();
+				playerBonePosition = (playerSphere.name == "") ? playerBonePosition + playerSphere.position : Player::Instance().GetBonePosition(playerSphere.name);
+
+
+				Vector3 dummy;
+				if (Collision::IntersectSphereVsSphere(lightningEmit.position, damageRadius, playerBonePosition.vec_, playerSphere.radius, dummy.vec_))
+				{
+					// --- ここに当たった時の処理を書く ---
+					lightningEmit.isDamaged = true;
+
+					CameraManager::Instance().shakeTimer = 1.0f;
+					CameraManager::Instance().shakePower = 100.0f;
+
+					Player& player = Player::Instance();
+					float currentHP = player.AStatus().hp;
+					player.AStatus().hp -= damage;
+
+					// --- この攻撃でプレイヤーが死亡したとき ---
+					if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
+					{
+						CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
+					}
+
+					break;
+				}
+			}
 		}
 
 		if (lightningEmit.addLightning0 && !lightningEmit.addLightning3)

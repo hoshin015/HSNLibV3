@@ -111,6 +111,7 @@ void SceneTest::Initialize()
 	Player::Instance().Initialize();
 	Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());	// ¡‚ÌƒJƒƒ‰‚ğİ’è
 	Player::Instance().SetPos({ 0.0f, 0.0f, 100.0f });
+	Player::Instance().SetAngle({ 0,0,0 });
 
 
 	Particle::Instance().Initialize();

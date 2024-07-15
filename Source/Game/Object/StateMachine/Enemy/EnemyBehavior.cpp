@@ -73,7 +73,8 @@ BT_ActionState EnemyPursuitAction::Run(float elapsedTime)
 		// --- 初期設定 ---
 	case 0:
 
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);	// アニメーションの設定
+		//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);	// アニメーションの設定
+		owner_->GetAnimator().SetNextState("walk_mae");
 		owner_->runTimer_ = 5.0f;
 
 		step++;
@@ -187,7 +188,8 @@ BT_ActionState EnemyWanderAction::Run(float elapsedTime)
 		// --- 初期設定 ---
 	case 0:
 
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
+		//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
+		owner_->GetAnimator().SetNextState("walk_mae");
 		step++;
 		break;
 
@@ -244,7 +246,8 @@ BT_ActionState EnemyIdleAction::Run(float elapsedTime)
 	case 0:
 
 		owner_->runTimer_ = (rand() / FLT_MAX) * 2.0f + 3.0f;	// 3.0 ~ 5.0
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::IDLE), true);
+		//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::IDLE), true);
+		owner_->GetAnimator().SetNextState("idle");
 
 		step++;
 		break;
@@ -511,7 +514,8 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 	{
 		// --- 初期設定 ---
 	case 0:
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROAR_BIG), false);
+		//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROAR_BIG), false);
+		owner_->GetAnimator().SetNextState("hoeru_big");
 
 		step++;
 		break;
@@ -551,9 +555,9 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 		owner_->radialBlur->SetBlurPosition(ndc);
 
 
-
+		// BUG::ブラーバグ
 		// --- アニメーションが終わったら ---
-		if (owner_->GetAnimationEndFlag())
+		if (owner_->GetAnimator().GetEndMotion())
 		{
 			OnEndAction();
 			ResetActionCount();
@@ -592,10 +596,12 @@ BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 			float cross = (front.z * vec.x) - (front.x * vec.z);
 
 			if (cross < 0.0f)
-				owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TURN_LEFT), false);
+				//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TURN_LEFT), false);
+				owner_->GetAnimator().SetNextState("tokotoko_left");
 
 			else
-				owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TURN_RIGHT), false);
+				//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TURN_RIGHT), false);
+				owner_->GetAnimator().SetNextState("tokotoko_right");
 
 			owner_->turnAngle = owner_->targetVec.Dot(vec);
 
@@ -652,7 +658,7 @@ BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 		}
 
 
-		if (owner_->GetAnimationEndFlag())
+		if (owner_->GetAnimator().GetEndMotion())
 		{
 			OnEndAction();
 			return BT_ActionState::Complete;
@@ -701,7 +707,8 @@ BT_ActionState EnemyBlessAction::Run(float elapsedTime)
 	case 0:
 
 		owner_->runTimer_ = 1.5f;
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BLESS), false);
+		//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BLESS), false);
+		owner_->GetAnimator().SetNextState("buresu");
 
 		LightningEffect::Instance().HeadAuraEmit(3.5f);
 
@@ -746,7 +753,7 @@ BT_ActionState EnemyBlessAction::Run(float elapsedTime)
 		BreathEffect::Instance().SetPosition(breathPosition);
 
 		// --- アニメーションが終わったら終了 ---
-		if (owner_->GetAnimationEndFlag())
+		if (owner_->GetAnimator().GetEndMotion())
 		{
 			OnEndAction();
 			return BT_ActionState::Complete;
@@ -773,7 +780,8 @@ BT_ActionState EnemyThreatAction::Run(float elapsedTime)
 	{
 	case 0:
 
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROAR), false);
+		// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROAR), false);
+		owner_->GetAnimator().SetNextState("hoeru");
 
 		step++;
 		break;
@@ -781,7 +789,7 @@ BT_ActionState EnemyThreatAction::Run(float elapsedTime)
 	case 1:
 
 		// --- アニメーションが終わったら終了 ---
-		if (owner_->GetAnimationEndFlag())
+		if (owner_->GetAnimator().GetEndMotion())
 		{
 			OnEndAction();
 			return BT_ActionState::Complete;
@@ -816,7 +824,8 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	{
 	case 0:
 
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::RUSH), false);
+		//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::RUSH), false);
+		owner_->GetAnimator().SetNextState("tossin");
 		owner_->runTimer_ = owner_->GetRushChargeTimer();
 
 		{
@@ -851,7 +860,7 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	case 2:
 	{
 		// --- 正面へ移動 ---
-		owner_->Move(owner_->targetVec, owner_->GetRushSpeed());
+		owner_->Move(owner_->targetVec, Vector3(owner_->GetAnimator().GetVelocity()).Length()*40);
 
 		// --- 岩生成 ---
 		rockNowTimer += Timer::Instance().DeltaTime();
@@ -936,7 +945,7 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	}
 
 	// --- アニメーションが終わったら終了 ---
-	if (owner_->GetAnimationEndFlag())
+	if (owner_->GetAnimator().GetEndMotion())
 	{
 		OnEndAction();
 		return BT_ActionState::Complete;
@@ -962,7 +971,8 @@ BT_ActionState EnemyStampAction::Run(float elapsedTime)
 	case 0:
 
 		owner_->runTimer_ = 0.75f;
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::STAMP), false);
+		//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::STAMP), false);
+		owner_->GetAnimator().SetNextState("asidon");
 
 		step++;
 		break;
@@ -984,7 +994,7 @@ BT_ActionState EnemyStampAction::Run(float elapsedTime)
 	case 2:
 
 		// --- アニメーションが終わったら終了 ---
-		if (owner_->GetAnimationEndFlag())
+		if (owner_->GetAnimator().GetEndMotion())
 		{
 			OnEndAction();
 			return BT_ActionState::Complete;
@@ -1010,7 +1020,8 @@ BT_ActionState EnemyBiteAction::Run(float elapsedTime)
 	{
 	case 0:
 
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BITE_1), false);
+		// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BITE_1), false);
+		owner_->GetAnimator().SetNextState("kamituki_1");
 
 		step++;
 		break;
@@ -1018,9 +1029,11 @@ BT_ActionState EnemyBiteAction::Run(float elapsedTime)
 	case 1:
 
 		// --- アニメーションが終わったら終了 ---
-		if (owner_->GetAnimationEndFlag())
+		if (owner_->GetAnimator().GetEndMotion())
 		{
-			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BITE_2), false);
+			// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BITE_2), false);
+			owner_->GetAnimator().SetNextState("kamituki_2");
+
 			step++;
 		}
 
@@ -1029,7 +1042,7 @@ BT_ActionState EnemyBiteAction::Run(float elapsedTime)
 	case 2:
 
 		// --- アニメーションが終わったら終了 ---
-		if (owner_->GetAnimationEndFlag())
+		if (owner_->GetAnimator().GetEndMotion())
 		{
 			OnEndAction();
 			return BT_ActionState::Complete;
@@ -1055,7 +1068,8 @@ BT_ActionState EnemyRushingBiteAction::Run(float elapsedTime)
 	{
 	case 0:
 
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BITE_1), false);
+		// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BITE_1), false);
+		owner_->GetAnimator().SetNextState("kamituki_1");
 
 		step++;
 		break;
@@ -1071,9 +1085,11 @@ BT_ActionState EnemyRushingBiteAction::Run(float elapsedTime)
 	}
 
 	// --- アニメーションが終わったら終了 ---
-	if (owner_->GetAnimationEndFlag())
+	if (owner_->GetAnimator().GetEndMotion())
 	{
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BITE_2), false);
+		// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::BITE_2), false);
+		owner_->GetAnimator().SetNextState("kamituki_1");
+
 		step++;
 	}
 
@@ -1092,7 +1108,7 @@ BT_ActionState EnemyRushingBiteAction::Run(float elapsedTime)
 	}
 
 	// --- アニメーションが終わったら終了 ---
-	if (owner_->GetAnimationEndFlag())
+	if (owner_->GetAnimator().GetEndMotion())
 	{
 		OnEndAction();
 		owner_->endRushingBite = true;
@@ -1120,7 +1136,9 @@ BT_ActionState EnemyFlinchAction::Run(float elapsedTime)
 	case 0:
 
 		owner_->runTimer_ = 5.0f;
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DOWN), false);
+		// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DOWN), false);
+		owner_->GetAnimator().SetNextState("down");
+
 		step++;
 
 		break;
@@ -1128,9 +1146,11 @@ BT_ActionState EnemyFlinchAction::Run(float elapsedTime)
 
 	case 1:
 
-		if (owner_->GetAnimationEndFlag())
+		if (owner_->GetAnimator().GetEndMotion())
 		{
-			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WHILE_DOWN), true);
+			// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WHILE_DOWN), true);
+			owner_->GetAnimator().SetNextState("down_tyu");
+
 			step++;
 		}
 
@@ -1142,7 +1162,9 @@ BT_ActionState EnemyFlinchAction::Run(float elapsedTime)
 		owner_->runTimer_ -= elapsedTime;
 		if (owner_->runTimer_ < 0.0f)
 		{
-			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::STAND_UP), false);
+			// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::STAND_UP), false);
+			owner_->GetAnimator().SetNextState("okiru");
+
 			step++;
 		}
 
@@ -1151,7 +1173,7 @@ BT_ActionState EnemyFlinchAction::Run(float elapsedTime)
 
 	case 3:
 
-		if (owner_->GetAnimationEndFlag())
+		if (owner_->GetAnimator().GetEndMotion())
 		{
 			OnEndAction();
 			owner_->SetFlinchValue(100.0f); // Todo : 怯み値仮
@@ -1175,7 +1197,8 @@ BT_ActionState EnemyDeadAction::Run(float elapsedTime)
 	{
 	case 0:
 
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEAD), false);
+		// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEAD), false);
+		owner_->GetAnimator().SetNextState("sinu");
 		step++;
 
 		break;
@@ -1205,7 +1228,8 @@ BT_ActionState EnemyTailAttack::Run(float elapsedTime)
 	switch (step)
 	{
 	case 0:
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROTATION), false);
+		// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROTATION), false);
+		owner_->GetAnimator().SetNextState("kaiten");
 
 		rockNowTimer = 0.0f;
 		rockTimer = 0.0f;
@@ -1239,7 +1263,7 @@ BT_ActionState EnemyTailAttack::Run(float elapsedTime)
 		}
 		
 
-		if (owner_->GetAnimationEndFlag())
+		if (owner_->GetAnimator().GetEndMotion())
 		{
 			OnEndAction();
 			return BT_ActionState::Complete;
@@ -1269,7 +1293,8 @@ BT_ActionState EnemyScoopUpAction::Run(float elapsedTime)
 	switch (step)
 	{
 	case 0:
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::SCOOP_UP), false);
+		// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::SCOOP_UP), false);
+		owner_->GetAnimator().SetNextState("sukuiage");
 		owner_->runTimer_ = 0.5f;
 
 		rockNowTimer = 0.0f;
@@ -1357,7 +1382,7 @@ BT_ActionState EnemyScoopUpAction::Run(float elapsedTime)
 		}
 
 
-		if (owner_->GetAnimationEndFlag())
+		if (owner_->GetAnimator().GetEndMotion())
 		{
 			step = 0;
 			return BT_ActionState::Complete;
@@ -1385,6 +1410,7 @@ BT_ActionState EnemyTackleAction::Run(float elapsedTime)
 	{
 	case 0:
 	{
+		step++;
 		// --- 右方向の取得 ---
 		Matrix R;
 		R.MakeRotationFromQuaternion(owner_->quaternion_);
@@ -1400,14 +1426,17 @@ BT_ActionState EnemyTackleAction::Run(float elapsedTime)
 		float dotR = right.Dot(vec);
 		if (dotR > 0.5f)	// 横にいたらタックル
 		{
-			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TACKLE_RIGHT), false);
+			// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TACKLE_RIGHT), false);
+			owner_->GetAnimator().SetNextState("takkuru_right");
 			break;
 		}
 
 		else if (dotR < -0.5f)
 		{
 			// --- 右タックル ---
-			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TACKLE_LEFT), false);
+			// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TACKLE_LEFT), false);
+			owner_->GetAnimator().SetNextState("takkuru_left");
+
 			break;
 		}
 
@@ -1417,7 +1446,7 @@ BT_ActionState EnemyTackleAction::Run(float elapsedTime)
 	}
 
 	// --- アニメーションが終わったら終了 ---
-	if (owner_->GetAnimationEndFlag())
+	if (owner_->GetAnimator().GetEndMotion())
 	{
 		OnEndAction();
 		return BT_ActionState::Complete;
@@ -1439,7 +1468,8 @@ BT_ActionState EnemyMoveCenterAction::Run(float elapsedTime)
 	{
 	case 0:
 
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
+		// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
+		owner_->GetAnimator().SetNextState("walk_mae");
 		step++;
 
 		break;

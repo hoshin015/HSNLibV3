@@ -129,7 +129,7 @@ private:
 	// --- カメラのポインタ ---
 	CameraBase* camera;
 
-	Animator animator;
+	//Animator animator;
 
 	// ステータス
 	AbilityStatus ability;
@@ -152,5 +152,5 @@ public:
 
 	AbilityStatus& AStatus() { return ability; }
 	ConstantStatus& CStatus() { return constant; }
-	Animator& GetAnimator() { return animator; }
+	//Animator& GetAnimator() { return animator; }
 };

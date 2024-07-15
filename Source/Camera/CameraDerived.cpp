@@ -343,6 +343,7 @@ Vector3 LockOnCamera::OnShake(const Vector3& intensity)
 {
 	Vector3 result;
 	float shakePower = CameraManager::Instance().shakePower;
+	if (static_cast<int>(shakePower) < 1) return { 0,0,0 };
 	result = rightVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.x;
 	result = upVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.y;
 	result = frontVec * (((rand() % static_cast<int>(shakePower)) / shakePower) - 0.5f) * intensity.z;

@@ -63,8 +63,123 @@ void Enemy::Initialize()
 
 	actionCount = 0;
 
+	// Animator
+	if (animator.GetCurrentState()) return;
+	enum class Motion : int {
+		ASIDON,
+		BURESU,
+		DOWN,
+		DOWN_TYU,
+		HISSATU_1,
+		HISSATU_2,
+		HISSATU_3,
+		HOERU,
+		HOERU_BIG,
+		IDLE,
+		KAITEN,
+		KAMITUKI_1,
+		KAMITUKI_2,
+		OKIRU,
+		SINU,
+		SUKUIAGE,
+		TAKKURU,
+		TAKKURU_RIGHT,
+		TOKOTOKO_LEFT,
+		TOKOTOKO_RIGHT,
+		TOSSIN,
+		WALK_LEFT,
+		WALK_MAE,
+		WALK_RIGHT,
+		WALK_USIRO,
+		SIZE
+	};
 
-	PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
+	std::vector<ModelResource::Animation>& animations = GetModel()->GetModelResource()->GetAnimationClips();
+
+	std::vector<Animator::Motion> motions;
+	int i = 0;
+	for (auto&& animation: animations) {
+		Animator::Motion motion;
+		motion.motion = &animation;
+		motion.animationIndex = 0;
+		motion.loop = false;
+		motions.emplace_back(motion);
+
+		i++;
+	}
+
+	motions[static_cast<int>(Motion::IDLE)].loop = true;
+	motions[static_cast<int>(Motion::WALK_MAE)].loop = true;
+	motions[static_cast<int>(Motion::WALK_USIRO)].loop = true;
+	motions[static_cast<int>(Motion::WALK_LEFT)].loop = true;
+	motions[static_cast<int>(Motion::WALK_RIGHT)].loop = true;
+	motions[static_cast<int>(Motion::DOWN_TYU)].loop = true;
+	motions[static_cast<int>(Motion::HISSATU_2)].loop = true;
+	motions[static_cast<int>(Motion::TOKOTOKO_LEFT)].loop = true;
+	motions[static_cast<int>(Motion::TOKOTOKO_RIGHT)].loop = true;
+
+	motions[static_cast<int>(Motion::IDLE)].threshold = {0,0};
+	motions[static_cast<int>(Motion::WALK_MAE)].threshold = {0,1};
+	motions[static_cast<int>(Motion::WALK_USIRO)].threshold = {0,-1};
+	motions[static_cast<int>(Motion::WALK_LEFT)].threshold = {-1,0};
+	motions[static_cast<int>(Motion::WALK_RIGHT)].threshold = {1,0};
+
+	Animator::BlendTree walkTree;
+	walkTree.motions.emplace_back(motions[static_cast<int>(Motion::IDLE)]);
+	walkTree.motions.emplace_back(motions[static_cast<int>(Motion::WALK_MAE)]);
+	walkTree.motions.emplace_back(motions[static_cast<int>(Motion::WALK_USIRO)]);
+	walkTree.motions.emplace_back(motions[static_cast<int>(Motion::WALK_LEFT)]);
+	walkTree.motions.emplace_back(motions[static_cast<int>(Motion::WALK_RIGHT)]);
+	walkTree.parameters[0] = "moveX";
+	walkTree.parameters[1] = "moveY";
+	walkTree.maxSeconds = 1.833333f;
+
+	Animator::State walkState;
+	walkState.object = Animator::MakeObjPointer(walkTree);
+	walkState.type = Animator::State::BLEND_TREE;
+	//walkState.transitions;
+
+	std::vector<Animator::State> states;
+	states.resize(static_cast<int>(Motion::SIZE));
+	i = 0;
+	for (auto&& state: states) {
+		state.object = Animator::MakeObjPointer(motions[i]);
+		state.type = Animator::State::MOTION;
+		state.transitionTime = 0.4f;
+		i++;
+	}
+
+	animator.AddState("asidon", states[static_cast<int>(Motion::ASIDON)]);
+	animator.AddState("buresu", states[static_cast<int>(Motion::BURESU)]);
+	animator.AddState("down", states[static_cast<int>(Motion::DOWN)]);
+	animator.AddState("down_tyu", states[static_cast<int>(Motion::DOWN_TYU)]);
+	animator.AddState("hissatu_1", states[static_cast<int>(Motion::HISSATU_1)]);
+	animator.AddState("hissatu_2", states[static_cast<int>(Motion::HISSATU_2)]);
+	animator.AddState("hissatu_3", states[static_cast<int>(Motion::HISSATU_3)]);
+	animator.AddState("hoeru", states[static_cast<int>(Motion::HOERU)]);
+	animator.AddState("hoeru_big", states[static_cast<int>(Motion::HOERU_BIG)]);
+	animator.AddState("idle", states[static_cast<int>(Motion::IDLE)]);
+	animator.AddState("kaiten", states[static_cast<int>(Motion::KAITEN)]);
+	animator.AddState("kamituki_1", states[static_cast<int>(Motion::KAMITUKI_1)]);
+	animator.AddState("kamituki_2", states[static_cast<int>(Motion::KAMITUKI_2)]);
+	animator.AddState("okiru", states[static_cast<int>(Motion::OKIRU)]);
+	animator.AddState("sinu", states[static_cast<int>(Motion::SINU)]);
+	animator.AddState("sukuiage", states[static_cast<int>(Motion::SUKUIAGE)]);
+	animator.AddState("takkuru_left", states[static_cast<int>(Motion::TAKKURU)]);
+	animator.AddState("takkuru_right", states[static_cast<int>(Motion::TAKKURU_RIGHT)]);
+	animator.AddState("tokotoko_left", states[static_cast<int>(Motion::TOKOTOKO_LEFT)]);
+	animator.AddState("tokotoko_right", states[static_cast<int>(Motion::TOKOTOKO_RIGHT)]);
+	animator.AddState("tossin", states[static_cast<int>(Motion::TOSSIN)]);
+	animator.AddState("walk_left", states[static_cast<int>(Motion::WALK_LEFT)]);
+	animator.AddState("walk_mae", states[static_cast<int>(Motion::WALK_MAE)]);
+	animator.AddState("walk_right", states[static_cast<int>(Motion::WALK_RIGHT)]);
+	animator.AddState("walk_usiro", states[static_cast<int>(Motion::WALK_USIRO)]);
+	//animator.AddState("walk", walkState);
+	animator.SetEntryState("idle");
+	animator.SetModelSceneView(&GetModel()->GetModelResource()->GetSceneView());
+	animator.EnableRootMotion("joint1");
+
+	//PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
 }
 
 void Enemy::Finalize()
@@ -84,7 +199,10 @@ void Enemy::Update()
 	UpdateMove(elapsedTime);
 
 	// アニメーション更新
-	UpdateAnimation();
+	//UpdateAnimation();
+	animatorKeyFrame = animator.PlayAnimation(elapsedTime);
+	currentKeyFrame = animator.GetKeyFrameIndex();
+	currentAnimationIndex = animator.GetMotionIndex();
 
 	// --- 位置の制限 ---
 	ClampPosition(75.0f);
@@ -102,7 +220,7 @@ void Enemy::Update()
 
 void Enemy::Render(bool isShadow)
 {
-	model->Render(transform, &keyFrame, isShadow);
+	model->Render(transform, &animatorKeyFrame, isShadow);
 }
 
 
@@ -227,6 +345,8 @@ void Enemy::DrawDebugGui()
 
 
 	ImGui::End();
+
+	animator.AnimationEditor();
 }
 
 
@@ -263,7 +383,7 @@ void Enemy::Transform()
 	T.MakeTranslation(GetPos());
 
 	// ４つの行列を組み合わせ、ワールド行列を作成
-	Matrix W = MS * S * R * T * C;
+	Matrix W = MS * C * S * R * T;
 	transform = W.mat_;
 }
 
@@ -463,7 +583,7 @@ void Enemy::RotateToTargetVec(const DirectX::XMFLOAT3& targetVec, float t, const
 
 	if (tempFront)
 		front = *tempFront;
-	
+
 	Vector3 cross = front.Cross(targetVec);
 
 	float dot = front.Dot(targetVec);
@@ -712,7 +832,7 @@ void Enemy::InitializeBehaviorTree()
 	{
 		// --- 徘徊 ---
 		aiTree_->AddNode("Scout", "Wander", 0, BT_SelectRule::Non, new EnemyWanderJudgment(this), new EnemyWanderAction(this));
-		
+
 		// --- 待機 ---
 		aiTree_->AddNode("Scout", "Idle", 0, BT_SelectRule::Non, nullptr, new EnemyIdleAction(this));
 	}

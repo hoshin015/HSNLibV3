@@ -84,7 +84,7 @@ ModelResource::KeyFrame Animator::MotionUpdate(Motion* motion, const float rate)
 
 	// TODO::最後のフレームを通過したかの判定をもうちょっと何とかする
 	// このままだとタイミングによっては最後のフレームになっても感知できない
-	_isEndMotion = motion->endMotion = fmodf(rate * motion->animationSpeed, 1) >= .91f;
+	_isEndMotion = motion->endMotion = fmodf(rate * motion->animationSpeed,1) >= 0.95f;
 	_currentMotionIndex = motion->animationIndex;
 	_currentKeyFrameIndex = index;
 	return BlendKeyFrame(keyFrames[0], keyFrames[1], lerpRate);
@@ -195,7 +195,8 @@ ModelResource::KeyFrame Animator::StateUpdate(State* state, float elapsedTime) {
 
 		currentRootNode->translation = {};
 		for (auto&& node: currentKeyFrame.nodes) {
-			const int64_t  parentID = _sceneView->nodes.at(_sceneView->GetIndex(node.uniqueId)).parentIndex;
+			const int64_t index = _sceneView->GetIndex(node.uniqueId);
+			const int64_t  parentID = index >= 0 ? _sceneView->nodes.at(_sceneView->GetIndex(node.uniqueId)).parentIndex : -1;
 			const XMMATRIX GT       = parentID < 0 ?
 				                          XMMatrixIdentity() :
 				                          XMMatrixScaling(node.scaling.x, node.scaling.y, node.scaling.z) *

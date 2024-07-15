@@ -283,7 +283,9 @@ void Player::Initialize()
 	stateMachine->SetState(static_cast<int>(State::Normal));
 
 	// idle アニメーション再生
-	PlayAnimation(static_cast<int>(PlayerAnimNum::Idle), true);
+	// PlayAnimation(static_cast<int>(PlayerAnimNum::Idle), true);
+	ability = AbilityStatus();
+	velocity = { 0,0,0 };
 }
 
 void Player::Update()
@@ -449,7 +451,7 @@ void Player::DrawDebugImGui(int number) {
 	}
 	ImGui::End();
 
-	animator.AnimationEditor();
+	//animator.AnimationEditor();
 }
 
 void Player::UpdateAnimationParam() {

@@ -40,6 +40,7 @@ public:
 		bool addLightning1 = false;
 		bool addLightning2 = false;
 		bool addLightning3 = false;
+		bool isDamaged = false;
 	};
 
 

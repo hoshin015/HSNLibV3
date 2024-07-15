@@ -1,9 +1,14 @@
 #include "BreathEffect.h"
+
+#include "SimpleMath.h"
 #include "../Lightning/LightningEffect.h"
 #include "../../../../../Library/Timer.h"
 #include "../../../../../Library/Particle/EmitterManager.h"
 #include "../../../../../Library/Input/InputManager.h"
 #include "../EffectDamageManager.h"
+#include "../../StateMachine/Player/Player.h"
+#include "../../../../../Library/Math/Collision.h"
+#include "../../../../../Library/3D/CameraManager.h"
 
 
 void BreathEffect::SetPosition(const DirectX::XMFLOAT3& position)
@@ -34,7 +39,7 @@ void BreathEffect::Initialize()
 	damageTimeStart = 0.1f;
 	damageTimeEnd = 1.5f;
 	damageRadius = 2.0f;
-	damage = 40.0f;
+	damage = 100.0f;
 }
 
 void BreathEffect::Update()
@@ -45,7 +50,7 @@ void BreathEffect::Update()
 	lifeTimer += deltaTime;
 
 	// ダメージ判定
-	if (lifeTimer >= damageTimeStart && lifeTimer <= damageTimeEnd)
+	if (!isDamaged && lifeTimer >= damageTimeStart && lifeTimer <= damageTimeEnd)
 	{
 		// 回転行列の計算
 		DirectX::XMMATRIX RotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(angle.x), DirectX::XMConvertToRadians(angle.y), DirectX::XMConvertToRadians(angle.z));
@@ -79,6 +84,38 @@ void BreathEffect::Update()
 			sphere.damage = damage;
 			effectCollision.spheres.emplace_back(sphere);
 			EffectDamageManager::Instance().Register(effectCollision);
+
+			// プレイヤーとの衝突判定
+			// --- プレイヤーの球 ---
+			for (auto& playerSphere : Player::Instance().GetModel()->GetModelResource()->GetSkeletonSphereCollisions())
+			{
+				// --- プレイヤーの球の座標を取得 ---
+				Vector3 playerBonePosition = Player::Instance().GetPos();
+				playerBonePosition = (playerSphere.name == "") ? playerBonePosition + playerSphere.position : Player::Instance().GetBonePosition(playerSphere.name);
+
+
+				Vector3 dummy;
+				if (Collision::IntersectSphereVsSphere(pos, damageRadius, playerBonePosition.vec_, playerSphere.radius, dummy.vec_))
+				{
+					// --- ここに当たった時の処理を書く ---
+					isDamaged = true;
+
+					CameraManager::Instance().shakeTimer = 1.0f;
+					CameraManager::Instance().shakePower = 100.0f;
+
+					Player& player = Player::Instance();
+					float currentHP = player.AStatus().hp;
+					player.AStatus().hp -= damage;
+
+					// --- この攻撃でプレイヤーが死亡したとき ---
+					if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
+					{
+						CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
+					}
+
+					break;
+				}
+			}
 		}
 	}
 
@@ -192,6 +229,8 @@ void BreathEffect::Emit()
 	isBreath = true;
 
 	lifeTimer = 0.0f;
+
+	isDamaged = false;
 
 	//angle.y = rand() % 360;
 	//angle.x = rand() % 360;

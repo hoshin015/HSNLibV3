@@ -73,4 +73,5 @@ private:
 	float damageTimeEnd;
 	float damageRadius;
 	float damage;
+	bool isDamaged = false;
 };

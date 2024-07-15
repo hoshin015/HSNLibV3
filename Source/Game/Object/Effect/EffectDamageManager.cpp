@@ -7,6 +7,7 @@ void EffectDamageManager::Initialize()
 
 void EffectDamageManager::Update()
 {
+
 }
 
 void EffectDamageManager::Render()

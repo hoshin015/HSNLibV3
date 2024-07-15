@@ -610,8 +610,8 @@ void SceneTest::Render()
 	// ‚±‚±‚ÅƒXƒvƒ‰ƒCƒg•`‰æ
 	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
 
-	//UiPause::Instance().Render();
 	UiGame::Instance().Render();
+	UiPause::Instance().Render();
 
 	// ‚±‚±‚Å•¶Žš•`‰æ
 	DamageTextManager::Instance().Render();

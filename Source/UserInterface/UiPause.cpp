@@ -7,7 +7,8 @@ void UiPause::Initialize()
 {
 	state = UiPauseState::Hidden;
 
-
+	SetAllOffRender();
+	imgBlack->SetColorA(0.0f);
 }
 
 bool UiPause::Update()
@@ -19,6 +20,7 @@ bool UiPause::Update()
 			// ポーズフラグがtrueになったら遷移
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
 			{
+				imgBlack->SetIsRender(true);
 
 				isPause = true;
 				state   = UiPauseState::Showing;
@@ -28,6 +30,8 @@ bool UiPause::Update()
 	case UiPauseState::Showing:
 		{
 			pauseTimer += Timer::Instance().DeltaTime();
+
+			imgBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgBlackAlpha));
 
 			// 表示中にポーズ解除されたら非表示遷移状態に遷移
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
@@ -60,6 +64,8 @@ bool UiPause::Update()
 		{
 			pauseTimer -= Timer::Instance().DeltaTime();
 
+			imgBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgBlackAlpha));
+
 			// 表示中にポーズ解除されたら非表示遷移状態に遷移
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
 			{
@@ -68,10 +74,10 @@ bool UiPause::Update()
 				break;
 			}
 
-
 			// 非表示完了したら遷移
 			if (pauseTimer < 0.0)
 			{
+				imgBlack->SetIsRender(false);
 
 				pauseTimer = 0.0f;
 				state      = UiPauseState::Hidden;
@@ -88,4 +94,14 @@ bool UiPause::Update()
 void UiPause::Render()
 {
 	//if (!isPause) return;
+
+	imgBlack->Render();
+}
+
+void UiPause::SetAllOffRender()
+{
+	for (auto* sprite : sprites)
+	{
+		sprite->SetIsRender(false);
+	}
 }

@@ -44,9 +44,6 @@
     <Filter Include="2_Source">
       <UniqueIdentifier>{d1302a82-3fac-457e-b0c9-aed82139a92b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="2_Source\Scene">
-      <UniqueIdentifier>{aa009b92-e711-45dd-9fc1-c167ee95d878}</UniqueIdentifier>
-    </Filter>
     <Filter Include="0_ImGui\Implot">
       <UniqueIdentifier>{50f7a556-0853-4996-bb9b-48a7760a9e07}</UniqueIdentifier>
     </Filter>
@@ -151,6 +148,9 @@
     </Filter>
     <Filter Include="1_HSNLib\Misc">
       <UniqueIdentifier>{61c2a66f-6026-4327-8c3f-2282ea33ac85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\Scene">
+      <UniqueIdentifier>{aa009b92-e711-45dd-9fc1-c167ee95d878}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

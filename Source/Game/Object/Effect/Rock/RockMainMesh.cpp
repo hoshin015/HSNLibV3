@@ -1,8 +1,15 @@
 #include "RockMainMesh.h"
 #include "../../../../../Library/Timer.h"
+#include "../EffectDamageManager.h"
+#include "../../StateMachine/Player/Player.h"
+#include "../../../../../Library/Math/Collision.h"
+#include "../../../../../Library/3D/CameraManager.h"
 
 void RockData::Update()
 {
+
+
+
 	// 関数ポインタ
 	(this->*funcs[static_cast<int>(updateType)])();
 	UpdateTransform();
@@ -76,6 +83,53 @@ void RockMainMesh::Update()
 	// rock データ更新
 	for (auto& data : rockInfo)
 	{
+		// ダメージ判定
+		if (!data->isDamaged)
+		{
+			EffectDamageManager::EffectCollision effectCollision;
+			EffectDamageManager::EffectCollision::SphereData sphere;
+			sphere.position = data->GetPos();
+			sphere.radius = data->damageRadius;
+			sphere.damage = data->damage;
+			effectCollision.spheres.emplace_back(sphere);
+			EffectDamageManager::Instance().Register(effectCollision);
+
+			// プレイヤーとの衝突判定
+			// --- プレイヤーの球 ---
+			for (auto& playerSphere : Player::Instance().GetModel()->GetModelResource()->GetSkeletonSphereCollisions())
+			{
+				if (data->isDamaged) continue;
+
+				// --- プレイヤーの球の座標を取得 ---
+				Vector3 playerBonePosition = Player::Instance().GetPos();
+				playerBonePosition = (playerSphere.name == "") ? playerBonePosition + playerSphere.position : Player::Instance().GetBonePosition(playerSphere.name);
+
+
+				Vector3 dummy;
+				if (Collision::IntersectSphereVsSphere(data->GetPos(), data->damageRadius, playerBonePosition.vec_, playerSphere.radius, dummy.vec_))
+				{
+					// --- ここに当たった時の処理を書く ---
+					data->isDamaged = true;
+
+					CameraManager::Instance().shakeTimer = 1.0f;
+					CameraManager::Instance().shakePower = 100.0f;
+
+					Player& player = Player::Instance();
+					float currentHP = player.AStatus().hp;
+					player.AStatus().hp -= data->damage;
+
+					// --- この攻撃でプレイヤーが死亡したとき ---
+					if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
+					{
+						CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
+					}
+
+					break;
+				}
+			}
+		}
+
+
 		// --- 行列更新と寿更新 ---
 		// スケール変更
 		DirectX::XMMATRIX MS = DirectX::XMMatrixScaling(model->GetModelResource()->GetScale(), model->GetModelResource()->GetScale(), model->GetModelResource()->GetScale());

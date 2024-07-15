@@ -92,7 +92,7 @@ public:
 
 public:
 	bool isDamaged = false;
-	float radius = 2.0f;
+	float damageRadius = 2.0f;
 	float damage = 10.0f;
 };
 

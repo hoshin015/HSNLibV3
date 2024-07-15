@@ -8,6 +8,8 @@ void RockEffect::Initialize()
 
 void RockEffect::Update()
 {
+
+
 	rockMesh1->Update();
 }
 

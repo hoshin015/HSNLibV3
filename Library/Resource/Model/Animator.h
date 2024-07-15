@@ -42,7 +42,7 @@ public:
 		ObjectType type           = MOTION;
 		float      speed          = 1;
 		float      timer          = 0;
-		float      transitionTime = 0.5f;
+		float      transitionTime = 0.1f;
 
 		template<typename T>
 		std::shared_ptr<T> GetObj() { return std::static_pointer_cast<T>(object); }
@@ -63,7 +63,7 @@ private:
 
 	float _timer;
 
-	int _currentMotionIndex = 0;
+	int _currentMotionIndex   = 0;
 	int _currentKeyFrameIndex = 0;
 
 	bool _rootMotionEnabled = false;
@@ -99,6 +99,11 @@ public:
 	///	@param var 値 int,float,boolのいずれかを入れれる
 	void SetParameter(const std::string& name, const Var var) { _parameters[name] = var; }
 
+	/// 次のStateをセットする
+	///	応急処置用
+	/// @param name Stateの名前
+	void SetNextState(const std::string& name) { _nextState = &_states[name]; }
+
 	/// RootMotionを有効にする
 	/// @param name RootとなるBoneの名前
 	void EnableRootMotion(const std::string& name) {
@@ -123,8 +128,8 @@ public:
 	const DirectX::XMFLOAT3& GetVelocity() const { return _velocity; }
 
 	float GetTimer() const { return _timer; }
-	int GetMotionIndex() const { return _currentMotionIndex; }
-	int GetKeyFrameIndex() const { return _currentKeyFrameIndex; }
+	int   GetMotionIndex() const { return _currentMotionIndex; }
+	int   GetKeyFrameIndex() const { return _currentKeyFrameIndex; }
 	bool  GetEndMotion() const { return _isEndMotion; }
 
 	/// アニメーションの再生

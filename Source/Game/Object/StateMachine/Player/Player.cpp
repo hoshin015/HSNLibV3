@@ -33,44 +33,44 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 
 	Animator::Motion idle;
 	idle.motion = &animation[3];
-	idle.animationSpeed = 0.15f;
+	idle.animationSpeed = 0.75f;
 	idle.threshold = { 0,0 };
 
 	Animator::Motion walkMae;
 	walkMae.motion = &animation[16];
-	walkMae.animationSpeed = 0.27f;
+	walkMae.animationSpeed = 1.35f;
 	walkMae.threshold = { 0,1 };
 
 	Animator::Motion walkUsiro;
 	walkUsiro.motion = &animation[18];
-	walkUsiro.animationSpeed = 0.27f;
+	walkUsiro.animationSpeed = 1.35f;
 	walkUsiro.threshold = { 0,-1 };
 
 	Animator::Motion walkLeft;
 	walkLeft.motion = &animation[15];
-	walkLeft.animationSpeed = 0.27f;
+	walkLeft.animationSpeed = 1.35f;
 	walkLeft.threshold = { 1,0 };
 
 	Animator::Motion walkRight;
 	walkRight.motion = &animation[17];
-	walkRight.animationSpeed = 0.27f;
+	walkRight.animationSpeed = 1.35f;
 	walkRight.threshold = { -1,0 };
 
 	Animator::Motion runMotion;
 	runMotion.motion = &animation[9];
-	runMotion.animationSpeed = 0.2f;
+	runMotion.animationSpeed = 1.f;
 	runMotion.threshold = { 0,1 };
 
 	Animator::Motion attack1;
 	attack1.motion = &animation[4];
-	attack1.animationSpeed = 0.2f;
+	attack1.animationSpeed = 1.f;
 	attack1.threshold = { 1,0 };
 	attack1.loop = false;
 	attack1.animationIndex = 4;
 
 	Animator::Motion attack2;
 	attack2.motion = &animation[5];
-	attack2.animationSpeed = 0.2f;
+	attack2.animationSpeed = 1.f;
 	attack2.threshold = { 1,0 };
 	attack2.loop = false;
 	attack2.animationIndex = 5;
@@ -78,39 +78,39 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 
 	Animator::Motion attack3;
 	attack3.motion = &animation[6];
-	attack3.animationSpeed = 0.2f;
+	attack3.animationSpeed = 1.f;
 	attack3.threshold = { 1,0 };
 	attack3.loop = false;
 	attack3.animationIndex = 6;
 
 	Animator::Motion attack4;
 	attack4.motion = &animation[7];
-	attack4.animationSpeed = 0.2f;
+	attack4.animationSpeed = 1.f;
 	attack4.threshold = { 1,0 };
 	attack4.loop = false;
 	attack4.animationIndex = 7;
 
 	Animator::Motion dodgeMae;
 	dodgeMae.motion = &animation[12];
-	dodgeMae.animationSpeed = 0.2f;
+	dodgeMae.animationSpeed = 1.f;
 	dodgeMae.threshold = { 0,1 };
 	dodgeMae.loop = false;
 
 	Animator::Motion dodgeUsiro;
 	dodgeUsiro.motion = &animation[14];
-	dodgeUsiro.animationSpeed = 0.2f;
+	dodgeUsiro.animationSpeed = 1.f;
 	dodgeUsiro.threshold = { 0,-1 };
 	dodgeUsiro.loop = false;
 
 	Animator::Motion dodgeLeft;
 	dodgeLeft.motion = &animation[11];
-	dodgeLeft.animationSpeed = 0.2f;
+	dodgeLeft.animationSpeed = 1.f;
 	dodgeLeft.threshold = { 1,0 };
 	dodgeLeft.loop = false;
 
 	Animator::Motion dodgeRight;
 	dodgeRight.motion = &animation[13];
-	dodgeRight.animationSpeed = 0.2f;
+	dodgeRight.animationSpeed = 1.f;
 	dodgeRight.threshold = { -1,0 };
 	dodgeRight.loop = false;
 
@@ -149,8 +149,8 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 		if (animator.GetParameter<bool>("run"))
 			return &animator.GetState("run");
 
-		if (animator.GetParameter<bool>("attack"))
-			return &animator.GetState("attack1");
+		// if (animator.GetParameter<bool>("attack"))
+		// 	return &animator.GetState("attack1");
 
 		if (animator.GetParameter<bool>("dodge"))
 			return &animator.GetState("dodge");
@@ -166,11 +166,11 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 		if (!animator.GetParameter<bool>("run"))
 			return &animator.GetState("walk");
 
-		if (animator.GetParameter<bool>("attack"))
-			return &animator.GetState("attack1");
+		// if (animator.GetParameter<bool>("attack"))
+		// 	return &animator.GetState("attack1");
 
-		if (animator.GetParameter<bool>("dodge"))
-			return &animator.GetState("dodge");
+		// if (animator.GetParameter<bool>("dodge"))
+		// 	return &animator.GetState("dodge");
 
 		return nullptr;
 		};
@@ -187,8 +187,8 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 		if (animator.GetParameter<bool>("attack"))
 			return &animator.GetState("attack2");
 
-		if (animator.GetParameter<bool>("dodge"))
-			return &animator.GetState("dodge");
+		// if (animator.GetParameter<bool>("dodge"))
+		// 	return &animator.GetState("dodge");
 
 		return nullptr;
 	};
@@ -205,8 +205,8 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 		if (animator.GetParameter<bool>("attack"))
 			return &animator.GetState("attack3");
 
-		if (animator.GetParameter<bool>("dodge"))
-			return &animator.GetState("dodge");
+		// if (animator.GetParameter<bool>("dodge"))
+		// 	return &animator.GetState("dodge");
 
 		return nullptr;
 	};
@@ -223,8 +223,8 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 		if (animator.GetParameter<bool>("attack"))
 			return &animator.GetState("attack4");
 
-		if (animator.GetParameter<bool>("dodge"))
-			return &animator.GetState("dodge");
+		// if (animator.GetParameter<bool>("dodge"))
+		// 	return &animator.GetState("dodge");
 
 		return nullptr;
 	};
@@ -233,13 +233,17 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	attack4State.object = Animator::MakeObjPointer(attack4);
 	attack4State.type = Animator::State::MOTION;
 	attack4State.transitions = STATE_FUNC(animator) {
-		if (animator.GetParameter<bool>("endAttack"))
+		if (animator.GetParameter<bool>("endAttack")) {
 			return !animator.GetParameter<bool>("run") ?
-			&animator.GetState("walk") :
-			&animator.GetState("run");
+				&animator.GetState("walk") :
+				&animator.GetState("run");
+		}
 
-		if (animator.GetParameter<bool>("dodge"))
-			return &animator.GetState("dodge");
+		if (animator.GetParameter<bool>("attack"))
+			return &animator.GetState("attack1");
+
+		// if (animator.GetParameter<bool>("dodge"))
+		// 	return &animator.GetState("dodge");
 
 		return nullptr;
 	};
@@ -250,9 +254,12 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	dodgeState.transitions =
 		STATE_FUNC(animator) {
 		if (animator.GetParameter<bool>("endDodge")) {
-			return !animator.GetParameter<bool>("run")?
-				&animator.GetState("walk"):
-				&animator.GetState("run");
+			// if (animator.GetParameter<bool>("attack"))
+			// 	return &animator.GetState("attack1");
+
+			if (!animator.GetParameter<bool>("run"))
+				 return &animator.GetState("walk");
+			else return &animator.GetState("run");
 		}
 
 		return nullptr;
@@ -337,6 +344,10 @@ void Player::Update()
 	// アニメーション更新
 	//SetAnimatorKeyFrame(keyFrame);
 	UpdateAnimationParam();
+	// Animatorを使ったモーション
+	animatorKeyFrame = animator.PlayAnimation(Timer::Instance().DeltaTime());
+	currentKeyFrame = animator.GetKeyFrameIndex();
+	currentAnimationIndex = animator.GetMotionIndex();
 
 	// 姿勢行列更新
 	UpdateTransform();
@@ -344,10 +355,6 @@ void Player::Update()
 
 void Player::Render(bool isShadow)
 {
-	// Animatorを使ったモーション
-	animatorKeyFrame = animator.PlayAnimation(Timer::Instance().DeltaTime());
-	currentKeyFrame = animator.GetKeyFrameIndex();
-	currentAnimationIndex = animator.GetMotionIndex();
 	model->Render(transform, &animatorKeyFrame, isShadow);
 }
 
@@ -402,6 +409,7 @@ void Player::DrawDebugImGui(int number) {
 				ImGui::DragFloat(u8"ダッシュ倍率", &constant.dashSpeed,0.01f);
 				ImGui::DragFloat(u8"回避強さ", &constant.dodgePower,0.01f);
 				ImGui::DragFloat(u8"回避時間", &constant.dodgeTime,0.01f);
+				ImGui::DragFloat(u8"入力拒否時間", &constant.notAcceptTime,0.01f);
 
 				static float rate = constant.dashDeadZone * 100;
 				if(ImGui::SliderFloat(u8"ダッシュデットゾーン", &rate,0,100,"%.0f%%"))
@@ -514,7 +522,7 @@ void Player::Input()
 	}
 
 	inputMap["Attack"] = inputAttackData;
-	animator.SetParameter("attack", inputAttackData);
+	//animator.SetParameter("attack", inputAttackData);
 
 	// --- 回避 ---
 	bool dodge = input.GetKeyPressed(DirectX::Keyboard::Space);
@@ -573,7 +581,7 @@ void Player::InputAttack() {
 	if(inputAttackData && !at) {
 		at = true;
 		ability.attackCount++;
-		if (ability.attackCount >= constant.maxAttackCombo) ability.attackTimer = 0;
+		//if (ability.attackCount >= constant.maxAttackCombo) ability.attackTimer = 0;
 	}
 
 	if (animator.GetEndMotion()) {
@@ -787,7 +795,7 @@ void Player::CalcAttackVelocity() {
 void Player::CalcRootAnimationVelocity() {
 	Vector3 animVel = animator.GetVelocity();
 	XMMATRIX ST = XMLoadFloat4x4(&model->GetModelResource()->GetCoordinateSystemTransform());
-	XMMATRIX S = XMMatrixScaling(10,10,10);
+	XMMATRIX S = XMMatrixScaling(1,1,1);
 	XMMATRIX R = XMMatrixRotationY(XMConvertToRadians(angle.y));
 	XMStoreFloat3(&animVel.vec_,XMVector3TransformCoord(animVel, ST*S*R));
 	velocity += animVel.vec_;

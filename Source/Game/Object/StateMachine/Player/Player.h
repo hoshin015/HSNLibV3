@@ -46,7 +46,7 @@ public:
 
 		float maxAttackCombo = 4;
 		float attackReceptionTime = 0.1f;
-		float notAcceptTime = 0.1f;
+		float notAcceptTime = 0.16f;
 	};
 
 private:

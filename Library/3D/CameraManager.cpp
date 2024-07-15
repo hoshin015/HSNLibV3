@@ -2,6 +2,8 @@
 
 #include "../../Source/Camera/CameraDerived.h"
 
+#include "../../Library/Timer.h"
+
 
 CameraManager::CameraManager()
 {
@@ -41,6 +43,7 @@ void CameraManager::Initialize()
 	Register("PlayerCamera", std::make_shared<PlayerCamera>());
 	Register("LockOnCamera", std::make_shared<LockOnCamera>());
 	Register("EnemyDeadCamera", std::make_shared<EnemyDeadCamera>());
+	Register("PlayerDeadCamera", std::make_shared<PlayerDeadCamera>());
 }
 
 
@@ -62,4 +65,17 @@ void CameraManager::UpdateConstants()
 void CameraManager::Register(std::string key, std::shared_ptr<CameraBase> camera)
 {
 	cameraMap.insert(std::make_pair(key, camera));
+}
+
+
+
+void CameraManager::UpdateShake()
+{
+	shakeTimer -= Timer::Instance().DeltaTime();
+
+	if (shakeTimer < 0.0f)
+	{
+		shakeTimer = 0.0f;
+		shakePower = 0.0f;
+	}
 }

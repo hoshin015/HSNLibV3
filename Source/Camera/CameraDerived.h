@@ -67,4 +67,32 @@ public:
 private:
 	int state;
 	float timer;
+	bool updateTimer = true;
+
+	struct
+	{
+		float beginAngle;
+		float endAngle;
+		float range;
+		float height;
+		float time;
+	}state1Data, state2Data, state3Data;
+};
+
+
+
+class PlayerDeadCamera final : public CameraBase
+{
+public:
+	void Initialize() override;
+	void Update() override;
+	void UpdateConstants() override;
+	void DrawDebugGui() override;
+
+private:
+	int state;
+	float time = 10.0f;
+	float timer;
+	float range = 12.0f;
+	float height = 5.0f;
 };

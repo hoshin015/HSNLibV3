@@ -215,6 +215,16 @@ void Enemy::DrawDebugGui()
 	float dot = front.Dot(vec);
 	ImGui::Text(u8"“àÏ : %f", dot);
 
+	if (ImGui::Button(u8"€–SƒJƒƒ‰Ø‚è‘Ö‚¦", { 200.0f, 30.0f }))
+	{
+		CameraManager::Instance().SetCurrentCamera("EnemyDeadCamera");
+	}
+
+	if (ImGui::Button(u8"ƒvƒŒƒCƒ„[€–SƒJƒƒ‰Ø‚è‘Ö‚¦", { 200.0f, 30.0f }))
+	{
+		CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
+	}
+
 
 	ImGui::End();
 }
@@ -289,9 +299,18 @@ void Enemy::CollisionVSPlayer()
 
 				// --- ‚±‚±‚É“–‚½‚Á‚½‚Ìˆ—‚ğ‘‚­ ---
 				CameraManager::Instance().shakeTimer = 1.0f;
+				CameraManager::Instance().shakePower = 100.0f;
 				attackCount++;
 
-				Player::Instance().AbilityStatus().hp -= attackPower;
+				Player& player = Player::Instance();
+				float currentHP = player.AbilityStatus().hp;
+				player.AbilityStatus().hp -= attackPower;
+
+				// --- ‚±‚ÌUŒ‚‚ÅƒvƒŒƒCƒ„[‚ª€–S‚µ‚½‚Æ‚« ---
+				if (player.AbilityStatus().hp <= 0.0f && currentHP > 0.0f)
+				{
+					CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
+				}
 
 				break;
 			}
@@ -598,12 +617,21 @@ void Enemy::InitializeBehaviorTree()
 				aiTree_->AddNode("NormalAttack", "LongRange", 0, BT_SelectRule::Random, new EnemyLongRangeJudgment(this)/*nullptr*/, nullptr);
 				{
 					// --- ƒuƒŒƒX ¨ ˆĞŠd ---
-					aiTree_->AddNode("LongRange", "Bless_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+					aiTree_->AddNode("LongRange", "Bless_Threat", 0, BT_SelectRule::Sequence, new EnemyAwakedJudgment(this), nullptr);
 					{
 						aiTree_->AddNode("Bless_Threat", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
 						aiTree_->AddNode("Bless_Threat", "Bless", 0, BT_SelectRule::Non, nullptr, new EnemyBlessAction(this));
 						aiTree_->AddNode("Bless_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
 					}
+
+
+					// --- ²‡‚í‚¹ ¨ ‹d‚¢ã‚° ---
+					aiTree_->AddNode("LongRange", "Turn_ScoopUp", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+					{
+						aiTree_->AddNode("Turn_ScoopUp", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+						aiTree_->AddNode("Turn_ScoopUp", "ScoopUp", 0, BT_SelectRule::Non, nullptr, new EnemyScoopUpAction(this));
+					}
+
 
 					// --- “Ëi ¨ ˆĞŠd ---
 					aiTree_->AddNode("LongRange", "Rush_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);

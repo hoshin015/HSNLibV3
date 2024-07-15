@@ -490,6 +490,14 @@ bool EnemyAwakeJudgment::Judgment()
 
 
 
+// ===== 覚醒後の判定 ======================================================================================================================================================
+bool EnemyAwakedJudgment::Judgment()
+{
+	return owner_->IsAwake();
+}
+
+
+
 
 // ===== 大咆哮の行動 ======================================================================================================================================================
 BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
@@ -998,7 +1006,6 @@ BT_ActionState EnemyBiteAction::Run(float elapsedTime)
 		return BT_ActionState::Failed;
 
 
-
 	switch (step)
 	{
 	case 0:
@@ -1093,143 +1100,6 @@ BT_ActionState EnemyRushingBiteAction::Run(float elapsedTime)
 	}
 
 	break;
-	}
-
-	return BT_ActionState::Run;
-}
-
-
-
-// ===== 踏み込み噛みつき後の行動 ======================================================================================================================================================
-BT_ActionState EnemyAfterRushingBiteAction::Run(float elapsedTime)
-{
-	// --- ダウン/死亡処理 ---
-	if (IsInterrupted())
-		return BT_ActionState::Failed;
-
-
-	switch (step)
-	{
-	case 0:
-
-		// --- この時点で 踏みつけ 左右タックル 威嚇 何もしない を決める ---
-	{
-		// --- 正面と右方向の取得 ---
-		Matrix R;
-		R.MakeRotationFromQuaternion(owner_->quaternion_);
-		Vector3 front = R.v_[2].xyz();
-		Vector3 right = R.v_[0].xyz();
-
-		Vector3 playerPos = Player::Instance().GetPos();
-		Vector3 vec = playerPos - owner_->GetPos();
-		float length = vec.Length();
-		vec.Normalize();
-
-
-		// --- 距離が近かったら ---
-		if (length < 10.0f)
-		{
-			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::STAMP), false);
-			step++;
-			break;
-		}
-
-		// --- 右方向との内積 ---
-		float dotR = right.Dot(vec);
-		if (dotR > 0.5f)	// 横にいたらタックル
-		{
-			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TACKLE_RIGHT), false);
-			step = 2;
-			owner_->runTimer_ = 0.25f;
-			break;
-		}
-
-		else if (dotR < -0.5f)
-		{
-			// --- 右タックル ---
-			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TACKLE_LEFT), false);
-			step = 3;
-			owner_->runTimer_ = 0.25f;
-			break;
-		}
-
-
-		float dotF = front.Dot(vec);
-		if (dotF > 0.5f)	// 正面にいたら
-		{
-			return BT_ActionState::Complete;
-		}
-
-		else if (dotF < -0.5f)	// 後ろにいたら
-		{
-			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROAR), false);
-			step++;
-			break;
-		}
-	}
-
-	break;
-
-
-	case 1:
-
-		// --- アニメーションが終わったら終了 ---
-		if (owner_->GetAnimationEndFlag())
-		{
-			OnEndAction();
-			return BT_ActionState::Complete;
-		}
-
-		break;
-
-
-	case 2:	// 右タックル
-	{
-		owner_->runTimer_ -= elapsedTime;
-
-		if(owner_->runTimer_ < 0.0f)
-		{
-			Matrix R;
-			R.MakeRotationFromQuaternion(owner_->quaternion_);
-			Vector3 right = R.v_[0].xyz();
-
-			owner_->Move(right, 0.1f);
-		}
-
-		// --- アニメーションが終わったら終了 ---
-		if (owner_->GetAnimationEndFlag())
-		{
-			OnEndAction();
-			return BT_ActionState::Complete;
-		}
-
-		break;
-	}
-
-
-	case 3:	// 右タックル
-	{
-		owner_->runTimer_ -= elapsedTime;
-
-		if (owner_->runTimer_ < 0.0f)
-		{
-			Matrix R;
-			R.MakeRotationFromQuaternion(owner_->quaternion_);
-			Vector3 left = -R.v_[0].xyz();
-
-			owner_->Move(left, 0.1f);
-		}
-
-		// --- アニメーションが終わったら終了 ---
-		if (owner_->GetAnimationEndFlag())
-		{
-			OnEndAction();
-			return BT_ActionState::Complete;
-		}
-
-		break;
-	}
-
 	}
 
 	return BT_ActionState::Run;

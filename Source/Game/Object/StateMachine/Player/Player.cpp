@@ -305,10 +305,10 @@ void Player::Update()
 			//Vector3 target = camera->GetTarget();
 			CameraManager::Instance().SetCurrentCamera("PlayerCamera");
 			auto ptr = std::dynamic_pointer_cast<PlayerCamera>(CameraManager::Instance().GetCamera());
-			ptr->OnSetCamera();
-			//camera = &playerCamera;
-			//playerCamera.OnSetCamera();
-			SetCamera(CameraManager::Instance().GetCamera().get());
+			ptr->SetCurrentPosition(position);
+			ptr->SetTarget(target);
+			ptr->currentTarget = target;
+			Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());
 
 			cameraFlag = !cameraFlag;
 		}
@@ -334,7 +334,7 @@ void Player::Update()
 			}
 		}
 	}
-
+	
 	// ステートマシン更新
 	stateMachine->Update();
 

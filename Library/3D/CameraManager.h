@@ -32,6 +32,8 @@ public:
 	void UpdateConstants();
 	void Register(std::string key, std::shared_ptr<CameraBase> camera);
 
+	void UpdateShake();
+
 
 	float shakeTimer;
 	float shakePower;

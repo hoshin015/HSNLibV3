@@ -77,14 +77,7 @@ void PlayerCamera::Update()
 		auto& manager = CameraManager::Instance();
 		if (manager.shakeTimer > 0.0f)
 		{
-			manager.shakeTimer -= deltaTime;
 			shakeOffset = OnShake(shakeIntensity);
-		}
-		
-		else
-		{
-			manager.shakeTimer = 0.0f;
-			shakeOffset = Vector3::Zero_;
 		}
 
 
@@ -305,14 +298,16 @@ void LockOnCamera::Update()
 		auto& manager = CameraManager::Instance();
 		if (manager.shakeTimer > 0.0f)
 		{
-			manager.shakeTimer -= Timer::Instance().DeltaTime();
 			shakeOffset = OnShake(shakeIntensity);
 		}
 
-		else
+
+		// --- 仮の壁とのレイキャスト ---
+		HitResult result;
+		if (StageManager::Instance().RayCast(1, target.vec_, position.vec_, result))
 		{
-			manager.shakeTimer = 0.0f;
-			shakeOffset = Vector3::Zero_;
+			currentPosition = result.position;
+			position = result.position;
 		}
 
 
@@ -362,11 +357,44 @@ void EnemyDeadCamera::Initialize()
 
 void EnemyDeadCamera::Update()
 {
+	auto lerp = [](const float start, const float end, const float t)
+		{
+			return start + (end - start) * t;
+		};
+	static bool enter;
+	if (!enter)
+	{
+		{
+			state1Data.time = 5.0f;
+			state1Data.range = 25.0f;
+			state1Data.height = 3.0f;
+			state1Data.beginAngle = 0.0f;
+			state1Data.endAngle = 60.0f;
+		}
+
+		{
+			state2Data.time = 7.0f;
+			state2Data.range = 25.0f;
+			state2Data.height = 15.0f;
+			state2Data.beginAngle = 0.0f;
+			state2Data.endAngle = 360.0f;
+		}
+
+		{
+			state3Data.time = 10.0f;
+			state3Data.range = 10.0f;
+			state3Data.height = 3.0f;
+		}
+
+		enter = true;
+	}
+
+
 	switch(state)
 	{
 	case 0:
 
-		timer = 3.0f;
+		timer = state1Data.time;
 
 		state++;
 		break;
@@ -377,29 +405,102 @@ void EnemyDeadCamera::Update()
 		Vector3 headPos = Enemy::Instance().GetBonePosition("atama");
 		target = headPos;	// 目標
 
+		// --- 敵の位置から頭の位置へのベクトルを算出 ---
 		Vector3 enemyPosition = Enemy::Instance().GetPos();
 		Vector3 vec = headPos - enemyPosition;
 		vec.Normalize();
 
-		position = enemyPosition + vec * 25.0f;
+		// --- ベクトルを回転 ---
+		Quaternion rot;
+		rot.SetRotationDegY(lerp(state1Data.beginAngle, state1Data.endAngle, timer / state1Data.time));
+		vec = Quaternion(rot * Quaternion(vec.x, vec.y, vec.z, 0.0f) * Quaternion(-rot.x, -rot.y, -rot.z, rot.w)).xyz();
 
-		if (position.y < 1.0f)
-			position.y = 1.0f;
-
-		CameraBase::Update();
+		// --- ベクトルで位置を決めて、高さ分移動させる ---
+		position = enemyPosition + vec * state1Data.range;
+		position.y += state1Data.height;
 
 
 		float elapsedTime = Timer::Instance().DeltaTime();
-		timer -= elapsedTime;
+		if (updateTimer)
+			timer -= elapsedTime;
 		if (timer < 0.0f)
 		{
-			CameraManager::Instance().SetCurrentCamera("PlayerCamera");
+			timer = state2Data.time;
+			state++;
 		}
 		break;
 	}
 
 
+	case 2:
+	{
+		Vector3 headPos = Enemy::Instance().GetBonePosition("atama");
+		target = headPos;	// 目標
+
+		Vector3 vec = Vector3::Front_;
+
+		// --- ベクトルを回転 ---
+		Quaternion rot;
+		rot.SetRotationDegY(lerp(state2Data.beginAngle, state2Data.endAngle, timer / state2Data.time));
+		vec = Quaternion(rot * Quaternion(vec.x, vec.y, vec.z, 0.0f) * Quaternion(-rot.x, -rot.y, -rot.z, rot.w)).xyz();
+
+		// --- ベクトルで位置を決めて、高さ分移動させる ---
+		position = headPos + vec * state2Data.range;
+		position.y += state2Data.height;
+
+
+		float elapsedTime = Timer::Instance().DeltaTime();
+		if (updateTimer)
+			timer -= elapsedTime;
+		if (timer < 0.0f)
+		{
+			timer = state3Data.time;
+			state3Data.range = 10.0f;
+			state3Data.height = 3.0f;
+			state++;
+		}
+
+		break;
 	}
+
+
+	case 3:
+	{
+		// --- 真ん中へのベクトル ---
+		Vector3 vec = Vector3::Zero_ - Enemy::Instance().GetPos();
+		vec.Normalize();
+
+		//// --- ベクトルを回転 ---
+		//Quaternion rot;
+		//rot.SetRotationDegY(lerp(state2Data.beginAngle, state2Data.endAngle, timer / state2Data.time));
+		//vec = Quaternion(rot * Quaternion(vec.x, vec.y, vec.z, 0.0f) * Quaternion(-rot.x, -rot.y, -rot.z, rot.w)).xyz();
+
+		// --- ベクトルで位置を決めて、高さ分移動させる ---
+		position = Vector3::Zero_ + vec * state3Data.range;
+		position.y += state3Data.height;
+
+		float elapsedTime = Timer::Instance().DeltaTime();
+		state3Data.range += elapsedTime;
+		state3Data.height += elapsedTime * 3.0f;
+
+
+		if (updateTimer)
+			timer -= elapsedTime;
+		if (timer < 0.0f)
+		{
+			CameraManager::Instance().SetCurrentCamera("PlayerCamera");
+			state = 0;
+		}
+
+		break;
+	}
+
+	}
+
+	if (position.y < 1.0f)
+		position.y = 1.0f;
+
+	CameraBase::Update();
 }
 
 void EnemyDeadCamera::UpdateConstants()
@@ -409,4 +510,112 @@ void EnemyDeadCamera::UpdateConstants()
 
 void EnemyDeadCamera::DrawDebugGui()
 {
+	ImGui::Begin(u8"敵の死亡カメラ");
+
+	ImGui::InputInt(u8"ステート", &state);
+	ImGui::DragFloat(u8"タイマー", &timer, 0.1f);
+	ImGui::Checkbox(u8"タイマー更新", &updateTimer);
+	if (ImGui::Button(u8"リセット", { 200.0f, 30.0f }))
+	{
+		state = 0;
+	}
+	if (ImGui::TreeNode(u8"ステート1"))
+	{
+		ImGui::BulletText(u8"近くで顔の周りを回転");
+		ImGui::DragFloat(u8"時間", &state1Data.time, 0.1f);
+		ImGui::DragFloat(u8"距離", &state1Data.range);
+		ImGui::DragFloat(u8"高さ", &state1Data.height);
+		ImGui::DragFloat(u8"開始角度", &state1Data.beginAngle);
+		ImGui::DragFloat(u8"終了角度", &state1Data.endAngle);
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode(u8"ステート2"))
+	{
+		ImGui::BulletText(u8"ちょっと離れて全体ぐるぐる");
+		ImGui::DragFloat(u8"時間", &state2Data.time, 0.1f);
+		ImGui::DragFloat(u8"距離", &state2Data.range);
+		ImGui::DragFloat(u8"高さ", &state2Data.height);
+		ImGui::DragFloat(u8"開始角度", &state2Data.beginAngle);
+		ImGui::DragFloat(u8"終了角度", &state2Data.endAngle);
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode(u8"ステート3"))
+	{
+		ImGui::BulletText(u8"画面だんだん引いていく");
+		ImGui::DragFloat(u8"時間", &state3Data.time, 0.1f);
+		ImGui::DragFloat(u8"距離", &state3Data.range);
+		ImGui::DragFloat(u8"高さ", &state3Data.height);
+		ImGui::TreePop();
+	}
+
+
+	ImGui::End();
+}
+
+
+
+// ===== プレイヤーの死亡時のカメラ ======================================================================================================================================================
+void PlayerDeadCamera::Initialize()
+{
+	timer = time;
+}
+
+void PlayerDeadCamera::Update()
+{
+	auto lerp = [](const float start, const float end, const float t)
+		{
+			return start + (end - start) * t;
+		};
+
+	switch (state)
+	{
+	case 0:
+		Initialize();
+		state++;
+		break;
+
+
+	case 1:
+	{
+		Quaternion rot;
+		rot.SetRotationDegY(lerp(0.0f, 360.0f, timer / time));
+
+		Matrix R;
+		R.MakeRotation(Player::Instance().GetAngle());
+		Vector3 vec = R.v_[2].xyz();
+		vec = Quaternion(rot * Quaternion(vec.x, vec.y, vec.z, 0.0f) * Quaternion(-rot.x, -rot.y, -rot.z, rot.w)).xyz();
+
+		target = Player::Instance().GetBonePosition("pelvis");
+		position = target + vec * range;
+		position.y += height;
+
+		float elapsedTime = Timer::Instance().DeltaTime();
+		timer -= elapsedTime;
+		if (timer < 0.0f)
+		{
+			state = 0;
+			CameraManager::Instance().SetCurrentCamera("PlayerCamera");
+		}
+
+		break;
+	}
+
+	}
+
+
+	if (position.y < 1.0f)
+		position.y = 1.0f;
+
+	CameraBase::Update();
+}
+
+void PlayerDeadCamera::UpdateConstants()
+{
+	CameraBase::UpdateConstants();
+}
+
+void PlayerDeadCamera::DrawDebugGui()
+{
+	ImGui::DragFloat(u8"距離", &range);
+	ImGui::DragFloat(u8"高さ", &height);
 }

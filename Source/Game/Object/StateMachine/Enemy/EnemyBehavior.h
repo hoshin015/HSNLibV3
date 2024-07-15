@@ -250,6 +250,16 @@ public:
 
 
 
+// ===== äoê¡å„ÇÃîªíË ======================================================================================================================================================
+class EnemyAwakedJudgment final : public JudgmentBase<Enemy>
+{
+public:
+	EnemyAwakedJudgment(Enemy* owner) : JudgmentBase(owner) {}
+	bool Judgment() override;
+};
+
+
+
 
 
 
@@ -330,16 +340,6 @@ class EnemyRushingBiteAction final : public EnemyBaseBehavior
 {
 public:
 	EnemyRushingBiteAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
-	BT_ActionState Run(float elapsedTime) override;
-};
-
-
-
-// ===== ì•Ç›çûÇ›äöÇ›Ç¬Ç´å„ÇÃçsìÆ ======================================================================================================================================================
-class EnemyAfterRushingBiteAction final : public EnemyBaseBehavior
-{
-public:
-	EnemyAfterRushingBiteAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };
 

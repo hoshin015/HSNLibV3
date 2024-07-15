@@ -189,6 +189,7 @@ void SceneTest::Update()
 	//Camera::Instance().SetTarget(blendTestPlayer->GetPos());
 	Camera::Instance().Update();
 #else
+	CameraManager::Instance().UpdateShake();
 	CameraManager::Instance().Update();
 	//camera->Update();
 #endif
@@ -671,91 +672,52 @@ void SceneTest::DrawDebugGUI()
 		ImGui::Text(u8"プレイヤーの中心からの距離 : %f", length);
 
 		// --- カメラ関連 ---
-		// static bool cameraFlag = true;
-		// InputManager& input = InputManager::Instance();
-		// if (input.GetKeyPressed(DirectX::Keyboard::Keys::L)) {
-		// 	// --- プレイヤーカメラをセット ---
-		// 	if (!cameraFlag) {
-		// 		auto camera = CameraManager::Instance().GetCamera();
-		// 		Vector3 position = camera->GetCurrentPosition();
-		// 		Vector3 target = camera->GetTarget();
-		// 		CameraManager::Instance().SetCurrentCamera("PlayerCamera");
-		 		auto ptr = std::dynamic_pointer_cast<PlayerCamera>(CameraManager::Instance().GetCamera());
-		// 		ptr->OnSetCamera();
-		// 		//camera = &playerCamera;
-		// 		//playerCamera.OnSetCamera();
-		// 		Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());
-		//
-		// 		cameraFlag = !cameraFlag;
-		// 	}
-		//
-		// 	// --- ロックオンカメラをセット ---
-		// 	else {
-		// 		if (!Enemy::Instance().IsDead()) {
-		// 			auto camera = CameraManager::Instance().GetCamera();
-		// 			Vector3 position = camera->GetPosition();
-		// 			Vector3 target = camera->GetTarget();
-		// 			CameraManager::Instance().SetCurrentCamera("LockOnCamera");
-		// 			camera = CameraManager::Instance().GetCamera();
-		// 			camera->Initialize();
-		// 			//camera = &lockOnCamera;
-		// 			//camera->Initialize();
-		//
-		// 			camera->SetPosition(position);
-		// 			camera->SetCurrentPosition(position);
-		// 			camera->SetTarget(target);
-		// 			Player::Instance().SetCamera(camera.get());
-		//
-		// 			cameraFlag = !cameraFlag;
-		// 		}
-		// 	}
-		// }
-		static bool cameraFlag = true;
-		InputManager& input = InputManager::Instance();
-		if (input.GetKeyPressed(DirectX::Keyboard::Keys::L))
-		{
-			// --- プレイヤーカメラをセット ---
-			if (!cameraFlag)
-			{
-				auto camera = CameraManager::Instance().GetCamera();
-				Vector3 position = camera->GetCurrentPosition();
-				Vector3 target = camera->GetTarget();
-				CameraManager::Instance().SetCurrentCamera("PlayerCamera");
-				auto ptr = std::dynamic_pointer_cast<PlayerCamera>(CameraManager::Instance().GetCamera());
-				ptr->SetCurrentPosition(position);
-				ptr->SetTarget(target);
-				ptr->currentTarget = target;
-				//ptr->OnSetCamera();
-				//camera = &playerCamera;
-				//playerCamera.OnSetCamera();
-				Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());
+		//static bool cameraFlag = true;
+		//InputManager& input = InputManager::Instance();
+		//if (input.GetKeyPressed(DirectX::Keyboard::Keys::L))
+		//{
+		//	// --- プレイヤーカメラをセット ---
+		//	if (!cameraFlag)
+		//	{
+		//		auto camera = CameraManager::Instance().GetCamera();
+		//		Vector3 position = camera->GetCurrentPosition();
+		//		Vector3 target = camera->GetTarget();
+		//		CameraManager::Instance().SetCurrentCamera("PlayerCamera");
+		//		auto ptr = std::dynamic_pointer_cast<PlayerCamera>(CameraManager::Instance().GetCamera());
+		//		ptr->SetCurrentPosition(position);
+		//		ptr->SetTarget(target);
+		//		ptr->currentTarget = target;
+		//		//ptr->OnSetCamera();
+		//		//camera = &playerCamera;
+		//		//playerCamera.OnSetCamera();
+		//		Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());
 
-				cameraFlag = !cameraFlag;
-			}
+		//		cameraFlag = !cameraFlag;
+		//	}
 
-			// --- ロックオンカメラをセット ---
-			else
-			{
-				if(!Enemy::Instance().IsDead())
-				{
-					auto camera = CameraManager::Instance().GetCamera();
-					Vector3 position = camera->GetPosition();
-					Vector3 target = camera->GetTarget();
-					CameraManager::Instance().SetCurrentCamera("LockOnCamera");
-					camera = CameraManager::Instance().GetCamera();
-					camera->Initialize();
-					//camera = &lockOnCamera;
-					//camera->Initialize();
+		//	// --- ロックオンカメラをセット ---
+		//	else
+		//	{
+		//		if(!Enemy::Instance().IsDead())
+		//		{
+		//			auto camera = CameraManager::Instance().GetCamera();
+		//			Vector3 position = camera->GetPosition();
+		//			Vector3 target = camera->GetTarget();
+		//			CameraManager::Instance().SetCurrentCamera("LockOnCamera");
+		//			camera = CameraManager::Instance().GetCamera();
+		//			camera->Initialize();
+		//			//camera = &lockOnCamera;
+		//			//camera->Initialize();
 
-					camera->SetPosition(position);
-					camera->SetCurrentPosition(position);
-					camera->SetTarget(target);
-					Player::Instance().SetCamera(camera.get());
+		//			camera->SetPosition(position);
+		//			camera->SetCurrentPosition(position);
+		//			camera->SetTarget(target);
+		//			Player::Instance().SetCamera(camera.get());
 
-					cameraFlag = !cameraFlag;
-				}
-			}
-		}
+		//			cameraFlag = !cameraFlag;
+		//		}
+		//	}
+		//}
 	}
 	ImGui::End();
 }

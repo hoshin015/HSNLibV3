@@ -9,6 +9,9 @@ void UiPause::Initialize()
 
 	SetAllOffRender();
 	imgBlack->SetColorA(0.0f);
+	imgPauseText->SetColorA(0.0f);
+	imgResume->SetColorA(0.0f);
+	imgGoTitle->SetColorA(0.0f);
 }
 
 bool UiPause::Update()
@@ -21,6 +24,9 @@ bool UiPause::Update()
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
 			{
 				imgBlack->SetIsRender(true);
+				imgPauseText->SetIsRender(true);
+				imgResume->SetIsRender(true);
+				imgGoTitle->SetIsRender(true);
 
 				isPause = true;
 				state   = UiPauseState::Showing;
@@ -32,6 +38,9 @@ bool UiPause::Update()
 			pauseTimer += Timer::Instance().DeltaTime();
 
 			imgBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgBlackAlpha));
+			imgPauseText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
+			imgResume->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
+			imgGoTitle->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
 
 			// 表示中にポーズ解除されたら非表示遷移状態に遷移
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
@@ -65,6 +74,9 @@ bool UiPause::Update()
 			pauseTimer -= Timer::Instance().DeltaTime();
 
 			imgBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgBlackAlpha));
+			imgPauseText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
+			imgResume->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
+			imgGoTitle->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
 
 			// 表示中にポーズ解除されたら非表示遷移状態に遷移
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
@@ -78,6 +90,9 @@ bool UiPause::Update()
 			if (pauseTimer < 0.0)
 			{
 				imgBlack->SetIsRender(false);
+				imgPauseText->SetIsRender(false);
+				imgResume->SetIsRender(false);
+				imgGoTitle->SetIsRender(false);
 
 				pauseTimer = 0.0f;
 				state      = UiPauseState::Hidden;
@@ -96,6 +111,9 @@ void UiPause::Render()
 	//if (!isPause) return;
 
 	imgBlack->Render();
+	imgPauseText->Render();
+	imgResume->Render();
+	imgGoTitle->Render();
 }
 
 void UiPause::SetAllOffRender()

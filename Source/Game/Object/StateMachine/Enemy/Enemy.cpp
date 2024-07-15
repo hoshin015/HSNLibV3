@@ -303,11 +303,11 @@ void Enemy::CollisionVSPlayer()
 				attackCount++;
 
 				Player& player = Player::Instance();
-				float currentHP = player.AbilityStatus().hp;
-				player.AbilityStatus().hp -= attackPower;
+				float currentHP = player.AStatus().hp;
+				player.AStatus().hp -= attackPower;
 
 				// --- ‚±‚ÌUŒ‚‚ÅƒvƒŒƒCƒ„[‚ª€–S‚µ‚½‚Æ‚« ---
-				if (player.AbilityStatus().hp <= 0.0f && currentHP > 0.0f)
+				if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
 				{
 					CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
 				}

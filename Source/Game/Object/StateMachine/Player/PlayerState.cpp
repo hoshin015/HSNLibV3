@@ -195,8 +195,10 @@ void PlayerAttackState::Enter()
 	//owner->PlayAnimation(static_cast<int>(PlayerAnimNum::Attack), false);
 	//owner->SetInputMap("Attack", false);
 	//owner->GetAnimator().SetParameter("attack", false);
-	owner->AbilityStatus().attackTimer = owner->ConstantStatus().attackReceptionTime;
-	owner->AbilityStatus().notAcceptTimer = owner->ConstantStatus().notAcceptTime;
+	owner->AStatus().attackTimer = owner->CStatus().attackReceptionTime;
+	owner->AStatus().notAcceptTimer = owner->CStatus().notAcceptTime;
+	//owner->GetAnimator().SetParameter("attack", true);
+	owner->GetAnimator().SetNextState("attack1");
 }
 
 void PlayerAttackState::Execute()
@@ -207,7 +209,11 @@ void PlayerAttackState::Execute()
 	{
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
 	}
+	if (owner->GetInputMap<bool>("Dodge"))
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Dodge));
 
+
+	owner->CalcAttackVelocity();
 	owner->CalcRootAnimationVelocity();
 	owner->Move();
 }
@@ -258,15 +264,27 @@ void PlayerDrinkState::Exit()
 }
 
 void PlayerDodgeState::Enter() {
-	owner->AbilityStatus().dodgeTimer = owner->ConstantStatus().dodgeTime;
+	owner->AStatus().dodgeTimer = owner->CStatus().dodgeTime;
 	owner->GetAnimator().SetParameter("endDodge", false);
+	owner->GetAnimator().SetNextState("dodge");
 }
 
 void PlayerDodgeState::Execute() {
+	owner->Input();
+
 	owner->CalcDodgeVelocity();
 
-	if (owner->AbilityStatus().dodgeTimer < 0) {
+	Player::ConstantStatus& cs = owner->CStatus();
+	const float dodgeLowTimer = cs.dodgeTime - cs.dodgeLowestTime;
+
+	if ((owner->AStatus().dodgeTimer < dodgeLowTimer&& !owner->GetInputMap<bool>("DodgeHold"))||
+		owner->AStatus().dodgeTimer < 0) {
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
+		if (Vector2 move = owner->GetInputMap<DirectX::XMFLOAT2>("Move");
+			move.Length() > owner->CStatus().dashDeadZone) {
+			owner->SetInputMap("Run", true);
+			owner->GetAnimator().SetParameter("run", true);
+		}
 		owner->GetAnimator().SetParameter("endDodge", true);
 	}
 

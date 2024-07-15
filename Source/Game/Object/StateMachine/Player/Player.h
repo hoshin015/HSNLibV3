@@ -24,7 +24,7 @@ public:
 	struct AbilityStatus {
 		float hp        = 10;
 		float strength  = 1;
-		float moveSpeed = 3;
+		float moveSpeed = 7;
 		float attackCount = 0;
 		float attackTimer = 0;
 		float dodgeTimer = 0;
@@ -37,15 +37,16 @@ public:
 
 		float shiftDashTimer = 0.4f;
 		float walkSpeed = 5;
-		float dashSpeed = 15;
+		float dashSpeed = 2.4f;
 		float dashDeadZone = 0.7f;
 
-		float dodgePower = 15;
-		float dodgeTime = 0.5f;
+		float dodgePower = 24;
+		float dodgeLowestTime = 0.5f;
+		float dodgeTime = 1.5f;
 
 		float maxAttackCombo = 4;
 		float attackReceptionTime = 0.1f;
-		float notAcceptTime = 0.1f;
+		float notAcceptTime = 0.16f;
 	};
 
 private:
@@ -58,7 +59,7 @@ private:
 public:
 	static Player& Instance()
 	{
-		static Player instance("Data/Fbx/GaoPlayer/gaoplayer_5.model");
+		static Player instance("Data/Fbx/GaoPlayer/gaoplayer_6.model");
 		return instance;
 	}
 
@@ -78,6 +79,8 @@ public:
 	void CalcRunVelocity();
 	// âÒî
 	void CalcDodgeVelocity();
+	// çUåÇ
+	void CalcAttackVelocity();
 
 	// RootAnimation
 	void CalcRootAnimationVelocity();
@@ -147,7 +150,7 @@ public:
 
 	void SetInputMap(const std::string& str, const inputData& data) { inputMap[str] = data; }
 
-	AbilityStatus& AbilityStatus() { return ability; }
-	ConstantStatus& ConstantStatus() { return constant; }
+	AbilityStatus& AStatus() { return ability; }
+	ConstantStatus& CStatus() { return constant; }
 	Animator& GetAnimator() { return animator; }
 };

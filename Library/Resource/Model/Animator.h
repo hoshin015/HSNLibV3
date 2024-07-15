@@ -42,7 +42,7 @@ public:
 		ObjectType type           = MOTION;
 		float      speed          = 1;
 		float      timer          = 0;
-		float      transitionTime = 0.5f;
+		float      transitionTime = 0.1f;
 
 		template<typename T>
 		std::shared_ptr<T> GetObj() { return std::static_pointer_cast<T>(object); }
@@ -63,7 +63,7 @@ private:
 
 	float _timer;
 
-	int _currentMotionIndex = 0;
+	int _currentMotionIndex   = 0;
 	int _currentKeyFrameIndex = 0;
 
 	bool _rootMotionEnabled = false;
@@ -80,17 +80,43 @@ private:
 public:
 	Animator() = default;
 
+	/// Stateの追加
+	/// @param name Stateの名前 MapのKeyとして使う
+	/// @param state Animator::State
 	void AddState(const std::string& name, const State& state) { _states[name] = state; }
 
+	/// ユニークIDから親IDを取得するためだけにある
+	/// @param sceneView
 	void SetModelSceneView(ModelResource::SceneView* sceneView) { _sceneView = sceneView; }
+
+	/// 始まりの遷移の設定
+	///	すべてのStateを追加したあとじゃないとバグるかも
+	/// @param name Stateの名前
 	void SetEntryState(const std::string& name) { _currentState = &_states[name]; }
+
+	/// BlendTreeのパラメータや別のStateに遷移するときに使う
+	///	@param name Parameterの名前
+	///	@param var 値 int,float,boolのいずれかを入れれる
 	void SetParameter(const std::string& name, const Var var) { _parameters[name] = var; }
 
+	/// 次のStateをセットする
+	///	応急処置用
+	/// @param name Stateの名前
+	void SetNextState(const std::string& name) { _nextState = &_states[name]; }
+
+	/// RootMotionを有効にする
+	/// @param name RootとなるBoneの名前
 	void EnableRootMotion(const std::string& name) {
 		_rootMotionEnabled = true;
 		_rootMotionName    = name;
 	}
 
+	/// Parameterの取得
+	///	Stateの関数を登録するときのみ使用する
+	/// @tparam T int,float,bool
+	/// @param name Parameterの名前
+	/// @return 存在する場合Parameterの値を返す
+	/// @return 型が合わないまたは存在しない場合は取得したい形の初期値を返す
 	template<typename T>
 	T          GetParameter(const std::string& name) {
 		if (T* get = std::get_if<T>(&_parameters[name])) return *get;
@@ -102,14 +128,22 @@ public:
 	const DirectX::XMFLOAT3& GetVelocity() const { return _velocity; }
 
 	float GetTimer() const { return _timer; }
-	int GetMotionIndex() const { return _currentMotionIndex; }
-	int GetKeyFrameIndex() const { return _currentKeyFrameIndex; }
+	int   GetMotionIndex() const { return _currentMotionIndex; }
+	int   GetKeyFrameIndex() const { return _currentKeyFrameIndex; }
 	bool  GetEndMotion() const { return _isEndMotion; }
 
+	/// アニメーションの再生
+	/// @param elapsedTime 経過時間を入れる
+	/// @return KeyFrameを返す
 	ModelResource::KeyFrame PlayAnimation(float elapsedTime);
 
 	void AnimationEditor();
 
+	/// Sharedを作る関数
+	///	長いので作った 使わなくても良い
+	/// @tparam T Motion,BlendTree
+	/// @param obj Stateに追加したいオブジェクト
+	/// @return Sharedを返す
 	template<typename T>
 	static std::shared_ptr<T> MakeObjPointer(T& obj) { return std::make_shared<T>(std::forward<T>(obj)); }
 };

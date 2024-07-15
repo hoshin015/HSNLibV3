@@ -46,6 +46,39 @@ private:
 	void DrawDebugGUI();
 
 private:
+	std::unique_ptr<Sprite> sprBlack;
 	std::unique_ptr<Sprite> sprBackground;
+	std::unique_ptr<Sprite> sprTimeBoard;
+	std::unique_ptr<Sprite> sprRankBoard;
+	std::unique_ptr<Sprite> sprRankS;
+	std::unique_ptr<Sprite> sprGoTitle;
 
+
+	float resultTimer = 0.0f;
+
+	Easing::EasingValue blackAlpha =
+	{
+		0.0f, 1.0f,
+		1.0f, 0.0f
+	};
+	Easing::EasingValue timeRankBoardAlpha =
+	{
+		1.0f, 2.0f,
+		0.0f, 1.0f
+	};
+	Easing::EasingValue rankAlpha =
+	{
+		2.0f, 2.2f,
+		0.0f,1.0f
+	};
+	Easing::EasingValue rankScale =
+	{
+		2.0f, 2.6f,
+		2.0f,1.0f
+	};
+	Easing::EasingValue goTitleAlpha =
+	{
+		3.0f, 4.0f,
+		0.0f, 1.0f
+	};
 };

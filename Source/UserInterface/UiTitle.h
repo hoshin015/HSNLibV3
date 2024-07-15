@@ -101,12 +101,11 @@ private:
 		imgHard->SetPos(imgHardPos);
 		sprites.emplace_back(imgHard.get());
 
-
 		// eitter
 		imgEmitterTop = std::make_unique<Sprite>("Data/Texture/Effect/particle0.sprite");
 		imgEmitterTop->UpdateAnimation();
 		imgEmitterTop->SetScale({ 0.07,0.07 });
-		imgEmitterTop->SetColor({ 1.0,2.0,2.0,0.5 });
+		imgEmitterTop->SetColor({ 1.0,2.0,2.0,0.7 });
 		imgEmitterTop->SetIsRender(false);
 		sprites.emplace_back(imgEmitterTop.get());
 	};

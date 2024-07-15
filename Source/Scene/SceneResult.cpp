@@ -39,7 +39,20 @@
 
 void SceneResult::Initialize()
 {
+	sprBlack = std::make_unique<Sprite>("Data/Texture/Black.png");
 	sprBackground = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/resultBackground.png");
+	sprTimeBoard = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/timeBoard.sprite");
+	sprTimeBoard->UpdateAnimation();
+	sprTimeBoard->SetPos({ 640, 250 });
+	sprRankBoard = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/rankBoard.sprite");
+	sprRankBoard->UpdateAnimation();
+	sprRankBoard->SetPos({ 640, 450 });
+	sprRankS = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/rankS.sprite");
+	sprRankS->UpdateAnimation();
+	sprRankS->SetPos({ 900, 250 });
+	sprGoTitle = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/goTitle.sprite");
+	sprGoTitle->UpdateAnimation();
+	sprGoTitle->SetPos({ 640, 650 });
 }
 
 void SceneResult::Finalize()
@@ -60,6 +73,17 @@ void SceneResult::Update()
 
 	// タイマーの定数バッファの更新
 	UpdateTimerConstnat();
+
+
+	resultTimer += Timer::Instance().DeltaTime();
+
+    sprBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, blackAlpha));
+	sprTimeBoard->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, timeRankBoardAlpha));
+	sprRankBoard->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, timeRankBoardAlpha));
+	sprRankS->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, rankAlpha));
+	float scale = Easing::GetNowParam(Easing::OutBounce<float>, resultTimer, rankScale);
+	sprRankS->SetScale({ scale, scale });
+	sprGoTitle->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, goTitleAlpha));
 }
 
 void SceneResult::Render()
@@ -85,6 +109,11 @@ void SceneResult::Render()
 	gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_OFF_ZW_OFF);
 
 	sprBackground->Render();
+	sprRankBoard->Render();
+	sprTimeBoard->Render();
+	sprRankS->Render();
+	sprGoTitle->Render();
+	sprBlack->Render();
 
 	// ここで文字描画
 	DamageTextManager::Instance().Render();

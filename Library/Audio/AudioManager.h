@@ -22,7 +22,6 @@ enum class MUSIC_LABEL
 	NovaNoise1,
 	NovaNoise2,
 
-
 	Lightning1,
 	Lightning2,
 	Lightning3,

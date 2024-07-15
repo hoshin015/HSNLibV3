@@ -323,7 +323,7 @@ void Player::Update()
 			}
 		}
 	}
-
+	
 	// ステートマシン更新
 	stateMachine->Update();
 

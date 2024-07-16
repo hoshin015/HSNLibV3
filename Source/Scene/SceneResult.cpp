@@ -74,7 +74,6 @@ void SceneResult::Update()
 	// タイマーの定数バッファの更新
 	UpdateTimerConstnat();
 
-
 	resultTimer += Timer::Instance().DeltaTime();
 
     sprBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, blackAlpha));

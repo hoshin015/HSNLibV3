@@ -1072,6 +1072,9 @@
     <FxCompile Include="Library\Shader\ParticlesScreenPS.hlsl">
       <Filter>シェーダーファイル\Particle</Filter>
     </FxCompile>
+    <FxCompile Include="Library\Shader\PbrEmissionPS.hlsl">
+      <Filter>シェーダーファイル\PbrIbl</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\Shader\Light.hlsli">

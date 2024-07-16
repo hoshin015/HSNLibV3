@@ -65,8 +65,125 @@ void Enemy::Initialize()
 	actionCount = 0;
 	roarNeededActionCount = 25;
 
+	// Animator
+	if (animator.GetCurrentState()) return;
+	enum class Motion : int {
+		ASIDON,
+		BURESU,
+		DOWN,
+		DOWN_TYU,
+		HISSATU_1,
+		HISSATU_2,
+		HISSATU_3,
+		HOERU,
+		HOERU_BIG,
+		IDLE,
+		KAITEN,
+		KAMITUKI_1,
+		KAMITUKI_2,
+		OKIRU,
+		SINU,
+		SUKUIAGE,
+		TAKKURU,
+		TAKKURU_RIGHT,
+		TOKOTOKO_LEFT,
+		TOKOTOKO_RIGHT,
+		TOSSIN,
+		WALK_LEFT,
+		WALK_MAE,
+		WALK_RIGHT,
+		WALK_USIRO,
+		SIZE
+	};
 
-	PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
+	constexpr auto IntCast = [](auto v) ->int {return static_cast<int>(v); };
+
+	std::vector<ModelResource::Animation>& animations = GetModel()->GetModelResource()->GetAnimationClips();
+
+	std::vector<Animator::Motion> motions;
+	int i = 0;
+	for (auto&& animation: animations) {
+		Animator::Motion motion;
+		motion.motion = &animation;
+		motion.animationIndex = i;
+		motion.loop = false;
+		motions.emplace_back(motion);
+
+		i++;
+	}
+
+	motions[IntCast(Motion::IDLE)].loop = true;
+	motions[IntCast(Motion::WALK_MAE)].loop = true;
+	motions[IntCast(Motion::WALK_USIRO)].loop = true;
+	motions[IntCast(Motion::WALK_LEFT)].loop = true;
+	motions[IntCast(Motion::WALK_RIGHT)].loop = true;
+	motions[IntCast(Motion::DOWN_TYU)].loop = true;
+	motions[IntCast(Motion::HISSATU_2)].loop = true;
+	motions[IntCast(Motion::TOKOTOKO_LEFT)].loop = true;
+	motions[IntCast(Motion::TOKOTOKO_RIGHT)].loop = true;
+
+	motions[IntCast(Motion::IDLE)].threshold = {0,0};
+	motions[IntCast(Motion::WALK_MAE)].threshold = {0,1};
+	motions[IntCast(Motion::WALK_USIRO)].threshold = {0,-1};
+	motions[IntCast(Motion::WALK_LEFT)].threshold = {-1,0};
+	motions[IntCast(Motion::WALK_RIGHT)].threshold = {1,0};
+
+	Animator::BlendTree walkTree;
+	walkTree.motions.emplace_back(motions[IntCast(Motion::IDLE)]);
+	walkTree.motions.emplace_back(motions[IntCast(Motion::WALK_MAE)]);
+	walkTree.motions.emplace_back(motions[IntCast(Motion::WALK_USIRO)]);
+	walkTree.motions.emplace_back(motions[IntCast(Motion::WALK_LEFT)]);
+	walkTree.motions.emplace_back(motions[IntCast(Motion::WALK_RIGHT)]);
+	walkTree.parameters[0] = "moveX";
+	walkTree.parameters[1] = "moveY";
+	walkTree.maxSeconds = 1.833333f;
+
+	Animator::State walkState;
+	walkState.object = Animator::MakeObjPointer(walkTree);
+	walkState.type = Animator::State::BLEND_TREE;
+	//walkState.transitions;
+
+	std::vector<Animator::State> states;
+	states.resize(IntCast(Motion::SIZE));
+	i = 0;
+	for (auto&& state: states) {
+		state.object = Animator::MakeObjPointer(motions[i]);
+		state.type = Animator::State::MOTION;
+		state.transitionTime = 0.4f;
+		i++;
+	}
+
+	animator.AddState("asidon", states[IntCast(Motion::ASIDON)]);
+	animator.AddState("buresu", states[IntCast(Motion::BURESU)]);
+	animator.AddState("down", states[IntCast(Motion::DOWN)]);
+	animator.AddState("down_tyu", states[IntCast(Motion::DOWN_TYU)]);
+	animator.AddState("hissatu_1", states[IntCast(Motion::HISSATU_1)]);
+	animator.AddState("hissatu_2", states[IntCast(Motion::HISSATU_2)]);
+	animator.AddState("hissatu_3", states[IntCast(Motion::HISSATU_3)]);
+	animator.AddState("hoeru", states[IntCast(Motion::HOERU)]);
+	animator.AddState("hoeru_big", states[IntCast(Motion::HOERU_BIG)]);
+	animator.AddState("idle", states[IntCast(Motion::IDLE)]);
+	animator.AddState("kaiten", states[IntCast(Motion::KAITEN)]);
+	animator.AddState("kamituki_1", states[IntCast(Motion::KAMITUKI_1)]);
+	animator.AddState("kamituki_2", states[IntCast(Motion::KAMITUKI_2)]);
+	animator.AddState("okiru", states[IntCast(Motion::OKIRU)]);
+	animator.AddState("sinu", states[IntCast(Motion::SINU)]);
+	animator.AddState("sukuiage", states[IntCast(Motion::SUKUIAGE)]);
+	animator.AddState("takkuru_left", states[IntCast(Motion::TAKKURU)]);
+	animator.AddState("takkuru_right", states[IntCast(Motion::TAKKURU_RIGHT)]);
+	animator.AddState("tokotoko_left", states[IntCast(Motion::TOKOTOKO_LEFT)]);
+	animator.AddState("tokotoko_right", states[IntCast(Motion::TOKOTOKO_RIGHT)]);
+	animator.AddState("tossin", states[IntCast(Motion::TOSSIN)]);
+	animator.AddState("walk_left", states[IntCast(Motion::WALK_LEFT)]);
+	animator.AddState("walk_mae", states[IntCast(Motion::WALK_MAE)]);
+	animator.AddState("walk_right", states[IntCast(Motion::WALK_RIGHT)]);
+	animator.AddState("walk_usiro", states[IntCast(Motion::WALK_USIRO)]);
+	//animator.AddState("walk", walkState);
+	animator.SetEntryState("idle");
+	animator.SetModelSceneView(&GetModel()->GetModelResource()->GetSceneView());
+	animator.EnableRootMotion("joint1");
+
+	//PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
 }
 
 void Enemy::Finalize()
@@ -86,7 +203,11 @@ void Enemy::Update()
 	UpdateMove(elapsedTime);
 
 	// アニメーション更新
-	UpdateAnimation();
+	//UpdateAnimation();
+
+	animatorKeyFrame = animator.PlayAnimation(elapsedTime);
+	currentKeyFrame = animator.GetKeyFrameIndex();
+	currentAnimationIndex = animator.GetMotionIndex();
 
 	// --- 位置の制限 ---
 	ClampPosition(75.0f);
@@ -105,7 +226,7 @@ void Enemy::Update()
 
 void Enemy::Render(bool isShadow)
 {
-	model->Render(transform, &keyFrame, isShadow);
+	model->Render(transform, &animatorKeyFrame, isShadow);
 }
 
 
@@ -249,6 +370,8 @@ void Enemy::DrawDebugGui()
 
 
 	ImGui::End();
+
+	animator.AnimationEditor();
 }
 
 
@@ -285,7 +408,7 @@ void Enemy::Transform()
 	T.MakeTranslation(GetPos());
 
 	// ４つの行列を組み合わせ、ワールド行列を作成
-	Matrix W = MS * S * R * T * C;
+	Matrix W =C * MS * S * R * T;
 	transform = W.mat_;
 }
 
@@ -324,17 +447,28 @@ void Enemy::CollisionVSPlayer()
 				CameraManager::Instance().shakePower = 100.0f;
 				attackCount++;
 
+				// TODO::Playerダメージ関係
 				Player& player = Player::Instance();
-				float currentHP = player.AStatus().hp;
-				player.AStatus().hp -= attackPower;
-				if (player.AStatus().hp < 0.0f)
-					player.AStatus().hp = 0.0f;
+				//float currentHP = player.AStatus().hp;
+				bool frying = false;
+
+				Vector3 pPos = player.GetPos();
+				Vector3 ePos = position;
+				Vector3 fryVec = pPos - ePos;
+				fryVec.y = 0;
+				fryVec.Normalize();
+				fryVec *= 10;
+				const Animator::State* current = animator.GetCurrentState();
+
+				if (current == &animator.GetState("asidon")) frying = true;
+
+				player.HitDamaged(attackPower,frying,fryVec);
 
 				// --- この攻撃でプレイヤーが死亡したとき ---
-				if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
-				{
-					CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
-				}
+				// if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
+				// {
+				// 	CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
+				// }
 
 				break;
 			}
@@ -486,7 +620,7 @@ void Enemy::RotateToTargetVec(const DirectX::XMFLOAT3& targetVec, float t, const
 
 	if (tempFront)
 		front = *tempFront;
-	
+
 	Vector3 cross = front.Cross(targetVec);
 
 	float dot = front.Dot(targetVec);
@@ -747,7 +881,7 @@ void Enemy::InitializeBehaviorTree()
 	{
 		// --- 徘徊 ---
 		aiTree_->AddNode("Scout", "Wander", 0, BT_SelectRule::Non, new EnemyWanderJudgment(this), new EnemyWanderAction(this));
-		
+
 		// --- 待機 ---
 		aiTree_->AddNode("Scout", "Idle", 0, BT_SelectRule::Non, nullptr, new EnemyIdleAction(this));
 	}

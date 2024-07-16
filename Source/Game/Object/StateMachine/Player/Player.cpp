@@ -13,6 +13,7 @@
 #include "../../Library/ImGui/ConsoleData.h"
 #include "../../../../../Library/Particle/EmitterManager.h"
 #include "../../../../../Library/Resource/Model/Animator.h"
+#include "../../../../../Library/Resource/Model/Animator.h"
 #include "../../../../UserInterface/DamageTextManager.h"
 
 #include "../../Source/Camera/CameraDerived.h"
@@ -30,6 +31,7 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerRunState(this));
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerAttackState(this));
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerDodgeState(this));
+	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerDamageState(this));
 
 	auto& animation = model->GetModelResource()->GetAnimationClips();
 
@@ -40,27 +42,27 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 
 	Animator::Motion walkMae;
 	walkMae.motion = &animation[16];
-	walkMae.animationSpeed = 1.35f;
+	walkMae.animationSpeed = 1.2f;
 	walkMae.threshold = { 0,1 };
 
 	Animator::Motion walkUsiro;
 	walkUsiro.motion = &animation[18];
-	walkUsiro.animationSpeed = 1.35f;
+	walkUsiro.animationSpeed = 1.2f;
 	walkUsiro.threshold = { 0,-1 };
 
 	Animator::Motion walkLeft;
 	walkLeft.motion = &animation[15];
-	walkLeft.animationSpeed = 1.35f;
+	walkLeft.animationSpeed = 1.2f;
 	walkLeft.threshold = { 1,0 };
 
 	Animator::Motion walkRight;
 	walkRight.motion = &animation[17];
-	walkRight.animationSpeed = 1.35f;
+	walkRight.animationSpeed = 1.2f;
 	walkRight.threshold = { -1,0 };
 
 	Animator::Motion runMotion;
 	runMotion.motion = &animation[9];
-	runMotion.animationSpeed = 1.f;
+	runMotion.animationSpeed = 1.25f;
 	runMotion.threshold = { 0,1 };
 
 	Animator::Motion attack1;
@@ -76,7 +78,6 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	attack2.threshold = { 1,0 };
 	attack2.loop = false;
 	attack2.animationIndex = 5;
-
 
 	Animator::Motion attack3;
 	attack3.motion = &animation[6];
@@ -115,6 +116,36 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	dodgeRight.animationSpeed = 1.f;
 	dodgeRight.threshold = { -1,0 };
 	dodgeRight.loop = false;
+
+	Animator::Motion hit;
+	hit.motion = &animation[0];
+	hit.animationSpeed = 1.f;
+	hit.threshold = { -1,0 };
+	hit.loop = false;
+
+	Animator::Motion down;
+	down.motion = &animation[1];
+	down.animationSpeed = 1.f;
+	down.threshold = { -1,0 };
+	down.loop = false;
+
+	Animator::Motion wakeUp;
+	wakeUp.motion = &animation[8];
+	wakeUp.animationSpeed = 1.f;
+	wakeUp.threshold = { -1,0 };
+	wakeUp.loop = false;
+
+	Animator::Motion rise;
+	rise.motion = &animation[8];
+	rise.animationSpeed = 1.f;
+	rise.threshold = { -1,0 };
+	rise.loop = false;
+
+	Animator::Motion death;
+	death .motion = &animation[10];
+	death .animationSpeed = 1.f;
+	death .threshold = { -1,0 };
+	death .loop = false;
 
 	Animator::BlendTree walkTree;
 	walkTree.motions.emplace_back(idle);
@@ -267,6 +298,26 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 		return nullptr;
 	};
 
+	Animator::State hitState;
+	hitState.object = Animator::MakeObjPointer(hit);
+	hitState.type = Animator::State::MOTION;
+
+	Animator::State downState;
+	downState.object = Animator::MakeObjPointer(down);
+	downState.type = Animator::State::MOTION;
+
+	Animator::State wakeUpState;
+	wakeUpState.object = Animator::MakeObjPointer(wakeUp);
+	wakeUpState.type = Animator::State::MOTION;
+
+	Animator::State riseState;
+	riseState.object = Animator::MakeObjPointer(rise);
+	riseState.type = Animator::State::MOTION;
+
+	Animator::State deathState;
+	deathState.object = Animator::MakeObjPointer(death);
+	deathState.type = Animator::State::MOTION;
+
 	animator.AddState("walk", walkState);
 	animator.AddState("run", runState);
 	animator.AddState("attack1", attack1State);
@@ -274,6 +325,11 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	animator.AddState("attack3", attack3State);
 	animator.AddState("attack4", attack4State);
 	animator.AddState("dodge", dodgeState);
+	animator.AddState("hit", hitState);
+	animator.AddState("down", downState);
+	animator.AddState("wakeUp", wakeUpState);
+	animator.AddState("rise", riseState);
+	animator.AddState("death", deathState);
 	animator.EnableRootMotion("root");
 	animator.SetModelSceneView(&model->GetModelResource()->GetSceneView());
 	animator.SetEntryState("walk");
@@ -483,6 +539,21 @@ void Player::DrawDebugImGui(int number) {
 				ImGui::TreePop();
 			}
 
+			if (ImGui::Button(u8"É_ÉÅÅ[ÉW")) {
+				HitDamaged(10);
+			}
+			if (ImGui::Button(u8"êÅÇ¡îÚÇ—")) {
+				Vector3 pPos = position;
+				Vector3 ePos = Enemy::Instance().GetPos();
+				Vector3 fryVec = pPos - ePos;
+				fryVec.Normalize();
+				HitDamaged(10, true, fryVec * 30);
+			}
+
+			if(ImGui::Button(u8"éÄñS")) {
+				HitDamaged(constant.maxHp);
+			}
+
 		}
 
 #ifdef _DEBUG
@@ -659,7 +730,7 @@ void Player::InputAttack() {
 		ClearSeFlag();
 	}
 
-	bool end = ability.attackTimer <= 0 && animator.GetEndMotion();
+	bool end = ability.attackTimer <= 0 && animator.GetEndMotion() || ability.isHitDamage;
 	inputMap["EndAttack"] = end;
 	animator.SetParameter("endAttack", end);
 
@@ -672,7 +743,7 @@ void Player::InputAttack() {
 	if (ability.notAcceptTimer <= 0)inputMap["Dodge"] = dodge;
 	else ability.notAcceptTimer -= dt;
 
-	if(ability.attackTimer <= 0 && animator.GetEndMotion()) {
+	if(end) {
 		ability.attackTimer = 0;
 		ability.attackCount = 0;
 	}
@@ -855,6 +926,13 @@ void Player::CalcAttackVelocity() {
 	if (cross < 0) deg *= -1;
 
 	angle.y += deg;
+}
+
+void Player::HitDamaged(float damage ,bool flying ,Vector3 vec) {
+	ability.hitDamage = damage;
+	ability.isHitDamage = true;
+	ability.isFlying = flying;
+	ability.flyVec = vec;
 }
 
 void Player::CalcRootAnimationVelocity() {

@@ -219,11 +219,18 @@ void PlayerAttackState::Execute()
 
 	if(owner->GetInputMap<bool>("EndAttack"))
 	{
+		owner->swordTrail->Clear();
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
 	}
 	if (owner->GetInputMap<bool>("Dodge"))
+	{
+		owner->swordTrail->Clear();
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Dodge));
+	}
 
+	
+	owner->swordTrail->SetSwordPos(owner->GetBonePosition("sword_05"), owner->GetBonePosition("sword_01"));
+	
 
 	owner->CalcAttackVelocity();
 	owner->CalcRootAnimationVelocity();

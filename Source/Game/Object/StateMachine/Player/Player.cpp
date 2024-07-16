@@ -349,6 +349,9 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 		wallSpheres.emplace_back(Vector3{ -static_cast<float>(i) + -5.0f, 0.0f, 106.5f });
 	}
 
+
+	// swordTrail
+	swordTrail = std::make_unique<SwordTrail>();
 }
 
 void Player::Initialize()
@@ -432,6 +435,8 @@ void Player::Update()
 
 	// Žp¨s—ñXV
 	UpdateTransform();
+
+	swordTrail->Update();
 }
 
 void Player::Render(bool isShadow)

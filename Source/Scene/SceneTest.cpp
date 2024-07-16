@@ -547,6 +547,9 @@ void SceneTest::Render()
 		Enemy::Instance().Render();
 
 		Player::Instance().Render();
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
+		Player::Instance().swordTrail->Render();
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
 
 		RockEffect::Instance().Render();
 

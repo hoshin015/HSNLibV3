@@ -152,6 +152,12 @@
     <Filter Include="2_Source\Scene">
       <UniqueIdentifier>{aa009b92-e711-45dd-9fc1-c167ee95d878}</UniqueIdentifier>
     </Filter>
+    <Filter Include="2_Source\Game\Other">
+      <UniqueIdentifier>{ef1a2e50-a1e3-4b05-b460-fd1c23d138e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Source\Game\Other\SwordTrail">
+      <UniqueIdentifier>{6ecc3802-c886-4d2f-87ef-e4404d6d321c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -500,6 +506,9 @@
       <Filter>2_Source\UserInterface</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Object\Stage\Gate.cpp" />
+    <ClCompile Include="Source\Other\SwordTrail\SwordTrail.cpp">
+      <Filter>2_Source\Game\Other\SwordTrail</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -881,6 +890,9 @@
       <Filter>2_Source\UserInterface</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Object\Stage\Gate.h" />
+    <ClInclude Include="Source\Other\SwordTrail\SwordTrail.h">
+      <Filter>2_Source\Game\Other\SwordTrail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">

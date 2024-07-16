@@ -1342,7 +1342,7 @@ void Player::Respawn()
 	enterStage = false;
 	enterEntrance = false;
 	lockOn = false;
-	ability.hp = ability.maxHP;
+	ability.hp = constant.maxHp;
 
 	Gate::Instance().Initialize();
 }

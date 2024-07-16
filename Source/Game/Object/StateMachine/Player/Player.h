@@ -166,9 +166,6 @@ public:
 	AbilityStatus& AStatus() { return ability; }
 	ConstantStatus& CStatus() { return constant; }
 	//Animator& GetAnimator() { return animator; }
-};
-	Animator& GetAnimator() { return animator; }
-
 
 	void ClampPosition(const float range);
 	void Respawn();

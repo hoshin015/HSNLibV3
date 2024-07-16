@@ -134,7 +134,7 @@ void UiGame::Update()
 	auto& enemy = Enemy::Instance();
 	auto& player = Player::Instance();
 	hp = player.AStatus().hp;
-	hpMax = player.AStatus().maxHP;
+	hpMax = player.CStatus().maxHp;
 }
 
 // •`‰æ

@@ -527,6 +527,7 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 	case 0:
 		//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROAR_BIG), false);
 		owner_->GetAnimator().SetNextState("hoeru_big");
+		owner_->SetFoundPlayer(true);
 
 		step++;
 		break;
@@ -1553,7 +1554,8 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 	{
 	case 0:
 
-		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_1), false);
+		//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_1), false);
+		owner_->GetAnimator().SetNextState("hissatu_1");
 		step++;
 
 		break;
@@ -1561,9 +1563,11 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 
 	case 1:
 	{
-		if (owner_->GetAnimationEndFlag())
+		if (owner_->GetAnimator().GetEndMotion())
 		{
-			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_2), false);
+			//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_2), false);
+			owner_->GetAnimator().SetNextState("hissatu_2");
+
 			step++;
 		}
 
@@ -1573,9 +1577,11 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 
 	case 2:
 	{
-		if (owner_->GetAnimationEndFlag())
+		if (owner_->GetAnimator().GetEndMotion())
 		{
-			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_3), false);
+			//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_3), false);
+			owner_->GetAnimator().SetNextState("hissatu_3");
+
 			step++;
 		}
 
@@ -1585,7 +1591,7 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 
 	case 3:
 	{
-		if (owner_->GetAnimationEndFlag())
+		if (owner_->GetAnimator().GetEndMotion())
 		{
 			OnEndAction();
 			return BT_ActionState::Complete;

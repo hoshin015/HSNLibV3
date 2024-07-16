@@ -1,5 +1,7 @@
 #include "PlayerState.h"
 #include "Player.h"
+#include "../../../../../Library/Timer.h"
+#include "../../../../../Library/3D/CameraManager.h"
 #include "../../../../../Library/Math/OperatorXMFloat3.h"
 #include "../../../../../Library/Input/InputManager.h"
 
@@ -288,6 +290,7 @@ void PlayerDodgeState::Execute() {
 
 	if ((owner->AStatus().dodgeTimer < dodgeLowTimer&& !owner->GetInputMap<bool>("DodgeHold"))||
 		owner->AStatus().dodgeTimer < 0) {
+		owner->AStatus().isHitDamage = false;
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
 		if (Vector2 move = owner->GetInputMap<DirectX::XMFLOAT2>("Move");
 			move.Length() > owner->CStatus().dashDeadZone) {
@@ -307,10 +310,77 @@ void PlayerDodgeState::Execute() {
 void PlayerDodgeState::Exit() {
 }
 
-void PlayerDamageState::Enter() {}
+void PlayerDamageState::Enter() {
+	Player::AbilityStatus& as = owner->AStatus();
+	as.isHitDamage = false;
+	as.hp -= as.hitDamage;
 
-void PlayerDamageState::Execute() {
-	
+	if (as.hp > 0)
+		as.isFlying ?
+		owner->GetAnimator().SetNextState("down") :
+		owner->GetAnimator().SetNextState("hit");
+	else {
+		owner->GetAnimator().SetNextState("death");
+		if (owner->AStatus().hp <= 0.0f)
+			CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
+	}
 }
 
-void PlayerDamageState::Exit() {}
+void PlayerDamageState::Execute() {
+	using namespace DirectX;
+
+	const Animator::State* current = owner->GetAnimator().GetCurrentState();
+	if (owner->AStatus().hp<=0) {
+		const Animator::State* rise = &owner->GetAnimator().GetState("rise");
+		if (owner->GetAnimator().GetEndMotion() && !CameraManager::Instance().IsCurrentCamera("PlayerDeadCamera")) {
+			if(current != rise)owner->GetAnimator().SetNextState("rise");
+			else {
+				owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
+				owner->GetAnimator().SetNextState("walk");
+			}
+		}
+	}
+	else if (owner->GetAnimator().GetEndMotion()) {
+		if(current == &owner->GetAnimator().GetState("down")) {
+			owner->GetAnimator().SetNextState("wakeUp");
+		}
+		else {
+			owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
+				owner->GetAnimator().SetNextState("walk");
+		}
+	}
+
+	if (owner->AStatus().isFlying && current == &owner->GetAnimator().GetState("down")) {
+		Vector2 vel;
+		vel.x = owner->GetVelocity().x;
+		vel.y = owner->GetVelocity().z;
+		vel += owner->AStatus().flyVec.xz() * Timer::Instance().DeltaTime();
+		owner->SetVelocity({vel.x,0, vel.y});
+
+		// Vector2 angV = {
+		// 	cosf(XMConvertToRadians(owner->GetAngleY())),
+		// 	sinf(XMConvertToRadians(owner->GetAngleY()))
+		// };
+		//
+		// angV = -angV;
+		//
+		// XMVECTOR lerp = XMVectorLerp(XMLoadFloat2(&angV.vec_), XMLoadFloat2(&vel.vec_), Timer::Instance().DeltaTime() * 10);
+		// lerp = XMVector2Normalize(lerp);
+		// XMVECTOR Dot = XMVector2Dot(lerp, XMLoadFloat2(&angV.vec_));
+		// float cross = XMVectorGetX(XMVector2Cross(lerp, XMLoadFloat2(&angV.vec_)));
+		// float deg = XMConvertToDegrees(XMVectorGetX(XMVectorACos(Dot)));
+		// if (cross < 0) deg *= -1;
+
+		vel.Normalize();
+		float ang = XMConvertToDegrees(atan2(-vel.x,-vel.y));
+		//if (ang < 0) ang += 180;
+
+		owner->SetAngleY(ang);
+	}
+	owner->Move();
+}
+
+void PlayerDamageState::Exit() {
+	Player::AbilityStatus& as = owner->AStatus();
+	as.isHitDamage = false;
+}

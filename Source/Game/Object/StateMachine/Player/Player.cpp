@@ -29,6 +29,7 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerRunState(this));
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerAttackState(this));
 	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerDodgeState(this));
+	stateMachine->RegisterSubState(static_cast<int>(State::Normal), new PlayerDamageState(this));
 
 	auto& animation = model->GetModelResource()->GetAnimationClips();
 
@@ -125,6 +126,12 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	down.animationSpeed = 1.f;
 	down.threshold = { -1,0 };
 	down.loop = false;
+
+	Animator::Motion wakeUp;
+	wakeUp.motion = &animation[8];
+	wakeUp.animationSpeed = 1.f;
+	wakeUp.threshold = { -1,0 };
+	wakeUp.loop = false;
 
 	Animator::Motion rise;
 	rise.motion = &animation[8];
@@ -297,6 +304,10 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	downState.object = Animator::MakeObjPointer(down);
 	downState.type = Animator::State::MOTION;
 
+	Animator::State wakeUpState;
+	wakeUpState.object = Animator::MakeObjPointer(wakeUp);
+	wakeUpState.type = Animator::State::MOTION;
+
 	Animator::State riseState;
 	riseState.object = Animator::MakeObjPointer(rise);
 	riseState.type = Animator::State::MOTION;
@@ -314,6 +325,7 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	animator.AddState("dodge", dodgeState);
 	animator.AddState("hit", hitState);
 	animator.AddState("down", downState);
+	animator.AddState("wakeUp", wakeUpState);
 	animator.AddState("rise", riseState);
 	animator.AddState("death", deathState);
 	animator.EnableRootMotion("root");
@@ -329,6 +341,7 @@ void Player::Initialize()
 	// idle アニメーション再生
 	// PlayAnimation(static_cast<int>(PlayerAnimNum::Idle), true);
 	ability = AbilityStatus();
+	ability.hp = constant.maxHp;
 	velocity = { 0,0,0 };
 }
 
@@ -462,6 +475,21 @@ void Player::DrawDebugImGui(int number) {
 					constant.dashDeadZone = rate / 100;
 
 				ImGui::TreePop();
+			}
+
+			if (ImGui::Button(u8"ダメージ")) {
+				HitDamaged(10);
+			}
+			if (ImGui::Button(u8"吹っ飛び")) {
+				Vector3 pPos = position;
+				Vector3 ePos = Enemy::Instance().GetPos();
+				Vector3 fryVec = pPos - ePos;
+				fryVec.Normalize();
+				HitDamaged(10, true, fryVec * 30);
+			}
+
+			if(ImGui::Button(u8"死亡")) {
+				HitDamaged(constant.maxHp);
 			}
 
 		}
@@ -640,7 +668,7 @@ void Player::InputAttack() {
 		ClearSeFlag();
 	}
 
-	bool end = ability.attackTimer <= 0 && animator.GetEndMotion();
+	bool end = ability.attackTimer <= 0 && animator.GetEndMotion() || ability.isHitDamage;
 	inputMap["EndAttack"] = end;
 	animator.SetParameter("endAttack", end);
 
@@ -653,7 +681,7 @@ void Player::InputAttack() {
 	if (ability.notAcceptTimer <= 0)inputMap["Dodge"] = dodge;
 	else ability.notAcceptTimer -= dt;
 
-	if(ability.attackTimer <= 0 && animator.GetEndMotion()) {
+	if(end) {
 		ability.attackTimer = 0;
 		ability.attackCount = 0;
 	}
@@ -838,9 +866,11 @@ void Player::CalcAttackVelocity() {
 	angle.y += deg;
 }
 
-void Player::HitDamaged(float damage) {
+void Player::HitDamaged(float damage ,bool flying ,Vector3 vec) {
 	ability.hitDamage = damage;
 	ability.isHitDamage = true;
+	ability.isFlying = flying;
+	ability.flyVec = vec;
 }
 
 void Player::CalcRootAnimationVelocity() {

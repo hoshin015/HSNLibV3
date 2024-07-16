@@ -103,7 +103,7 @@ void Enemy::Initialize()
 	for (auto&& animation: animations) {
 		Animator::Motion motion;
 		motion.motion = &animation;
-		motion.animationIndex = 0;
+		motion.animationIndex = i;
 		motion.loop = false;
 		motions.emplace_back(motion);
 
@@ -202,6 +202,7 @@ void Enemy::Update()
 
 	// アニメーション更新
 	//UpdateAnimation();
+
 	animatorKeyFrame = animator.PlayAnimation(elapsedTime);
 	currentKeyFrame = animator.GetKeyFrameIndex();
 	currentAnimationIndex = animator.GetMotionIndex();
@@ -385,7 +386,7 @@ void Enemy::Transform()
 	T.MakeTranslation(GetPos());
 
 	// ４つの行列を組み合わせ、ワールド行列を作成
-	Matrix W = MS * C * S * R * T;
+	Matrix W =C * MS * S * R * T;
 	transform = W.mat_;
 }
 
@@ -424,15 +425,28 @@ void Enemy::CollisionVSPlayer()
 				CameraManager::Instance().shakePower = 100.0f;
 				attackCount++;
 
+				// TODO::Playerダメージ関係
 				Player& player = Player::Instance();
-				float currentHP = player.AStatus().hp;
-				player.AStatus().hp -= attackPower;
+				//float currentHP = player.AStatus().hp;
+				bool frying = false;
+
+				Vector3 pPos = player.GetPos();
+				Vector3 ePos = position;
+				Vector3 fryVec = pPos - ePos;
+				fryVec.y = 0;
+				fryVec.Normalize();
+				fryVec *= 10;
+				const Animator::State* current = animator.GetCurrentState();
+
+				if (current == &animator.GetState("asidon")) frying = true;
+
+				player.HitDamaged(attackPower,frying,fryVec);
 
 				// --- この攻撃でプレイヤーが死亡したとき ---
-				if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
-				{
-					CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
-				}
+				// if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
+				// {
+				// 	CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
+				// }
 
 				break;
 			}

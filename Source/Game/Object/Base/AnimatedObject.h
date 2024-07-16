@@ -31,6 +31,9 @@ public:
 
 	// すべてのダメージフラグをtrueに
 	void EnableAnimSphereCollisionDamagedFlag();
+
+	// 効果音フラグのクリア
+	void ClearSeFlag();
 protected:
 	// 姿勢行列更新
 	void UpdateTransform() override;
@@ -45,7 +48,7 @@ protected:
 	void UpdateSe();
 
 	// 効果音フラグのクリア
-	void ClearSeFlag();
+	// void ClearSeFlag();
 
 public:
 	DirectX::XMFLOAT3 GetBonePosition(std::string boneName);

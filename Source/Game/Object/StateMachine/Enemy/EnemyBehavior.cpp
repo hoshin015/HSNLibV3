@@ -30,6 +30,10 @@ void EnemyBaseBehavior::OnEndAction()
 
 	if (owner_->IsFoundPlayer())
 		owner_->actionCount++;	// s“®‰ñ”‚ð‰ÁŽZ
+
+	// “–‚½‚è”»’è‚Ìƒtƒ‰ƒO‚ð‰Šú‰»‚·‚é
+	owner_->ClearAnimSphereCollisionDamagedFlag();
+	owner_->ClearSeFlag();
 }
 
 
@@ -862,7 +866,7 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	{
 		// --- ³–Ê‚ÖˆÚ“® ---
 		Vector3 rootMotionVel = owner_->GetAnimator().GetVelocity();
-		rootMotionVel *= 80;
+		rootMotionVel *= 70;
 		float len = rootMotionVel.Length();
 		owner_->Move(owner_->targetVec, len);
 

@@ -22,20 +22,25 @@ class Player : public AnimatedObject
 public:
 	// ゲーム中変動する値
 	struct AbilityStatus {
-		float hp        = 10;
+		float hp        = 0;
 		float strength  = 1;
 		float moveSpeed = 7;
 		float attackCount = 0;
 		float attackTimer = 0;
 		float dodgeTimer = 0;
 		float notAcceptTimer = 0;
+
+
 		float hitDamage = 0;
 		bool isHitDamage = false;
+
+		Vector3 flyVec = { 0,0,0 };
+		bool isFlying = false;
 	};
 
 	// 外部要因(ImGuiとか)でのみ変動する値
 	struct ConstantStatus {
-		float maxHp = 10;
+		float maxHp = 1000;
 
 		float shiftDashTimer = 0.4f;
 		float walkSpeed = 5;
@@ -71,7 +76,7 @@ public:
 	void DrawDebugImGui(int number);
 
 	void UpdateAnimationParam();
-	
+
 	// 入力データ取得
 	void Input();
 	void InputAttack();
@@ -85,7 +90,7 @@ public:
 	void CalcAttackVelocity();
 
 	// ダメージ
-	void HitDamaged(float damage);
+	void HitDamaged(float damage, bool flying = false, Vector3 vec = {0,0,0});
 
 	// RootAnimation
 	void CalcRootAnimationVelocity();

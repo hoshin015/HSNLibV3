@@ -84,7 +84,7 @@ ModelResource::KeyFrame Animator::MotionUpdate(Motion* motion, const float rate)
 
 	// TODO::最後のフレームを通過したかの判定をもうちょっと何とかする
 	// このままだとタイミングによっては最後のフレームになっても感知できない
-	_isEndMotion = motion->endMotion = fmodf(rate * motion->animationSpeed,1) >= 0.95f;
+	_isEndMotion = motion->endMotion = fmodf(rate * motion->animationSpeed,1) >= 0.93f;
 	_currentMotionIndex = motion->animationIndex;
 	_currentKeyFrameIndex = index;
 	return BlendKeyFrame(keyFrames[0], keyFrames[1], lerpRate);

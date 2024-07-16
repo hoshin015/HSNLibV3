@@ -1,6 +1,7 @@
 #include "UiGame.h"
 
 #include "../../External/ImGui/imgui.h"
+#include "../../Library/Timer.h"
 
 // èâä˙âª
 void UiGame::Initialize()
@@ -32,11 +33,34 @@ void UiGame::Initialize()
 	skillGaugeBg = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/skillGaugeBg.sprite");
 	skillGaugeBg->UpdateAnimation();
 	skillGaugeBg->SetPos({ 50, 625 });
+
+	imgDownOver = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/downOver.sprite");
+	imgDownOver->UpdateAnimation();
+	imgDownOver->SetColorA(0.0f);
+	imgDownOver->SetPosX(640);
+	imgDownOver->SetIsRender(false);
+
+	imgBlack = std::make_unique<Sprite>("Data/Texture/Black.png");
+	imgBlack->SetColorA(0.0f);
+	imgBlack->SetIsRender(false);
 }
 
 // çXêV
 void UiGame::Update()
 {
+	if(isDownOverFlag)
+	{
+		downTimer += Timer::Instance().DeltaTime();
+		imgDownOver->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, downTimer, imgDownOverAlpha));
+		imgDownOver->SetPosY(Easing::GetNowParam(Easing::OutQuad<float>, downTimer, imgDownOverPosY));
+		imgBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, downTimer, imgBlackAlpha));
+
+		if (downTimer > downTime)
+		{
+			// Ç±Ç±Ç≈ëJà⁄èàóù
+
+		}
+	}
 }
 
 // ï`âÊ
@@ -100,6 +124,9 @@ void UiGame::Render()
 
 		skillGauge->SetSizeX(skillSizeX);
 	}
+
+	imgDownOver->Render();
+	imgBlack->Render();
 }
 
 // debugGui
@@ -107,10 +134,25 @@ void UiGame::DrawDebugImGui()
 {
 	ImGui::Begin("UiGame");
 	{
+		if(ImGui::Button("onDown"))
+		{
+			OnDown();
+		}
+
 		ImGui::SliderInt("soma", &soma, 0, 100);
 		ImGui::SliderInt("hp", &hp, 0, 100);
 		ImGui::SliderInt("injury", &injury, 0, 100);
 		ImGui::SliderInt("skill", &skill, 0, 100);
 	}
 	ImGui::End();
+}
+
+void UiGame::OnDown()
+{
+	imgDownOver->SetIsRender(true);
+	imgDownOver->SetColorA(0.0f);
+	imgBlack->SetIsRender(true);
+	imgBlack->SetColorA(0.0f);
+
+	isDownOverFlag = true;
 }

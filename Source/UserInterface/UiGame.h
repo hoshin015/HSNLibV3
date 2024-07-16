@@ -56,4 +56,28 @@ private:
 
 	int skillMax = 100;
 	int skill = 50;
+
+	// HP‚O
+	bool isDownOverFlag = false;
+	float downTimer = 0.0f;
+	float downTime = 4.0f;
+	std::unique_ptr<Sprite> imgDownOver;
+	Easing::EasingValue imgDownOverAlpha =
+	{
+		0.0f, 0.5f,
+		0.0f,1.0f
+	};
+	Easing::EasingValue imgDownOverPosY =
+	{
+		0.0f, 0.5f,
+		-100.0f, 360.0f
+	};
+	std::unique_ptr<Sprite> imgBlack;
+	Easing::EasingValue imgBlackAlpha =
+	{
+		2.0f, 3.0f,
+		0.0f,1.0f
+	};
+public:
+	void OnDown();
 };

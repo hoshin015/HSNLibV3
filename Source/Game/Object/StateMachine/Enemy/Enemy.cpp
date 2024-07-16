@@ -184,6 +184,7 @@ void Enemy::DrawDebugGui()
 
 	ImGui::Begin(u8"敵");
 
+	ImGui::DragFloat(u8"タイマー", &runTimer_);
 	if (ImGui::TreeNode(u8"移動関連"))
 	{
 		ImGui::DragFloat3(u8"速度", &velocity.x);

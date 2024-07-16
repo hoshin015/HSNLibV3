@@ -17,6 +17,7 @@
 
 #include "../../Source/Camera/CameraDerived.h"
 #include "../../../../../Library/3D/DebugPrimitive.h"
+#include "../../Stage/Gate.h"
 
 Player::Player(const char* filePath) : AnimatedObject(filePath)
 {
@@ -276,6 +277,22 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	animator.EnableRootMotion("root");
 	animator.SetModelSceneView(&model->GetModelResource()->GetSceneView());
 	animator.SetEntryState("walk");
+
+
+	// 左壁手前
+	for (int i = 0; i < 11; i++)
+	{
+		wallSpheres.emplace_back(Vector3{ static_cast<float>(i) + 5.0f, 0.0f, 106.5f });
+	}
+	wallSpheres.emplace_back(Vector3(4.5f, 0.0f, 106.5f));
+
+	// 右壁手前
+	wallSpheres.emplace_back(Vector3(-4.5f, 0.0f, 106.5f));
+	for (int i = 0; i < 11; i++)
+	{
+		wallSpheres.emplace_back(Vector3{ -static_cast<float>(i) + -5.0f, 0.0f, 106.5f });
+	}
+
 }
 
 void Player::Initialize()
@@ -397,6 +414,31 @@ void Player::DrawDebugImGui(int number) {
 			Respawn();
 		}
 
+		if(ImGui::TreeNode(u8"壁の球"))
+		{
+			int i = 0;
+			for (auto& sphere : wallSpheres)
+			{
+				std::string name = "Sphere" + std::to_string(i);
+				if (ImGui::TreeNode(name.c_str()))
+				{
+					ImGui::DragFloat3(u8"位置", &sphere.x);
+					ImGui::TreePop();
+				}
+				i++;
+			}
+			ImGui::TreePop();
+		}
+		if (ImGui::Button(u8"球追加", { 200.0f, 30.0f }))
+		{
+			wallSpheres.emplace_back();
+		}
+
+		ImGui::DragFloat(u8"壁の球の半径", &wallSphereRadius);
+		ImGui::DragFloat(u8"プレイヤーの球の半径", &playerRadius);
+
+		ImGui::Separator();
+		ImGui::Checkbox(u8"入口に入ったか", &enterEntrance);
 		ImGui::DragFloat3(u8"待機場所の中心", &restRoomCenter.x);
 		ImGui::DragFloat(u8"待機場所の半径", &radius);
 		ImGui::DragFloat3(u8"入口の立方体の位置", &entrance.position.x);
@@ -1060,7 +1102,15 @@ void Player::DrawDebug()
 	DebugPrimitive::Instance().AddCube(position, {1.0f, 1.0f, 1.0f}, { 0.3f, 0.3f, 1.0f, 1.0f });
 	DebugPrimitive::Instance().AddCube(entrance.position.vec_, entrance.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
 	DebugPrimitive::Instance().AddCube(entranceLWall.position.vec_, entranceLWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
+	DebugPrimitive::Instance().AddCube(entranceLWall.position.vec_, entranceLWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
 	DebugPrimitive::Instance().AddCube(entranceRWall.position.vec_, entranceRWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
+
+	for (auto& sphere : wallSpheres)
+	{
+		DebugPrimitive::Instance().AddSphere(sphere.vec_, wallSphereRadius, { 1.0f, 0.3f, 0.3f, 1.0f });
+	}
+
+	DebugPrimitive::Instance().AddSphere(position, playerRadius, { 1.0f, 0.3f, 0.3f, 1.0f });
 }
 
 
@@ -1152,27 +1202,44 @@ void Player::ClampPosition(float range)
 			}
 		}
 
-		if (collision(entranceLWall.position, entranceLWall.size, position, { 1.0f, 1.0f, 1.0f }))
+		else
 		{
-			//Vector3 vec = pos - entranceLWall.position;
-			//vec.Normalize();
-			//position += (vec * 0.5f).vec_;
-
-			extrusion(entranceLWall.position, Timer::Instance().DeltaTime());
+			enterEntrance = true;
 		}
 
-		if (collision(entranceRWall.position, entranceRWall.size, position, { 1.0f, 1.0f, 1.0f }))
-		{
-			//Vector3 vec = pos - entranceRWall.position;
-			//vec.Normalize();
-			//position += (vec * 0.5f).vec_;
 
-			extrusion(entranceRWall.position, Timer::Instance().DeltaTime());
+		for (auto& sphere : wallSpheres)
+		{
+			Vector3 outPosition;
+			if (Collision::IntersectSphereVsSphere(sphere.vec_, wallSphereRadius, position, playerRadius, outPosition.vec_))
+			{
+				position = outPosition.vec_;
+			}
 		}
+
+		
+		//// 左右の壁
+		//if (collision(entranceLWall.position, entranceLWall.size, position, { 1.0f, 1.0f, 1.0f }))
+		//{
+		//	//Vector3 vec = pos - entranceLWall.position;
+		//	//vec.Normalize();
+		//	//position += (vec * 0.5f).vec_;
+
+		//	extrusion(entranceLWall.position, Timer::Instance().DeltaTime());
+		//}
+
+		//if (collision(entranceRWall.position, entranceRWall.size, position, { 1.0f, 1.0f, 1.0f }))
+		//{
+		//	//Vector3 vec = pos - entranceRWall.position;
+		//	//vec.Normalize();
+		//	//position += (vec * 0.5f).vec_;
+
+		//	extrusion(entranceRWall.position, Timer::Instance().DeltaTime());
+		//}
 	}
 
 
-
+	// ステージ内
 	if (length > range)
 	{
 		if(enterStage)
@@ -1195,6 +1262,9 @@ void Player::Respawn()
 	position = { 0.0f, 0.0f, 135.0f };	// 初期位置
 	angle = { 0.0f, 180.0f, 0.0f };
 	enterStage = false;
+	enterEntrance = false;
 	lockOn = false;
 	ability.hp = ability.maxHP;
+
+	Gate::Instance().Initialize();
 }

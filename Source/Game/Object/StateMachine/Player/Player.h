@@ -163,6 +163,7 @@ public:
 	
 	bool enterStage;
 	bool lockOn;
+	bool enterEntrance;
 
 	Vector3 restRoomCenter = { 0.0f, 0.0f, 132.0f };
 	float radius = 29.0f;
@@ -174,7 +175,11 @@ public:
 	{
 		Vector3 position;
 		Vector3 size;
-	}entrance = { {0.0f, 0.0f, 92.0f}, {7.0f, 1.0f, 31.0f} },
+	}entrance = { {0.0f, 0.0f, 95.0f}, {7.0f, 1.0f, 31.0f} },
 		entranceLWall = { {9.0f, 0.0f, 94.25f}, {11.0f, 12.0f, 26.0f} },
 		entranceRWall = { {-9.0f, 0.0f, 94.25f}, {11.0f, 12.0f, 26.0f} };
+
+	std::vector<Vector3> wallSpheres;
+	float wallSphereRadius = 1.0f;
+	float playerRadius = 1.0f;
 };

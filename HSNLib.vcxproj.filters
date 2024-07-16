@@ -496,6 +496,7 @@
     <ClCompile Include="Source\Game\Object\Effect\EffectDamageManager.cpp">
       <Filter>2_Source\Game\Object\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\Object\Stage\Gate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -873,6 +874,7 @@
     <ClInclude Include="Source\Game\Object\Effect\EffectDamageManager.h">
       <Filter>2_Source\Game\Object\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\Object\Stage\Gate.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">

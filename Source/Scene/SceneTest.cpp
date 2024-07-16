@@ -68,18 +68,15 @@ void SceneTest::Initialize()
 	// --- ステージ初期化 ---
 	float stageScale = 4.0f;
 	StageManager& stageManager = StageManager::Instance();
-#if 0
-	StageMain*    stageMain    = new StageMain("Data/Fbx/ExampleStage/ExampleStage.model");
-#else
-	StageMain*    stageMain    = new StageMain("Data/Fbx/AfterStage/AfterStage.model");
-	stageMain->SetScale({ stageScale, stageScale, stageScale });
+	StageMain*    stageBefore    = new StageMain("Data/Fbx/BeforeStage/BeforeStage.model");
+	stageBefore->SetScale({ stageScale, stageScale, stageScale });
+	stageManager.Register(stageBefore);
 	StageMain* stage = new StageMain("./Data/Fbx/Stage/StageCollision2.model");
 	stage->GetModel()->GetModelResource()->SetScale(4.0f);
-#endif
-	stageManager.Register(stageMain);
 	stageManager.Register(stage);
-	StageMain* stage2 = new StageMain("./Data/Fbx/Stage/StageCollision1.fbx");
-	stageManager.Register(stage2);
+	StageMain* stageAfter = new StageMain("Data/Fbx/AfterStage/AfterStage.model");
+	stageAfter->SetScale({ stageScale, stageScale, stageScale });
+	stageManager.Register(stageAfter);
 
 	// --- buffer 系初期化 ---
 	bitBlockTransfer = std::make_unique<FullScreenQuad>();
@@ -145,6 +142,8 @@ void SceneTest::Initialize()
 	LightningEffect::Instance().Initialize();
 	RockEffect::Instance().Initialize();
 	BreathEffect::Instance().Initialize();
+
+	SpecialEffect::Instance().drawAfterStage = false;
 
 	// テスト
 	AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
@@ -492,7 +491,12 @@ void SceneTest::Render()
 				// --- animated object ---
 				shadow->SetAnimatedShader(); // animated object の影描画開始
 				//StageManager::Instance().Render(true);
-				StageManager::Instance().Render(0, true);
+
+				if(SpecialEffect::Instance().drawAfterStage)
+					StageManager::Instance().Render(2, true);
+				else
+					StageManager::Instance().Render(0, true);
+
 				Enemy::Instance().Render(true);
 
 				Player::Instance().Render(true);
@@ -520,8 +524,10 @@ void SceneTest::Render()
 		gfx->SetBlend(BLEND_STATE::ALPHA);
 
 		// ここに不透明オブジェクトの描画
-		//StageManager::Instance().Render();
-		StageManager::Instance().Render(0, false);
+		if (SpecialEffect::Instance().drawAfterStage)
+			StageManager::Instance().Render(2, false);
+		else
+			StageManager::Instance().Render(0, false);
 
 		//testStatic->Render();
 		Enemy::Instance().Render();

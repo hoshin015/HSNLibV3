@@ -11,6 +11,8 @@
 #include "../EffectDamageManager.h"
 #include "../../StateMachine/Player/Player.h"
 #include "../../../../../Library/Math/Collision.h"
+#include "../../Stage/StageManager.h"
+#include "../../Stage/StageMain.h"
 
 // 更新
 void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
@@ -234,51 +236,75 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 		break;
 	case SpecialState::Nova:
 		{
-		// ダメージ判定
-		if (!isDamaged)
-		{
-			EffectDamageManager::EffectCollision effectCollision;
-			EffectDamageManager::EffectCollision::SphereData sphere;
-			sphere.position = {0,0,0};
-			sphere.radius = damageRadius;
-			sphere.damage = damage;
-			effectCollision.spheres.emplace_back(sphere);
-			EffectDamageManager::Instance().Register(effectCollision);
-
-			// プレイヤーとの衝突判定
-			// --- プレイヤーの球 ---
-			for (auto& playerSphere : Player::Instance().GetModel()->GetModelResource()->GetSkeletonSphereCollisions())
+			// ダメージ判定
+			if (!isDamaged)
 			{
-				if (isDamaged) continue;
+				EffectDamageManager::EffectCollision effectCollision;
+				EffectDamageManager::EffectCollision::SphereData sphere;
+				sphere.position = {0,0,0};
+				sphere.radius = damageRadius;
+				sphere.damage = damage;
+				effectCollision.spheres.emplace_back(sphere);
+				EffectDamageManager::Instance().Register(effectCollision);
 
-				// --- プレイヤーの球の座標を取得 ---
-				Vector3 playerBonePosition = Player::Instance().GetPos();
-				playerBonePosition = (playerSphere.name == "") ? playerBonePosition + playerSphere.position : Player::Instance().GetBonePosition(playerSphere.name);
-
-
-				Vector3 dummy;
-				if (Collision::IntersectSphereVsSphere({ 0,0,0 }, damageRadius, playerBonePosition.vec_, playerSphere.radius, dummy.vec_))
+				// プレイヤーとの衝突判定
+				// --- プレイヤーの球 ---
+				for (auto& playerSphere : Player::Instance().GetModel()->GetModelResource()->GetSkeletonSphereCollisions())
 				{
-					// --- ここに当たった時の処理を書く ---
-					isDamaged = true;
+					if (isDamaged) continue;
 
-					CameraManager::Instance().shakeTimer = 1.0f;
-					CameraManager::Instance().shakePower = 100.0f;
+					// --- プレイヤーの球の座標を取得 ---
+					Vector3 playerBonePosition = Player::Instance().GetPos();
+					playerBonePosition = (playerSphere.name == "") ? playerBonePosition + playerSphere.position : Player::Instance().GetBonePosition(playerSphere.name);
 
-					Player& player = Player::Instance();
-					float currentHP = player.AStatus().hp;
-					player.AStatus().hp -= damage;
 
-					// --- この攻撃でプレイヤーが死亡したとき ---
-					if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
+					Vector3 dummy;
+					if (Collision::IntersectSphereVsSphere({ 0,0,0 }, damageRadius, playerBonePosition.vec_, playerSphere.radius, dummy.vec_))
 					{
-						CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
-					}
+						// --- ここに当たった時の処理を書く ---
+						isDamaged = true;
 
-					break;
+						CameraManager::Instance().shakeTimer = 1.0f;
+						CameraManager::Instance().shakePower = 100.0f;
+
+						Player& player = Player::Instance();
+						float currentHP = player.AStatus().hp;
+						player.AStatus().hp -= damage;
+
+						// --- この攻撃でプレイヤーが死亡したとき ---
+						if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
+						{
+							CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
+						}
+
+						break;
+					}
 				}
 			}
-		}
+
+			drawAfterStage = true;
+
+			// 仮置きm
+			Emitter* emitter = new Emitter();
+			emitter->position = { 0, 3, 3 };
+			emitter->emitterData.duration = 5.0;
+			emitter->emitterData.looping = false;
+			emitter->emitterData.burstsTime = 0.1;
+			emitter->emitterData.burstsCount = 128;
+			emitter->emitterData.particleKind = pk_Dust;
+			emitter->emitterData.particleLifeTimeMin = 1.0f;
+			emitter->emitterData.particleLifeTimeMax = 1.0f;
+			emitter->emitterData.particleSpeedMin = 1.0f;
+			emitter->emitterData.particleSpeedMax = 5.0f;
+			emitter->emitterData.particleSizeMin = { 0.1f, 0.1f };
+			emitter->emitterData.particleSizeMax = { 0.4f, 0.4f };
+			emitter->emitterData.particleColorMin = { 10.2, 0.0, 0.0, 1 };
+			emitter->emitterData.particleColorMax = { 40.2, 0.8, 0.8, 1 };
+			emitter->emitterData.particleGravity = -1;
+			emitter->emitterData.particleBillboardType = 0;
+			emitter->emitterData.particleTextureType = 0;
+			emitter->emitterData.burstsOneShot = 1;
+			EmitterManager::Instance().Register(emitter);
 
 			// ステート更新
 			specialState = SpecialState::UpMusic;
@@ -297,28 +323,6 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 			{
 				AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE2);
 #endif
-
-				// 仮置きm
-				Emitter* emitter                           = new Emitter();
-				emitter->position                          = {0, 3, 3};
-				emitter->emitterData.duration              = 5.0;
-				emitter->emitterData.looping               = false;
-				emitter->emitterData.burstsTime            = 0.1;
-				emitter->emitterData.burstsCount           = 128;
-				emitter->emitterData.particleKind          = pk_Dust;
-				emitter->emitterData.particleLifeTimeMin   = 1.0f;
-				emitter->emitterData.particleLifeTimeMax   = 1.0f;
-				emitter->emitterData.particleSpeedMin      = 1.0f;
-				emitter->emitterData.particleSpeedMax      = 5.0f;
-				emitter->emitterData.particleSizeMin       = {0.1f, 0.1f};
-				emitter->emitterData.particleSizeMax       = {0.4f, 0.4f};
-				emitter->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
-				emitter->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
-				emitter->emitterData.particleGravity       = -1;
-				emitter->emitterData.particleBillboardType = 0;
-				emitter->emitterData.particleTextureType   = 0;
-				emitter->emitterData.burstsOneShot   = 1;
-				EmitterManager::Instance().Register(emitter);
 			}
 			AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE2, Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, soundUpValue));
 

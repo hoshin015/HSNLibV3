@@ -228,7 +228,7 @@ private:
 	};
 
 	std::unique_ptr<Sprite> imgTitleText;
-	DirectX::XMFLOAT2 imgTitleTextPos = {640, 360};
+	DirectX::XMFLOAT2 imgTitleTextPos = {0, 0};
 	Easing::EasingValue imgTitleTextAlpha =
 	{
 		0.0f, 0.25f,

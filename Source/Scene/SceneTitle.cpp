@@ -48,10 +48,8 @@ void SceneTitle::Initialize()
 
 	// --- ステージ初期化 ---
 	StageManager& stageManager = StageManager::Instance();
-	StageMain*    stageMain    = new StageMain("Data/Fbx/StageMain/StageMain.model");
+	StageMain*    stageMain    = new StageMain("Data/Fbx/BeforeStage/BeforeStage.model");
 	stageManager.Register(stageMain);
-	StageMain* StageFence = new StageMain("Data/Fbx/StageFence/StageFence.model");
-	stageManager.Register(StageFence);
 
 	// player
 	titlePlayer = std::make_unique<TestAnimated>("Data/Fbx/TitlePlayer/TitlePlayer.model");

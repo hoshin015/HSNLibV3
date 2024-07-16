@@ -5,3 +5,4 @@ Data/
 x64/
 HSNLib.vcxproj.user
 imgui.ini
+*.exe

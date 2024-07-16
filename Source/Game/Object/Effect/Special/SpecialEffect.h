@@ -38,6 +38,9 @@ public:
 	// lightning ¶¬
 	void GenerateLightning();
 
+public:
+	bool drawAfterStage = false;
+
 private:
 	bool isSpecialEffect = false; // ‹N“®’†‚©‚Ç‚¤‚©
 

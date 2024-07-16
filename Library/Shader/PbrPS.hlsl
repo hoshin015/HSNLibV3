@@ -46,7 +46,7 @@ float4 main(VS_OUT pin) : SV_TARGET
 	float  metalness              = metallicRoughnessColor.r;
 
 	// オブジェクトパラメータによる調整
-#if 1
+#if 0
 	roughness = clamp(roughness + roughnessPower, 0.0, 1.0);
     metalness = clamp(metalness + metalnessPower, 0.0, 1.0);
 #endif

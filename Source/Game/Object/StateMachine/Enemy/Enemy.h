@@ -71,6 +71,7 @@ public:
 	void RotateToTargetVec(const DirectX::XMFLOAT3& targetVec, float t, const Vector3* tempFront = nullptr);
 	void ClampPosition(float range);
 	void OnPlayerDead();
+	void OnAttacked(const float attackPower);
 
 
 	// --- エフェクト関連 ---

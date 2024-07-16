@@ -973,7 +973,7 @@ void Player::CollisionVsEnemy()
 					collision.isDamaged = true;
 				}
 
-				Enemy::Instance().wasAttacked = true;
+				Enemy::Instance().OnAttacked(ability.strength);
 
 				ConsoleData::Instance().logs.push_back("Damage!");
 

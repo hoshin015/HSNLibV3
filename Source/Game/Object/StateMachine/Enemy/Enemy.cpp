@@ -144,6 +144,18 @@ void Enemy::OnDead()
 	alive = false;
 }
 
+// --- 攻撃されたとき ---
+void Enemy::OnAttacked(const float attackPower)
+{
+	hp -= attackPower;
+	wasAttacked = true;
+
+	if (hp < 0.0f)
+	{
+		hp = 0.0f;
+	}
+}
+
 
 // --- デバッグGui描画 ---
 void Enemy::DrawDebugGui()
@@ -314,6 +326,8 @@ void Enemy::CollisionVSPlayer()
 				Player& player = Player::Instance();
 				float currentHP = player.AStatus().hp;
 				player.AStatus().hp -= attackPower;
+				if (player.AStatus().hp < 0.0f)
+					player.AStatus().hp = 0.0f;
 
 				// --- この攻撃でプレイヤーが死亡したとき ---
 				if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)

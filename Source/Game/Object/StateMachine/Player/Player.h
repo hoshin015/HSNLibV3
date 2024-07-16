@@ -27,9 +27,15 @@ public:
 		float moveSpeed = 7;
 		float attackCount = 0;
 		float attackTimer = 0;
+
+		//‰ñ”ð
 		float dodgeTimer = 0;
 		float notAcceptTimer = 0;
+		bool isJustDodge = false;
 
+		//‘ÌŠ²
+		float bodyTrunkStrength = 1;
+		float bodyTrunkStrengthRange = 1; // ƒ‰ƒ“ƒ_ƒ€‚Ì”ÍˆÍ
 
 		float hitDamage = 0;
 		bool isHitDamage = false;
@@ -50,6 +56,7 @@ public:
 		float dodgePower = 24;
 		float dodgeLowestTime = 0.5f;
 		float dodgeTime = 1.5f;
+		float justDodgeTime = 0.1f;
 
 		float maxAttackCombo = 4;
 		float attackReceptionTime = 0.1f;

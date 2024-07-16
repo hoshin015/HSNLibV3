@@ -2,6 +2,9 @@
 
 #include "../../External/ImGui/imgui.h"
 
+#include "../Game/Object/StateMachine/Enemy/Enemy.h"
+#include "../Game/Object/StateMachine/Player/Player.h"
+
 // ‰Šú‰»
 void UiGame::Initialize()
 {
@@ -37,6 +40,10 @@ void UiGame::Initialize()
 // XV
 void UiGame::Update()
 {
+	auto& enemy = Enemy::Instance();
+	auto& player = Player::Instance();
+	hp = player.AStatus().hp;
+	hpMax = player.AStatus().maxHP;
 }
 
 // •`‰æ

@@ -6,6 +6,8 @@
 class PlayerCamera : public CameraBase
 {
 public:
+	void SetAngle(const Vector2& angle) { horizontalAngle = angle.x; verticalAngle = angle.y; }
+
 	void Initialize() override;
 	void Update() override;
 	void UpdateConstants() override;
@@ -49,9 +51,11 @@ private:
 
 	float height;	// ‚‚³
 	float range;	// ‹——£
+	float targetHeight;
 
 	float t = 0.3f;	// •âŠ®—Ê
 	Vector3 prevTarget;	// ‘O‰ñ‚Ì–Ú•W‚ÌˆÊ’u
+	Vector3 currentTarget;
 };
 
 
@@ -95,4 +99,19 @@ private:
 	float timer;
 	float range = 12.0f;
 	float height = 5.0f;
+};
+
+
+class ClearCamera final : public CameraBase
+{
+public:
+	void Initialize() override;
+	void Update() override;
+	void UpdateConstants() override;
+	void DrawDebugGui() override;
+	
+private:
+	Vector3 offset = { 1.8f, 3.0f, 5.5f };
+	int state;
+	float angle = 30.0f;
 };

@@ -60,8 +60,10 @@ void Enemy::Initialize()
 	alive = true;
 	awake = false;
 	endRushingBite = false;
+	wasAttacked = false;
 
 	actionCount = 0;
+	roarNeededActionCount = 25;
 
 
 	PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
@@ -89,6 +91,7 @@ void Enemy::Update()
 	// --- 位置の制限 ---
 	ClampPosition(75.0f);
 
+	// 生きてるときにHPが０を下回ったら
 	if (alive && hp < 0.0f)
 	{
 		OnDead();
@@ -133,7 +136,24 @@ void Enemy::OnDead()
 {
 	CameraManager::Instance().SetCurrentCamera("EnemyDeadCamera");
 
+	CameraManager::Instance().clearTimer = 40.0f;
+	CameraManager::Instance().clear = true;
+
+	Player::Instance().SetCamera(CameraManager::Instance().GetCamera("PlayerCamera").get());
+
 	alive = false;
+}
+
+// --- 攻撃されたとき ---
+void Enemy::OnAttacked(const float attackPower)
+{
+	hp -= attackPower;
+	wasAttacked = true;
+
+	if (hp < 0.0f)
+	{
+		hp = 0.0f;
+	}
 }
 
 
@@ -183,6 +203,7 @@ void Enemy::DrawDebugGui()
 		ImGui::TreePop();
 	}
 
+	ImGui::Checkbox(u8"攻撃されたか", &wasAttacked);
 	ImGui::Text(u8"行動回数 : %d", actionCount);
 	ImGui::Text(u8"咆哮に必要な行動回数 : %d", roarNeededActionCount);
 	ImGui::Text(u8"攻撃回数 : %d", attackCount);
@@ -305,6 +326,8 @@ void Enemy::CollisionVSPlayer()
 				Player& player = Player::Instance();
 				float currentHP = player.AStatus().hp;
 				player.AStatus().hp -= attackPower;
+				if (player.AStatus().hp < 0.0f)
+					player.AStatus().hp = 0.0f;
 
 				// --- この攻撃でプレイヤーが死亡したとき ---
 				if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
@@ -444,7 +467,6 @@ bool Enemy::SearchPlayer()
 
 		if (dot > 0.0f)
 		{
-			foundPlayer = true;
 			return true;
 		}
 	}
@@ -499,6 +521,13 @@ void Enemy::ClampPosition(float range)
 		pos *= range;
 		position = pos.vec_;
 	}
+}
+
+// --- プレイヤーが死んだときに呼ぶ ---
+void Enemy::OnPlayerDead()
+{
+	foundPlayer = false;
+	wasAttacked = false;
 }
 
 
@@ -571,7 +600,7 @@ void Enemy::InitializeBehaviorTree()
 		aiTree_->AddNode("Awake", "BigRoar", 0, BT_SelectRule::Non, nullptr, new EnemyBigRoarAction(this));
 		aiTree_->AddNode("Awake", "Move", 0, BT_SelectRule::Non, nullptr, new EnemyMoveCenterAction(this));
 		aiTree_->AddNode("Awake", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
-		aiTree_->AddNode("Awake", "Awake", 0, BT_SelectRule::Non, nullptr, new EnemyBigRoarAction(this));
+		aiTree_->AddNode("Awake", "Awake", 0, BT_SelectRule::Non, nullptr, new EnemyDeathBlowAction(this));
 	}
 
 
@@ -610,14 +639,11 @@ void Enemy::InitializeBehaviorTree()
 			// --- それ以外 ---
 			aiTree_->AddNode("Attack", "NormalAttack", 1, BT_SelectRule::Random, nullptr, nullptr);
 			{
-				// --- 普通に接近 ---
-				aiTree_->AddNode("NormalAttack", "Pursuit", 0, BT_SelectRule::Non, nullptr, new EnemyPursuitAction(this));
-
 				// --- 遠距離 ---
 				aiTree_->AddNode("NormalAttack", "LongRange", 0, BT_SelectRule::Random, new EnemyLongRangeJudgment(this)/*nullptr*/, nullptr);
 				{
 					// --- ブレス → 威嚇 ---
-					aiTree_->AddNode("LongRange", "Bless_Threat", 0, BT_SelectRule::Sequence, new EnemyAwakedJudgment(this), nullptr);
+					aiTree_->AddNode("LongRange", "Bless_Threat", 0, BT_SelectRule::Sequence, new EnemyAwakedJudgment(this)/*nullptr*/, nullptr);
 					{
 						aiTree_->AddNode("Bless_Threat", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
 						aiTree_->AddNode("Bless_Threat", "Bless", 0, BT_SelectRule::Non, nullptr, new EnemyBlessAction(this));
@@ -665,6 +691,14 @@ void Enemy::InitializeBehaviorTree()
 					{
 						aiTree_->AddNode("Turn_ScoopUp", "Turn", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
 						aiTree_->AddNode("Turn_ScoopUp", "ScoopUp", 0, BT_SelectRule::Non, nullptr, new EnemyScoopUpAction(this));
+					}
+
+					// --- 突進 → 威嚇 ---
+					aiTree_->AddNode("MiddleRange", "Rush_Threat", 0, BT_SelectRule::Sequence, nullptr, nullptr);
+					{
+						aiTree_->AddNode("Rush_Threat", "AxisAlignment", 0, BT_SelectRule::Non, nullptr, new EnemyAxisAlignmentAction(this));
+						aiTree_->AddNode("Rush_Threat", "Rush", 0, BT_SelectRule::Non, nullptr, new EnemyRushAction(this));
+						aiTree_->AddNode("Rush_Threat", "Threat", 0, BT_SelectRule::Non, nullptr, new EnemyThreatAction(this));
 					}
 
 					// --- タックル ---

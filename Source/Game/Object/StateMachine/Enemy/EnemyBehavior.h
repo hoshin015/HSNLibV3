@@ -11,6 +11,9 @@ enum class MonsterAnimation
 	BLESS,
 	DOWN,
 	WHILE_DOWN,
+	DEATHBLOW_1,
+	DEATHBLOW_2,
+	DEATHBLOW_3,
 	ROAR,
 	ROAR_BIG,
 	IDLE,
@@ -39,6 +42,7 @@ public:
 	BT_ActionState Run(float elapsedTime) override { return BT_ActionState::Complete; };
 
 	bool IsInterrupted();
+	bool WasAttacked();
 	void OnEndAction();	// çsìÆÇ™èIÇÌÇ¡ÇΩéûÇÃå„èàóù
 	void ResetActionCount();
 };
@@ -400,5 +404,15 @@ class EnemyMoveCenterAction final : public EnemyBaseBehavior
 {
 public:
 	EnemyMoveCenterAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
+	BT_ActionState Run(float elapsedTime) override;
+};
+
+
+
+// ===== ïKéEãZ ======================================================================================================================================================
+class EnemyDeathBlowAction final : public EnemyBaseBehavior
+{
+public:
+	EnemyDeathBlowAction(Enemy* owner) : EnemyBaseBehavior(owner) {}
 	BT_ActionState Run(float elapsedTime) override;
 };

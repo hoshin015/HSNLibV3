@@ -50,15 +50,42 @@ void UiGame::Update()
 {
 	if(isDownOverFlag)
 	{
-		downTimer += Timer::Instance().DeltaTime();
-		imgDownOver->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, downTimer, imgDownOverAlpha));
-		imgDownOver->SetPosY(Easing::GetNowParam(Easing::OutQuad<float>, downTimer, imgDownOverPosY));
-		imgBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, downTimer, imgBlackAlpha));
-
-		if (downTimer > downTime)
+		switch (static_cast<State>(state))
 		{
-			// Ç±Ç±Ç≈ëJà⁄èàóù
+		case State::BlackUp:
+			{
+			downTimer += Timer::Instance().DeltaTime();
+			imgDownOver->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, downTimer, imgDownOverAlpha));
+			imgDownOver->SetPosY(Easing::GetNowParam(Easing::OutQuad<float>, downTimer, imgDownOverPosY));
+			imgBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, downTimer, imgBlackAlphaUp));
 
+			if (downTimer > downTime)
+			{
+				// Ç±Ç±Ç≈ëJà⁄èàóù
+				imgDownOver->SetIsRender(false);
+				imgDownOver->SetColorA(0.0f);
+
+				downTimer = 0.0f;
+				state = static_cast<int>(State::BlackDown);
+			}
+			}
+			break;
+		case State::BlackDown:
+			{
+				downTimer += Timer::Instance().DeltaTime();
+				imgBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, downTimer, imgBlackAlphaDown));
+
+				if (downTimer > blackDownTime)
+				{
+					// Ç±Ç±Ç≈ëJà⁄èàóù
+
+					downTimer = 0.0f;
+					state = static_cast<int>(State::BlackUp);
+
+					isDownOverFlag = false;
+				}
+			}
+			break;
 		}
 	}
 }
@@ -154,5 +181,6 @@ void UiGame::OnDown()
 	imgBlack->SetIsRender(true);
 	imgBlack->SetColorA(0.0f);
 
+	state = static_cast<int>(State::BlackUp);
 	isDownOverFlag = true;
 }

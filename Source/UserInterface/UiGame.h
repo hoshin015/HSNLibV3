@@ -57,6 +57,14 @@ private:
 	int skillMax = 100;
 	int skill = 50;
 
+
+	enum class State
+	{
+		BlackUp,
+		BlackDown,
+	};
+	int state = static_cast<int>(State::BlackUp);
+
 	// HP‚O
 	bool isDownOverFlag = false;
 	float downTimer = 0.0f;
@@ -73,10 +81,18 @@ private:
 		-100.0f, 360.0f
 	};
 	std::unique_ptr<Sprite> imgBlack;
-	Easing::EasingValue imgBlackAlpha =
+	Easing::EasingValue imgBlackAlphaUp =
 	{
 		2.0f, 3.0f,
 		0.0f,1.0f
+	};
+
+	// •œŠˆ
+	float blackDownTime = 1.0f;
+	Easing::EasingValue imgBlackAlphaDown =
+	{
+		0.0f, 1.0f,
+		1.0f,0.0f
 	};
 public:
 	void OnDown();

@@ -4,6 +4,7 @@
 #include "../../../../../Library/3D/CameraManager.h"
 #include "../../../../../Library/Math/OperatorXMFloat3.h"
 #include "../../../../../Library/Input/InputManager.h"
+#include "../../../../../Library/Particle/EmitterManager.h"
 
 ///////////////////////////
 ///
@@ -299,6 +300,32 @@ void PlayerDodgeState::Execute() {
 		}
 		owner->GetAnimator().SetParameter("endDodge", true);
 	}
+
+	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ª~‚Ü‚Á‚Ä‚¢‚È‚¢‚È‚ç
+	//if(!owner->GetAnimator().GetEndMotion())
+	{
+		Emitter* emitter0 = new Emitter();
+		emitter0->position = owner->GetPos();
+		emitter0->emitterData.duration = 10.0;
+		emitter0->emitterData.looping = false;
+		emitter0->emitterData.burstsTime = 0.05;
+		emitter0->emitterData.burstsCount = 2;
+		emitter0->emitterData.particleKind = pk_simpleFire;
+		emitter0->emitterData.particleLifeTimeMin = 0.5f;
+		emitter0->emitterData.particleLifeTimeMax = 1.0f;
+		emitter0->emitterData.particleSpeedMin = 1.0f;
+		emitter0->emitterData.particleSpeedMax = 1.0f;
+		emitter0->emitterData.particleSizeMin = { 0.25f, 1.0f };
+		emitter0->emitterData.particleSizeMax = { 1.0f, 2.0f };
+		emitter0->emitterData.particleColorMin = { 1.0, 3.0, 15.0, 1 };
+		emitter0->emitterData.particleColorMax = { 1.0, 3.0, 15.0, 1 };
+		emitter0->emitterData.particleGravity = 0;
+		emitter0->emitterData.particleBillboardType = 0;
+		emitter0->emitterData.particleTextureType = 0;
+		emitter0->emitterData.burstsOneShot = 2;
+		EmitterManager::Instance().Register(emitter0);
+	}
+
 
 	// ‰ñ“]
 	//owner->Turn();

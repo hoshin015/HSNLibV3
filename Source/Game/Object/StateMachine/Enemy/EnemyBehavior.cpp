@@ -22,7 +22,6 @@ bool EnemyBaseBehavior::IsInterrupted()
 	return false;
 }
 
-
 bool EnemyBaseBehavior::WasAttacked()
 {
 	return owner_->wasAttacked;

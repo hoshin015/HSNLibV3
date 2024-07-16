@@ -105,15 +105,9 @@ void BreathEffect::Update()
 					CameraManager::Instance().shakeTimer = 1.0f;
 					CameraManager::Instance().shakePower = 100.0f;
 
+					// TODO: これがエフェクトダメージフラグ
 					Player& player = Player::Instance();
-					float currentHP = player.AStatus().hp;
-					player.AStatus().hp -= damage;
-
-					// --- この攻撃でプレイヤーが死亡したとき ---
-					if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
-					{
-						CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
-					}
+					player.HitDamaged(damage);
 
 					break;
 				}

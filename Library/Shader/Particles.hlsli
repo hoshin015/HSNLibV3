@@ -260,6 +260,9 @@ void spawn(uint id, inout Particle p)
 		{
 			float3 pos = emitterPosition;
 
+            p.scale.x = lerp(particleSizeMin.x, particleSizeMax.x, rand(seed));
+			p.scale.y = p.scale.x;
+
 			float3 pos2 = float3(0, 0, 0);
 
 			p.angle = rand(seed) * 360;
@@ -270,9 +273,9 @@ void spawn(uint id, inout Particle p)
 
 			pos2 = normalize(pos2) * pow(rand(seed), 1.0 / 3.0);
 
-			p.position.x = pos.x + pos2.x * 10;
-			p.position.y = pos.y + 5 * rand(seed);
-			p.position.z = pos.z + pos2.z * 10;
+			p.position.x = pos.x + pos2.x * 1;
+			p.position.y = pos.y + 1 * rand(seed);
+			p.position.z = pos.z + pos2.z * 1;
 
 			p.textureType = 7;
 			if (rand(seed) > 0.5)

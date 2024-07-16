@@ -1129,8 +1129,8 @@ void Player::CollisionVsEnemy()
 				emitter1->emitterData.particleLifeTimeMax = 0.1f;
 				emitter1->emitterData.particleSpeedMin = 0.0f;
 				emitter1->emitterData.particleSpeedMax = 0.0f;
-				emitter1->emitterData.particleSizeMin = { 50.0f, 5.0f };
-				emitter1->emitterData.particleSizeMax = { 50.0f, 5.0f };
+				emitter1->emitterData.particleSizeMin = { 70.0f, 2.0f };
+				emitter1->emitterData.particleSizeMax = { 70.0f, 2.0f };
 				emitter1->emitterData.particleColorMin = { 1.9, 1.9, 8.8, 1 };
 				emitter1->emitterData.particleColorMax = { 1.9, 1.9, 10.8, 1 };
 				emitter1->emitterData.particleAngleMin = 0;

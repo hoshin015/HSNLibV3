@@ -41,6 +41,7 @@ public:
 	const float GetHP() const { return hp; }
 	const float GetMaxHP() const { return maxHP; }
 	const float GetFlinchValue() const { return flinchValue; }
+	const bool IsAlive() const { return alive; }
 
 	const Vector3 GetFrontVec();
 
@@ -69,6 +70,7 @@ public:
 	bool SearchPlayer();
 	void RotateToTargetVec(const DirectX::XMFLOAT3& targetVec, float t, const Vector3* tempFront = nullptr);
 	void ClampPosition(float range);
+	void OnPlayerDead();
 
 
 	// --- エフェクト関連 ---
@@ -148,6 +150,8 @@ public:
 	int roarNeededActionCount;	// 咆哮に必要な行動の数
 	int attackCount;
 	bool endRushingBite;
+
+	bool wasAttacked;
 
 	void DrawDebugImGui(int number);
 };

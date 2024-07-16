@@ -16,6 +16,7 @@
 #include "../../../../UserInterface/DamageTextManager.h"
 
 #include "../../Source/Camera/CameraDerived.h"
+#include "../../../../../Library/3D/DebugPrimitive.h"
 
 Player::Player(const char* filePath) : AnimatedObject(filePath)
 {
@@ -284,6 +285,8 @@ void Player::Initialize()
 
 	// idle アニメーション再生
 	PlayAnimation(static_cast<int>(PlayerAnimNum::Idle), true);
+
+	Respawn();
 }
 
 void Player::Update()
@@ -315,7 +318,7 @@ void Player::Update()
 
 		// --- ロックオンカメラをセット ---
 		else {
-			if (!Enemy::Instance().IsDead()) {
+			if (!Enemy::Instance().IsDead() && enterStage) {
 				auto camera = CameraManager::Instance().GetCamera();
 				Vector3 position = camera->GetPosition();
 				Vector3 target = camera->GetTarget();
@@ -348,6 +351,11 @@ void Player::Update()
 	animatorKeyFrame = animator.PlayAnimation(Timer::Instance().DeltaTime());
 	currentKeyFrame = animator.GetKeyFrameIndex();
 	currentAnimationIndex = animator.GetMotionIndex();
+
+
+	// --- 位置の制限 ---
+	ClampPosition(79.0f);
+
 
 	// 姿勢行列更新
 	UpdateTransform();
@@ -383,6 +391,21 @@ void Player::DrawDebugImGui(int number) {
 		ImGui::DragFloat("emissive", &GetModel()->data.emissivePower, 0.01f);
 		ImGui::SliderFloat("roughness", &GetModel()->data.roughnessPower, -1.0f, 1.0f);
 		ImGui::SliderFloat("metalness", &GetModel()->data.metalnessPower, -1.0f, 1.0f);
+
+		if (ImGui::Button(u8"再配置", { 200.0f, 30.0f }))
+		{
+			Respawn();
+		}
+
+		ImGui::DragFloat3(u8"待機場所の中心", &restRoomCenter.x);
+		ImGui::DragFloat(u8"待機場所の半径", &radius);
+		ImGui::DragFloat3(u8"入口の立方体の位置", &entrance.position.x);
+		ImGui::DragFloat3(u8"入口の立方体のサイズ", &entrance.size.x);
+		ImGui::DragFloat3(u8"入口の左壁の位置", &entranceLWall.position.x);
+		ImGui::DragFloat3(u8"入口の左壁のサイズ", &entranceLWall.size.x);
+		ImGui::DragFloat3(u8"入口の右壁の位置", &entranceRWall.position.x);
+		ImGui::DragFloat3(u8"入口の右壁のサイズ", &entranceRWall.size.x);
+		ImGui::Checkbox(u8"ヒット", &isHit);
 
 		//ImGui::ShowDemoWindow();
 		if(ImGui::CollapsingHeader(u8"ステータス")) {
@@ -882,18 +905,21 @@ void Player::CollisionVsEnemy()
 			}
 
 			// 衝突処理
-			DirectX::XMFLOAT3 outPosition;
-			if (Collision::IntersectSphereVsSphere(
+			if(Enemy::Instance().IsAlive() && ability.hp > 0.0f) // 生きてたら押し出す
+			{
+				DirectX::XMFLOAT3 outPosition;
+				if (Collision::IntersectSphereVsSphere(
 					eBonePos,
 					eBoneSphere.radius,
 					bonePos,
 					boneSphere.radius,
 					outPosition)
-			)
-			{
-				// 押し出し後の位置設定
-				outPosition.y = 0;
-				SetPos(outPosition);
+					)
+				{
+					// 押し出し後の位置設定
+					outPosition.y = 0;
+					SetPos(outPosition);
+				}
 			}
 		}
 
@@ -946,6 +972,8 @@ void Player::CollisionVsEnemy()
 				for (auto && collision: anim) {
 					collision.isDamaged = true;
 				}
+
+				Enemy::Instance().wasAttacked = true;
 
 				ConsoleData::Instance().logs.push_back("Damage!");
 
@@ -1024,4 +1052,149 @@ void Player::CollisionVsEnemy()
 			}
 		}
 	}
+}
+
+void Player::DrawDebug()
+{
+	DebugPrimitive::Instance().AddSphere(restRoomCenter.vec_, radius, { 0.3f, 0.3f, 1.0f, 1.0f });
+	DebugPrimitive::Instance().AddCube(position, {1.0f, 1.0f, 1.0f}, { 0.3f, 0.3f, 1.0f, 1.0f });
+	DebugPrimitive::Instance().AddCube(entrance.position.vec_, entrance.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
+	DebugPrimitive::Instance().AddCube(entranceLWall.position.vec_, entranceLWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
+	DebugPrimitive::Instance().AddCube(entranceRWall.position.vec_, entranceRWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
+}
+
+
+
+// --- 位置の制限 ---
+void Player::ClampPosition(float range)
+{
+	// ステージ
+	Vector3 pos = position;
+	float length = pos.Length();
+
+
+	// 待機場所
+	Vector3 restRoomVec = pos - restRoomCenter;
+	float restRoomLength = restRoomVec.Length();
+
+
+
+
+	// --- 立方体同士の交差判定 ---
+	auto collision = [](const Vector3& positionA, const Vector3& sizeA, const Vector3& positionB, const Vector3& sizeB)->bool
+		{
+			Vector3 rightTopBackA = positionA + sizeA * 0.5f;
+			Vector3 leftBottomFrontA = positionA - sizeA * 0.5f;
+
+			Vector3 rightTopBackB = positionB + sizeB * 0.5f;
+			Vector3 leftBottomFrontB = positionB - sizeB * 0.5f;
+
+			if (leftBottomFrontA.x < rightTopBackB.x &&
+				rightTopBackA.x    > leftBottomFrontB.x &&
+				leftBottomFrontA.y < rightTopBackB.y &&
+				rightTopBackA.y    > leftBottomFrontB.y &&
+				leftBottomFrontA.z < rightTopBackB.z &&
+				rightTopBackA.z    > leftBottomFrontB.z)
+				return true;
+
+			return false;
+		};
+
+	auto extrusion = [&](const Vector3& cubePosition, const float elapsedTime)
+		{
+			// --- ブロックの面の向きに押し返す ---
+			Vector3 vec = pos - cubePosition;
+			vec.Normalize();
+
+			// --- Y軸 0固定 ---
+			vec.y = 0.0f;
+
+			const Vector3 directions[4] =
+			{
+				Vector3::Front_,
+				Vector3::Left_,
+				Vector3::Back_,
+				Vector3::Right_
+			};
+
+			float dots[4] = {};
+
+			for (size_t i = 0; i < 4; i++)
+				dots[i] = vec.Dot(directions[i]);
+
+
+			size_t indices[2] = { -1, -1 };
+
+			indices[0] = (dots[0] > dots[2]) ? 0 : 2;
+			indices[1] = (dots[1] > dots[3]) ? 1 : 3;
+
+			indices[0] = (dots[indices[0]] > dots[indices[1]]) ? indices[0] : indices[1];
+
+			position += (directions[indices[0]] * 25.0f * elapsedTime).vec_;
+		};
+
+
+
+	// ステージに入ってなかったら
+	if(!enterStage)
+	{
+		// 入り口の判定
+		if (!collision(entrance.position, entrance.size, position, { 1.0f, 1.0f, 1.0f }))
+		{
+			// 入ってなかったら待機場所に
+			if (restRoomLength > radius)
+			{
+				if (!enterStage)
+				{
+					restRoomVec.Normalize();
+					position = (restRoomCenter + restRoomVec * radius).vec_;
+				}
+			}
+		}
+
+		if (collision(entranceLWall.position, entranceLWall.size, position, { 1.0f, 1.0f, 1.0f }))
+		{
+			//Vector3 vec = pos - entranceLWall.position;
+			//vec.Normalize();
+			//position += (vec * 0.5f).vec_;
+
+			extrusion(entranceLWall.position, Timer::Instance().DeltaTime());
+		}
+
+		if (collision(entranceRWall.position, entranceRWall.size, position, { 1.0f, 1.0f, 1.0f }))
+		{
+			//Vector3 vec = pos - entranceRWall.position;
+			//vec.Normalize();
+			//position += (vec * 0.5f).vec_;
+
+			extrusion(entranceRWall.position, Timer::Instance().DeltaTime());
+		}
+	}
+
+
+
+	if (length > range)
+	{
+		if(enterStage)
+		{
+			pos.Normalize();
+			pos *= range;
+			position = pos.vec_;
+		}
+	}
+
+	else
+	{
+		if (!enterStage) enterStage = true;
+	}
+}
+
+// --- 配置しなおし ---
+void Player::Respawn()
+{
+	position = { 0.0f, 0.0f, 135.0f };	// 初期位置
+	angle = { 0.0f, 180.0f, 0.0f };
+	enterStage = false;
+	lockOn = false;
+	ability.hp = ability.maxHP;
 }

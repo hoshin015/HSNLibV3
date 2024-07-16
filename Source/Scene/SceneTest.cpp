@@ -110,7 +110,6 @@ void SceneTest::Initialize()
 
 	Player::Instance().Initialize();
 	Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());	// 今のカメラを設定
-	Player::Instance().SetPos({ 0.0f, 0.0f, 100.0f });
 
 
 	Particle::Instance().Initialize();
@@ -190,6 +189,7 @@ void SceneTest::Update()
 	Camera::Instance().Update();
 #else
 	CameraManager::Instance().UpdateShake();
+	CameraManager::Instance().UpdateClearTimer();
 	CameraManager::Instance().Update();
 	//camera->Update();
 #endif
@@ -211,6 +211,8 @@ void SceneTest::Update()
 
 	EmitterManager::Instance().Update();
 	Particle::Instance().Update();
+
+	UiGame::Instance().Update();
 
 	// テストエミッター
 	if (InputManager::Instance().GetKeyPressed(Keyboard::F1))
@@ -534,6 +536,7 @@ void SceneTest::Render()
 			EffectDamageManager::Instance().Render();
 		}
 		Enemy::Instance().DrawDebug();
+		Player::Instance().DrawDebug();
 		DebugPrimitive::Instance().Render();
 
 		skyMap->Render();
@@ -634,6 +637,7 @@ void SceneTest::Render()
 
 	StageManager::Instance().DrawDebugImGui();
 	Enemy::Instance().DrawDebugGui();
+	CameraManager::Instance().DrawDebugGui();
 
 	LightManager::Instance().DrawDebugGui();
 	bloom->DrawDebugGui();

@@ -31,6 +31,8 @@ public:
 	// 円柱追加
 	void AddCylinder(const DirectX::XMFLOAT3& position, float radius, float height, const DirectX::XMFLOAT4& color);
 
+	void AddCube(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& size, const DirectX::XMFLOAT4& color);
+
 private:
 	// 球メッシュ作成
 	void CreateSphereMesh(float radius, int slices, int stacks);
@@ -72,4 +74,18 @@ private:
 
 	UINT	sphereVertexCount = 0;
 	UINT	cylinderVertexCount = 0;
+
+
+	// --- 立方体のオブジェクトデータ
+	struct Cube
+	{
+		DirectX::XMFLOAT4 color_;
+		DirectX::XMFLOAT3 position_;
+		DirectX::XMFLOAT3 size_;
+		DirectX::XMFLOAT3 rotation_;
+	};
+	std::vector<Cube> cubes_;								// オブジェクトのリスト
+	Microsoft::WRL::ComPtr<ID3D11Buffer> cubeVertexBuffer_;	// 頂点バッファ
+	Microsoft::WRL::ComPtr<ID3D11Buffer> cubeIndexBuffer_;	// インデックスバッファ
+
 };

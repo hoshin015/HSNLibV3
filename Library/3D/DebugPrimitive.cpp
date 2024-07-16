@@ -36,6 +36,77 @@ void DebugPrimitive::Initialize()
 
 	//--- 円柱メッシュ作成 ---
 	CreateCylinderMesh(1.0f, 1.0f, 0.0f, 1.0f, 16, 1);
+
+
+	{
+		// --- 頂点情報の作成 ---
+		std::vector < DirectX::XMFLOAT3> vertices = {
+			// --- 手前 ---
+			{ -0.5f,  0.5f, -0.5f},	// 左上
+			{  0.5f,  0.5f, -0.5f},	// 右上
+			{ -0.5f, -0.5f, -0.5f},	// 左下
+			{  0.5f, -0.5f, -0.5f},	// 右下
+			// --- 奥 ---
+			{ -0.5f,  0.5f, 0.5f},	// 左上
+			{  0.5f,  0.5f, 0.5f},	// 右上
+			{ -0.5f, -0.5f, 0.5f},	// 左下
+			{  0.5f, -0.5f, 0.5f},	// 右下
+		};
+
+		// --- 頂点のインデックス ---
+		uint32_t indices[]
+		{
+			0, 1, 1, 3, 3, 2, 2, 0, 0, 4, 1, 5, 3, 7, 2, 6, 4, 5, 5, 7, 7, 6, 6, 4
+		};
+
+
+		HRESULT hr{ S_OK };
+
+		{
+			D3D11_BUFFER_DESC bufferDesc = {};
+			D3D11_SUBRESOURCE_DATA subResourceData = {};
+			bufferDesc.ByteWidth = static_cast<UINT>(vertices.size() * sizeof(DirectX::XMFLOAT3));
+			bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			bufferDesc.CPUAccessFlags = 0;
+			bufferDesc.MiscFlags = 0;
+			bufferDesc.StructureByteStride = 0;
+
+			subResourceData.pSysMem = vertices.data();
+			subResourceData.SysMemPitch = 0;
+			subResourceData.SysMemSlicePitch = 0;
+
+			// --- 作成 ---
+			HRESULT hr = device->CreateBuffer(
+				&bufferDesc,
+				&subResourceData,
+				cubeVertexBuffer_.GetAddressOf()
+			);
+
+			_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
+		}
+
+		// --- インデックスバッファの作成 ---
+		{
+			D3D11_BUFFER_DESC bufferDesc{};
+			D3D11_SUBRESOURCE_DATA subResourceData{};
+
+			bufferDesc.ByteWidth = static_cast<UINT>(sizeof(indices));
+			bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+			subResourceData.pSysMem = indices;
+
+			HRESULT hr = device->CreateBuffer(
+				&bufferDesc,
+				&subResourceData,
+				cubeIndexBuffer_.GetAddressOf()
+			);
+
+			_ASSERT_EXPR(SUCCEEDED(hr), hrTrace(hr));
+		}
+
+	}
 }
 
 // 描画実行
@@ -98,6 +169,45 @@ void DebugPrimitive::Render()
 		dc->Draw(cylinderVertexCount, 0);
 	}
 	cylinders.clear();
+
+
+	// ===== 立方体の描画 ==================================================================================================================================
+
+	// --- プリミティブ設定 ---
+	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+
+	// --- バッファを設定 ---
+	dc->IASetVertexBuffers(0, 1, cubeVertexBuffer_.GetAddressOf(), &stride, &offset);
+	dc->IASetIndexBuffer(cubeIndexBuffer_.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+	// --- 描画する回数を計算 ---
+	D3D11_BUFFER_DESC bufferDesc{};
+	cubeIndexBuffer_->GetDesc(&bufferDesc);
+	UINT indexCount = bufferDesc.ByteWidth / sizeof(uint32_t);
+
+	// --- リストの分だけ描画 ---
+	for (const Cube& cube : cubes_)
+	{
+		// --- ワールド行列の作成 ---
+		DirectX::XMMATRIX S = DirectX::XMMatrixScaling(cube.size_.x, cube.size_.y, cube.size_.z);
+		DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(cube.position_.x, cube.position_.y, cube.position_.z);
+		DirectX::XMMATRIX W = S * T;
+
+		DirectX::XMFLOAT4X4 w;
+		DirectX::XMStoreFloat4x4(&w, W);
+
+		// --- オブジェクト定数バッファ更新 ---
+		Constants cb;
+		cb.world = w;
+		cb.materialColor = cube.color_;
+		dc->UpdateSubresource(constantBuffer.Get(), 0, 0, &cb, 0, 0);
+		dc->VSSetConstantBuffers(_objectConstant, 1, constantBuffer.GetAddressOf());
+
+		// --- 描画 ---
+		dc->DrawIndexed(indexCount, 0, 0);
+	}
+	cubes_.clear();
+
 #endif
 }
 
@@ -123,6 +233,17 @@ void DebugPrimitive::AddCylinder(const DirectX::XMFLOAT3& position, float radius
 	cylinder.height = height;
 	cylinder.color = color;
 	cylinders.emplace_back(cylinder);
+#endif
+}
+
+void DebugPrimitive::AddCube(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& size, const DirectX::XMFLOAT4& color)
+{
+#if USE_DEBUG_PRIMITIVE
+	Cube cube;
+	cube.position_ = position;
+	cube.size_ = size;
+	cube.color_ = color;
+	cubes_.emplace_back(cube);
 #endif
 }
 

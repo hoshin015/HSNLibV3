@@ -58,6 +58,8 @@ void InputManager::Update()
 	gamepadState = gamepad->GetState(0);
 	// ゲームパッド状態トラッカー更新
 	gamepadTracker.Update(gamepadState);
+
+	GetPressedSticks();
 }
 
 // --- キーボード ---

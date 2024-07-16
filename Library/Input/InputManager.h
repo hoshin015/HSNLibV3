@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DirectXMath.h>
 #include <Windows.h>
 #include <memory>
 #include <Keyboard.h>
@@ -125,4 +126,56 @@ public:
 	float GetTriggersRight() { return gamepadState.triggers.right; }
 	// バイブレーション設定
 	void SetVibration(int index, float leftPower, float rightPower);
+
+	DirectX::XMFLOAT2 controllerPressed;
+	void GetPressedSticks()
+	{
+		static int lastX = 0;
+		static int lastY = 0;
+
+		DirectX::XMFLOAT2 inputPad = { gamepadState.thumbSticks.leftX, gamepadState.thumbSticks.leftY };
+		DirectX::XMVECTOR InputPad = DirectX::XMLoadFloat2(&inputPad);
+		DirectX::XMVECTOR N = DirectX::XMVector2Normalize(InputPad);
+		DirectX::XMFLOAT2 nInputPad;
+		DirectX::XMStoreFloat2(&nInputPad, N);
+
+		float length = DirectX::XMVectorGetX(DirectX::XMVector2Length(InputPad));
+		if(length < 0.5f)
+		{
+			controllerPressed.x = static_cast<float>(0);
+			controllerPressed.y = static_cast<float>(0);
+			lastX = 0;
+			lastY = 0;
+			return;
+		}
+
+
+		// 入力の角度(radian)
+		float radian = atan2(nInputPad.y, nInputPad.x);
+		// degree
+		float deg = DirectX::XMConvertToDegrees(radian);
+		if (deg < 0) deg += 360;
+
+		// 現在の入力
+		int inputPressX = 0;
+		int inputPressY = 0;
+		int inputStorePressX = 0;
+		int inputStorePressY = 0;
+		if ((deg <=360 && deg > 315) || (deg >= 0 && deg <= 45)) inputPressX = 1;
+		if (deg > 45 && deg <= 135) inputPressY = 1;
+		if (deg > 135 && deg <= 225) inputPressX = -1;
+		if (deg > 225 && deg <= 315) inputPressY = -1;
+
+		inputStorePressX = inputPressX;
+		inputStorePressY = inputPressY;
+
+		if (lastX != 0) inputPressX = 0;
+		if (lastY != 0) inputPressY = 0;
+
+		lastX = inputStorePressX;
+		lastY = inputStorePressY;
+
+		controllerPressed.x = static_cast<float>(inputPressX);
+		controllerPressed.y = static_cast<float>(inputPressY);
+	}
 };

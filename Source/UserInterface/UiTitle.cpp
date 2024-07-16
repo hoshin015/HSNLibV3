@@ -74,7 +74,8 @@ void UiTitle::Update()
 		//[[fallthrough]]
 	case UiTitleState::Title2:
 		{
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
+			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
+				InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 			{
 				state = UiTitleState::TitleToSelectMenu1;
 			}
@@ -160,17 +161,20 @@ void UiTitle::Update()
 		//[[fallthrough]]
 	case UiTitleState::SelectMenu2:
 		{
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
+			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back) ||
+				InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::b))
 			{
 				state = UiTitleState::ToTitle1;
 			}
 
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::W))
+			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::W) ||
+				InputManager::Instance().controllerPressed.y >= 0.9f)
 			{
 				AudioManager::Instance().PlayMusic(MUSIC_LABEL::SELECT_MOVE, false);
 				selectMenu--;
 			}
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::S))
+			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::S) ||
+				InputManager::Instance().controllerPressed.y <= -0.9f)
 			{
 				AudioManager::Instance().PlayMusic(MUSIC_LABEL::SELECT_MOVE, false);
 				selectMenu++;
@@ -184,7 +188,8 @@ void UiTitle::Update()
 					imgSelectBar->SetPos(imgGameStartPos.endValueVec);
 					emitterTargetPos = { 80, 100 };
 
-					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
+					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
+						InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 					{
 						state      = UiTitleState::SelectMenuToLevel1;
 					}
@@ -195,7 +200,8 @@ void UiTitle::Update()
 					imgSelectBar->SetPos(imgOptionsPos.endValueVec);
 					emitterTargetPos = { 80, 200 };
 
-					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
+					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
+						InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 					{
 					}
 				}
@@ -205,7 +211,8 @@ void UiTitle::Update()
 					imgSelectBar->SetPos(imgQuitPos.endValueVec);
 					emitterTargetPos = { 80, 300 };
 
-					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
+					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
+						InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 					{
 					}
 				}
@@ -275,17 +282,20 @@ void UiTitle::Update()
 		//[[fallthrough]]
 	case UiTitleState::Level2:
 		{
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
+			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back) ||
+				InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::b))
 			{
 				state = UiTitleState::ToTitle1;
 			}
 
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::W))
+			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::W) ||
+				InputManager::Instance().controllerPressed.y >= 0.9f)
 			{
 				emitterMoveTimer = 0.0f;
 				selectLevel--;
 			}
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::S))
+			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::S) ||
+				InputManager::Instance().controllerPressed.y <= -0.9f)
 			{
 				emitterMoveTimer = 0.0f;
 				selectLevel++;
@@ -301,7 +311,8 @@ void UiTitle::Update()
 				imgEasy->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
 				imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
 				imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
-				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
+				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
+					InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
 				}
@@ -314,7 +325,8 @@ void UiTitle::Update()
 				imgEasy->spriteAddColorConstant.addColor = { 0,0,0,1 };
 				imgNormal->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
 				imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
-				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
+				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
+					InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
 				}
@@ -327,7 +339,8 @@ void UiTitle::Update()
 				imgEasy->spriteAddColorConstant.addColor = { 0,0,0,1 };
 				imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
 				imgHard->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
-				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space))
+				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
+					InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
 				}

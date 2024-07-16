@@ -87,7 +87,8 @@ void SceneResult::Update()
 
 	if(resultTimer > resultTime)
 	{
-		if(InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter))
+		if(InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter) ||
+			InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 		{
 			SceneManager::Instance().ChangeScene(new SceneTitle);
 		}

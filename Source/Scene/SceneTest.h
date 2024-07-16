@@ -54,6 +54,7 @@ private:
 	std::unique_ptr<RadialBlur> radialBlur;
 	std::unique_ptr<HeatHaze> heatHaze;
 	std::unique_ptr<ColorFilter> colorFilter;
+	std::unique_ptr<FrameBuffer> swordTrailBuffer;
 
 	std::unique_ptr<SkyMap> skyMap;
 

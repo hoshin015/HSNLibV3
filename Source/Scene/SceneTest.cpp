@@ -97,6 +97,8 @@ void SceneTest::Initialize()
 	                                          Framework::Instance().GetScreenHeightF());
 	colorFilter->SetIsColorFilter(true);
 	colorFilter->SetBrightness(2.0f);
+	swordTrailBuffer = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
+	                                          Framework::Instance().GetScreenHeightF());
 
 	// --- skyMap 初期化 ---
 	skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
@@ -547,9 +549,7 @@ void SceneTest::Render()
 		Enemy::Instance().Render();
 
 		Player::Instance().Render();
-		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
-		Player::Instance().swordTrail->Render();
-		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+		
 
 		RockEffect::Instance().Render();
 
@@ -599,6 +599,17 @@ void SceneTest::Render()
 		bitBlockTransfer->blit(srvs, 0, ARRAYSIZE(srvs), wbOitBuffer->GetWbOitPS());
 	}
 	frameBuffer->DeActivate();
+
+	float swordTrailClear[4] = {0,0,0,0};
+	swordTrailBuffer->Clear(swordTrailClear);
+	swordTrailBuffer->Activate();
+	{
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
+		Player::Instance().swordTrail->Render();
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+	}
+	swordTrailBuffer->DeActivate();
+
 
 
 	// ポストエフェクトをかけるたびにこれを更新する
@@ -751,6 +762,8 @@ void SceneTest::DrawDebugGUI()
 		//		}
 		//	}
 		//}
+
+		ImGui::Image(swordTrailBuffer->shaderResourceViews[0].Get(), ImVec2(200, 200));
 	}
 	ImGui::End();
 }

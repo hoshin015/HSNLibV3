@@ -102,7 +102,17 @@ public:
 	/// 次のStateをセットする
 	///	応急処置用
 	/// @param name Stateの名前
-	void SetNextState(const std::string& name) { _nextState = &_states[name]; }
+	void SetNextState(const std::string& name) {
+		_nextState = &_states[name];
+		if (_nextState->type == State::MOTION)
+			_nextState->GetObj<Motion>()->endMotion = false;
+		else {
+			auto obj = _nextState->GetObj<BlendTree>();
+			for (auto&& motion: obj->motions) {
+				motion.endMotion = false;
+			}
+		}
+	}
 
 	/// RootMotionを有効にする
 	/// @param name RootとなるBoneの名前

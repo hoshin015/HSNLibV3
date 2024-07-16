@@ -2,6 +2,7 @@
 // --- Game ---
 #include "BaseObject.h"
 #include "AnimatedModel.h"
+#include "../../../../Library/Resource/Model/Animator.h"
 
 // アニメーションする3Dオブジェクトのクラス
 class AnimatedObject : public BaseObject
@@ -30,6 +31,9 @@ public:
 
 	// すべてのダメージフラグをtrueに
 	void EnableAnimSphereCollisionDamagedFlag();
+
+	// 効果音フラグのクリア
+	void ClearSeFlag();
 protected:
 	// 姿勢行列更新
 	void UpdateTransform() override;
@@ -44,7 +48,7 @@ protected:
 	void UpdateSe();
 
 	// 効果音フラグのクリア
-	void ClearSeFlag();
+	// void ClearSeFlag();
 
 public:
 	DirectX::XMFLOAT3 GetBonePosition(std::string boneName);
@@ -53,6 +57,8 @@ protected:
 	std::unique_ptr<AnimatedModel> model;
 
 	// --- アニメーションフラグ ---
+	Animator animator;
+
 	ModelResource::KeyFrame animatorKeyFrame;//Animatorから取得したKeyFrame
 	ModelResource::KeyFrame keyFrame;                       // 使用されるキーフレーム
 	int                     currentKeyFrame         = 0;    // 現在のフレーム
@@ -80,6 +86,8 @@ protected:
 
 public:
 	// --- アニメーションフラグ ---
+	Animator& GetAnimator() { return animator; };
+
 	int GetCurrentKeyFrame() { return currentKeyFrame; }
 	int GetCurrentAnimationIndex() { return currentAnimationIndex; }
 	float GetCurrentAnimationSeconds() { return currentAnimationSeconds; }

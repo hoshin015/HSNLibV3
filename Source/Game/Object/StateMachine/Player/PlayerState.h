@@ -87,11 +87,22 @@ public:
 	void Exit() override;
 };
 
-// ドリンクステートオブジェクト
+// 回避ステートオブジェクト
 class PlayerDodgeState : public State<Player> {
 public:
 	PlayerDodgeState(Player* owner) : State<Player>(owner) {}
 	~PlayerDodgeState() override {};
+
+	void Enter() override;
+	void Execute() override;
+	void Exit() override;
+};
+
+// 回避ステートオブジェクト
+class PlayerDamageState : public State<Player> {
+public:
+	PlayerDamageState(Player* owner) : State<Player>(owner) {}
+	~PlayerDamageState() override {};
 
 	void Enter() override;
 	void Execute() override;

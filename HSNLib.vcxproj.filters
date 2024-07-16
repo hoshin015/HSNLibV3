@@ -499,6 +499,7 @@
     <ClCompile Include="Source\UserInterface\UiClearAfter.cpp">
       <Filter>2_Source\UserInterface</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\Object\Stage\Gate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -879,6 +880,7 @@
     <ClInclude Include="Source\UserInterface\UiClearAfter.h">
       <Filter>2_Source\UserInterface</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\Object\Stage\Gate.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">

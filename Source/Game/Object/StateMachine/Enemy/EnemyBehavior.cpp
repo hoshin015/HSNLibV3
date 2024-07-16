@@ -23,6 +23,12 @@ bool EnemyBaseBehavior::IsInterrupted()
 }
 
 
+bool EnemyBaseBehavior::WasAttacked()
+{
+	return owner_->wasAttacked;
+}
+
+
 void EnemyBaseBehavior::OnEndAction()
 {
 	step = 0;
@@ -65,7 +71,7 @@ bool EnemyPursuitJudgment::Judgment()
 BT_ActionState EnemyPursuitAction::Run(float elapsedTime)
 {
 	// --- ダウン/死亡処理 ---
-	if (owner_->IsDown() || owner_->IsDead())
+	if (IsInterrupted() || WasAttacked())
 		return BT_ActionState::Failed;
 
 	switch (step)
@@ -175,9 +181,9 @@ bool EnemyWanderJudgment::Judgment()
 
 // --- 徘徊行動 ---
 BT_ActionState EnemyWanderAction::Run(float elapsedTime)
-{	
+{
 	// --- ダウン/死亡処理 ---
-	if (IsInterrupted())
+	if (IsInterrupted() || WasAttacked())
 		return BT_ActionState::Failed;
 
 
@@ -290,7 +296,7 @@ bool EnemyBattleInitJudgment::Judgment()
 
 
 	// --- プレイヤーを見つけたら成功 ---
-	if (owner_->SearchPlayer())
+	if (owner_->SearchPlayer() || owner_->wasAttacked)
 	{
 		return true;
 	}
@@ -312,7 +318,7 @@ bool EnemyLongRangeJudgment::Judgment()
 
 
 	// --- 距離が一定以上なら成功 ---
-	if (length > owner_->GetLongRange())
+	if (length >= owner_->GetMiddleRange())
 		return true;
 
 	else
@@ -512,6 +518,7 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 		// --- 初期設定 ---
 	case 0:
 		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROAR_BIG), false);
+		owner_->SetFoundPlayer(true);
 
 		step++;
 		break;
@@ -522,14 +529,23 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 		// --- radialBlur 処理 ---
 		owner_->bigRoarTimer += Timer::Instance().DeltaTime();
 
+		// --- カメラシェイク ---
+		float t = owner_->runTimer_;
+		owner_->runTimer_ += Timer::Instance().DeltaTime();
+		if (t < 0.7f && owner_->runTimer_ > 0.7f)
+		{
+			CameraManager::Instance().shakeTimer = 1.5f;
+			CameraManager::Instance().shakePower = 200.0f;
+		}
+
 		// radialBlur ON OFF
-		if(!owner_->radialBlur->GetIsRadial() && owner_->bigRoarRadialUpSampling.startTime < owner_->bigRoarTimer)
+		if (!owner_->radialBlur->GetIsRadial() && owner_->bigRoarRadialUpSampling.startTime < owner_->bigRoarTimer)
 		{
 			owner_->radialBlur->SetSamplingCount(0.0f);
 			owner_->radialBlur->SetBlurPower(0.02f);
 			owner_->radialBlur->SetIsRadial(true);
 		}
-		if(owner_->radialBlur->GetIsRadial() && owner_->bigRoarRadialDownSampling.endTime < owner_->bigRoarTimer)
+		if (owner_->radialBlur->GetIsRadial() && owner_->bigRoarRadialDownSampling.endTime < owner_->bigRoarTimer)
 		{
 			owner_->radialBlur->SetIsRadial(false);
 		}
@@ -581,39 +597,39 @@ BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 	{
 	case 0:
 
+	{
+		Matrix R;
+		R.MakeRotationFromQuaternion(owner_->quaternion_);
+		Vector3 front = R.v_[2].xyz();
+		Vector3 playerPosition = Player::Instance().GetPos();
+		Vector3 vec = playerPosition - owner_->GetPos();
+		vec.Normalize();
+
+		float cross = (front.z * vec.x) - (front.x * vec.z);
+
+		if (cross < 0.0f)
+			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TURN_LEFT), false);
+
+		else
+			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TURN_RIGHT), false);
+
+		owner_->turnAngle = owner_->targetVec.Dot(vec);
+
+
+		// --- 目標に向いていたら ---
+		float dot = front.Dot(vec);
+		if (dot > 0.99f)
 		{
-			Matrix R;
-			R.MakeRotationFromQuaternion(owner_->quaternion_);
-			Vector3 front = R.v_[2].xyz();
-			Vector3 playerPosition = Player::Instance().GetPos();
-			Vector3 vec = playerPosition - owner_->GetPos();
-			vec.Normalize();
-
-			float cross = (front.z * vec.x) - (front.x * vec.z);
-
-			if (cross < 0.0f)
-				owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TURN_LEFT), false);
-
-			else
-				owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TURN_RIGHT), false);
-
-			owner_->turnAngle = owner_->targetVec.Dot(vec);
-
-
-			// --- 目標に向いていたら ---
-			float dot = front.Dot(vec);
-			if (dot > 0.99f)
-			{
-				OnEndAction();
-				return BT_ActionState::Complete;
-			}
+			OnEndAction();
+			return BT_ActionState::Complete;
 		}
+	}
 
 
 
 
-		step++;
-		break;
+	step++;
+	break;
 
 	case 1:
 	{
@@ -709,21 +725,29 @@ BT_ActionState EnemyBlessAction::Run(float elapsedTime)
 		break;
 
 	case 1:
+	{
+		Vector3 position = owner_->GetPos();
+		Vector3 moveVec = Vector3(Player::Instance().GetPos()) - position;
 
-		owner_->runTimer_ -= elapsedTime;
-		if (owner_->runTimer_ < 0.0f)
-		{
-			Matrix R;
-			R.MakeRotationFromQuaternion(owner_->quaternion_);
-			Vector3 front = R.v_[2].xyz();
-			float atan = atan2(front.z, front.x);
-			float theta = DirectX::XMConvertToDegrees(atan);
-			owner_->PlayFireBress(-(theta + 180.0f));
-			owner_->runTimer_ = 0.0f;
-			step++;
-		}
+		// --- 位置の更新 ---
+		moveVec.Normalize();
+		owner_->RotateToTargetVec(moveVec.vec_, 0.3f);
+	}
 
-		break;
+	owner_->runTimer_ -= elapsedTime;
+	if (owner_->runTimer_ < 0.0f)
+	{
+		Matrix R;
+		R.MakeRotationFromQuaternion(owner_->quaternion_);
+		Vector3 front = R.v_[2].xyz();
+		float atan = atan2(front.z, front.x);
+		float theta = DirectX::XMConvertToDegrees(atan);
+		owner_->PlayFireBress(-(theta + 180.0f));
+		owner_->runTimer_ = 0.0f;
+		step++;
+	}
+
+	break;
 
 
 	case 2:
@@ -738,9 +762,9 @@ BT_ActionState EnemyBlessAction::Run(float elapsedTime)
 		float positionLength = 2.0f;
 		DirectX::XMFLOAT3 breathPosition = Enemy::Instance().GetBonePosition("sitaago");
 		breathPosition += {
-					(front.x) * positionLength,
-					-1,
-					(front.z) * positionLength
+			(front.x)* positionLength,
+				-1,
+				(front.z)* positionLength
 		};
 
 		BreathEffect::Instance().SetPosition(breathPosition);
@@ -835,22 +859,34 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 
 		// --- 突進始めの溜めの時間 ---
 	case 1:
+	{
+		// --- 目標に向かって移動 ---
+		Vector3 position = owner_->GetPos();
+		Vector3 moveVec = Vector3(Player::Instance().GetPos()) - position;
 
-		owner_->runTimer_ -= elapsedTime;
+		// --- 位置の更新 ---
+		moveVec.Normalize();
+		owner_->RotateToTargetVec(moveVec.vec_, 0.6f);
+	}
 
-		if (owner_->runTimer_ < 0.0f)
-		{
-			owner_->runTimer_ = owner_->GetWhileRushTimer();
-			step++;
-		}
+	owner_->runTimer_ -= elapsedTime;
 
-		break;
+	if (owner_->runTimer_ < 0.0f)
+	{
+		owner_->runTimer_ = owner_->GetWhileRushTimer();
+		Matrix R;
+		R.MakeRotationFromQuaternion(owner_->quaternion_);
+		owner_->targetVec = R.v_[2].xyz();
+		step++;
+	}
+
+	break;
 
 
-		// --- 突進中 ---
+	// --- 突進中 ---
 	case 2:
 	{
-		// --- 正面へ移動 ---
+		// --- 目標へ移動 ---
 		owner_->Move(owner_->targetVec, owner_->GetRushSpeed());
 
 		// --- 岩生成 ---
@@ -866,7 +902,7 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 				rock.angle = { Math::RandomRange(0,359), Math::RandomRange(0,359),Math::RandomRange(0,359) };
 				rock.scale = { Math::RandomRange(0.25,0.5), Math::RandomRange(0.25,0.5),Math::RandomRange(0.25,0.5) };
 				float r = Math::RandomRange(5, 10);
-				rock.velocity = {Math::RandomRange(-3,3),Math::RandomRange(1,3),Math::RandomRange(-3,3)};
+				rock.velocity = { Math::RandomRange(-3,3),Math::RandomRange(1,3),Math::RandomRange(-3,3) };
 				rock.gravity = 10;
 				rock.lifeTime = 3;
 				RockEffect::Instance().Emit(rock);
@@ -889,7 +925,7 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	// --- 突進終わり ---
 	case 3:
 	{
-		if(!isEndRock)
+		if (!isEndRock)
 		{
 			rockNowTimer += Timer::Instance().DeltaTime();
 			if (rockStartTime_3 < rockNowTimer && rockNowTimer < rockEndTime_3)
@@ -929,10 +965,10 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 		}
 
 		owner_->Move(owner_->targetVec, owner_->GetRushEndSpeed());
-			
-		}
 
-		break;
+	}
+
+	break;
 	}
 
 	// --- アニメーションが終わったら終了 ---
@@ -972,7 +1008,10 @@ BT_ActionState EnemyStampAction::Run(float elapsedTime)
 		owner_->runTimer_ -= elapsedTime;
 		if (owner_->runTimer_ < 0.0f)	// 踏みつけた時
 		{
-			CameraManager::Instance().shakeTimer = 0.5f;
+			// --- 距離が近かったら ---
+			if ((Vector3(Player::Instance().GetPos()) - owner_->GetPos()).Length() < 20.0f)
+				CameraManager::Instance().shakeTimer = 1.0f;
+
 			owner_->PlayRockEffect();
 			owner_->runTimer_ = 0.0f;
 			step++;
@@ -1217,7 +1256,7 @@ BT_ActionState EnemyTailAttack::Run(float elapsedTime)
 	case 1:
 		// --- 岩生成 ---
 		rockNowTimer += Timer::Instance().DeltaTime();
-		if(rockStartTime < rockNowTimer && rockNowTimer < rockEndTime)
+		if (rockStartTime < rockNowTimer && rockNowTimer < rockEndTime)
 		{
 			rockTimer += Timer::Instance().DeltaTime();
 			while (rockTimer > rockTime)
@@ -1229,7 +1268,7 @@ BT_ActionState EnemyTailAttack::Run(float elapsedTime)
 				rock.angle = { Math::RandomRange(0,359), Math::RandomRange(0,359),Math::RandomRange(0,359) };
 				rock.scale = { Math::RandomRange(0.25,0.5), Math::RandomRange(0.25,0.5),Math::RandomRange(0.25,0.5) };
 				float r = Math::RandomRange(5, 10);
-				rock.velocity = {Math::RandomRange(-3,3), Math::RandomRange(1,3), Math::RandomRange(-3,3)};
+				rock.velocity = { Math::RandomRange(-3,3), Math::RandomRange(1,3), Math::RandomRange(-3,3) };
 				rock.gravity = 10;
 				rock.lifeTime = 3;
 				RockEffect::Instance().Emit(rock);
@@ -1237,7 +1276,7 @@ BT_ActionState EnemyTailAttack::Run(float elapsedTime)
 				rockTimer -= rockTime;
 			}
 		}
-		
+
 
 		if (owner_->GetAnimationEndFlag())
 		{
@@ -1430,7 +1469,7 @@ BT_ActionState EnemyTackleAction::Run(float elapsedTime)
 
 // ===== 中央へ移動 ======================================================================================================================================================
 BT_ActionState EnemyMoveCenterAction::Run(float elapsedTime)
-{	
+{
 	// --- ダウン/死亡処理 ---
 	if (IsInterrupted())
 		return BT_ActionState::Failed;
@@ -1459,6 +1498,61 @@ BT_ActionState EnemyMoveCenterAction::Run(float elapsedTime)
 		owner_->RotateToTargetVec(moveVec.vec_, 0.1f);
 		Vector3 front = owner_->GetFrontVec();
 		owner_->Move(front, owner_->runSpeed_);
+
+		break;
+	}
+
+	}
+
+	return BT_ActionState::Run;
+}
+
+
+
+// ===== 覚醒移行行動 ======================================================================================================================================================
+BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
+{
+	switch (step)
+	{
+	case 0:
+
+		owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_1), false);
+		step++;
+
+		break;
+
+
+	case 1:
+	{
+		if (owner_->GetAnimationEndFlag())
+		{
+			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_2), false);
+			step++;
+		}
+
+		break;
+	}
+
+
+	case 2:
+	{
+		if (owner_->GetAnimationEndFlag())
+		{
+			owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_3), false);
+			step++;
+		}
+
+		break;
+	}
+
+
+	case 3:
+	{
+		if (owner_->GetAnimationEndFlag())
+		{
+			OnEndAction();
+			return BT_ActionState::Complete;
+		}
 
 		break;
 	}

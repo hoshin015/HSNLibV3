@@ -18,8 +18,8 @@
 // ===== プレイヤーのカメラ ======================================================================================================================================================
 void PlayerCamera::Initialize()
 {
-	verticalAngle = 45.0f;
-	horizontalAngle = 0.0f;
+	horizontalAngle = 90.0f;
+	verticalAngle = 30.0f;
 
 	// 勝手に range 変えてます
 	//range = 13.0f;
@@ -250,8 +250,9 @@ void PlayerCamera::CalcPositionFromAngle(const Vector3& position)
 // ===== ロックオンカメラ ======================================================================================================================================================
 void LockOnCamera::Initialize()
 {
-	height = 7.0f;
-	range = 18.0f;
+	height = 0.0f;
+	range = 10.0f;
+	targetHeight = 5.0f;
 }
 
 void LockOnCamera::Update()
@@ -268,7 +269,6 @@ void LockOnCamera::Update()
 	{
 		Vector3 playerPos = Player::Instance().GetPos();	// プレイヤーの位置
 		Vector3 enemyPos = Enemy::Instance().GetPos();		// 目標の位置
-		prevTarget = target;
 		//Vector3 enemyPos = Enemy::Instance().GetBonePosition("atama");
 
 		// --- 前回との移動量が小さかったら更新しない ---
@@ -277,7 +277,7 @@ void LockOnCamera::Update()
 		//	break;
 
 		target = enemyPos;	// 目標
-		target.y += 3.0f;
+		target.y += targetHeight;
 
 		// 敵とプレイヤーとカメラを一直線に並べる
 		Vector3 vec = playerPos - enemyPos;	// 敵からプレイヤーへのベクトル
@@ -312,8 +312,10 @@ void LockOnCamera::Update()
 		}
 
 
-		currentPosition = position;
-		CameraBase::Update(currentPosition + shakeOffset, target, up, fov, nearZ, farZ, aspect);
+		//currentPosition = position;
+		currentPosition = currentPosition.Lerp(currentPosition, position, 0.1f);
+		currentTarget = currentTarget.Lerp(currentTarget, target, 0.1f);
+		CameraBase::Update(currentPosition + shakeOffset, currentTarget, up, fov, nearZ, farZ, aspect);
 
 		break;
 	}
@@ -332,6 +334,7 @@ void LockOnCamera::DrawDebugGui()
 
 	ImGui::DragFloat(u8"高さ", &height, 0.1f);
 	ImGui::DragFloat(u8"距離", &range, 0.1f);
+	ImGui::DragFloat(u8"目標の高さ", &targetHeight, 0.1f);
 
 	if (ImGui::Button(u8"シェイク", { 100.0f, 30.0f }))
 		CameraManager::Instance().shakeTimer = 0.3f;
@@ -375,11 +378,11 @@ void EnemyDeadCamera::Update()
 		}
 
 		{
-			state2Data.time = 7.0f;
+			state2Data.time = 5.0f;
 			state2Data.range = 25.0f;
 			state2Data.height = 15.0f;
 			state2Data.beginAngle = 0.0f;
-			state2Data.endAngle = 360.0f;
+			state2Data.endAngle = 180.0f;
 		}
 
 		{
@@ -596,7 +599,14 @@ void PlayerDeadCamera::Update()
 		if (timer < 0.0f)
 		{
 			state = 0;
+
 			CameraManager::Instance().SetCurrentCamera("PlayerCamera");
+			auto camera = std::dynamic_pointer_cast<PlayerCamera>(CameraManager::Instance().GetCamera());
+			camera->SetAngle({ 90.0f, 30.0f });
+
+			Player::Instance().Respawn();
+			Player::Instance().SetCamera(camera.get());
+			Enemy::Instance().OnPlayerDead();
 		}
 
 		break;
@@ -620,4 +630,64 @@ void PlayerDeadCamera::DrawDebugGui()
 {
 	ImGui::DragFloat(u8"距離", &range);
 	ImGui::DragFloat(u8"高さ", &height);
+}
+
+
+
+// ===== クリア時のカメラ ======================================================================================================================================================
+void ClearCamera::Initialize()
+{
+	
+}
+
+void ClearCamera::Update()
+{
+	switch (state)
+	{
+	case 0:
+	{
+		Initialize();
+		state++;
+		break;
+	}
+
+
+	case 1:
+	{
+		Matrix R;
+		R.MakeRotation(Vector3(Player::Instance().GetAngle()).ToRadian());
+		Vector3 front = R.v_[2].xyz();
+		Vector3 left = -R.v_[0].xyz();
+
+		Vector3 playerPosition = Player::Instance().GetPos();
+		target = playerPosition + left * offset.x;
+		target.y += offset.y;
+
+		Quaternion rot;
+		rot.SetRotationDegY(angle);
+		Vector3 vec = (rot * Quaternion(front.x, front.y, front.z, 0.0f) * Quaternion(-rot.x, -rot.y, -rot.z, rot.w)).xyz();
+
+		position = target + vec * offset.z;
+
+		break;
+	}
+
+	}
+
+	CameraBase::Update();
+}
+
+void ClearCamera::UpdateConstants()
+{
+	CameraBase::UpdateConstants();
+}
+
+void ClearCamera::DrawDebugGui()
+{
+	ImGui::Begin(u8"クリアカメラ");
+
+	ImGui::DragFloat3(u8"オフセット", &offset.x, 0.1f);
+	ImGui::DragFloat(u8"回転角度", &angle);
+
+	ImGui::End();
 }

@@ -17,6 +17,7 @@
 #include "../Game/Object/TestStatic.h"
 #include "../Game/Object/StateMachine/BlendTestPlayer/BlendTestPlayer.h"
 #include "../Game/Object/Effect/Lightning/LightningMainMesh.h"
+#include "../Game/Object/Stage/Gate.h"
 // --- Camera ---
 #include "../Camera/CameraDerived.h"
 #include "../../Library/3D/CameraManager.h"

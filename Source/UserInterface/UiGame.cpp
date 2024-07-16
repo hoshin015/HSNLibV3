@@ -4,6 +4,9 @@
 #include "../../Library/Timer.h"
 #include "../../Library/Input/InputManager.h"
 
+#include "../Game/Object/StateMachine/Enemy/Enemy.h"
+#include "../Game/Object/StateMachine/Player/Player.h"
+
 // ‰Šú‰»
 void UiGame::Initialize()
 {
@@ -128,6 +131,10 @@ void UiGame::Update()
 			break;
 		}
 	}
+	auto& enemy = Enemy::Instance();
+	auto& player = Player::Instance();
+	hp = player.AStatus().hp;
+	hpMax = player.AStatus().maxHP;
 }
 
 // •`‰æ

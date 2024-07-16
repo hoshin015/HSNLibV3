@@ -105,13 +105,15 @@ void SceneTest::Initialize()
 	//blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");
 
 
+	Gate::Instance().Initialize();
+
+
 
 	Enemy::Instance().Initialize();
 	Enemy::Instance().radialBlur = radialBlur.get();
 
 	Player::Instance().Initialize();
 	Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());	// 今のカメラを設定
-	Player::Instance().SetPos({ 0.0f, 0.0f, 100.0f });
 
 
 	Particle::Instance().Initialize();
@@ -195,6 +197,7 @@ void SceneTest::Update()
 	Camera::Instance().Update();
 #else
 	CameraManager::Instance().UpdateShake();
+	CameraManager::Instance().UpdateClearTimer();
 	CameraManager::Instance().Update();
 	//camera->Update();
 #endif
@@ -216,6 +219,10 @@ void SceneTest::Update()
 
 	EmitterManager::Instance().Update();
 	Particle::Instance().Update();
+
+	UiGame::Instance().Update();
+
+	Gate::Instance().Update();
 
 	// テストエミッター
 	if (InputManager::Instance().GetKeyPressed(Keyboard::F1))
@@ -511,6 +518,8 @@ void SceneTest::Render()
 
 				RockEffect::Instance().Render(true);
 				//testStatic->Render(true);
+
+				Gate::Instance().Render(true);
 			}
 			shadow->DeActivate();
 		}
@@ -548,7 +557,10 @@ void SceneTest::Render()
 			EffectDamageManager::Instance().Render();
 		}
 		Enemy::Instance().DrawDebug();
+		Player::Instance().DrawDebug();
 		DebugPrimitive::Instance().Render();
+
+		Gate::Instance().Render();
 
 		skyMap->Render();
 	}
@@ -650,6 +662,7 @@ void SceneTest::Render()
 
 	StageManager::Instance().DrawDebugImGui();
 	Enemy::Instance().DrawDebugGui();
+	CameraManager::Instance().DrawDebugGui();
 
 	LightManager::Instance().DrawDebugGui();
 	bloom->DrawDebugGui();
@@ -658,6 +671,7 @@ void SceneTest::Render()
 	radialBlur->DrawDebugGui();
 	heatHaze->DrawDebugGui();
 	colorFilter->DrawDebugGui();
+	Gate::Instance().DrawDebugImGui();
 
 
 	CameraManager::Instance().GetCamera()->DrawDebugGui();

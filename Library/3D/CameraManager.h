@@ -31,12 +31,17 @@ public:
 	void Update();
 	void UpdateConstants();
 	void Register(std::string key, std::shared_ptr<CameraBase> camera);
+	void DrawDebugGui();
 
 	void UpdateShake();
+	void UpdateClearTimer();
 
 
 	float shakeTimer;
-	float shakePower = 0.001f;
+	float shakePower = 100.0f;
+	float clearTimer;
+	bool clear; // Todo : ‰¼ƒtƒ‰ƒO
+	bool updateClearTimer;
 
 
 private:

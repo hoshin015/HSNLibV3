@@ -94,6 +94,25 @@ private:
 		0.0f, 1.0f,
 		1.0f,0.0f
 	};
+
+
+
+	// key
+	std::unique_ptr<Sprite> imgKeyOption;
+	std::unique_ptr<Sprite> imgKeyCameraMove;
+	std::unique_ptr<Sprite> imgKeyLockOn;
+	std::unique_ptr<Sprite> imgKeyMove;
+	std::unique_ptr<Sprite> imgKeyAvoid;
+	std::unique_ptr<Sprite> imgKeyAttack;
+
+	// controller
+	std::unique_ptr<Sprite> imgConOption;
+	std::unique_ptr<Sprite> imgConCameraMove;
+	std::unique_ptr<Sprite> imgConLockOn;
+	std::unique_ptr<Sprite> imgConMove;
+	std::unique_ptr<Sprite> imgConAvoid;
+	std::unique_ptr<Sprite> imgConAttack;
+
 public:
 	void OnDown();
 };

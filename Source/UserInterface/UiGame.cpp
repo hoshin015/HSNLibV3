@@ -2,6 +2,7 @@
 
 #include "../../External/ImGui/imgui.h"
 #include "../../Library/Timer.h"
+#include "../../Library/Input/InputManager.h"
 
 // èâä˙âª
 void UiGame::Initialize()
@@ -43,6 +44,45 @@ void UiGame::Initialize()
 	imgBlack = std::make_unique<Sprite>("Data/Texture/Black.png");
 	imgBlack->SetColorA(0.0f);
 	imgBlack->SetIsRender(false);
+
+	imgKeyOption = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Keyboard/Option.sprite");
+	imgKeyOption->SetPos({ 20,20 });
+	imgKeyOption->UpdateAnimation();
+	imgKeyCameraMove = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Keyboard/CameraMove.sprite");
+	imgKeyCameraMove->SetPos({ 1260, 350 });
+	imgKeyCameraMove->UpdateAnimation();
+	imgKeyLockOn = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Keyboard/LockOn.sprite");
+	imgKeyLockOn->SetPos({ 1260, 400 });
+	imgKeyLockOn->UpdateAnimation();
+	imgKeyMove = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Keyboard/Move.sprite");
+	imgKeyMove->SetPos({ 1260, 550 });
+	imgKeyMove->UpdateAnimation();
+	imgKeyAttack = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Keyboard/Attack.sprite");
+	imgKeyAttack->SetPos({ 1260, 600 });
+	imgKeyAttack->UpdateAnimation();
+	imgKeyAvoid = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Keyboard/Avoid.sprite");
+	imgKeyAvoid->SetPos({ 1260, 650 });
+	imgKeyAvoid->UpdateAnimation();
+
+
+	imgConOption = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Controller/Option.sprite");
+	imgConOption->SetPos({ 20,20 });
+	imgConOption->UpdateAnimation();
+	imgConCameraMove = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Controller/CameraMove.sprite");
+	imgConCameraMove->SetPos({ 1260, 350 });
+	imgConCameraMove->UpdateAnimation();
+	imgConLockOn = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Controller/LockOn.sprite");
+	imgConLockOn->SetPos({ 1260, 400 });
+	imgConLockOn->UpdateAnimation();
+	imgConMove = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Controller/Move.sprite");
+	imgConMove->SetPos({ 1260, 550 });
+	imgConMove->UpdateAnimation();
+	imgConAvoid = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Controller/Avoid.sprite");
+	imgConAvoid->SetPos({ 1260, 600 });
+	imgConAvoid->UpdateAnimation();
+	imgConAttack = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Controller/Attack.sprite");
+	imgConAttack->SetPos({ 1260, 650 });
+	imgConAttack->UpdateAnimation();
 }
 
 // çXêV
@@ -154,6 +194,26 @@ void UiGame::Render()
 
 	imgDownOver->Render();
 	imgBlack->Render();
+
+
+	if(InputManager::Instance().IsGamePadConnected())
+	{
+		imgConOption->Render();
+		imgConCameraMove->Render();
+		imgConLockOn->Render();
+		imgConMove->Render();
+		imgConAvoid->Render();
+		imgConAttack->Render();
+	}
+	else
+	{
+		imgKeyOption->Render();
+		imgKeyCameraMove->Render();
+		imgKeyLockOn->Render();
+		imgKeyMove->Render();
+		imgKeyAvoid->Render();
+		imgKeyAttack->Render();
+	}
 }
 
 // debugGui

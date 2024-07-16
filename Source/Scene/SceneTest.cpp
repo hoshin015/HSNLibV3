@@ -77,6 +77,9 @@ void SceneTest::Initialize()
 	StageMain* stageAfter = new StageMain("Data/Fbx/AfterStage/AfterStage.model");
 	stageAfter->SetScale({ stageScale, stageScale, stageScale });
 	stageManager.Register(stageAfter);
+	StageMain* stageObject = new StageMain("Data/Fbx/StageObject/StageObject.model");
+	stageObject->SetScale({ stageScale, stageScale, stageScale });
+	stageManager.Register(stageObject);
 
 	// --- buffer Œn‰Šú‰» ---
 	bitBlockTransfer = std::make_unique<FullScreenQuad>();
@@ -496,6 +499,7 @@ void SceneTest::Render()
 					StageManager::Instance().Render(2, true);
 				else
 					StageManager::Instance().Render(0, true);
+				StageManager::Instance().Render(3, true);
 
 				Enemy::Instance().Render(true);
 
@@ -528,6 +532,7 @@ void SceneTest::Render()
 			StageManager::Instance().Render(2, false);
 		else
 			StageManager::Instance().Render(0, false);
+		StageManager::Instance().Render(3, false);
 
 		//testStatic->Render();
 		Enemy::Instance().Render();

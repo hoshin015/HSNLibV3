@@ -1047,6 +1047,10 @@ void Player::Move()
 // 敵との衝突処理
 void Player::CollisionVsEnemy()
 {
+	// ヒットストップのバグ対策
+	if (Timer::Instance().DeltaTime() <= 0.0f)
+		return;
+
 	for (auto& eBoneSphere : Enemy::Instance().GetModel()->GetModelResource()->GetSkeletonSphereCollisions())
 	{
 		// ===== 体同士の当たり判定 =====

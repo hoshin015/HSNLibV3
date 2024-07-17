@@ -11,6 +11,7 @@ void UiClearAfter::Initialize()
 	clearWaitTimer = 0.0f;
 	clearAnimTimer = 0.0f;
 	SetAllOffRender();
+	clearFlag = false;
 }
 
 // çXêV

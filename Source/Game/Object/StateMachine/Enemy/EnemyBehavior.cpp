@@ -1253,7 +1253,6 @@ BT_ActionState EnemyFlinchAction::Run(float elapsedTime)
 // ===== Ž€–Ss“® ======================================================================================================================================================
 BT_ActionState EnemyDeadAction::Run(float elapsedTime)
 {
-
 	switch (step)
 	{
 	case 0:
@@ -1588,7 +1587,7 @@ BT_ActionState EnemyMoveCenterAction::Run(float elapsedTime)
 	case 1:
 	{
 		Vector3 moveVec = Vector3(0.0f, 0.0f, 0.0f) - owner_->GetPos();
-		if (moveVec.Length() < 1.0f)
+		if (moveVec.Length() < 5.0f)
 		{
 			OnEndAction();
 			return BT_ActionState::Complete;
@@ -1617,19 +1616,13 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 	{
 	case 0:
 		owner_->runTimer_ = 1.2f;
-		step++;
-		break;
-
-	case 1:
-
-		//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_1), false);
 		owner_->GetAnimator().SetNextState("hissatu_1");
 		step++;
 
 		break;
 
 
-	case 2:
+	case 1:
 	{
 		//owner_->runTimer_ -= Timer::Instance().DeltaTime();
 		//if (owner_->runTimer_ < 0.0f)
@@ -1651,7 +1644,7 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 	}
 
 
-	case 3:
+	case 2:
 	{
 		owner_->runTimer_ -= Timer::Instance().DeltaTime();
 		//if (owner_->GetAnimator().GetEndMotion())
@@ -1673,7 +1666,7 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 	}
 
 
-	case 4:
+	case 3:
 	{
 		if (owner_->GetAnimator().GetEndMotion())
 		{

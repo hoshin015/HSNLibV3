@@ -53,6 +53,7 @@ void SceneTest::Initialize()
 #else
 	CameraManager::Instance().Initialize();
 	CameraManager::Instance().SetCurrentCamera("PlayerCamera");
+	CameraManager::Instance().GetCamera("PlayerCamera")->Initialize();
 	//camera = &playerCamera;
 	//camera = &lockOnCamera;
 #endif

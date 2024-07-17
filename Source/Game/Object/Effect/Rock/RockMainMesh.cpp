@@ -65,7 +65,7 @@ void RockData::RockUpUpdate()
 	position.z += velocity.z * deltaTime;
 
 	// ’n–Ê‚æ‚è‚µ‚½‚È‚çíœ
-	if (position.y >= 20)
+	if (position.y >= 50)
 	{
 		owner->Remove(this);
 	}

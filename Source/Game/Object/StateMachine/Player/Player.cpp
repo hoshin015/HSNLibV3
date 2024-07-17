@@ -18,6 +18,7 @@
 
 #include "../../Source/Camera/CameraDerived.h"
 #include "../../../../../Library/3D/DebugPrimitive.h"
+#include "../../../../UserInterface/UiClearAfter.h"
 #include "../../Stage/Gate.h"
 
 Player::Player(const char* filePath) : AnimatedObject(filePath)
@@ -1086,6 +1087,10 @@ void Player::Move()
 // 敵との衝突処理
 void Player::CollisionVsEnemy()
 {
+	// ヒットストップのバグ対策
+	if (Timer::Instance().DeltaTime() <= 0.0f)
+		return;
+
 	for (auto& eBoneSphere : Enemy::Instance().GetModel()->GetModelResource()->GetSkeletonSphereCollisions())
 	{
 		// ===== 体同士の当たり判定 =====

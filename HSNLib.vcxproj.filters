@@ -515,6 +515,9 @@
     <ClCompile Include="Source\Game\Object\Stage\Gate.cpp">
       <Filter>2_Source\Game\Object\Stage</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyAwakeBehavior.cpp">
+      <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -901,6 +904,9 @@
     <ClInclude Include="Source\Game\Object\Stage\Gate.h" />
     <ClInclude Include="Source\Other\SwordTrail\SwordTrail.h">
       <Filter>2_Source\Game\Other\SwordTrail</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyAwakeBehavior.h">
+      <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -46,7 +46,7 @@ private:
 
 	// damage
 	bool isDamaged = false;
-	float damageRadius = 10.0f;
+	float damageRadius = 50.0f;
 	float damage = 1000.0f;
 
 	bool isPlayChargeSound = false;
@@ -66,6 +66,13 @@ private:
 
 
 	float lifeTimer = 0.0f;
+
+	// music
+	Easing::EasingValue battle1DownSound =
+	{
+		0.0f, 1.0f,
+		0.5f, 0.0f
+	};
 
 	// firstNova
 	float               firstNovaTime          = 2.0f;

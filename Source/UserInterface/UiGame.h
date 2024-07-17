@@ -65,7 +65,7 @@ private:
 	};
 	int state = static_cast<int>(State::BlackUp);
 
-	// HP‚Ojjjj	
+	// HP‚O
 	bool isDownOverFlag = false;
 	float downTimer = 0.0f;
 	float downTime = 10.0f;

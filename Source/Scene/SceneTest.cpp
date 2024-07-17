@@ -37,6 +37,7 @@
 #include "../UserInterface/UiGame.h"
 #include "../Game/Object/Effect/EffectDamageManager.h"
 #include "../UserInterface/UiClearAfter.h"
+#include "../Game/Object/DodgeEffect/DodgeEffect.h"
 
 
 void SceneTest::Initialize()
@@ -176,6 +177,7 @@ void SceneTest::Finalize()
 	LightManager::Instance().Clear();
 	EmitterManager::Instance().Clear();
 	Enemy::Instance().Finalize();
+	DodgeEffect::Instance().Clear();
 
 	AudioManager::Instance().StopMusic(MUSIC_LABEL::BATTLE1);
 	AudioManager::Instance().StopMusic(MUSIC_LABEL::BATTLE2);
@@ -452,6 +454,7 @@ void SceneTest::Update()
 	RockEffect::Instance().Update();
 	BreathEffect::Instance().Update();
 	SpecialEffect::Instance().Update(radialBlur.get(), heatHaze.get());
+	DodgeEffect::Instance().Update();
 
 #if SPECIAL_AUDIO_DELAY
 	// sound
@@ -552,7 +555,10 @@ void SceneTest::Render()
 		//testStatic->Render();
 		Enemy::Instance().Render();
 
-		Player::Instance().Render();
+		if(Player::Instance().GetModel()->data.materialColorKd.w >= 0.99f)
+		{
+			Player::Instance().Render(Player::Instance().pbrPS.Get());
+		}
 		
 
 		RockEffect::Instance().Render();
@@ -580,11 +586,19 @@ void SceneTest::Render()
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
 
 		// ここに半透明オブジェクトの描画
+
 		Particle::Instance().Render();
 
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
 		LightningEffect::Instance().Render();
 		BreathEffect::Instance().Render();
+
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+		if (Player::Instance().GetModel()->data.materialColorKd.w < 0.99f)
+		{
+			Player::Instance().Render(Player::Instance().wboitPbrPS.Get());
+		}
+		DodgeEffect::Instance().Render();
 	}
 	wbOitBuffer->DeActivate();
 

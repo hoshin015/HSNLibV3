@@ -81,7 +81,91 @@ void AnimatedModel::Render(DirectX::XMFLOAT4X4 world, ModelResource::KeyFrame* k
 				dc->PSSetShader(pixelShaderMap[material.name].Get(), nullptr, 0);
 			}
 
-			data.materialColorKd = material.Kd;
+			//data.materialColorKd = material.Kd;
+			data.materialColorKs = material.Ks;
+			data.materialColorKa = material.Ka;
+
+			dc->UpdateSubresource(constantBuffer.Get(), 0, 0, &data, 0, 0);
+			dc->VSSetConstantBuffers(_objectConstant, 1, constantBuffer.GetAddressOf());
+			dc->PSSetConstantBuffers(_objectConstant, 1, constantBuffer.GetAddressOf());
+
+			dc->PSSetShaderResources(_deffuseTexture, 1, material.shaderResourceViews[_deffuseTexture].GetAddressOf());
+			dc->PSSetShaderResources(_normalTexture, 1, material.shaderResourceViews[_normalTexture].GetAddressOf());
+			dc->PSSetShaderResources(_specularTexture, 1, material.shaderResourceViews[_specularTexture].GetAddressOf());
+			dc->PSSetShaderResources(_emissiveTexture, 1, material.shaderResourceViews[_emissiveTexture].GetAddressOf());
+			dc->PSSetShaderResources(_occlusionTexture, 1, material.shaderResourceViews[_occlusionTexture].GetAddressOf());
+			dc->PSSetShaderResources(_dissolveTexture, 1, material.shaderResourceViews[_dissolveTexture].GetAddressOf());
+
+			dc->DrawIndexed(subset.indexCount, subset.startIndex, 0);
+		}
+	}
+}
+
+void AnimatedModel::Render(DirectX::XMFLOAT4X4 world, ModelResource::KeyFrame* keyFrame, ID3D11PixelShader* ps)
+{
+	// --- Graphics 取得 ---
+	Graphics* gfx = &Graphics::Instance();
+	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
+
+	// uvScroll 更新
+	dc->UpdateSubresource(uvScrollConstantBuffer.Get(), 0, 0, &uvScrollConstant, 0, 0);
+	dc->VSSetConstantBuffers(_uvScrollConstant, 1, uvScrollConstantBuffer.GetAddressOf());
+
+	// dissolve 更新
+	dc->UpdateSubresource(dissolveConstantBuffer.Get(), 0, 0, &dissolveConstant, 0, 0);
+	dc->PSSetConstantBuffers(_dissolveConstant, 1, dissolveConstantBuffer.GetAddressOf());
+
+	// --- mesh ごとの描画 ---
+	for (const ModelResource::Mesh& mesh : modelResource->GetMeshes())
+	{
+		UINT stride = sizeof(ModelResource::Vertex);
+		UINT offset = 0;
+
+		dc->IASetVertexBuffers(0, 1, mesh.vertexBuffer.GetAddressOf(), &stride, &offset);
+		dc->IASetIndexBuffer(mesh.indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+		dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		dc->IASetInputLayout(inputLayout.Get());
+
+		// アニメーション
+		if (keyFrame && keyFrame->nodes.size() > 0)
+		{
+			const ModelResource::KeyFrame::Node& meshNode = keyFrame->nodes.at(mesh.nodeIndex);
+			XMStoreFloat4x4(&data.world, XMLoadFloat4x4(&meshNode.globalTransform) * XMLoadFloat4x4(&world));
+
+			const size_t boneCount = mesh.skeleton.bones.size();
+			_ASSERT_EXPR(boneCount < ModelResource::MAX_BONES, L"The value of the 'boneCount' has exceeded MAX_BONES.");
+
+			for (size_t boneIndex = 0; boneIndex < boneCount; boneIndex++)
+			{
+				const ModelResource::Bone& bone = mesh.skeleton.bones.at(boneIndex);
+				const ModelResource::KeyFrame::Node& boneNode = keyFrame->nodes.at(bone.nodeIndex);
+				XMStoreFloat4x4(
+					&data.boneTransforms[boneIndex],
+					XMLoadFloat4x4(&bone.offsetTransform) *
+					XMLoadFloat4x4(&boneNode.globalTransform) *
+					XMMatrixInverse(nullptr, XMLoadFloat4x4(&mesh.defaultGlobalTransform))
+				);
+			}
+		}
+		else
+		{
+			XMStoreFloat4x4(&data.world, XMLoadFloat4x4(&mesh.defaultGlobalTransform) * XMLoadFloat4x4(&world));
+			for (size_t boneIndex = 0; boneIndex < ModelResource::MAX_BONES; boneIndex++)
+			{
+				data.boneTransforms[boneIndex] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
+			}
+		}
+
+		for (const ModelResource::Subset& subset : mesh.subsets)
+		{
+			// マテリアルの取得
+			const ModelResource::Material& material = modelResource->GetMaterials().at(subset.materialName);
+
+			
+			dc->VSSetShader(vertexShaderMap[material.name].Get(), nullptr, 0);
+			dc->PSSetShader(ps, nullptr, 0);
+
+			//data.materialColorKd = material.Kd;
 			data.materialColorKs = material.Ks;
 			data.materialColorKa = material.Ka;
 

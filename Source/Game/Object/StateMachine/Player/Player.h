@@ -7,6 +7,7 @@
 
 #include "../../Library/3D/CameraBase.h"
 #include "../../../../Other/SwordTrail/SwordTrail.h"
+#include "../../Library/Easing.h"
 
 
 enum class PlayerAnimNum
@@ -74,6 +75,15 @@ public:
 		float leastBt = 1;
 		float maxBt = 10;
 		float incrementBt = 2;
+
+		// alpha
+		float alphaTimer = 0.6f;
+		float alphaTime = 0.6;
+		Easing::EasingValue dodgeAlphaUp =
+		{
+			0.3f, 0.6f,
+			0.0f,1.0f
+		};
 	};
 
 private:
@@ -93,6 +103,7 @@ public:
 	void Initialize();
 	void Update() override;
 	void Render(bool isShadow = false) override;
+	void Render(ID3D11PixelShader* ps);
 	void DrawDebugImGui(int number);
 
 	void UpdateAnimationParam();
@@ -134,6 +145,8 @@ public:
 	void OnHitAttack(bool hitWeak);
 
 	void UpdateHitStopTimer();
+
+	void AlphaUpdate();
 
 public:
 	enum class State
@@ -227,4 +240,10 @@ public:
 	float hitStopTimer;
 	float hitStopTime = 0.05f;
 	float weakHitStopTime = 0.1f;
+
+public:
+	// ï`âÊÉJÉâÅ[
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> pbrPS;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> wboitPbrPS;
+	DirectX::XMFLOAT4 drawColor = { 1,1,1,1 };
 };

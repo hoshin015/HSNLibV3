@@ -6,6 +6,7 @@
 #include "../../../../../Library/Input/InputManager.h"
 #include "../../../../../Library/Particle/EmitterManager.h"
 #include "../../../../UserInterface/UiGame.h"
+#include "../../DodgeEffect/DodgeEffect.h"
 
 ///////////////////////////
 ///
@@ -287,6 +288,12 @@ void PlayerDodgeState::Enter() {
 	owner->AStatus().dodgeTimer = owner->CStatus().dodgeTime;
 	owner->GetAnimator().SetParameter("endDodge", false);
 	owner->GetAnimator().SetNextState("dodge");
+	owner->CStatus().alphaTimer = 0.0f;
+
+	DodgeEffect::DodgeData* dodge = new DodgeEffect::DodgeData();
+	dodge->trans = owner->GetTransform();
+	dodge->key = owner->GetAnimatorKeyFrame();
+	DodgeEffect::Instance().Register(dodge);
 }
 
 void PlayerDodgeState::Execute() {

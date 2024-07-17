@@ -44,7 +44,7 @@ public:
 		bool  isJustDodge        = false;
 
 		// ‘ÌŠ²
-		float bodyTrunkStrength      = 1;
+		float bodyTrunkStrength      = 5;
 		float bodyTrunkStrengthRange = 3; // ƒ‰ƒ“ƒ_ƒ€‚Ì”ÍˆÍ
 
 		float hitDamage = 0;
@@ -79,9 +79,10 @@ public:
 		float leastStrength       = 10;
 		//float maxStrength         = 60;
 		//float incrementStrength   = 2;
-		float maxSkillGauge       = 100;
-		float incrementSkill      = 5;
-		float skillDamageRate     = 3;
+		float maxSkillGauge   = 100;
+		float incrementSkill  = 7;
+		float incSkillRange   = 2;
+		float skillDamageRate = 3;
 
 		float leastBt = 5;
 		//float maxBt = 25;

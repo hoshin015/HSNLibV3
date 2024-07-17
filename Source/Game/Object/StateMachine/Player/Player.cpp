@@ -41,31 +41,38 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	idle.motion = &animation[3];
 	idle.animationSpeed = 0.75f;
 	idle.threshold = { 0,0 };
+	idle.animationIndex = 3;
 
 	Animator::Motion walkMae;
 	walkMae.motion = &animation[16];
 	walkMae.animationSpeed = 1.2f;
 	walkMae.threshold = { 0,1 };
+	walkMae.animationIndex = 16;
 
 	Animator::Motion walkUsiro;
 	walkUsiro.motion = &animation[18];
 	walkUsiro.animationSpeed = 1.2f;
 	walkUsiro.threshold = { 0,-1 };
+	walkUsiro.animationIndex = 18;
 
 	Animator::Motion walkLeft;
 	walkLeft.motion = &animation[15];
 	walkLeft.animationSpeed = 1.2f;
 	walkLeft.threshold = { 1,0 };
+	walkLeft.animationIndex = 15;
+
 
 	Animator::Motion walkRight;
 	walkRight.motion = &animation[17];
 	walkRight.animationSpeed = 1.2f;
 	walkRight.threshold = { -1,0 };
+	walkRight.animationIndex = 17;
 
 	Animator::Motion runMotion;
 	runMotion.motion = &animation[9];
 	runMotion.animationSpeed = 1.25f;
 	runMotion.threshold = { 0,1 };
+	runMotion.animationIndex = 9;
 
 	Animator::Motion attack1;
 	attack1.motion = &animation[4];
@@ -100,54 +107,64 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	dodgeMae.animationSpeed = 1.f;
 	dodgeMae.threshold = { 0,1 };
 	dodgeMae.loop = false;
+	dodgeMae.animationIndex = 12;
 
 	Animator::Motion dodgeUsiro;
 	dodgeUsiro.motion = &animation[14];
 	dodgeUsiro.animationSpeed = 1.f;
 	dodgeUsiro.threshold = { 0,-1 };
 	dodgeUsiro.loop = false;
+	dodgeUsiro.animationIndex = 14;
 
 	Animator::Motion dodgeLeft;
 	dodgeLeft.motion = &animation[11];
 	dodgeLeft.animationSpeed = 1.f;
 	dodgeLeft.threshold = { 1,0 };
 	dodgeLeft.loop = false;
+	dodgeLeft.animationIndex = 11;
 
 	Animator::Motion dodgeRight;
 	dodgeRight.motion = &animation[13];
 	dodgeRight.animationSpeed = 1.f;
 	dodgeRight.threshold = { -1,0 };
 	dodgeRight.loop = false;
+	dodgeRight.animationIndex = 13;
 
 	Animator::Motion hit;
 	hit.motion = &animation[0];
 	hit.animationSpeed = 1.f;
 	hit.threshold = { -1,0 };
 	hit.loop = false;
+	hit.animationIndex = 0;
 
 	Animator::Motion down;
 	down.motion = &animation[1];
 	down.animationSpeed = 1.f;
 	down.threshold = { -1,0 };
 	down.loop = false;
+	down.animationIndex = 1;
 
 	Animator::Motion wakeUp;
 	wakeUp.motion = &animation[8];
 	wakeUp.animationSpeed = 1.f;
 	wakeUp.threshold = { -1,0 };
 	wakeUp.loop = false;
+	wakeUp.animationIndex = 8;
 
 	Animator::Motion rise;
 	rise.motion = &animation[8];
 	rise.animationSpeed = 1.f;
 	rise.threshold = { -1,0 };
 	rise.loop = false;
+	rise.animationIndex = 8;
 
 	Animator::Motion death;
-	death .motion = &animation[10];
-	death .animationSpeed = 1.f;
-	death .threshold = { -1,0 };
-	death .loop = false;
+	death.motion = &animation[10];
+	death.animationSpeed = 1.f;
+	death.threshold = { -1,0 };
+	death.loop = false;
+	death.animationIndex = 10;
+
 
 	Animator::BlendTree walkTree;
 	walkTree.motions.emplace_back(idle);
@@ -1008,7 +1025,7 @@ void Player::CalcJustDodge() {
 
 		//Timer::Instance().SetTimeScale(0.3f);
 		//OnHitAttack(false);
-		ability.skillGauge += constant.incrementSkill;
+		ability.skillGauge += Math::RandomRange(constant.incrementSkill - constant.incSkillRange, constant.incrementSkill + constant.incSkillRange);
 		if(ability.skillGauge>=constant.maxSkillGauge) {
 			ability.isSkillGaugeMax = true;
 		}
@@ -1296,7 +1313,7 @@ void Player::CollisionVsEnemy()
 				enemy.SetFlinchValue(enemy.GetFlinchValue() - btStrength);
 				Enemy::Instance().OnAttacked(strength);
 
-				std::string dmgText = std::to_string(static_cast<int>(strength));
+				std::string dmgText = std::to_string(static_cast<int>(strength*10));
 				DamageTextManager::Instance().Register({ dmgText, collisionPoint });
 			}
 		}

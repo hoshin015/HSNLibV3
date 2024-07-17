@@ -135,6 +135,8 @@ void UiGame::Update()
 	auto& player = Player::Instance();
 	hp = player.AStatus().hp;
 	hpMax = player.CStatus().maxHp;
+	skill = player.AStatus().skillGauge;
+	skillMax = player.CStatus().maxSkillGauge;
 }
 
 // •`‰æ

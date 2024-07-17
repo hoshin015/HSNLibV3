@@ -22,6 +22,7 @@ public:
 	float timer;
 	float maxTime = 2.5f;
 	float speed = 5.0f;
+	float fallSpeed = 10.0f;
 	bool complete;
 };
 

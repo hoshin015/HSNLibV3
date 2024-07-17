@@ -23,7 +23,7 @@ void Gate::Update()
 	// ステージに入ったら下げる
 	if (enterStage)
 	{
-		position.y -= speed * elapsedTime;
+		position.y -= fallSpeed * elapsedTime;
 
 		if (position.y < 0.0f)
 			position.y = 0.0f;
@@ -60,6 +60,7 @@ void Gate::DrawDebugImGui()
 	ImGui::Checkbox(u8"完了", &complete);
 	ImGui::DragFloat(u8"タイマー", &timer);
 	ImGui::DragFloat(u8"スピード", &speed);
+	ImGui::DragFloat(u8"落下速度", &fallSpeed);
 
 	if (ImGui::Button(u8"リセット", { 200.0f, 30.0f }))
 	{

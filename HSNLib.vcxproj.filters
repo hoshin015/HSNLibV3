@@ -512,6 +512,9 @@
     <ClCompile Include="Source\Other\SwordTrail\SwordTrail.cpp">
       <Filter>2_Source\Game\Other\SwordTrail</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\Object\Stage\Gate.cpp">
+      <Filter>2_Source\Game\Object\Stage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -891,6 +894,9 @@
     </ClInclude>
     <ClInclude Include="Source\UserInterface\UiClearAfter.h">
       <Filter>2_Source\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\Stage\Gate.h">
+      <Filter>2_Source\Game\Object\Stage</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Object\Stage\Gate.h" />
     <ClInclude Include="Source\Other\SwordTrail\SwordTrail.h">

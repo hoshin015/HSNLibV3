@@ -67,6 +67,8 @@ public:
 	// クリアフラグON
 	void OnClear();
 
+	bool IsClear() const { return clearFlag; }
+
 	void SetAllOffRender();
 
 private:
@@ -81,7 +83,7 @@ private:
 	};
 	int state = static_cast<int>(State::NO);
 
-	float clearAfterTime = 11.0f;
+	float clearAfterTime = 40.0f;
 	float clearAfterTimer = 0.0f;
 
 	std::unique_ptr<Sprite> imgText;

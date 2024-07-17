@@ -340,18 +340,55 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	{
 		wallSpheres.emplace_back(Vector3{ static_cast<float>(i) + 5.0f, 0.0f, 106.5f });
 	}
-	wallSpheres.emplace_back(Vector3(4.5f, 0.0f, 106.5f));
+	wallSpheres.emplace_back(Vector3(4.3f, 0.0f, 106.5f));
+
+	// 左壁側面
+	for (int i = 0; i < 28; i++)
+	{
+		wallSpheres.emplace_back(Vector3(4.3f, 0.0f, 106.5f + -static_cast<float>(i)));
+	}
 
 	// 右壁手前
-	wallSpheres.emplace_back(Vector3(-4.5f, 0.0f, 106.5f));
+	wallSpheres.emplace_back(Vector3(-4.3f, 0.0f, 106.5f));
 	for (int i = 0; i < 11; i++)
 	{
 		wallSpheres.emplace_back(Vector3{ -static_cast<float>(i) + -5.0f, 0.0f, 106.5f });
 	}
 
+	// 右壁側面
+	for (int i = 0; i < 28; i++)
+	{
+		wallSpheres.emplace_back(Vector3(-4.3f, 0.0f, 106.5f + -static_cast<float>(i)));
+	}
 
 	// swordTrail
 	swordTrail = std::make_unique<SwordTrail>();
+}
+
+	// 樽の当たり判定
+	wallSpheres.emplace_back(Vector3(24.2f, 0.0f, 141.8f));
+	wallSpheres.emplace_back(Vector3(26.0f, 0.0f, 137.8f));
+	wallSpheres.emplace_back(Vector3(22.0f, 0.0f, 146.5f));
+	wallSpheres.emplace_back(Vector3(20.5f, 0.0f, 148.7f));
+
+	// ベット
+	// 足元側
+	for(int i = 0; i < 4; i++)
+	{
+		wallSpheres.emplace_back(Vector3(21.0f, 0.0f, 130.7f + static_cast<float>(i)));
+	}
+
+	// 左側面
+	for (int i = 0; i < 7; i++)
+	{
+		wallSpheres.emplace_back(Vector3(22.0f + static_cast<float>(i), 0.0f, 133.7f));
+	}
+
+	// 右側面
+	for (int i = 0; i < 7; i++)
+	{
+		wallSpheres.emplace_back(Vector3(22.0f + static_cast<float>(i), 0.0f, 130.7f));
+	}
 }
 
 void Player::Initialize()
@@ -363,6 +400,8 @@ void Player::Initialize()
 	PlayAnimation(static_cast<int>(PlayerAnimNum::Idle), true);
 
 	Respawn();
+
+	hitStopTimer = 0.0f;
 }
 
 void Player::Update()
@@ -431,6 +470,8 @@ void Player::Update()
 
 	// --- 位置の制限 ---
 	ClampPosition(79.0f);
+
+	UpdateHitStopTimer();
 
 
 	// 姿勢行列更新
@@ -502,7 +543,7 @@ void Player::DrawDebugImGui(int number) {
 		ImGui::Separator();
 		ImGui::Checkbox(u8"入口に入ったか", &enterEntrance);
 		ImGui::DragFloat3(u8"待機場所の中心", &restRoomCenter.x);
-		ImGui::DragFloat(u8"待機場所の半径", &radius);
+		ImGui::DragFloat(u8"待機場所の半径", &restRoomRadius);
 		ImGui::DragFloat3(u8"入口の立方体の位置", &entrance.position.x);
 		ImGui::DragFloat3(u8"入口の立方体のサイズ", &entrance.size.x);
 		ImGui::DragFloat3(u8"入口の左壁の位置", &entranceLWall.position.x);
@@ -510,6 +551,8 @@ void Player::DrawDebugImGui(int number) {
 		ImGui::DragFloat3(u8"入口の右壁の位置", &entranceRWall.position.x);
 		ImGui::DragFloat3(u8"入口の右壁のサイズ", &entranceRWall.size.x);
 		ImGui::Checkbox(u8"ヒット", &isHit);
+		ImGui::DragFloat(u8"ヒットストップタイマー", &hitStopTimer);
+		ImGui::DragFloat(u8"ヒットストップの時間", &hitStopTime);
 
 		//ImGui::ShowDemoWindow();
 		if(ImGui::CollapsingHeader(u8"ステータス")) {
@@ -1103,7 +1146,7 @@ void Player::CollisionVsEnemy()
 					collision.isDamaged = true;
 				}
 
-				Enemy::Instance().OnAttacked(ability.strength);
+				OnHitAttack(eBoneSphere.skeletonType == SkeletonSphereCollision::SkeletonType::WeakPoint1);
 
 				ConsoleData::Instance().logs.push_back("Damage!");
 
@@ -1238,8 +1281,8 @@ void Player::PowerSwordEffetUpdate()
 
 void Player::DrawDebug()
 {
-	DebugPrimitive::Instance().AddSphere(restRoomCenter.vec_, radius, { 0.3f, 0.3f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddCube(position, {1.0f, 1.0f, 1.0f}, { 0.3f, 0.3f, 1.0f, 1.0f });
+	DebugPrimitive::Instance().AddSphere(restRoomCenter.vec_, restRoomRadius, { 0.3f, 0.3f, 1.0f, 1.0f });
+	DebugPrimitive::Instance().AddCube(position, {1.5f, 1.5f, 1.5f}, { 0.3f, 0.3f, 1.0f, 1.0f });
 	DebugPrimitive::Instance().AddCube(entrance.position.vec_, entrance.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
 	DebugPrimitive::Instance().AddCube(entranceLWall.position.vec_, entranceLWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
 	DebugPrimitive::Instance().AddCube(entranceLWall.position.vec_, entranceLWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
@@ -1253,6 +1296,51 @@ void Player::DrawDebug()
 	DebugPrimitive::Instance().AddSphere(position, playerRadius, { 1.0f, 0.3f, 0.3f, 1.0f });
 }
 
+void Player::OnHitAttack(bool hitWeak)
+{
+	Enemy::Instance().OnAttacked(ability.strength);
+	Enemy::Instance().wasAttacked = true;
+
+	Timer::Instance().SetTimeScale(0.0f);
+
+	// Todo : 頭なら大き目にヒットストップさせる
+	CameraManager::Instance().shakeTimer = hitStopTime;
+	hitStopTimer = (hitWeak) ? weakHitStopTime : hitStopTime;
+}
+
+void Player::UpdateHitStopTimer()
+{
+	if (hitStopTimer > 0.0f)
+	{
+		hitStopTimer -= Timer::Instance().UnscaledDeltaTime();
+
+		if (hitStopTimer < 0.0f)
+		{
+			hitStopTimer = 0.0f;
+			Timer::Instance().SetTimeScale(1.0f);
+		}
+	}
+}
+
+
+static bool IntersectBoxVSBox(const Vector3& positionA, const Vector3& sizeA, const Vector3& positionB, const Vector3& sizeB)
+{
+	Vector3 rightTopBackA = positionA + sizeA * 0.5f;
+	Vector3 leftBottomFrontA = positionA - sizeA * 0.5f;
+
+	Vector3 rightTopBackB = positionB + sizeB * 0.5f;
+	Vector3 leftBottomFrontB = positionB - sizeB * 0.5f;
+
+	if (leftBottomFrontA.x < rightTopBackB.x &&
+		rightTopBackA.x    > leftBottomFrontB.x &&
+		leftBottomFrontA.y < rightTopBackB.y &&
+		rightTopBackA.y    > leftBottomFrontB.y &&
+		leftBottomFrontA.z < rightTopBackB.z &&
+		rightTopBackA.z    > leftBottomFrontB.z)
+		return true;
+
+	return false;
+}
 
 
 // --- 位置の制限 ---
@@ -1270,58 +1358,38 @@ void Player::ClampPosition(float range)
 
 
 
-	// --- 立方体同士の交差判定 ---
-	auto collision = [](const Vector3& positionA, const Vector3& sizeA, const Vector3& positionB, const Vector3& sizeB)->bool
-		{
-			Vector3 rightTopBackA = positionA + sizeA * 0.5f;
-			Vector3 leftBottomFrontA = positionA - sizeA * 0.5f;
+	//auto extrusion = [&](const Vector3& cubePosition, const float elapsedTime)
+	//	{
+	//		// --- ブロックの面の向きに押し返す ---
+	//		Vector3 vec = pos - cubePosition;
+	//		vec.Normalize();
 
-			Vector3 rightTopBackB = positionB + sizeB * 0.5f;
-			Vector3 leftBottomFrontB = positionB - sizeB * 0.5f;
+	//		// --- Y軸 0固定 ---
+	//		vec.y = 0.0f;
 
-			if (leftBottomFrontA.x < rightTopBackB.x &&
-				rightTopBackA.x    > leftBottomFrontB.x &&
-				leftBottomFrontA.y < rightTopBackB.y &&
-				rightTopBackA.y    > leftBottomFrontB.y &&
-				leftBottomFrontA.z < rightTopBackB.z &&
-				rightTopBackA.z    > leftBottomFrontB.z)
-				return true;
+	//		const Vector3 directions[4] =
+	//		{
+	//			Vector3::Front_,
+	//			Vector3::Left_,
+	//			Vector3::Back_,
+	//			Vector3::Right_
+	//		};
 
-			return false;
-		};
+	//		float dots[4] = {};
 
-	auto extrusion = [&](const Vector3& cubePosition, const float elapsedTime)
-		{
-			// --- ブロックの面の向きに押し返す ---
-			Vector3 vec = pos - cubePosition;
-			vec.Normalize();
-
-			// --- Y軸 0固定 ---
-			vec.y = 0.0f;
-
-			const Vector3 directions[4] =
-			{
-				Vector3::Front_,
-				Vector3::Left_,
-				Vector3::Back_,
-				Vector3::Right_
-			};
-
-			float dots[4] = {};
-
-			for (size_t i = 0; i < 4; i++)
-				dots[i] = vec.Dot(directions[i]);
+	//		for (size_t i = 0; i < 4; i++)
+	//			dots[i] = vec.Dot(directions[i]);
 
 
-			size_t indices[2] = { -1, -1 };
+	//		size_t indices[2] = { -1, -1 };
 
-			indices[0] = (dots[0] > dots[2]) ? 0 : 2;
-			indices[1] = (dots[1] > dots[3]) ? 1 : 3;
+	//		indices[0] = (dots[0] > dots[2]) ? 0 : 2;
+	//		indices[1] = (dots[1] > dots[3]) ? 1 : 3;
 
-			indices[0] = (dots[indices[0]] > dots[indices[1]]) ? indices[0] : indices[1];
+	//		indices[0] = (dots[indices[0]] > dots[indices[1]]) ? indices[0] : indices[1];
 
-			position += (directions[indices[0]] * 25.0f * elapsedTime).vec_;
-		};
+	//		position += (directions[indices[0]] * 25.0f * elapsedTime).vec_;
+	//	};
 
 
 
@@ -1329,15 +1397,15 @@ void Player::ClampPosition(float range)
 	if(!enterStage)
 	{
 		// 入り口の判定
-		if (!collision(entrance.position, entrance.size, position, { 1.0f, 1.0f, 1.0f }))
+		if (!IntersectBoxVSBox(entrance.position, entrance.size, position, { 1.5f, 1.5f, 1.5f }))
 		{
 			// 入ってなかったら待機場所に
-			if (restRoomLength > radius)
+			if (restRoomLength > restRoomRadius)
 			{
 				if (!enterStage)
 				{
 					restRoomVec.Normalize();
-					position = (restRoomCenter + restRoomVec * radius).vec_;
+					position = (restRoomCenter + restRoomVec * restRoomRadius).vec_;
 				}
 			}
 		}

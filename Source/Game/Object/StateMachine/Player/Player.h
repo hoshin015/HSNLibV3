@@ -24,7 +24,7 @@ public:
 	// ƒQ[ƒ€’†•Ï“®‚·‚é’l
 	struct AbilityStatus {
 		float hp        = 0;
-		float strength  = 1;
+		float strength  = 15;
 		float moveSpeed = 7;
 		float attackCount = 0;
 		float attackTimer = 0;
@@ -111,6 +111,10 @@ public:
 
 	void DrawDebug();
 
+	void OnHitAttack(bool hitWeak);
+
+	void UpdateHitStopTimer();
+
 public:
 	enum class State
 	{
@@ -179,7 +183,7 @@ public:
 	bool enterEntrance;
 
 	Vector3 restRoomCenter = { 0.0f, 0.0f, 132.0f };
-	float radius = 29.0f;
+	float restRoomRadius = 28.0f;
 	Vector3 size = { 10.0f, 10.0f, 10.0f };
 	bool isHit;
 	Vector3 entranceCubePosition = { 0.0f, 0.0f, 92.0f };
@@ -200,4 +204,7 @@ public:
 
 	// SwordTrail
 	std::unique_ptr<SwordTrail> swordTrail;
+	float hitStopTimer;
+	float hitStopTime = 0.05f;
+	float weakHitStopTime = 0.1f;
 };

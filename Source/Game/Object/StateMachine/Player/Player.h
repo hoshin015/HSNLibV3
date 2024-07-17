@@ -23,21 +23,26 @@ class Player : public AnimatedObject
 public:
 	// ƒQ[ƒ€’†•Ï“®‚·‚é’l
 	struct AbilityStatus {
-		float hp        = 0;
-		float strength  = 5;
-		float moveSpeed = 7;
-		float attackCount = 0;
-		float attackTimer = 0;
+		float hp          = 0;
+		float moveSpeed   = 7;
 
-		//‰ñ”ğ
-		float dodgeTimer = 0;
-		float notAcceptTimer = 0;
+		// UŒ‚
+		float strength      = 10;
+		float strengthRange = 5;
+		float attackCount   = 0;
+		float attackTimer   = 0;
+		float skillGauge    = 0;
+		bool isSkillGaugeMax = false;
+
+		// ‰ñ”ğ
+		float dodgeTimer         = 0;
+		float notAcceptTimer     = 0;
 		float justDodgeSlowTimer = 3;
-		bool isJustDodge = false;
+		bool  isJustDodge        = false;
 
-		//‘ÌŠ²
-		float bodyTrunkStrength = 1;
-		float bodyTrunkStrengthRange = 1; // ƒ‰ƒ“ƒ_ƒ€‚Ì”ÍˆÍ
+		// ‘ÌŠ²
+		float bodyTrunkStrength      = 1;
+		float bodyTrunkStrengthRange = 5; // ƒ‰ƒ“ƒ_ƒ€‚Ì”ÍˆÍ
 
 		float hitDamage = 0;
 		bool isHitDamage = false;
@@ -62,18 +67,22 @@ public:
 		float dodgeLowestTime = 0.5f;
 		float dodgeInvincibleTime = 0.5f;
 		float justDodgeTime   = 0.1f;
+		float justDodgeInvincibleTime = 0.3f;
 
 		// UŒ‚
-		float maxAttackCombo = 4;
+		float maxAttackCombo      = 4;
 		float attackReceptionTime = 0.1f;
-		float notAcceptTime = 0.16f;
-		float leastStrength = 5;
-		float maxStrength = 60;
-		float incrementStrength = 2;
+		float notAcceptTime       = 0.16f;
+		float leastStrength       = 10;
+		float maxStrength         = 60;
+		//float incrementStrength   = 2;
+		float maxSkillGauge       = 100;
+		float incrementSkill      = 5;
+		float skillDamageRate     = 3;
 
-		float leastBt = 1;
-		float maxBt = 10;
-		float incrementBt = 2;
+		float leastBt = 10;
+		float maxBt = 25;
+		//float incrementBt = 2;
 	};
 
 private:

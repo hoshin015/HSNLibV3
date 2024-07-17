@@ -599,6 +599,9 @@ void Player::DrawDebugImGui(int number) {
 				ImGui::DragFloat(u8"最低攻撃力", &constant.leastStrength,0.01f);
 				ImGui::DragFloat(u8"最大攻撃力", &constant.maxStrength, 0.01f);
 
+				ImGui::DragFloat(u8"最低怯み力", &constant.leastBt, 0.01f);
+				ImGui::DragFloat(u8"最大怯み力", &constant.maxBt, 0.01f);
+
 				ImGui::TreePop();
 			}
 
@@ -618,7 +621,6 @@ void Player::DrawDebugImGui(int number) {
 			}
 
 		}
-
 #ifdef _DEBUG
 		if(ImGui::CollapsingHeader(u8"デバッグ")) {
 			for (auto& [name, data] : debug) {
@@ -1005,11 +1007,17 @@ void Player::CalcJustDodge() {
 
 		//Timer::Instance().SetTimeScale(0.3f);
 		//OnHitAttack(false);
+		ability.skillGauge += constant.incrementSkill;
+		if(ability.skillGauge>=constant.maxSkillGauge) {
+			ability.isSkillGaugeMax = true;
+		}
 		ability.justDodgeSlowTimer = 0;
 		ability.isJustDodge = false;
 	}
 	else {
-		ability.strength = max(ability.strength - dt, constant.leastStrength);
+		if (ability.skillGauge <= 0) { ability.isJustDodge = false; }
+		if ()
+		ability.strength = constant.leastStrength;
 		ability.bodyTrunkStrength = max(ability.bodyTrunkStrength - dt, constant.leastBt);
 
 		if (GetInputMap<bool>("Attack")) ability.justDodgeSlowTimer = 3;
@@ -1022,7 +1030,7 @@ void Player::CalcJustDodge() {
 
 void Player::HitDamaged(float damage, bool invincibleInvalid, bool flying ,Vector3 vec) {
 	ability.hitDamage = damage;
-	ability.isHitDamage = true;
+	ability.isHitDamage = ability.hitDamage > 0;
 	ability.isInvincibleInvalidDamage = invincibleInvalid;
 	ability.isFlying = flying;
 	ability.flyVec = vec;
@@ -1048,7 +1056,7 @@ void Player::Turn()
 	}
 	else vel = velocity;
 
-	// 移動していなければ return 
+	// 移動していなければ return
 	if (vel.Length() < 0.0001f) return;
 	vel.Normalize();
 
@@ -1266,11 +1274,14 @@ void Player::CollisionVsEnemy()
 				//int dmg = rand() % 20 + 1;
 				//std::string dmgText = std::to_string(dmg);
 				//DamageTextManager::Instance().Register({ dmgText, collisionPoint });
+
 				OnHitAttack(false);
 				float btStrength = Math::RandomRange(ability.bodyTrunkStrength - ability.bodyTrunkStrengthRange, ability.bodyTrunkStrength + ability.bodyTrunkStrengthRange);
-				enemy.SetFlinchValue(enemy.GetFlinchValue() + btStrength);
+				float strength = Math::RandomRange(ability.strength - ability.strengthRange, ability.strength + ability.strengthRange);
+				enemy.SetFlinchValue(enemy.GetFlinchValue() - btStrength);
+				Enemy::Instance().OnAttacked(strength);
 
-				std::string dmgText = std::to_string(btStrength);
+				std::string dmgText = std::to_string(static_cast<int>(strength));
 				DamageTextManager::Instance().Register({ dmgText, collisionPoint });
 			}
 		}
@@ -1348,7 +1359,7 @@ void Player::DrawDebug()
 
 void Player::OnHitAttack(bool hitWeak)
 {
-	Enemy::Instance().OnAttacked(ability.strength);
+	// Enemy::Instance().OnAttacked(ability.strength);
 	Enemy::Instance().wasAttacked = true;
 
 	Timer::Instance().SetTimeScale(0.0f);
@@ -1475,7 +1486,6 @@ void Player::ClampPosition(float range)
 			}
 		}
 
-		
 		//// 左右の壁
 		//if (collision(entranceLWall.position, entranceLWall.size, position, { 1.0f, 1.0f, 1.0f }))
 		//{

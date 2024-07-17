@@ -336,10 +336,13 @@ void PlayerDodgeState::Execute() {
 		EmitterManager::Instance().Register(emitter0);
 	}
 
-	if (owner->AStatus().dodgeTimer < justDodgeTimer && owner->AStatus().isHitDamage)
+	if (owner->AStatus().dodgeTimer <= cs.justDodgeTime && owner->AStatus().isHitDamage)
 		owner->AStatus().isJustDodge = true;
 
-	if (owner->AStatus().dodgeTimer < dodgeInvincibleTime) {
+	if(owner->AStatus().isHitDamage&&owner->AStatus().isInvincibleInvalidDamage)
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Damage));
+
+	if (owner->AStatus().dodgeTimer < cs.dodgeInvincibleTime) {
 		if (owner->AStatus().isHitDamage)owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Damage));
 	}
 	else owner->AStatus().isHitDamage = false;

@@ -24,16 +24,24 @@ public:
 	// ゲーム中変動する値
 	struct AbilityStatus {
 		float hp        = 0;
-		float strength  = 15;
+		float strength  = 5;
 		float moveSpeed = 7;
 		float attackCount = 0;
 		float attackTimer = 0;
+
+		//回避
 		float dodgeTimer = 0;
 		float notAcceptTimer = 0;
+		float justDodgeSlowTimer = 3;
+		bool isJustDodge = false;
 
+		//体幹
+		float bodyTrunkStrength = 1;
+		float bodyTrunkStrengthRange = 1; // ランダムの範囲
 
 		float hitDamage = 0;
 		bool isHitDamage = false;
+		bool isInvincibleInvalidDamage = false;
 
 		Vector3 flyVec = { 0,0,0 };
 		bool isFlying = false;
@@ -43,18 +51,29 @@ public:
 	struct ConstantStatus {
 		float maxHp = 1000;
 
+		float walkSpeed      = 5;
 		float shiftDashTimer = 0.4f;
-		float walkSpeed = 5;
-		float dashSpeed = 2.4f;
-		float dashDeadZone = 0.7f;
+		float dashSpeed      = 2.4f;
+		float dashDeadZone   = 0.7f;
 
-		float dodgePower = 24;
+		// 回避
+		float dodgePower      = 24;
+		float dodgeTime       = 1.5f;
 		float dodgeLowestTime = 0.5f;
-		float dodgeTime = 1.5f;
+		float dodgeInvincibleTime = 0.5f;
+		float justDodgeTime   = 0.1f;
 
+		// 攻撃
 		float maxAttackCombo = 4;
 		float attackReceptionTime = 0.1f;
 		float notAcceptTime = 0.16f;
+		float leastStrength = 5;
+		float maxStrength = 60;
+		float incrementStrength = 2;
+
+		float leastBt = 1;
+		float maxBt = 10;
+		float incrementBt = 2;
 	};
 
 private:
@@ -89,9 +108,10 @@ public:
 	void CalcDodgeVelocity();
 	// 攻撃
 	void CalcAttackVelocity();
+	void CalcJustDodge();
 
 	// ダメージ
-	void HitDamaged(float damage, bool flying = false, Vector3 vec = {0,0,0});
+	void HitDamaged(float damage,bool invincibleInvalid = false,  bool flying = false, Vector3 vec = {0,0,0});
 
 	// RootAnimation
 	void CalcRootAnimationVelocity();

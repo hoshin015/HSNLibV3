@@ -470,7 +470,7 @@ void Enemy::CollisionVSPlayer()
 
 				if (current == &animator.GetState("asidon")) frying = true;
 
-				player.HitDamaged(attackPower,false,frying,fryVec);
+				player.HitDamaged(attackPower,false,true,fryVec);
 
 				// --- ‚±‚ÌUŒ‚‚ÅƒvƒŒƒCƒ„[‚ª€–S‚µ‚½‚Æ‚« ---
 				// if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)

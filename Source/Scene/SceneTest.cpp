@@ -120,6 +120,7 @@ void SceneTest::Initialize()
 	Player::Instance().Initialize();
 	Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());	// ¡‚ÌƒJƒƒ‰‚ğİ’è
 
+	Player::Instance().SetColorFilter(colorFilter.get());
 
 	Particle::Instance().Initialize();
 

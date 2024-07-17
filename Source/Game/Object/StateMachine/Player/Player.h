@@ -9,6 +9,8 @@
 #include "../../../../Other/SwordTrail/SwordTrail.h"
 
 
+class ColorFilter;
+
 enum class PlayerAnimNum
 {
 	Attack,
@@ -38,11 +40,12 @@ public:
 		float dodgeTimer         = 0;
 		float notAcceptTimer     = 0;
 		float justDodgeSlowTimer = 3;
+		float justDodgeInvincibleTimer = 0;
 		bool  isJustDodge        = false;
 
 		// 体幹
 		float bodyTrunkStrength      = 1;
-		float bodyTrunkStrengthRange = 5; // ランダムの範囲
+		float bodyTrunkStrengthRange = 3; // ランダムの範囲
 
 		float hitDamage = 0;
 		bool isHitDamage = false;
@@ -64,9 +67,9 @@ public:
 		// 回避
 		float dodgePower      = 24;
 		float dodgeTime       = 1.5f;
-		float dodgeLowestTime = 0.5f;
+		float dodgeLowestTime = 0.42f;
 		float dodgeInvincibleTime = 0.5f;
-		float justDodgeTime   = 0.1f;
+		float justDodgeTime   = 0.21f;
 		float justDodgeInvincibleTime = 0.3f;
 
 		// 攻撃
@@ -74,14 +77,14 @@ public:
 		float attackReceptionTime = 0.1f;
 		float notAcceptTime       = 0.16f;
 		float leastStrength       = 10;
-		float maxStrength         = 60;
+		//float maxStrength         = 60;
 		//float incrementStrength   = 2;
 		float maxSkillGauge       = 100;
 		float incrementSkill      = 5;
 		float skillDamageRate     = 3;
 
-		float leastBt = 10;
-		float maxBt = 25;
+		float leastBt = 5;
+		//float maxBt = 25;
 		//float incrementBt = 2;
 	};
 
@@ -179,7 +182,7 @@ private:
 	// --- カメラのポインタ ---
 	CameraBase* camera;
 
-	//Animator animator;
+	ColorFilter* colorFilter;
 
 	// ステータス
 	AbilityStatus ability;
@@ -191,6 +194,7 @@ public:
 	DirectX::XMFLOAT3 GetVelocity() { return velocity; }
 	void              SetVelocity(DirectX::XMFLOAT3 velocity) { this->velocity = velocity; }
 
+	void SetColorFilter(ColorFilter* cf) { colorFilter = cf; }
 
 	template <typename T>
 	const T& GetInputMap(const std::string& str)

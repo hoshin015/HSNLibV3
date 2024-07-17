@@ -18,6 +18,7 @@
 
 #include "../../Source/Camera/CameraDerived.h"
 #include "../../../../../Library/3D/DebugPrimitive.h"
+#include "../../../../../Library/Graphics/ColorFilter.h"
 #include "../../../../UserInterface/UiClearAfter.h"
 #include "../../Stage/Gate.h"
 
@@ -597,10 +598,10 @@ void Player::DrawDebugImGui(int number) {
 				ImGui::DragFloat(u8"ƒWƒƒƒXƒg‰ñ”ğŠÔ", &constant.justDodgeTime,0.01f);
 
 				ImGui::DragFloat(u8"Å’áUŒ‚—Í", &constant.leastStrength,0.01f);
-				ImGui::DragFloat(u8"Å‘åUŒ‚—Í", &constant.maxStrength, 0.01f);
+				//ImGui::DragFloat(u8"Å‘åUŒ‚—Í", &constant.maxStrength, 0.01f);
 
 				ImGui::DragFloat(u8"Å’á‹¯‚İ—Í", &constant.leastBt, 0.01f);
-				ImGui::DragFloat(u8"Å‘å‹¯‚İ—Í", &constant.maxBt, 0.01f);
+				//ImGui::DragFloat(u8"Å‘å‹¯‚İ—Í", &constant.maxBt, 0.01f);
 
 				ImGui::TreePop();
 			}
@@ -1002,8 +1003,8 @@ void Player::CalcJustDodge() {
 	float dt = Timer::Instance().DeltaTime();
 
 	if(ability.isJustDodge) {
-		ability.strength = min(ability.strength+constant.incrementStrength,constant.maxStrength);
-		ability.bodyTrunkStrength = min(ability.bodyTrunkStrength + constant.incrementBt, constant.maxBt);
+		//ability.strength = min(ability.strength+constant.incrementStrength,constant.maxStrength);
+		//ability.bodyTrunkStrength = min(ability.bodyTrunkStrength + constant.incrementBt, constant.maxBt);
 
 		//Timer::Instance().SetTimeScale(0.3f);
 		//OnHitAttack(false);
@@ -1015,16 +1016,32 @@ void Player::CalcJustDodge() {
 		ability.isJustDodge = false;
 	}
 	else {
-		if (ability.skillGauge <= 0) { ability.isJustDodge = false; }
-		if ()
-		ability.strength = constant.leastStrength;
-		ability.bodyTrunkStrength = max(ability.bodyTrunkStrength - dt, constant.leastBt);
+		if (ability.skillGauge <= 0) { ability.isSkillGaugeMax = false; }
 
-		if (GetInputMap<bool>("Attack")) ability.justDodgeSlowTimer = 3;
+		// ƒXƒLƒ‹ŠÖŒW
+		if (ability.isSkillGaugeMax) {
+			ability.strength = constant.leastStrength * constant.skillDamageRate;
+			ability.bodyTrunkStrength = constant.leastBt * constant.skillDamageRate;
+			ability.skillGauge -= dt;
+		}
+		else {
+			ability.strength = constant.leastStrength;
+			ability.bodyTrunkStrength = constant.leastBt;
+		}
+
+		ability.justDodgeInvincibleTimer -= dt;
+
+		if (GetInputMap<bool>("Attack")) {
+			ability.justDodgeSlowTimer = 3;
+			Timer::Instance().SetTimeScale(1);
+		}
 		ability.justDodgeSlowTimer += Timer::Instance().UnscaledDeltaTime();
 		if (ability.justDodgeSlowTimer >= 3) ability.justDodgeSlowTimer = 3;
-
-		Timer::Instance().SetTimeScale(Easing::InQuad(ability.justDodgeSlowTimer, 3.f,1.f,0.f));
+		//(cos(x * pi*2)+1)/2 = (cosf(ability.justDodgeSlowTimer/3 * 6.2831853072)+1)/2
+		static float sat = 1;
+		sat = Math::Lerp(sat, ability.justDodgeInvincibleTimer <= 0 ? 1 : 0, Timer::Instance().UnscaledDeltaTime() * 15);
+		colorFilter->SetSaturation(sat);
+		if(ability.justDodgeSlowTimer < 3)Timer::Instance().SetTimeScale(Easing::InQuad(ability.justDodgeSlowTimer, 3.f,1.f,0.f));
 	}
 }
 
@@ -1271,13 +1288,11 @@ void Player::CollisionVsEnemy()
 				emitter2->emitterData.burstsOneShot = 1;
 				EmitterManager::Instance().Register(emitter2);
 
-				//int dmg = rand() % 20 + 1;
-				//std::string dmgText = std::to_string(dmg);
-				//DamageTextManager::Instance().Register({ dmgText, collisionPoint });
-
-				OnHitAttack(false);
-				float btStrength = Math::RandomRange(ability.bodyTrunkStrength - ability.bodyTrunkStrengthRange, ability.bodyTrunkStrength + ability.bodyTrunkStrengthRange);
-				float strength = Math::RandomRange(ability.strength - ability.strengthRange, ability.strength + ability.strengthRange);
+				bool weakness = eBoneSphere.skeletonType == SkeletonSphereCollision::SkeletonType::WeakPoint1;
+				OnHitAttack(weakness);
+				float rate = weakness ? 1.5f : 1;
+				float btStrength = Math::RandomRange(ability.bodyTrunkStrength * rate - ability.bodyTrunkStrengthRange, ability.bodyTrunkStrength * rate + ability.bodyTrunkStrengthRange);
+				float strength = Math::RandomRange(ability.strength * rate - ability.strengthRange, ability.strength * rate + ability.strengthRange);
 				enemy.SetFlinchValue(enemy.GetFlinchValue() - btStrength);
 				Enemy::Instance().OnAttacked(strength);
 

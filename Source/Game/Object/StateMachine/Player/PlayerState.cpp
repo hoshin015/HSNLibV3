@@ -79,7 +79,7 @@ void PlayerIdleState::Execute()
 	if (owner->GetInputMap<bool>("Dodge"))
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Dodge));
 
-	if (owner->AStatus().isHitDamage)
+	if (owner->AStatus().isHitDamage && owner->AStatus().justDodgeInvincibleTimer <= 0)
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Damage));
 
 	// ‰ñ“]
@@ -132,7 +132,7 @@ void PlayerWalkState::Execute()
 	if (owner->GetInputMap<bool>("Dodge"))
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Dodge));
 
-	if (owner->AStatus().isHitDamage)
+	if (owner->AStatus().isHitDamage && owner->AStatus().justDodgeInvincibleTimer <= 0)
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Damage));
 
 	// ‰ñ“]
@@ -185,7 +185,7 @@ void PlayerRunState::Execute()
 	if (owner->GetInputMap<bool>("Dodge"))
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Dodge));
 
-	if (owner->AStatus().isHitDamage)
+	if (owner->AStatus().isHitDamage && owner->AStatus().justDodgeInvincibleTimer <= 0)
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Damage));
 
 	// ‰ñ“]
@@ -336,13 +336,16 @@ void PlayerDodgeState::Execute() {
 		EmitterManager::Instance().Register(emitter0);
 	}
 
-	if (owner->AStatus().dodgeTimer <= cs.justDodgeTime && owner->AStatus().isHitDamage)
+	if (owner->AStatus().dodgeTimer > justDodgeTimer && owner->AStatus().isHitDamage) {
 		owner->AStatus().isJustDodge = true;
+		owner->AStatus().justDodgeInvincibleTimer = cs.justDodgeInvincibleTime;
+
+	}
 
 	if(owner->AStatus().isHitDamage&&owner->AStatus().isInvincibleInvalidDamage)
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Damage));
 
-	if (owner->AStatus().dodgeTimer < cs.dodgeInvincibleTime) {
+	if (owner->AStatus().dodgeTimer > dodgeInvincibleTime&&owner->AStatus().justDodgeInvincibleTimer<=0) {
 		if (owner->AStatus().isHitDamage)owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Damage));
 	}
 	else owner->AStatus().isHitDamage = false;

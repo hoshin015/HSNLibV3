@@ -363,7 +363,6 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 
 	// swordTrail
 	swordTrail = std::make_unique<SwordTrail>();
-}
 
 	// ’M‚Ì“–‚½‚è”»’è
 	wallSpheres.emplace_back(Vector3(24.2f, 0.0f, 141.8f));

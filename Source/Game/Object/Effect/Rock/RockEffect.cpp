@@ -48,5 +48,8 @@ void RockEffect::Emit(RockEmitter rockEmitter)
 	rock->SetLifeTime(rockEmitter.lifeTime);
 	rock->SetColor({ 1.0, 1.0, 1.0, 1 });
 	rock->SetUpdateType(RockData::RockFuncEnum::Default);
+	rock->isDamaged = rockEmitter.isDamaged;
+	rock->damage = rockEmitter.damage;
+	rock->damageRadius = rockEmitter.damageRadius;
 	rockMesh1->Register(rock);
 }

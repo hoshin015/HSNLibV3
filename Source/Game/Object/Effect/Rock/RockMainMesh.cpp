@@ -47,7 +47,7 @@ void RockData::RockDefaultUpdate()
 	position.z += velocity.z * deltaTime;
 
 	// ínñ ÇÊÇËÇµÇΩÇ»ÇÁçÌèú
-	if(position.y <= -1)
+	if(position.y <= -10)
 	{
 		owner->Remove(this);
 	}

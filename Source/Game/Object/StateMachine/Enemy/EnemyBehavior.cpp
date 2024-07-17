@@ -1029,7 +1029,22 @@ BT_ActionState EnemyStampAction::Run(float elapsedTime)
 			if ((Vector3(Player::Instance().GetPos()) - owner_->GetPos()).Length() < 20.0f)
 				CameraManager::Instance().shakeTimer = 0.5f;
 
-			owner_->PlayRockEffect();
+			for(int i = 0; i < 10; i++)
+			{
+				// 岩エフェクト生成
+				RockEffect::RockEmitter rock;
+				rock.position = Enemy::Instance().GetBonePosition("tumasaki_L");
+				DirectX::XMFLOAT3 rPos = { (rand() % 2 - 1.0f), (rand() % 2 - 1.0f) , (rand() % 2 - 1.0f) };
+				rock.position += rPos;
+				rock.angle = { Math::RandomRange(0,359), Math::RandomRange(0,359),Math::RandomRange(0,359) };
+				rock.scale = { Math::RandomRange(0.25,0.75), Math::RandomRange(0.25,0.75),Math::RandomRange(0.25,0.75) };
+				float r = Math::RandomRange(5, 10);
+				rock.velocity = { Math::RandomRange(-3,3),Math::RandomRange(1,5),Math::RandomRange(-3,3) };
+				rock.gravity = 10;
+				rock.lifeTime = 3;
+				RockEffect::Instance().Emit(rock);
+			}
+
 			owner_->runTimer_ = 0.0f;
 			step++;
 		}

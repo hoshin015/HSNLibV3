@@ -365,6 +365,9 @@ void SpecialEffect::GenerateRock()
 		rock->SetAngle({rX, rY, rZ});
 		rock->SetColor({10.0, 0.8, 0.8, 1});
 		rock->SetUpdateType(RockData::RockFuncEnum::Up);
+
+		rock->isDamaged = false;
+
 		RockEffect::Instance().rockMesh1->Register(rock);
 	}
 }

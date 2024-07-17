@@ -153,6 +153,7 @@ public:
 	bool endRushingBite;
 
 	bool wasAttacked;
+	int hissatuCount;
 
 	void DrawDebugImGui(int number);
 };

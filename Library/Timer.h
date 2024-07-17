@@ -47,6 +47,8 @@ private:
 
 	bool stopped{ false };
 
+	float timeScale = 1.0f;
+
 public:
 
 	// Returns the total time elapsed since Reset() was called, NOT counting any
@@ -156,14 +158,20 @@ public:
 		deltaTime = static_cast<double>(t);
 	}
 
+	void SetTimeScale(const float t) { timeScale = t; }
+
 	// --- ÉQÉbÉ^Å[ ---
 	float DeltaTime() const
 	{
-		return static_cast<float>(deltaTime);
+		return static_cast<float>(deltaTime) * timeScale;
 	}
 	float StoreDeltaTime() const
 	{
 		return static_cast<float>(storeDeltaTime);
+	}
+	float UnscaledDeltaTime() const
+	{
+		return static_cast<float>(deltaTime);
 	}
 
 	void CheckTick()

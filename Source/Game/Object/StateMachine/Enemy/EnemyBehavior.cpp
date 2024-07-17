@@ -10,6 +10,7 @@
 #include "../../../../../Library/3D/CameraManager.h"
 #include "../../Effect/Lightning/LightningEffect.h"
 #include "../../Effect/Rock/RockEffect.h"
+#include "../../Effect/Special/SpecialEffect.h"
 
 
 
@@ -147,7 +148,6 @@ bool EnemyAttackJudgment::Judgment()
 	DirectX::XMFLOAT3 enemyPosition = owner_->GetPos();
 
 	// --- ƒvƒŒƒCƒ„[‚Æ‚Ì‹——£‚ð‚Æ‚é ---
-	// TODO : Ž‹ŠE‚Æ‚©ÄŒ»‚µ‚½‚¢
 	float length = Math::XMFloat3Length(playerPosition, enemyPosition);
 
 
@@ -200,7 +200,7 @@ BT_ActionState EnemyWanderAction::Run(float elapsedTime)
 
 		//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
 		owner_->GetAnimator().SetNextState("walk_mae");
-		
+
 		step++;
 		break;
 
@@ -616,13 +616,13 @@ BT_ActionState EnemyAxisAlignmentAction::Run(float elapsedTime)
 
 		float cross = (front.z * vec.x) - (front.x * vec.z);
 
-			if (cross < 0.0f)
-				//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TURN_LEFT), false);
-				owner_->GetAnimator().SetNextState("tokotoko_left");
+		if (cross < 0.0f)
+			//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TURN_LEFT), false);
+			owner_->GetAnimator().SetNextState("tokotoko_left");
 
-			else
-				//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TURN_RIGHT), false);
-				owner_->GetAnimator().SetNextState("tokotoko_right");
+		else
+			//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::TURN_RIGHT), false);
+			owner_->GetAnimator().SetNextState("tokotoko_right");
 
 		owner_->turnAngle = owner_->targetVec.Dot(vec);
 
@@ -1028,7 +1028,7 @@ BT_ActionState EnemyStampAction::Run(float elapsedTime)
 		{
 			// --- ‹——£‚ª‹ß‚©‚Á‚½‚ç ---
 			if ((Vector3(Player::Instance().GetPos()) - owner_->GetPos()).Length() < 20.0f)
-				CameraManager::Instance().shakeTimer = 1.0f;
+				CameraManager::Instance().shakeTimer = 0.5f;
 
 			owner_->PlayRockEffect();
 			owner_->runTimer_ = 0.0f;
@@ -1535,7 +1535,7 @@ BT_ActionState EnemyMoveCenterAction::Run(float elapsedTime)
 
 		owner_->RotateToTargetVec(moveVec.vec_, 0.1f);
 		Vector3 front = owner_->GetFrontVec();
-		owner_->Move(front, owner_->runSpeed_);
+		owner_->Move(front, owner_->runSpeed_ * 1.5f);
 
 		break;
 	}
@@ -1553,6 +1553,11 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 	switch (step)
 	{
 	case 0:
+		owner_->runTimer_ = 1.2f;
+		step++;
+		break;
+
+	case 1:
 
 		//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_1), false);
 		owner_->GetAnimator().SetNextState("hissatu_1");
@@ -1561,27 +1566,21 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 		break;
 
 
-	case 1:
+	case 2:
 	{
+		//owner_->runTimer_ -= Timer::Instance().DeltaTime();
+		//if (owner_->runTimer_ < 0.0f)
+		//{
+		//	owner_->runTimer_ = 100.0f;
+		//}
+
 		if (owner_->GetAnimator().GetEndMotion())
 		{
 			//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_2), false);
 			owner_->GetAnimator().SetNextState("hissatu_2");
+			SpecialEffect::Instance().Emit();
 
-			step++;
-		}
-
-		break;
-	}
-
-
-	case 2:
-	{
-		if (owner_->GetAnimator().GetEndMotion())
-		{
-			//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_3), false);
-			owner_->GetAnimator().SetNextState("hissatu_3");
-
+			owner_->runTimer_ = 8.5f;
 			step++;
 		}
 
@@ -1590,6 +1589,28 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 
 
 	case 3:
+	{
+		owner_->runTimer_ -= Timer::Instance().DeltaTime();
+		//if (owner_->GetAnimator().GetEndMotion())
+		//{
+		//	owner_->hissatuCount++;
+		//	//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_3), false);
+		//}
+
+		if (owner_->runTimer_ < 0.0f && owner_->GetAnimator().GetEndMotion())
+		{
+			owner_->GetAnimator().SetNextState("hissatu_3");
+			owner_->runTimer_ = 0.0f;
+			owner_->hissatuCount = 0;
+
+			step++;
+		}
+
+		break;
+	}
+
+
+	case 4:
 	{
 		if (owner_->GetAnimator().GetEndMotion())
 		{

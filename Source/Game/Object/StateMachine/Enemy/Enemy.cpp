@@ -21,6 +21,8 @@
 
 #include "../Player/Player.h"
 
+#include "../../../../UserInterface/UiClearAfter.h"
+
 
 Enemy::~Enemy()
 {
@@ -64,6 +66,7 @@ void Enemy::Initialize()
 
 	actionCount = 0;
 	roarNeededActionCount = 25;
+	hissatuCount = 0;
 
 	// Animator
 	if (animator.GetCurrentState()) return;
@@ -121,6 +124,7 @@ void Enemy::Initialize()
 	motions[IntCast(Motion::HISSATU_2)].loop = true;
 	motions[IntCast(Motion::TOKOTOKO_LEFT)].loop = true;
 	motions[IntCast(Motion::TOKOTOKO_RIGHT)].loop = true;
+	motions[IntCast(Motion::HISSATU_2)].loop = true;
 
 	motions[IntCast(Motion::IDLE)].threshold = {0,0};
 	motions[IntCast(Motion::WALK_MAE)].threshold = {0,1};
@@ -258,7 +262,8 @@ void Enemy::OnDead()
 	CameraManager::Instance().SetCurrentCamera("EnemyDeadCamera");
 
 	CameraManager::Instance().clearTimer = 40.0f;
-	CameraManager::Instance().clear = true;
+	//CameraManager::Instance().clear = true;
+	UiClearAfter::Instance().OnClear();
 
 	Player::Instance().SetCamera(CameraManager::Instance().GetCamera("PlayerCamera").get());
 
@@ -269,12 +274,11 @@ void Enemy::OnDead()
 void Enemy::OnAttacked(const float attackPower)
 {
 	hp -= attackPower;
-	wasAttacked = true;
 
-	if (hp < 0.0f)
-	{
-		hp = 0.0f;
-	}
+	//if (hp < 0.0f)
+	//{
+	//	hp = 0.0f;
+	//}
 }
 
 
@@ -399,13 +403,13 @@ void Enemy::Transform()
 
 	// スケール行列を作成
 	Matrix S;
-	S.MakeScaling(GetScale());
+	S.MakeScaling(Vector3(GetScale()));
 	// 回転行列を作成
 	Matrix R;
 	R.MakeRotationFromQuaternion(quaternion_);
 	// 位置行列を作成
 	Matrix T;
-	T.MakeTranslation(GetPos());
+	T.MakeTranslation(Vector3(GetPos()));
 
 	// ４つの行列を組み合わせ、ワールド行列を作成
 	Matrix W =C * MS * S * R * T;
@@ -446,6 +450,10 @@ void Enemy::CollisionVSPlayer()
 				CameraManager::Instance().shakeTimer = 1.0f;
 				CameraManager::Instance().shakePower = 100.0f;
 				attackCount++;
+
+				// ヒットストップ処理
+				Player::Instance().hitStopTimer = 0.05f;
+				Timer::Instance().SetTimeScale(0.0f);
 
 				// TODO::Playerダメージ関係
 				Player& player = Player::Instance();

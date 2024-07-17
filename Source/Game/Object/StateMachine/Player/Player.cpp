@@ -1301,8 +1301,15 @@ void Player::DrawDebug()
 
 void Player::OnHitAttack(bool hitWeak)
 {
-	Enemy::Instance().OnAttacked(ability.strength);
-	Enemy::Instance().wasAttacked = true;
+	Enemy& enemy = Enemy::Instance();
+	enemy.OnAttacked(ability.strength);
+	enemy.wasAttacked = true;
+
+	// ŠoÁ‚µ‚Ä‚È‚­‚Ä‘Ì—Í‚ª”¼•ªØ‚Á‚½‚ç
+	if (!enemy.IsAwake() && enemy.GetHP() < enemy.GetMaxHP() * 0.5f)
+	{
+		enemy.awaking = true;
+	}
 
 	Timer::Instance().SetTimeScale(0.0f);
 

@@ -517,7 +517,11 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 {
 	// --- ダウン/死亡処理 ---
 	if (IsInterrupted())
+	{
+		owner_->radialBlur->SetIsRadial(false);
+		owner_->bigRoarTimer = 0.0f;	// ラジアルブラー用タイマーをリセット
 		return BT_ActionState::Failed;
+	}
 
 
 	switch (step)
@@ -1237,7 +1241,7 @@ BT_ActionState EnemyFlinchAction::Run(float elapsedTime)
 		if (owner_->GetAnimator().GetEndMotion())
 		{
 			OnEndAction();
-			owner_->SetFlinchValue(100.0f); // Todo : 怯み値仮
+			owner_->SetFlinchValue(owner_->maxFlinchValue); // Todo : 怯み値仮
 			return BT_ActionState::Complete;
 		}
 
@@ -1616,6 +1620,7 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 	{
 	case 0:
 		owner_->runTimer_ = 1.2f;
+		owner_->hissatuTimer = 0.25f;
 		owner_->GetAnimator().SetNextState("hissatu_1");
 		step++;
 
@@ -1647,11 +1652,22 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 	case 2:
 	{
 		owner_->runTimer_ -= Timer::Instance().DeltaTime();
+		owner_->hissatuTimer -= Timer::Instance().DeltaTime();
 		//if (owner_->GetAnimator().GetEndMotion())
 		//{
 		//	owner_->hissatuCount++;
 		//	//owner_->PlayAnimation(static_cast<int>(MonsterAnimation::DEATHBLOW_3), false);
 		//}
+
+		if (owner_->hissatuTimer < 0.0f)
+		{
+			owner_->hissatuTimer = 0.25f;
+
+			float range = static_cast<float>(rand() % 50) + 10.0f;
+			float theta = DirectX::XMConvertToRadians(static_cast<float>(rand() % 360));
+			Vector3 position = Vector3(owner_->GetPos()) + Vector3(cosf(theta) * range, 0.0f, sinf(theta) * range);
+			LightningEffect::Instance().Emit(position.vec_);
+		}
 
 		if (owner_->runTimer_ < 0.0f && owner_->GetAnimator().GetEndMotion())
 		{

@@ -37,6 +37,7 @@
 #include "../UserInterface/UiGame.h"
 #include "../Game/Object/Effect/EffectDamageManager.h"
 #include "../UserInterface/UiClearAfter.h"
+#include "../UserInterface/CaptureScreen.h"
 
 
 void SceneTest::Initialize()
@@ -105,6 +106,9 @@ void SceneTest::Initialize()
 
 	// --- skyMap 初期化 ---
 	skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
+
+	// 画面キャプチャの初期化
+	CaptureScreen::Instance().Initialize();
 
 	// --- AnimatedObject 初期化 ---
 	//blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");
@@ -670,6 +674,12 @@ void SceneTest::Render()
 	};
 	bitBlockTransfer->blit(shvs, 0, 2, bloom->GetFinalPassPs());
 
+	if (CaptureScreen::Instance().BeginCapture())
+	{
+		bitBlockTransfer->blit(shvs, 0, 2, bloom->GetFinalPassPs());
+		CaptureScreen::Instance().EndCapture();
+	}
+
 	// ======　ブルームなしの描画　======　
 
 	// ここでスプライト描画
@@ -710,6 +720,7 @@ void SceneTest::Render()
 	heatHaze->DrawDebugGui();
 	colorFilter->DrawDebugGui();
 	Gate::Instance().DrawDebugImGui();
+	CaptureScreen::Instance().DrawDebugGui();
 
 
 	CameraManager::Instance().GetCamera()->DrawDebugGui();

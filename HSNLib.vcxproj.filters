@@ -518,6 +518,9 @@
     <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyAwakeBehavior.cpp">
       <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UserInterface\CaptureScreen.cpp">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -907,6 +910,9 @@
     </ClInclude>
     <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyAwakeBehavior.h">
       <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UserInterface\CaptureScreen.h">
+      <Filter>2_Source\UserInterface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

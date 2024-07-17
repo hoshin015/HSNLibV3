@@ -24,7 +24,7 @@ public:
 	// ゲーム中変動する値
 	struct AbilityStatus {
 		float hp        = 0;
-		float strength  = 15;
+		float strength  = 5;
 		float moveSpeed = 7;
 		float attackCount = 0;
 		float attackTimer = 0;
@@ -32,7 +32,7 @@ public:
 		//回避
 		float dodgeTimer = 0;
 		float notAcceptTimer = 0;
-		float justDodgeSlowTimer = 0;
+		float justDodgeSlowTimer = 3;
 		bool isJustDodge = false;
 
 		//体幹
@@ -41,6 +41,7 @@ public:
 
 		float hitDamage = 0;
 		bool isHitDamage = false;
+		bool isInvincibleInvalidDamage = false;
 
 		Vector3 flyVec = { 0,0,0 };
 		bool isFlying = false;
@@ -66,7 +67,7 @@ public:
 		float maxAttackCombo = 4;
 		float attackReceptionTime = 0.1f;
 		float notAcceptTime = 0.16f;
-		float leastStrength = 15;
+		float leastStrength = 5;
 		float maxStrength = 60;
 		float incrementStrength = 2;
 
@@ -110,7 +111,7 @@ public:
 	void CalcJustDodge();
 
 	// ダメージ
-	void HitDamaged(float damage, bool flying = false, Vector3 vec = {0,0,0});
+	void HitDamaged(float damage,bool invincibleInvalid = false,  bool flying = false, Vector3 vec = {0,0,0});
 
 	// RootAnimation
 	void CalcRootAnimationVelocity();

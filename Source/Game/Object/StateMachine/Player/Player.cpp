@@ -595,7 +595,8 @@ void Player::DrawDebugImGui(int number) {
 				ImGui::DragFloat(u8"–³“G‰ñ”ðŽžŠÔ", &constant.dodgeInvincibleTime,0.01f);
 				ImGui::DragFloat(u8"ƒWƒƒƒXƒg‰ñ”ðŽžŠÔ", &constant.justDodgeTime,0.01f);
 
-				ImGui::DragFloat(u8"“ü—Í‹‘”ÛŽžŠÔ", &constant.notAcceptTime,0.01f);
+				ImGui::DragFloat(u8"Å’áUŒ‚—Í", &constant.leastStrength,0.01f);
+				ImGui::DragFloat(u8"Å‘åUŒ‚—Í", &constant.maxStrength, 0.01f);
 
 				ImGui::TreePop();
 			}
@@ -608,7 +609,7 @@ void Player::DrawDebugImGui(int number) {
 				Vector3 ePos = Enemy::Instance().GetPos();
 				Vector3 fryVec = pPos - ePos;
 				fryVec.Normalize();
-				HitDamaged(10, true, fryVec * 30);
+				HitDamaged(10, false,true, fryVec * 30);
 			}
 
 			if(ImGui::Button(u8"Ž€–S")) {
@@ -788,11 +789,12 @@ void Player::InputAttack() {
 		{
 			swordTrail->Clear();
 			ability.attackTimer = constant.attackReceptionTime;
+			ClearAnimSphereCollisionDamagedFlag();
+			ClearSeFlag();
 		}
 		else ability.attackTimer -= dt;
 		at = false;
-		ClearAnimSphereCollisionDamagedFlag();
-		ClearSeFlag();
+
 	}
 
 	bool end = ability.attackTimer <= 0 && animator.GetEndMotion() || ability.isHitDamage;
@@ -1001,6 +1003,7 @@ void Player::CalcJustDodge() {
 		ability.bodyTrunkStrength = min(ability.bodyTrunkStrength + constant.incrementBt, constant.maxBt);
 
 		//Timer::Instance().SetTimeScale(0.3f);
+		//OnHitAttack(false);
 		ability.justDodgeSlowTimer = 0;
 		ability.isJustDodge = false;
 	}
@@ -1016,9 +1019,10 @@ void Player::CalcJustDodge() {
 	}
 }
 
-void Player::HitDamaged(float damage ,bool flying ,Vector3 vec) {
+void Player::HitDamaged(float damage, bool invincibleInvalid, bool flying ,Vector3 vec) {
 	ability.hitDamage = damage;
 	ability.isHitDamage = true;
+	ability.isInvincibleInvalidDamage = invincibleInvalid;
 	ability.isFlying = flying;
 	ability.flyVec = vec;
 }

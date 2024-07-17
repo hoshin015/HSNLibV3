@@ -4,6 +4,8 @@
 #include "../../../../../Library/3D/CameraManager.h"
 #include "../../../../../Library/Math/OperatorXMFloat3.h"
 #include "../../../../../Library/Input/InputManager.h"
+#include "../../../../../Library/Particle/EmitterManager.h"
+#include "../../../../UserInterface/UiGame.h"
 
 ///////////////////////////
 ///
@@ -218,11 +220,18 @@ void PlayerAttackState::Execute()
 
 	if(owner->GetInputMap<bool>("EndAttack"))
 	{
+		owner->swordTrail->Clear();
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Idle));
 	}
 	if (owner->GetInputMap<bool>("Dodge"))
+	{
+		owner->swordTrail->Clear();
 		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Dodge));
+	}
 
+	
+	owner->swordTrail->SetSwordPos(owner->GetBonePosition("sword_05"), owner->GetBonePosition("sword_01"));
+	
 
 	owner->CalcAttackVelocity();
 	owner->CalcRootAnimationVelocity();
@@ -302,6 +311,31 @@ void PlayerDodgeState::Execute() {
 		owner->GetAnimator().SetParameter("endDodge", true);
 	}
 
+	// アニメーションが止まっていないなら
+	//if(!owner->GetAnimator().GetEndMotion())
+	{
+		Emitter* emitter0 = new Emitter();
+		emitter0->position = owner->GetPos();
+		emitter0->emitterData.duration = 10.0;
+		emitter0->emitterData.looping = false;
+		emitter0->emitterData.burstsTime = 0.05;
+		emitter0->emitterData.burstsCount = 2;
+		emitter0->emitterData.particleKind = pk_simpleFire;
+		emitter0->emitterData.particleLifeTimeMin = 0.5f;
+		emitter0->emitterData.particleLifeTimeMax = 1.0f;
+		emitter0->emitterData.particleSpeedMin = 1.0f;
+		emitter0->emitterData.particleSpeedMax = 1.0f;
+		emitter0->emitterData.particleSizeMin = { 0.25f, 1.0f };
+		emitter0->emitterData.particleSizeMax = { 1.0f, 2.0f };
+		emitter0->emitterData.particleColorMin = { 1.0, 3.0, 15.0, 1 };
+		emitter0->emitterData.particleColorMax = { 1.0, 3.0, 15.0, 1 };
+		emitter0->emitterData.particleGravity = 0;
+		emitter0->emitterData.particleBillboardType = 0;
+		emitter0->emitterData.particleTextureType = 0;
+		emitter0->emitterData.burstsOneShot = 2;
+		EmitterManager::Instance().Register(emitter0);
+	}
+
 	if (owner->AStatus().dodgeTimer < justDodgeTimer && owner->AStatus().isHitDamage)
 		owner->AStatus().isJustDodge = true;
 
@@ -336,6 +370,7 @@ void PlayerDamageState::Enter() {
 		as.hp = 0;
 		owner->GetAnimator().SetNextState("death");
 		CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
+		UiGame::Instance().OnDown();
 	}
 }
 

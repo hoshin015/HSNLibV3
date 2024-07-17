@@ -33,6 +33,9 @@ public:
 		float gravity;				// 重力
 		float lifeTime = 10.0f;		// 寿命[s](この時間がたつと消えます)
 
+		bool isDamaged = true;
+		float damage = 2.0f;
+		float damageRadius = 1.0f;
 		// 特殊な動きをする岩を作りたかったら行ってくれたら追加できるようにはしてます
 	};
 	// ロック追加

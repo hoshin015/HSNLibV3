@@ -268,14 +268,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 						CameraManager::Instance().shakePower = 100.0f;
 
 						Player& player = Player::Instance();
-						float currentHP = player.AStatus().hp;
-						player.AStatus().hp -= damage;
-
-						// --- ‚±‚ÌUŒ‚‚ÅƒvƒŒƒCƒ„[‚ª€–S‚µ‚½‚Æ‚« ---
-						if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
-						{
-							CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
-						}
+						player.HitDamaged(damage);
 
 						break;
 					}
@@ -290,7 +283,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 			emitter->emitterData.duration = 5.0;
 			emitter->emitterData.looping = false;
 			emitter->emitterData.burstsTime = 0.1;
-			emitter->emitterData.burstsCount = 128;
+			emitter->emitterData.burstsCount = 256;
 			emitter->emitterData.particleKind = pk_Dust;
 			emitter->emitterData.particleLifeTimeMin = 1.0f;
 			emitter->emitterData.particleLifeTimeMax = 1.0f;
@@ -372,6 +365,9 @@ void SpecialEffect::GenerateRock()
 		rock->SetAngle({rX, rY, rZ});
 		rock->SetColor({10.0, 0.8, 0.8, 1});
 		rock->SetUpdateType(RockData::RockFuncEnum::Up);
+
+		rock->isDamaged = false;
+
 		RockEffect::Instance().rockMesh1->Register(rock);
 	}
 }

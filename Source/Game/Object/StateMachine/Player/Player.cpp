@@ -361,6 +361,9 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 		wallSpheres.emplace_back(Vector3(-4.3f, 0.0f, 106.5f + -static_cast<float>(i)));
 	}
 
+	// swordTrail
+	swordTrail = std::make_unique<SwordTrail>();
+
 	// ’M‚Ì“–‚½‚è”»’è
 	wallSpheres.emplace_back(Vector3(24.2f, 0.0f, 141.8f));
 	wallSpheres.emplace_back(Vector3(26.0f, 0.0f, 137.8f));
@@ -474,6 +477,9 @@ void Player::Update()
 
 	// Žp¨s—ñXV
 	UpdateTransform();
+
+	swordTrail->Update();
+	PowerSwordEffetUpdate();
 }
 
 void Player::Render(bool isShadow)
@@ -778,7 +784,11 @@ void Player::InputAttack() {
 	if (animator.GetEndMotion()) {
 		inputMap["Attack"] = at;
 		animator.SetParameter("attack", at);
-		if (at) ability.attackTimer = constant.attackReceptionTime;
+		if (at)
+		{
+			swordTrail->Clear();
+			ability.attackTimer = constant.attackReceptionTime;
+		}
 		else ability.attackTimer -= dt;
 		at = false;
 		ClearAnimSphereCollisionDamagedFlag();
@@ -1207,8 +1217,8 @@ void Player::CollisionVsEnemy()
 				emitter1->emitterData.particleLifeTimeMax = 0.1f;
 				emitter1->emitterData.particleSpeedMin = 0.0f;
 				emitter1->emitterData.particleSpeedMax = 0.0f;
-				emitter1->emitterData.particleSizeMin = { 50.0f, 5.0f };
-				emitter1->emitterData.particleSizeMax = { 50.0f, 5.0f };
+				emitter1->emitterData.particleSizeMin = { 70.0f, 2.0f };
+				emitter1->emitterData.particleSizeMax = { 70.0f, 2.0f };
 				emitter1->emitterData.particleColorMin = { 1.9, 1.9, 8.8, 1 };
 				emitter1->emitterData.particleColorMax = { 1.9, 1.9, 10.8, 1 };
 				emitter1->emitterData.particleAngleMin = 0;
@@ -1254,6 +1264,58 @@ void Player::CollisionVsEnemy()
 				std::string dmgText = std::to_string(btStrength);
 				DamageTextManager::Instance().Register({ dmgText, collisionPoint });
 			}
+		}
+	}
+}
+
+void Player::PowerSwordEffetUpdate()
+{
+	DirectX::XMFLOAT3 tail = GetBonePosition("sword_05");
+	DirectX::XMFLOAT3 head = GetBonePosition("sword_01");
+
+	DirectX::XMVECTOR TAIL = DirectX::XMLoadFloat3(&tail);
+	DirectX::XMVECTOR HEAD = DirectX::XMLoadFloat3(&head);
+	DirectX::XMVECTOR SUB = DirectX::XMVectorSubtract(TAIL, HEAD);
+	DirectX::XMVECTOR N = DirectX::XMVector3Normalize(SUB);
+	float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(SUB));
+	length += 0.5f;
+
+	static const float swordTime = 0.001f;
+	static float swordTimer = 0.0f;
+
+	swordTimer += Timer::Instance().DeltaTime();
+	while(swordTimer > swordTime)
+	{
+		swordTimer -= swordTime;
+
+		// ¶¬À•W‚ÌŒˆ’è
+		float lengthPower = Math::RandomRange(0.0f, length);
+		DirectX::XMVECTOR GeneratePos = HEAD;
+		GeneratePos = DirectX::XMVectorAdd(GeneratePos, DirectX::XMVectorScale(N, lengthPower));
+		DirectX::XMFLOAT3 generatePos;
+		DirectX::XMStoreFloat3(&generatePos, GeneratePos);
+
+		{
+			Emitter* emitter0 = new Emitter();
+			emitter0->position = generatePos;
+			emitter0->emitterData.duration = 10.0;
+			emitter0->emitterData.looping = false;
+			emitter0->emitterData.burstsTime = 0.0;
+			emitter0->emitterData.burstsCount = 10;
+			emitter0->emitterData.particleKind = pk_swordPowerUp;
+			emitter0->emitterData.particleLifeTimeMin = 0.05f;
+			emitter0->emitterData.particleLifeTimeMax = 0.05f;
+			emitter0->emitterData.particleSpeedMin = 1.0f;
+			emitter0->emitterData.particleSpeedMax = 1.0f;
+			emitter0->emitterData.particleSizeMin = { 0.1f, 1.0f };
+			emitter0->emitterData.particleSizeMax = { 0.5f, 2.0f };
+			emitter0->emitterData.particleColorMin = { 1.0, 1.0, 4.0, 1 };
+			emitter0->emitterData.particleColorMax = { 1.0, 1.0, 4.0, 1 };
+			emitter0->emitterData.particleGravity = 0;
+			emitter0->emitterData.particleBillboardType = 0;
+			emitter0->emitterData.particleTextureType = 0;
+			emitter0->emitterData.burstsOneShot = 1;
+			EmitterManager::Instance().Register(emitter0);
 		}
 	}
 }

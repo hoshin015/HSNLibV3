@@ -28,7 +28,6 @@ void AnimatedModel::Render(DirectX::XMFLOAT4X4 world, ModelResource::KeyFrame* k
 	dc->UpdateSubresource(dissolveConstantBuffer.Get(), 0, 0, &dissolveConstant, 0, 0);
 	dc->PSSetConstantBuffers(_dissolveConstant, 1, dissolveConstantBuffer.GetAddressOf());
 
-
 	// --- mesh ‚²‚Æ‚Ì•`‰æ ---
 	for (const ModelResource::Mesh& mesh : modelResource->GetMeshes())
 	{

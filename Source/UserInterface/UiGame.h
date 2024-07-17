@@ -68,7 +68,7 @@ private:
 	// HP‚Ojjjj	
 	bool isDownOverFlag = false;
 	float downTimer = 0.0f;
-	float downTime = 4.0f;
+	float downTime = 10.0f;
 	std::unique_ptr<Sprite> imgDownOver;
 	Easing::EasingValue imgDownOverAlpha =
 	{
@@ -83,15 +83,15 @@ private:
 	std::unique_ptr<Sprite> imgBlack;
 	Easing::EasingValue imgBlackAlphaUp =
 	{
-		2.0f, 3.0f,
+		9.0f, 10.0f,
 		0.0f,1.0f
 	};
 
 	// •œŠˆ
-	float blackDownTime = 1.0f;
+	float blackDownTime = 5.0f;
 	Easing::EasingValue imgBlackAlphaDown =
 	{
-		0.0f, 1.0f,
+		1.0f, 3.0f,
 		1.0f,0.0f
 	};
 

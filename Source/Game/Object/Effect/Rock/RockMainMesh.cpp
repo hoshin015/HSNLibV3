@@ -47,7 +47,7 @@ void RockData::RockDefaultUpdate()
 	position.z += velocity.z * deltaTime;
 
 	// 地面よりしたなら削除
-	if(position.y <= -1)
+	if(position.y <= -10)
 	{
 		owner->Remove(this);
 	}
@@ -115,14 +115,7 @@ void RockMainMesh::Update()
 					CameraManager::Instance().shakePower = 100.0f;
 
 					Player& player = Player::Instance();
-					float currentHP = player.AStatus().hp;
-					player.AStatus().hp -= data->damage;
-
-					// --- この攻撃でプレイヤーが死亡したとき ---
-					if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
-					{
-						CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
-					}
+					player.HitDamaged(data->damage);
 
 					break;
 				}

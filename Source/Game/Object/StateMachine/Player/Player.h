@@ -6,6 +6,7 @@
 #include "../../Source/Game/Object/Base/AnimatedObject.h"
 
 #include "../../Library/3D/CameraBase.h"
+#include "../../../../Other/SwordTrail/SwordTrail.h"
 
 
 enum class PlayerAnimNum
@@ -124,6 +125,9 @@ public:
 
 	void SetCamera(CameraBase* camera) { this->camera = camera; }
 
+	// 剣強化エフェクト
+	void PowerSwordEffetUpdate();
+
 	void DrawDebug();
 
 	void OnHitAttack(bool hitWeak);
@@ -214,6 +218,11 @@ public:
 	std::vector<Vector3> wallSpheres;
 	float wallSphereRadius = 1.0f;
 	float playerRadius = 1.0f;
+
+
+
+	// SwordTrail
+	std::unique_ptr<SwordTrail> swordTrail;
 	float hitStopTimer;
 	float hitStopTime = 0.05f;
 	float weakHitStopTime = 0.1f;

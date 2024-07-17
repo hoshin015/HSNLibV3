@@ -97,6 +97,10 @@ void SceneTest::Initialize()
 	                                          Framework::Instance().GetScreenHeightF());
 	colorFilter->SetIsColorFilter(true);
 	colorFilter->SetBrightness(2.0f);
+	swordTrailBuffer = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
+	                                          Framework::Instance().GetScreenHeightF());
+	swordTrailBufferSub = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
+	                                          Framework::Instance().GetScreenHeightF());
 
 	// --- skyMap èâä˙âª ---
 	skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
@@ -149,6 +153,9 @@ void SceneTest::Initialize()
 	BreathEffect::Instance().Initialize();
 
 	SpecialEffect::Instance().drawAfterStage = false;
+
+	// ------- ps ê∂ê¨ -------
+	CreatePsFromCso("Data/Shader/SwordTrailPS.cso", swordTrailPisxelShader.GetAddressOf());
 
 	// ÉeÉXÉg
 	AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
@@ -219,8 +226,6 @@ void SceneTest::Update()
 
 	EmitterManager::Instance().Update();
 	Particle::Instance().Update();
-
-	UiGame::Instance().Update();
 
 	Gate::Instance().Update();
 
@@ -547,6 +552,7 @@ void SceneTest::Render()
 		Enemy::Instance().Render();
 
 		Player::Instance().Render();
+		
 
 		RockEffect::Instance().Render();
 
@@ -594,6 +600,37 @@ void SceneTest::Render()
 			wbOitBuffer->shaderResourceViews[_revealTexture].Get(),
 		};
 		bitBlockTransfer->blit(srvs, 0, ARRAYSIZE(srvs), wbOitBuffer->GetWbOitPS());
+	}
+	frameBuffer->DeActivate();
+
+	// ======= swrodTrail =======
+	swordTrailBufferSub->Activate();
+	{
+		bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
+	}
+	swordTrailBufferSub->DeActivate();
+
+	float swordTrailClear[4] = {0,0,0,0};
+	swordTrailBuffer->Clear(swordTrailClear);
+	swordTrailBuffer->Activate();
+	{
+		dc->OMSetRenderTargets(1, swordTrailBuffer->renderTargetView.GetAddressOf(), frameBuffer->depthStencilView.Get());
+
+		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
+		Player::Instance().swordTrail->Render();
+		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
+	}
+	swordTrailBuffer->DeActivate();
+
+	frameBuffer->Activate();
+	{
+		ID3D11ShaderResourceView* swordShvs[2] =
+		{
+			swordTrailBufferSub->shaderResourceViews[0].Get(),
+			swordTrailBuffer->shaderResourceViews[0].Get(),
+		};
+		bitBlockTransfer->blit(swordShvs, 0, ARRAYSIZE(swordShvs), swordTrailPisxelShader.Get());
 	}
 	frameBuffer->DeActivate();
 
@@ -748,6 +785,8 @@ void SceneTest::DrawDebugGUI()
 		//		}
 		//	}
 		//}
+
+		ImGui::Image(swordTrailBuffer->shaderResourceViews[0].Get(), ImVec2(200, 200));
 	}
 	ImGui::End();
 }

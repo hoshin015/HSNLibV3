@@ -628,8 +628,11 @@ void PlayerDeadCamera::UpdateConstants()
 
 void PlayerDeadCamera::DrawDebugGui()
 {
+	ImGui::Begin(u8"プレイヤー死亡カメラ");
+	ImGui::DragFloat(u8"タイマー", &timer);
 	ImGui::DragFloat(u8"距離", &range);
 	ImGui::DragFloat(u8"高さ", &height);
+	ImGui::End();
 }
 
 

@@ -287,6 +287,7 @@
     <ClCompile Include="Source\UserInterface\UiTitle.cpp" />
     <ClCompile Include="Source\UserInterface\UiGame.cpp" />
     <ClCompile Include="Source\UserInterface\UiClearAfter.cpp" />
+    <ClCompile Include="Source\Other\SwordTrail\SwordTrail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Game\Object\Effect\EffectDamageManager.h" />
@@ -416,6 +417,7 @@
     <ClInclude Include="Source\UserInterface\UiTitle.h" />
     <ClInclude Include="Source\UserInterface\UiGame.h" />
     <ClInclude Include="Source\UserInterface\UiClearAfter.h" />
+    <ClInclude Include="Source\Other\SwordTrail\SwordTrail.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc" />
@@ -876,6 +878,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SwordTrailPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

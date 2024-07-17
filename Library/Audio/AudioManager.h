@@ -4,7 +4,7 @@
 
 
 //====================================
-#define USE_AUDIO 0
+#define USE_AUDIO 1
 //====================================
 
 enum class MUSIC_LABEL

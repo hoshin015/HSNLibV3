@@ -1534,7 +1534,7 @@ BT_ActionState EnemyMoveCenterAction::Run(float elapsedTime)
 
 		owner_->RotateToTargetVec(moveVec.vec_, 0.1f);
 		Vector3 front = owner_->GetFrontVec();
-		owner_->Move(front, owner_->runSpeed_ * 1.5f);
+		owner_->Move(front, owner_->runSpeed_);
 
 		break;
 	}

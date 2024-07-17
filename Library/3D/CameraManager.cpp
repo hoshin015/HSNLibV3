@@ -82,6 +82,7 @@ void CameraManager::DrawDebugGui()
 
 	ImGui::DragFloat(u8"クリアタイマー", &clearTimer);
 
+
 	for (auto& camera : cameraMap)
 	{
 		if (ImGui::Button(camera.first.c_str(), { 200.0f, 30.0f }))

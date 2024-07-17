@@ -502,6 +502,9 @@
     <ClCompile Include="Source\Game\Object\Stage\Gate.cpp">
       <Filter>2_Source\Game\Object\Stage</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyAwakeBehavior.cpp">
+      <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -884,6 +887,9 @@
     </ClInclude>
     <ClInclude Include="Source\Game\Object\Stage\Gate.h">
       <Filter>2_Source\Game\Object\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyAwakeBehavior.h">
+      <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

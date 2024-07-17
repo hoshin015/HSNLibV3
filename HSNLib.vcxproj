@@ -175,6 +175,7 @@
     <ClCompile Include="Library\Graphics\ColorFilter.cpp" />
     <ClCompile Include="Library\Graphics\HeatHaze.cpp" />
     <ClCompile Include="Source\Game\Object\Stage\Gate.cpp" />
+    <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyAwakeBehavior.cpp" />
     <ClCompile Include="Source\Scene\SceneResult.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\Breath\BreathEffect.cpp" />
     <ClCompile Include="Library\3D\CameraBase.cpp" />
@@ -293,6 +294,7 @@
     <ClInclude Include="Library\Graphics\ColorFilter.h" />
     <ClInclude Include="Library\Graphics\HeatHaze.h" />
     <ClInclude Include="Source\Game\Object\Stage\Gate.h" />
+    <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyAwakeBehavior.h" />
     <ClInclude Include="Source\Scene\SceneResult.h" />
     <ClInclude Include="Source\Game\Object\Effect\Breath\BreathEffect.h" />
     <ClInclude Include="Library\3D\CameraBase.h" />

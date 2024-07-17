@@ -71,8 +71,8 @@ public:
 
 	void SetAllOffRender();
 
-private:
 	bool clearFlag = false;	// このフラグをONにするとリザルト画面まで流れる
+private:
 	std::vector<Sprite*> sprites;
 
 	enum class State

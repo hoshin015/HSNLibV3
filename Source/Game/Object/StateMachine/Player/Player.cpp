@@ -18,6 +18,7 @@
 
 #include "../../Source/Camera/CameraDerived.h"
 #include "../../../../../Library/3D/DebugPrimitive.h"
+#include "../../../../UserInterface/UiClearAfter.h"
 #include "../../Stage/Gate.h"
 
 Player::Player(const char* filePath) : AnimatedObject(filePath)

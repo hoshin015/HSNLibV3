@@ -111,7 +111,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 				EmitterManager::Instance().Register(emitter);
 			}
 
-			AudioManager::Instance().StopMusic(MUSIC_LABEL::BATTLE1);
+			
 			AudioManager::Instance().PlayMusic(MUSIC_LABEL::MonsterRoar1, false);
 			AudioManager::Instance().PlayMusic(MUSIC_LABEL::Fire1, false);
 
@@ -124,6 +124,17 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 	//[[fallthrough]]
 	case SpecialState::firstNova:
 		{
+			if(AudioManager::Instance().IsInUseMusic(MUSIC_LABEL::BATTLE1))
+			{
+				float volume = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, battle1DownSound);
+				AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, volume);
+
+				if(volume <= 0)
+				{
+					AudioManager::Instance().StopMusic(MUSIC_LABEL::BATTLE1);
+				}
+			}
+
 			// --- radialBlur ---
 			float sampCount;
 			sampCount = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, firstNovaSamplingUp);
@@ -299,6 +310,13 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 			emitter->emitterData.burstsOneShot = 1;
 			EmitterManager::Instance().Register(emitter);
 
+
+#if SPECIAL_AUDIO_DELAY
+			AudioManager::Instance().ResumeMusic(MUSIC_LABEL::BATTLE2);
+#else
+			AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE2);
+#endif
+
 			// ステート更新
 			specialState = SpecialState::UpMusic;
 		}
@@ -307,16 +325,6 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 		{
 			lifeTimer += deltaTime;
 
-#if SPECIAL_AUDIO_DELAY
-			if(AudioManager::Instance().GetSoundState(MUSIC_LABEL::BATTLE2) == DirectX::SoundState::PAUSED)
-			{
-				AudioManager::Instance().ResumeMusic(MUSIC_LABEL::BATTLE2);
-#else
-			if (!AudioManager::Instance().IsInUseMusic(MUSIC_LABEL::BATTLE2))
-			{
-				AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE2);
-#endif
-			}
 			AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE2, Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, soundUpValue));
 
 			if (lifeTimer >= chargeNovaTime)
@@ -349,7 +357,7 @@ void SpecialEffect::GenerateRock()
 {
 	for (int i = 0; i < 2; i++)
 	{
-		DirectX::XMFLOAT3 rPos = {(rand() % 60) - 30.0f, 0, rand() % 60 - 30.0f};
+		DirectX::XMFLOAT3 rPos = {(rand() % 100) - 50.0f, 0, rand() % 100 - 50.0f};
 		DirectX::XMFLOAT3 rVec = {(rand() % 3) - 1.5f, rand() % 1 + 0.5f, rand() % 3 - 1.5f};
 
 		RockData* rock = new RockData();
@@ -357,8 +365,8 @@ void SpecialEffect::GenerateRock()
 		rock->SetVeloicty(rVec);
 		rock->SetLifeTime(10.0f);
 		rock->SetEmissivePower(0.0f);
-		float rScale = Math::RandomRange(0.05, 0.15);
-		rock->SetScale({rScale + Math::RandomRange(0.05, 0.15), rScale, rScale});
+		float rScale = Math::RandomRange(0.25, 0.35);
+		rock->SetScale({rScale + Math::RandomRange(0.25, 0.35), rScale, rScale});
 		float rX = rand() % 360;
 		float rY = rand() % 360;
 		float rZ = rand() % 360;

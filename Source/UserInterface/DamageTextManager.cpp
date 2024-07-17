@@ -1,4 +1,6 @@
 #include "DamageTextManager.h"
+
+#include "UiClearAfter.h"
 #include "../../Library/Timer.h"
 #include "../../Library/3D/CameraManager.h"
 #include "../../Library/Math/Math.h"
@@ -36,9 +38,12 @@ void DamageTextManager::Update()
 
 void DamageTextManager::Render()
 {
-	for(auto& dmgText : damageTexts)
+	if(!UiClearAfter::Instance().clearFlag)
 	{
-		textSprite->SprTextOut(dmgText.text, dmgText.screenPosition);
+		for (auto& dmgText : damageTexts)
+		{
+			textSprite->SprTextOut(dmgText.text, dmgText.screenPosition);
+		}
 	}
 }
 

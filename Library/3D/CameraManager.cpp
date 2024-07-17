@@ -6,6 +6,8 @@
 
 #include "../../Library/Timer.h"
 
+#include "../../Source/UserInterface/UiClearAfter.h"
+
 
 CameraManager::CameraManager()
 {
@@ -93,7 +95,7 @@ void CameraManager::DrawDebugGui()
 
 void CameraManager::UpdateShake()
 {
-	shakeTimer -= Timer::Instance().DeltaTime();
+	shakeTimer -= Timer::Instance().UnscaledDeltaTime();
 
 	if (shakeTimer < 0.0f)
 	{
@@ -104,7 +106,7 @@ void CameraManager::UpdateShake()
 
 void CameraManager::UpdateClearTimer()
 {
-	if(clear)
+	if(UiClearAfter::Instance().IsClear())
 	{
 		if (updateClearTimer)
 			clearTimer -= Timer::Instance().DeltaTime();

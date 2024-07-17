@@ -4,6 +4,7 @@
 #include "../../../../../Library/3D/CameraManager.h"
 #include "../../../../../Library/Math/OperatorXMFloat3.h"
 #include "../../../../../Library/Input/InputManager.h"
+#include "../../../../UserInterface/UiGame.h"
 
 ///////////////////////////
 ///
@@ -322,7 +323,10 @@ void PlayerDamageState::Enter() {
 	else {
 		owner->GetAnimator().SetNextState("death");
 		if (owner->AStatus().hp <= 0.0f)
+		{
 			CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
+			UiGame::Instance().OnDown();
+		}
 	}
 }
 

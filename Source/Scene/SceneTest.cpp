@@ -220,8 +220,6 @@ void SceneTest::Update()
 	EmitterManager::Instance().Update();
 	Particle::Instance().Update();
 
-	UiGame::Instance().Update();
-
 	Gate::Instance().Update();
 
 	// テストエミッター

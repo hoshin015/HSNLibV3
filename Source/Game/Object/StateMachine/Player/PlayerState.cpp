@@ -287,6 +287,8 @@ void PlayerDodgeState::Execute() {
 
 	Player::ConstantStatus& cs = owner->CStatus();
 	const float dodgeLowTimer = cs.dodgeTime - cs.dodgeLowestTime;
+	const float justDodgeTimer = cs.dodgeTime - cs.justDodgeTime;
+	const float dodgeInvincibleTime = cs.dodgeTime - cs.dodgeInvincibleTime;
 
 	if ((owner->AStatus().dodgeTimer < dodgeLowTimer&& !owner->GetInputMap<bool>("DodgeHold"))||
 		owner->AStatus().dodgeTimer < 0) {
@@ -300,6 +302,17 @@ void PlayerDodgeState::Execute() {
 		owner->GetAnimator().SetParameter("endDodge", true);
 	}
 
+	if (owner->AStatus().dodgeTimer < justDodgeTimer && owner->AStatus().isHitDamage) owner->AStatus().isJustDodge = true;
+
+	if (owner->AStatus().dodgeTimer < dodgeInvincibleTime) {
+		if (owner->AStatus().isHitDamage)owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Damage));
+	}
+	else owner->AStatus().isHitDamage = false;
+
+	if(owner->GetInputMap<bool>("Attack")) {
+		owner->GetAnimator().SetParameter("endDodge",true);
+		owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Attack));
+	}
 	// ‰ñ“]
 	//owner->Turn();
 
@@ -312,7 +325,6 @@ void PlayerDodgeState::Exit() {
 
 void PlayerDamageState::Enter() {
 	Player::AbilityStatus& as = owner->AStatus();
-	as.isHitDamage = false;
 	as.hp -= as.hitDamage;
 
 	if (as.hp > 0)
@@ -320,14 +332,16 @@ void PlayerDamageState::Enter() {
 		owner->GetAnimator().SetNextState("down") :
 		owner->GetAnimator().SetNextState("hit");
 	else {
+		as.hp = 0;
 		owner->GetAnimator().SetNextState("death");
-		if (owner->AStatus().hp <= 0.0f)
-			CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
+		CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
 	}
 }
 
 void PlayerDamageState::Execute() {
 	using namespace DirectX;
+	Player::AbilityStatus& as = owner->AStatus();
+	as.isHitDamage = false;
 
 	const Animator::State* current = owner->GetAnimator().GetCurrentState();
 	if (owner->AStatus().hp<=0) {
@@ -357,30 +371,14 @@ void PlayerDamageState::Execute() {
 		vel += owner->AStatus().flyVec.xz() * Timer::Instance().DeltaTime();
 		owner->SetVelocity({vel.x,0, vel.y});
 
-		// Vector2 angV = {
-		// 	cosf(XMConvertToRadians(owner->GetAngleY())),
-		// 	sinf(XMConvertToRadians(owner->GetAngleY()))
-		// };
-		//
-		// angV = -angV;
-		//
-		// XMVECTOR lerp = XMVectorLerp(XMLoadFloat2(&angV.vec_), XMLoadFloat2(&vel.vec_), Timer::Instance().DeltaTime() * 10);
-		// lerp = XMVector2Normalize(lerp);
-		// XMVECTOR Dot = XMVector2Dot(lerp, XMLoadFloat2(&angV.vec_));
-		// float cross = XMVectorGetX(XMVector2Cross(lerp, XMLoadFloat2(&angV.vec_)));
-		// float deg = XMConvertToDegrees(XMVectorGetX(XMVectorACos(Dot)));
-		// if (cross < 0) deg *= -1;
-
 		vel.Normalize();
 		float ang = XMConvertToDegrees(atan2(-vel.x,-vel.y));
-		//if (ang < 0) ang += 180;
 
 		owner->SetAngleY(ang);
+		owner->Move();
 	}
-	owner->Move();
 }
 
 void PlayerDamageState::Exit() {
-	Player::AbilityStatus& as = owner->AStatus();
-	as.isHitDamage = false;
+
 }

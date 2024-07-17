@@ -417,6 +417,8 @@ void Player::Update()
 	// 敵との当たり判定
 	CollisionVsEnemy();
 
+	CalcJustDodge();
+
 	// アニメーション更新
 	//SetAnimatorKeyFrame(keyFrame);
 	UpdateAnimationParam();
@@ -520,21 +522,32 @@ void Player::DrawDebugImGui(int number) {
 				ImGui::DragFloat(u8"攻撃時間", &ability.attackTimer,0.1f);
 				ImGui::DragFloat(u8"攻撃回数", &ability.attackCount,0.1f);
 
+				ImGui::DragFloat(u8"回避時間", &ability.dodgeTimer, 0.1f);
+				ImGui::Checkbox(u8"ジャスト回避", &ability.isJustDodge);
+
+				ImGui::DragFloat(u8"体幹攻撃力", &ability.bodyTrunkStrength, 0.1f);
+				ImGui::DragFloat(u8"体幹攻撃力の振れ幅", &ability.bodyTrunkStrengthRange, 0.1f);
+
 				ImGui::TreePop();
 			}
 
 			if(ImGui::TreeNode(u8"定数値")) {
 				ImGui::DragFloat(u8"最大体力", &constant.maxHp);
+
 				ImGui::DragFloat(u8"歩き速度", &constant.walkSpeed,0.01f);
 				ImGui::DragFloat(u8"ダッシュ移行時間", &constant.shiftDashTimer,0.01f);
 				ImGui::DragFloat(u8"ダッシュ倍率", &constant.dashSpeed,0.01f);
-				ImGui::DragFloat(u8"回避強さ", &constant.dodgePower,0.01f);
-				ImGui::DragFloat(u8"回避時間", &constant.dodgeTime,0.01f);
-				ImGui::DragFloat(u8"入力拒否時間", &constant.notAcceptTime,0.01f);
-
 				static float rate = constant.dashDeadZone * 100;
 				if(ImGui::SliderFloat(u8"ダッシュデットゾーン", &rate,0,100,"%.0f%%"))
 					constant.dashDeadZone = rate / 100;
+
+				ImGui::DragFloat(u8"回避強さ", &constant.dodgePower,0.01f);
+				ImGui::DragFloat(u8"回避時間", &constant.dodgeTime,0.01f);
+				ImGui::DragFloat(u8"最小回避時間", &constant.dodgeLowestTime,0.01f);
+				ImGui::DragFloat(u8"無敵回避時間", &constant.dodgeInvincibleTime,0.01f);
+				ImGui::DragFloat(u8"ジャスト回避時間", &constant.justDodgeTime,0.01f);
+
+				ImGui::DragFloat(u8"入力拒否時間", &constant.notAcceptTime,0.01f);
 
 				ImGui::TreePop();
 			}
@@ -928,6 +941,20 @@ void Player::CalcAttackVelocity() {
 	angle.y += deg;
 }
 
+void Player::CalcJustDodge() {
+	float dt = Timer::Instance().DeltaTime();
+
+	if(ability.isJustDodge) {
+		ability.strength = min(ability.strength+constant.incrementStrength,constant.maxStrength);
+		ability.bodyTrunkStrength = min(ability.bodyTrunkStrength + constant.incrementBt, constant.maxBt);
+		ability.isJustDodge = false;
+	}
+	else {
+		ability.strength = max(ability.strength - dt, constant.leastStrength);
+		ability.bodyTrunkStrength = max(ability.bodyTrunkStrength - dt, constant.leastBt);
+	}
+}
+
 void Player::HitDamaged(float damage ,bool flying ,Vector3 vec) {
 	ability.hitDamage = damage;
 	ability.isHitDamage = true;
@@ -1092,8 +1119,8 @@ void Player::CollisionVsEnemy()
 				for (auto && collision: anim) {
 					collision.isDamaged = true;
 				}
-
-				Enemy::Instance().OnAttacked(ability.strength);
+				Enemy& enemy = Enemy::Instance();
+				enemy.OnAttacked(ability.strength);
 
 				ConsoleData::Instance().logs.push_back("Damage!");
 
@@ -1166,8 +1193,14 @@ void Player::CollisionVsEnemy()
 				emitter2->emitterData.burstsOneShot = 1;
 				EmitterManager::Instance().Register(emitter2);
 
-				int dmg = rand() % 20 + 1;
-				std::string dmgText = std::to_string(dmg);
+				//int dmg = rand() % 20 + 1;
+				//std::string dmgText = std::to_string(dmg);
+				//DamageTextManager::Instance().Register({ dmgText, collisionPoint });
+
+				float btStrength = Math::RandomRange(ability.bodyTrunkStrength - ability.bodyTrunkStrengthRange, ability.bodyTrunkStrength + ability.bodyTrunkStrengthRange);
+				enemy.SetFlinchValue(enemy.GetFlinchValue() + btStrength);
+
+				std::string dmgText = std::to_string(btStrength);
 				DamageTextManager::Instance().Register({ dmgText, collisionPoint });
 			}
 		}
@@ -1251,7 +1284,7 @@ void Player::ClampPosition(float range)
 				dots[i] = vec.Dot(directions[i]);
 
 
-			size_t indices[2] = { -1, -1 };
+			int indices[2] = { -1, -1 };
 
 			indices[0] = (dots[0] > dots[2]) ? 0 : 2;
 			indices[1] = (dots[1] > dots[3]) ? 1 : 3;
@@ -1342,6 +1375,9 @@ void Player::Respawn()
 	enterStage = false;
 	enterEntrance = false;
 	lockOn = false;
+
+	// 初期設定
+	ability = AbilityStatus();
 	ability.hp = constant.maxHp;
 
 	Gate::Instance().Initialize();

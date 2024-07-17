@@ -48,19 +48,29 @@ public:
 	struct ConstantStatus {
 		float maxHp = 1000;
 
+		float walkSpeed      = 5;
 		float shiftDashTimer = 0.4f;
-		float walkSpeed = 5;
-		float dashSpeed = 2.4f;
-		float dashDeadZone = 0.7f;
+		float dashSpeed      = 2.4f;
+		float dashDeadZone   = 0.7f;
 
-		float dodgePower = 24;
+		// âÒî
+		float dodgePower      = 24;
+		float dodgeTime       = 1.5f;
 		float dodgeLowestTime = 0.5f;
-		float dodgeTime = 1.5f;
-		float justDodgeTime = 0.1f;
+		float dodgeInvincibleTime = 0.5f;
+		float justDodgeTime   = 0.1f;
 
+		// çUåÇ
 		float maxAttackCombo = 4;
 		float attackReceptionTime = 0.1f;
 		float notAcceptTime = 0.16f;
+		float leastStrength = 1;
+		float maxStrength = 10;
+		float incrementStrength = 2;
+
+		float leastBt = 1;
+		float maxBt = 10;
+		float incrementBt = 2;
 	};
 
 private:
@@ -95,6 +105,7 @@ public:
 	void CalcDodgeVelocity();
 	// çUåÇ
 	void CalcAttackVelocity();
+	void CalcJustDodge();
 
 	// É_ÉÅÅ[ÉW
 	void HitDamaged(float damage, bool flying = false, Vector3 vec = {0,0,0});

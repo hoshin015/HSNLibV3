@@ -31,6 +31,7 @@ public:
 		//‰ñ”ð
 		float dodgeTimer = 0;
 		float notAcceptTimer = 0;
+		float justDodgeSlowTimer = 0;
 		bool isJustDodge = false;
 
 		//‘ÌŠ²
@@ -64,8 +65,8 @@ public:
 		float maxAttackCombo = 4;
 		float attackReceptionTime = 0.1f;
 		float notAcceptTime = 0.16f;
-		float leastStrength = 1;
-		float maxStrength = 10;
+		float leastStrength = 15;
+		float maxStrength = 60;
 		float incrementStrength = 2;
 
 		float leastBt = 1;

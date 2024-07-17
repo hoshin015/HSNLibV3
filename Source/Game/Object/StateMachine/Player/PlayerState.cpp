@@ -302,7 +302,8 @@ void PlayerDodgeState::Execute() {
 		owner->GetAnimator().SetParameter("endDodge", true);
 	}
 
-	if (owner->AStatus().dodgeTimer < justDodgeTimer && owner->AStatus().isHitDamage) owner->AStatus().isJustDodge = true;
+	if (owner->AStatus().dodgeTimer < justDodgeTimer && owner->AStatus().isHitDamage)
+		owner->AStatus().isJustDodge = true;
 
 	if (owner->AStatus().dodgeTimer < dodgeInvincibleTime) {
 		if (owner->AStatus().isHitDamage)owner->GetStateMachine()->ChangeSubState(static_cast<int>(Player::Normal::Damage));

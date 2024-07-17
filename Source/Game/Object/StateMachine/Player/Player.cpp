@@ -989,11 +989,20 @@ void Player::CalcJustDodge() {
 	if(ability.isJustDodge) {
 		ability.strength = min(ability.strength+constant.incrementStrength,constant.maxStrength);
 		ability.bodyTrunkStrength = min(ability.bodyTrunkStrength + constant.incrementBt, constant.maxBt);
+
+		//Timer::Instance().SetTimeScale(0.3f);
+		ability.justDodgeSlowTimer = 0;
 		ability.isJustDodge = false;
 	}
 	else {
 		ability.strength = max(ability.strength - dt, constant.leastStrength);
 		ability.bodyTrunkStrength = max(ability.bodyTrunkStrength - dt, constant.leastBt);
+
+		if (GetInputMap<bool>("Attack")) ability.justDodgeSlowTimer = 3;
+		ability.justDodgeSlowTimer += Timer::Instance().UnscaledDeltaTime();
+		if (ability.justDodgeSlowTimer >= 3) ability.justDodgeSlowTimer = 3;
+
+		Timer::Instance().SetTimeScale(Easing::InQuad(ability.justDodgeSlowTimer, 3.f,1.f,0.f));
 	}
 }
 
@@ -1164,7 +1173,7 @@ void Player::CollisionVsEnemy()
 				Enemy& enemy = Enemy::Instance();
 				enemy.OnAttacked(ability.strength);
 
-				ConsoleData::Instance().logs.push_back("Damage!");
+				//ConsoleData::Instance().logs.push_back("Damage!");
 
 				Emitter* emitter = new Emitter();
 				emitter->position = collisionPoint;
@@ -1238,7 +1247,7 @@ void Player::CollisionVsEnemy()
 				//int dmg = rand() % 20 + 1;
 				//std::string dmgText = std::to_string(dmg);
 				//DamageTextManager::Instance().Register({ dmgText, collisionPoint });
-
+				OnHitAttack(false);
 				float btStrength = Math::RandomRange(ability.bodyTrunkStrength - ability.bodyTrunkStrengthRange, ability.bodyTrunkStrength + ability.bodyTrunkStrengthRange);
 				enemy.SetFlinchValue(enemy.GetFlinchValue() + btStrength);
 
@@ -1443,9 +1452,11 @@ void Player::Respawn()
 	enterEntrance = false;
 	lockOn = false;
 
-	// ‰Šúİ’è
+	// ”\—Í’l‰Šúİ’è
 	ability = AbilityStatus();
 	ability.hp = constant.maxHp;
+
+	CameraManager::Instance().SetCurrentCamera("PlayerCamera");
 
 	Gate::Instance().Initialize();
 }

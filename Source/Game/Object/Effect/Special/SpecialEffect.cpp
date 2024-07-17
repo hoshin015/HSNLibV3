@@ -290,7 +290,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 			emitter->emitterData.duration = 5.0;
 			emitter->emitterData.looping = false;
 			emitter->emitterData.burstsTime = 0.1;
-			emitter->emitterData.burstsCount = 128;
+			emitter->emitterData.burstsCount = 256;
 			emitter->emitterData.particleKind = pk_Dust;
 			emitter->emitterData.particleLifeTimeMin = 1.0f;
 			emitter->emitterData.particleLifeTimeMax = 1.0f;

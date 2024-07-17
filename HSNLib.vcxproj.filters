@@ -158,6 +158,9 @@
     <Filter Include="2_Source\Game\Other\SwordTrail">
       <UniqueIdentifier>{6ecc3802-c886-4d2f-87ef-e4404d6d321c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダーファイル\SwordTrail">
+      <UniqueIdentifier>{edbfed58-b299-44a1-928f-a2518ba1053e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -1088,6 +1091,9 @@
     </FxCompile>
     <FxCompile Include="Library\Shader\PbrEmissionPS.hlsl">
       <Filter>シェーダーファイル\PbrIbl</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\SwordTrailPS.hlsl">
+      <Filter>シェーダーファイル\SwordTrail</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

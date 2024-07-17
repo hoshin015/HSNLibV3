@@ -99,6 +99,8 @@ void SceneTest::Initialize()
 	colorFilter->SetBrightness(2.0f);
 	swordTrailBuffer = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
 	                                          Framework::Instance().GetScreenHeightF());
+	swordTrailBufferSub = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
+	                                          Framework::Instance().GetScreenHeightF());
 
 	// --- skyMap 初期化 ---
 	skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
@@ -151,6 +153,9 @@ void SceneTest::Initialize()
 	BreathEffect::Instance().Initialize();
 
 	SpecialEffect::Instance().drawAfterStage = false;
+
+	// ------- ps 生成 -------
+	CreatePsFromCso("Data/Shader/SwordTrailPS.cso", swordTrailPisxelShader.GetAddressOf());
 
 	// テスト
 	AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
@@ -600,16 +605,36 @@ void SceneTest::Render()
 	}
 	frameBuffer->DeActivate();
 
+	// ======= swrodTrail =======
+	swordTrailBufferSub->Activate();
+	{
+		bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
+	}
+	swordTrailBufferSub->DeActivate();
+
 	float swordTrailClear[4] = {0,0,0,0};
 	swordTrailBuffer->Clear(swordTrailClear);
 	swordTrailBuffer->Activate();
 	{
+		dc->OMSetRenderTargets(1, swordTrailBuffer->renderTargetView.GetAddressOf(), frameBuffer->depthStencilView.Get());
+
+		gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
 		Player::Instance().swordTrail->Render();
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
 	}
 	swordTrailBuffer->DeActivate();
 
+	frameBuffer->Activate();
+	{
+		ID3D11ShaderResourceView* swordShvs[2] =
+		{
+			swordTrailBufferSub->shaderResourceViews[0].Get(),
+			swordTrailBuffer->shaderResourceViews[0].Get(),
+		};
+		bitBlockTransfer->blit(swordShvs, 0, ARRAYSIZE(swordShvs), swordTrailPisxelShader.Get());
+	}
+	frameBuffer->DeActivate();
 
 
 	// ポストエフェクトをかけるたびにこれを更新する

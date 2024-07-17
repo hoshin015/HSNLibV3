@@ -728,7 +728,11 @@ void Player::InputAttack() {
 	if (animator.GetEndMotion()) {
 		inputMap["Attack"] = at;
 		animator.SetParameter("attack", at);
-		if (at) ability.attackTimer = constant.attackReceptionTime;
+		if (at)
+		{
+			swordTrail->Clear();
+			ability.attackTimer = constant.attackReceptionTime;
+		}
 		else ability.attackTimer -= dt;
 		at = false;
 		ClearAnimSphereCollisionDamagedFlag();

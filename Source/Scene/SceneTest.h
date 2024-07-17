@@ -55,6 +55,7 @@ private:
 	std::unique_ptr<HeatHaze> heatHaze;
 	std::unique_ptr<ColorFilter> colorFilter;
 	std::unique_ptr<FrameBuffer> swordTrailBuffer;
+	std::unique_ptr<FrameBuffer> swordTrailBufferSub;
 
 	std::unique_ptr<SkyMap> skyMap;
 
@@ -70,4 +71,7 @@ private:
 
 	bool stopSoundTimer = false;
 	float soundTimer = 0.0f;
+
+	// swordTrail
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> swordTrailPisxelShader;
 };

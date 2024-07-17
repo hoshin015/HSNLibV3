@@ -69,14 +69,7 @@ void LightningEffect::Update()
 					CameraManager::Instance().shakePower = 100.0f;
 
 					Player& player = Player::Instance();
-					float currentHP = player.AStatus().hp;
-					player.AStatus().hp -= damage;
-
-					// --- ‚±‚ÌUŒ‚‚ÅƒvƒŒƒCƒ„[‚ª€–S‚µ‚½‚Æ‚« ---
-					if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)
-					{
-						CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
-					}
+					player.HitDamaged(damage);
 
 					break;
 				}

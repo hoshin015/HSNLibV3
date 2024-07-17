@@ -437,6 +437,7 @@ void Player::Update()
 	UpdateTransform();
 
 	swordTrail->Update();
+	PowerSwordEffetUpdate();
 }
 
 void Player::Render(bool isShadow)
@@ -1179,6 +1180,58 @@ void Player::CollisionVsEnemy()
 				std::string dmgText = std::to_string(dmg);
 				DamageTextManager::Instance().Register({ dmgText, collisionPoint });
 			}
+		}
+	}
+}
+
+void Player::PowerSwordEffetUpdate()
+{
+	DirectX::XMFLOAT3 tail = GetBonePosition("sword_05");
+	DirectX::XMFLOAT3 head = GetBonePosition("sword_01");
+
+	DirectX::XMVECTOR TAIL = DirectX::XMLoadFloat3(&tail);
+	DirectX::XMVECTOR HEAD = DirectX::XMLoadFloat3(&head);
+	DirectX::XMVECTOR SUB = DirectX::XMVectorSubtract(TAIL, HEAD);
+	DirectX::XMVECTOR N = DirectX::XMVector3Normalize(SUB);
+	float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(SUB));
+	length += 0.5f;
+
+	static const float swordTime = 0.001f;
+	static float swordTimer = 0.0f;
+
+	swordTimer += Timer::Instance().DeltaTime();
+	while(swordTimer > swordTime)
+	{
+		swordTimer -= swordTime;
+
+		// ¶¬À•W‚ÌŒˆ’è
+		float lengthPower = Math::RandomRange(0.0f, length);
+		DirectX::XMVECTOR GeneratePos = HEAD;
+		GeneratePos = DirectX::XMVectorAdd(GeneratePos, DirectX::XMVectorScale(N, lengthPower));
+		DirectX::XMFLOAT3 generatePos;
+		DirectX::XMStoreFloat3(&generatePos, GeneratePos);
+
+		{
+			Emitter* emitter0 = new Emitter();
+			emitter0->position = generatePos;
+			emitter0->emitterData.duration = 10.0;
+			emitter0->emitterData.looping = false;
+			emitter0->emitterData.burstsTime = 0.0;
+			emitter0->emitterData.burstsCount = 10;
+			emitter0->emitterData.particleKind = pk_swordPowerUp;
+			emitter0->emitterData.particleLifeTimeMin = 0.05f;
+			emitter0->emitterData.particleLifeTimeMax = 0.05f;
+			emitter0->emitterData.particleSpeedMin = 1.0f;
+			emitter0->emitterData.particleSpeedMax = 1.0f;
+			emitter0->emitterData.particleSizeMin = { 0.1f, 1.0f };
+			emitter0->emitterData.particleSizeMax = { 0.5f, 2.0f };
+			emitter0->emitterData.particleColorMin = { 1.0, 1.0, 4.0, 1 };
+			emitter0->emitterData.particleColorMax = { 1.0, 1.0, 4.0, 1 };
+			emitter0->emitterData.particleGravity = 0;
+			emitter0->emitterData.particleBillboardType = 0;
+			emitter0->emitterData.particleTextureType = 0;
+			emitter0->emitterData.burstsOneShot = 1;
+			EmitterManager::Instance().Register(emitter0);
 		}
 	}
 }

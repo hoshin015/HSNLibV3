@@ -43,6 +43,8 @@
 
 #define pk_titleSelect			12
 
+#define pk_swordPowerUp			13
+
 // billboardType
 #define bt_View		0
 #define bt_Velocity 1

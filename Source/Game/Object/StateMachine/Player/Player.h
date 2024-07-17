@@ -106,6 +106,9 @@ public:
 
 	void SetCamera(CameraBase* camera) { this->camera = camera; }
 
+	// 剣強化エフェクト
+	void PowerSwordEffetUpdate();
+
 	void DrawDebug();
 
 public:

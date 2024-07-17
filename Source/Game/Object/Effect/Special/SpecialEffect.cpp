@@ -367,6 +367,8 @@ void SpecialEffect::GenerateRock()
 		rock->SetUpdateType(RockData::RockFuncEnum::Up);
 
 		rock->isDamaged = false;
+		rock->damage = 0.0f;
+		rock->damageRadius = 0.0f;
 
 		RockEffect::Instance().rockMesh1->Register(rock);
 	}

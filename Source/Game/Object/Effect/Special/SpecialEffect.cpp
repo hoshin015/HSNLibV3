@@ -186,7 +186,6 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 				CameraManager::Instance().shakeTimer = chargeNovaTime;
 				CameraManager::Instance().shakePower = 2.0f;
 
-				radialBlur->SetIsRadial(false);
 				lifeTimer         = 0.0f;
 				rockIntervalTimer = 0.0f;
 				isEndParticle = false;
@@ -286,7 +285,19 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 				}
 			}
 				
+			// --- radialBlur ---
+			float sampCount;
+			sampCount = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, endNovaBlurPowerUp);
+			if (endNovaBlurPowerDown.startTime < lifeTimer)
+			{
+				sampCount = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, endNovaBlurPowerDown);
+			}
+			radialBlur->SetBlurPower(sampCount);
 
+			DirectX::XMFLOAT2 ndc = Math::ScreenToNdcPos(Math::WorldToScreenPos({ 0,0,0 }, CameraManager::Instance().GetCamera().get()));
+			ndc.x = (ndc.x + 1.0f) / 2.0f;
+			ndc.y = (ndc.y + 1.0f) / 2.0f;
+			radialBlur->SetBlurPosition(ndc);
 
 			// --- ambientColor ---
 			float rColor = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, firstNovaColorDown);

@@ -125,8 +125,16 @@ private:
 		0.4f, 0.2f,
 	};
 
-
-
+	Easing::EasingValue endNovaBlurPowerUp =
+	{
+		8.5f, 9.5f,
+		0.0f, 0.1f,
+	};
+	Easing::EasingValue endNovaBlurPowerDown =
+	{
+		9.5f, 10.0f,
+		0.1f, 0.0f,
+	};
 
 
 

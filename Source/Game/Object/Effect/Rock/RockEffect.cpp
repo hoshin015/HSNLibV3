@@ -33,6 +33,9 @@ void RockEffect::Emit(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 vel, DirectX::XMF
 	rock->SetAngle({rX, rY, rZ});
 	rock->SetColor({1.0, 1.0, 1.0, 1});
 	rock->SetUpdateType(RockData::RockFuncEnum::Default);
+	rock->isDamaged = true;
+	rock->damage = 0;
+	rock->damageRadius = 0;
 	rockMesh1->Register(rock);
 }
 

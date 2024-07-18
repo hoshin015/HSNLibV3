@@ -27,21 +27,22 @@ void SceneLoading::Initialize()
 
 	// particle
 	Particle::Instance().Initialize();
-	emitterPos = { 640, 360 };
+	emitterPos = { 610, 360 };
 
 
 	bg = std::make_unique<Sprite>("Data/Texture/UserInterface/Loading/bg.png");
-	
 
-	sprite = std::make_unique<Sprite>("Data/Texture/slash.sprite");
-	sprite->SetPos({ 640,360 });
+	sprite = std::make_unique<Sprite>("Data/Texture/Effect/particle0.sprite");
+	sprite->SetPos({ 620,360 });
+	sprite->SetScale({ 0.5f,0.5f });
+	sprite->SetColor({ 1.0,2.0,2.0,0.3f });
 	sprite->UpdateAnimation();
 
 	// スレッド開始
 	thread = new std::thread(LoadingThread, this);
 
 	// スレッドの管理を放棄
-	//thread->detach();
+	thread->detach();
 
 	loadTimer = 0.0f;
 }
@@ -61,8 +62,6 @@ void SceneLoading::Update()
 	Particle::Instance().Update();
 
 	EmitUpdate();
-
-	sprite->UpdateAnimation();
 
 	 loadTimer += Timer::Instance().DeltaTime();
 	 if(loadTimer < loadTime)
@@ -149,21 +148,22 @@ void SceneLoading::Render()
 	}
 
 	// ====== ブルーム処理しての描画 ======
-	bloom->Make(useSrv);
-	ID3D11ShaderResourceView* shvs[2] =
-	{
-		useSrv,
-		bloom->GetSrv()
-	};
-	bitBlockTransfer->blit(shvs, 0, 2, bloom->GetFinalPassPs());
+	//bloom->Make(useSrv);
+	//ID3D11ShaderResourceView* shvs[2] =
+	//{
+	//	useSrv,
+	//	bloom->GetSrv()
+	//};
+	//bitBlockTransfer->blit(shvs, 0, 2, bloom->GetFinalPassPs());
+	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 
 
 	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
 	gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
 	gfx->SetBlend(BLEND_STATE::ALPHA);
 
+	sprite->Render();
 	bg->Render();
-	//sprite->Render();
 }
 
 void SceneLoading::EmitUpdate()
@@ -175,18 +175,18 @@ void SceneLoading::EmitUpdate()
 		uiEmitterTimer -= uiEmitterTime;
 
 		Emitter* emitter0 = new Emitter();
-		emitter0->position = {640, 360,0};
+		emitter0->position = {620, 360,0};
 		emitter0->emitterData.duration = 5.0;
 		emitter0->emitterData.looping = false;
 		emitter0->emitterData.burstsTime = 0.1;
-		emitter0->emitterData.burstsCount = 3;
+		emitter0->emitterData.burstsCount = 1;
 		emitter0->emitterData.particleKind = pk_loadingParticle;
 		emitter0->emitterData.particleLifeTimeMin = 2.0f;
 		emitter0->emitterData.particleLifeTimeMax = 3.0f;
-		emitter0->emitterData.particleSpeedMin = 5.0f;
-		emitter0->emitterData.particleSpeedMax = 30.0f;
+		emitter0->emitterData.particleSpeedMin = 40.0f;
+		emitter0->emitterData.particleSpeedMax = 70.0f;
 		emitter0->emitterData.particleSizeMin = { 5.0f, 10.0f };
-		emitter0->emitterData.particleSizeMax = { 20.0f, 20.0f };
+		emitter0->emitterData.particleSizeMax = { 30.0f, 20.0f };
 		emitter0->emitterData.particleColorMin = { 1.0, 2.0, 2.0, 1 };
 		emitter0->emitterData.particleColorMax = { 1.0, 2.0, 2.0, 1 };
 		emitter0->emitterData.particleGravity = 1;

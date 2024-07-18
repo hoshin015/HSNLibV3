@@ -56,6 +56,12 @@ public:
 	// 終了化
 	void Finalize();
 
+	// ゲーム終了
+	void SetGameEnd()
+	{
+		PostMessage(hwnd, WM_KEYDOWN, VK_F4, 0);
+	}
+
 private:
 	// ウィンドウ作成
 	void CreateHSNWindow(HINSTANCE hInstance);

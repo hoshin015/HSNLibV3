@@ -220,7 +220,6 @@ HRESULT LoadTextureFromFile(const wchar_t* filename, ID3D11ShaderResourceView** 
 	}
 
 
-
 	//--- < テクスチャ情報の取得 > ---
 	ComPtr<ID3D11Texture2D> texture2d;
 	D3D11_TEXTURE2D_DESC texture2dDesc;

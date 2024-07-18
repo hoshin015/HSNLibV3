@@ -34,8 +34,10 @@ void UiTitle::Update()
 			imgTitleLogo->SetColorA(1.0f);
 			imgTitleText->SetIsRender(true);
 			imgTitleText->SetColorA(1.0f);
-			imgPressAnyButton->SetIsRender(true);
-			imgPressAnyButton->SetColorA(1.0f);
+			imgPressAnyKeyButton->SetIsRender(true);
+			imgPressAnyPadButton->SetIsRender(true);
+			imgPressAnyKeyButton->SetColorA(1.0f);
+			imgPressAnyPadButton->SetColorA(1.0f);
 
 			isEmitterRender = false;
 
@@ -74,7 +76,7 @@ void UiTitle::Update()
 		//[[fallthrough]]
 	case UiTitleState::Title2:
 		{
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
+			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::F) ||
 				InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 			{
 				state = UiTitleState::TitleToSelectMenu1;
@@ -87,10 +89,13 @@ void UiTitle::Update()
 
 			imgTitleLogo->SetIsRender(true);
 			imgTitleText->SetIsRender(true);
-			imgPressAnyButton->SetIsRender(true);
+			imgPressAnyKeyButton->SetIsRender(true);
+			imgPressAnyPadButton->SetIsRender(true);
 
-			imgEnterText->SetIsRender(true);
-			imgBackText->SetIsRender(true);
+			imgEnterKeyText->SetIsRender(true);
+			imgEnterPadText->SetIsRender(true);
+			imgBackKeyText->SetIsRender(true);
+			imgBackPadText->SetIsRender(true);
 			imgTitleLogoSmall->SetIsRender(true);
 			imgBgCover->SetIsRender(true);
 			imgGameStart->SetIsRender(true);
@@ -107,8 +112,10 @@ void UiTitle::Update()
 			titleTimer += Timer::Instance().DeltaTime();
 
 			// imgEnterBackText
-			imgEnterText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextTitleToSelectMenuAlpha));
-			imgBackText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextTitleToSelectMenuAlpha));
+			imgEnterKeyText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextTitleToSelectMenuAlpha));
+			imgEnterPadText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextTitleToSelectMenuAlpha));
+			imgBackKeyText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextTitleToSelectMenuAlpha));
+			imgBackPadText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextTitleToSelectMenuAlpha));
 
 			// imgTitleLogo
 			imgTitleLogo->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgTitleLogoAlpha));
@@ -120,8 +127,10 @@ void UiTitle::Update()
 
 			// pressAnyButton
 			float _imgPressAnyButtonScale = Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgPressAnyButtonScale);
-			imgPressAnyButton->SetScale({_imgPressAnyButtonScale, _imgPressAnyButtonScale});
-			imgPressAnyButton->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgPressAnyButtonAlpha));
+			imgPressAnyKeyButton->SetScale({_imgPressAnyButtonScale, _imgPressAnyButtonScale});
+			imgPressAnyPadButton->SetScale({_imgPressAnyButtonScale, _imgPressAnyButtonScale});
+			imgPressAnyKeyButton->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgPressAnyButtonAlpha));
+			imgPressAnyPadButton->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgPressAnyButtonAlpha));
 
 			// imgBgCover
 			imgBgCover->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgBgCoverAlpha));
@@ -161,7 +170,7 @@ void UiTitle::Update()
 		//[[fallthrough]]
 	case UiTitleState::SelectMenu2:
 		{
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back) ||
+			if (InputManager::Instance().GetMousePressed(MOUSEBUTTON_STATE::rightButton) ||
 				InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::b))
 			{
 				state = UiTitleState::ToTitle1;
@@ -188,7 +197,7 @@ void UiTitle::Update()
 					imgSelectBar->SetPos(imgGameStartPos.endValueVec);
 					emitterTargetPos = { 80, 100 };
 
-					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
+					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::F) ||
 						InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 					{
 						state      = UiTitleState::SelectMenuToLevel1;
@@ -200,9 +209,10 @@ void UiTitle::Update()
 					imgSelectBar->SetPos(imgOptionsPos.endValueVec);
 					emitterTargetPos = { 80, 200 };
 
-					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
+					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::F) ||
 						InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 					{
+						state = UiTitleState::SelectMenuToOption1;
 					}
 				}
 				break;
@@ -211,9 +221,10 @@ void UiTitle::Update()
 					imgSelectBar->SetPos(imgQuitPos.endValueVec);
 					emitterTargetPos = { 80, 300 };
 
-					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
+					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::F) ||
 						InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 					{
+						Framework::Instance().SetGameEnd();
 					}
 				}
 				break;
@@ -223,22 +234,22 @@ void UiTitle::Update()
 		break;
 	case UiTitleState::SelectMenuToLevel1:
 		{
-			// テキストカラー設定
-			imgEasy->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
-			imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
-			imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
 
 			SetAllOffRender();
 
 			imgBlack->SetIsRender(true);
-			imgEnterText->SetIsRender(true);
-			imgBackText->SetIsRender(true);
+			imgEnterKeyText->SetIsRender(true);
+			imgEnterPadText->SetIsRender(true);
+			imgBackKeyText->SetIsRender(true);
+			imgBackPadText->SetIsRender(true);
 
 			imgSelectLevelBgCover->SetIsRender(true);
 			imgSelectLevel->SetIsRender(true);
 			imgEasy->SetIsRender(true);
 			imgNormal->SetIsRender(true);
 			imgHard->SetIsRender(true);
+
+			imgEasySelect->SetIsRender(true);
 
 			// ステージ非描画
 			isStageRender = false;
@@ -256,8 +267,10 @@ void UiTitle::Update()
 			imgBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgBlackSelectMenuToLevelAlpha));
 
 			// imgEnterBackText
-			imgEnterText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextSelectMenuToLevelAlpha));
-			imgBackText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextSelectMenuToLevelAlpha));
+			imgEnterKeyText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextSelectMenuToLevelAlpha));
+			imgEnterPadText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextSelectMenuToLevelAlpha));
+			imgBackKeyText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextSelectMenuToLevelAlpha));
+			imgBackPadText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextSelectMenuToLevelAlpha));
 
 			imgSelectLevelBgCover->spriteDissolveConstant.dissolveThreshold = Easing::GetNowParam(
 				Easing::OutQuad<float>, titleTimer, imgSelectLevelBgCoverDissolveThread);
@@ -271,7 +284,7 @@ void UiTitle::Update()
 		break;
 	case UiTitleState::Level1:
 		{
-			emitterPos = { 50, 250 };
+			emitterPos = { 100, 250 };
 			isEmitterRender = true;
 			imgEmitterTop->SetIsRender(true);
 
@@ -282,7 +295,7 @@ void UiTitle::Update()
 		//[[fallthrough]]
 	case UiTitleState::Level2:
 		{
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back) ||
+			if (InputManager::Instance().GetMousePressed(MOUSEBUTTON_STATE::rightButton) ||
 				InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::b))
 			{
 				state = UiTitleState::ToTitle1;
@@ -306,12 +319,13 @@ void UiTitle::Update()
 			{
 			case SelectLevel::Easy:
 				{
-				emitterTargetPos = { 50, 250 };
+				emitterTargetPos = { 100, 250 };
 
-				imgEasy->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
-				imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
-				imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
-				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
+				imgEasySelect->SetIsRender(true);
+				imgNormalSelect->SetIsRender(false);
+				imgHardSelect->SetIsRender(false);
+
+				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::F) ||
 					InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
@@ -320,12 +334,13 @@ void UiTitle::Update()
 				break;
 			case SelectLevel::Normal:
 				{
-				emitterTargetPos = { 50, 400 };
+				emitterTargetPos = { 100, 400 };
 
-				imgEasy->spriteAddColorConstant.addColor = { 0,0,0,1 };
-				imgNormal->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
-				imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
-				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
+				imgEasySelect->SetIsRender(false);
+				imgNormalSelect->SetIsRender(true);
+				imgHardSelect->SetIsRender(false);
+
+				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::F) ||
 					InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
@@ -334,12 +349,13 @@ void UiTitle::Update()
 				break;
 			case SelectLevel::Hard:
 				{
-				emitterTargetPos = { 50, 550 };
+				emitterTargetPos = { 100, 550 };
 
-				imgEasy->spriteAddColorConstant.addColor = { 0,0,0,1 };
-				imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
-				imgHard->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
-				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
+				imgEasySelect->SetIsRender(false);
+				imgNormalSelect->SetIsRender(false);
+				imgHardSelect->SetIsRender(true);
+
+				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::F) ||
 					InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 				{
 					SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
@@ -350,6 +366,52 @@ void UiTitle::Update()
 			EmitUpdate();
 		}
 		break;
+	case UiTitleState::SelectMenuToOption1:
+		{
+			SetAllOffRender();
+
+			imgBackBlack->SetIsRender(true);
+			imgBackKeyText->SetIsRender(true);
+			imgBackPadText->SetIsRender(true);
+			imgBackKeyText->SetPos(imgBackTextPos2);
+			imgBackPadText->SetPos(imgBackTextPos2);
+
+			titleTimer = 0.0f;
+			state = UiTitleState::SelectMenuToOption2;
+		}
+	case UiTitleState::SelectMenuToOption2:
+		{
+			titleTimer += Timer::Instance().DeltaTime();
+
+			imgBackBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgBlackSelectMenuToOptionAlpha));
+
+			imgBackKeyText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextSelectMenuToLevelAlpha));
+			imgBackPadText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextSelectMenuToLevelAlpha));
+
+			// 表示完了したら遷移
+			if (titleTimer > selectMenuToSelectLevelTime)
+			{
+				state = UiTitleState::Option1;
+			}
+		}
+		break;
+	case UiTitleState::Option1:
+		{
+			titleTimer = 0.0f;
+			state = UiTitleState::Option2;
+		}
+	case UiTitleState::Option2:
+		{
+			if (InputManager::Instance().GetMousePressed(MOUSEBUTTON_STATE::rightButton) ||
+				InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::b))
+			{
+				imgBackKeyText->SetPos(imgBackTextPos);
+				imgBackPadText->SetPos(imgBackTextPos);
+
+				state = UiTitleState::ToTitle1;
+			}
+		}
+		break;
 	}
 }
 
@@ -358,10 +420,10 @@ void UiTitle::Render()
 {
 	//if (!isPause) return;
 
+	imgBackBlack->Render();
 	imgTitleLogo->Render();
 	imgTitleLogoSmall->Render();
 	imgTitleText->Render();
-	imgPressAnyButton->Render();
 	imgBgCover->Render();
 	imgGameStart->Render();
 	imgOptions->Render();
@@ -372,9 +434,23 @@ void UiTitle::Render()
 	imgEasy->Render();
 	imgNormal->Render();
 	imgHard->Render();
+	imgEasySelect->Render();
+	imgNormalSelect->Render();
+	imgHardSelect->Render();
 
-	imgEnterText->Render();
-	imgBackText->Render();
+	if(InputManager::Instance().IsGamePadConnected())
+	{
+		imgPressAnyPadButton->Render();
+		imgEnterPadText->Render();
+		imgBackPadText->Render();
+	}
+	else
+	{
+		imgPressAnyKeyButton->Render();
+		imgEnterKeyText->Render();
+		imgBackKeyText->Render();
+	}
+	
 
 	imgBlack->Render();
 

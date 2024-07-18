@@ -47,12 +47,32 @@ private:
 	void DrawDebugGUI();
 
 private:
+	bool goTitleFlag = false;
+	Easing::EasingValue goTitleBlackAlpha =
+	{
+		0.0f, 1.0f,
+		0.0f, 1.0f
+	};
+
+	enum class Rank
+	{
+		S,
+		A,
+		B,
+		C
+	};
+	int rank;
+
 	std::unique_ptr<Sprite> sprBlack;
 	std::unique_ptr<Sprite> sprBackground;
 	std::unique_ptr<Sprite> sprTimeBoard;
 	std::unique_ptr<Sprite> sprRankBoard;
 	std::unique_ptr<Sprite> sprRankS;
-	std::unique_ptr<Sprite> sprGoTitle;
+	std::unique_ptr<Sprite> sprRankA;
+	std::unique_ptr<Sprite> sprRankB;
+	std::unique_ptr<Sprite> sprRankC;
+	std::unique_ptr<Sprite> sprGoTitleKey;
+	std::unique_ptr<Sprite> sprGoTitlePad;
 
 	// îwåi
 	std::unique_ptr<FullScreenQuad> capturedBackground;
@@ -89,4 +109,8 @@ private:
 		3.0f, 4.0f,
 		0.0f, 1.0f
 	};
+
+	// ÉeÉLÉXÉg
+	std::unique_ptr<Sprite> imgText;
+	std::unique_ptr<Sprite> colon;
 };

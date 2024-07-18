@@ -24,7 +24,7 @@ private:
 		sprites.emplace_back(imgGoTitle.get());
 		imgResumeGoTitleSelect = std::make_unique<Sprite>("Data/Texture/UserInterface/Pause/resumeGoTitleSelect.sprite");
 		imgResumeGoTitleSelect->UpdateAnimation();
-		imgResumeGoTitleSelect->SetPos({ 500, 550 });
+		imgResumeGoTitleSelect->SetPos({ 500, 575 });
 		sprites.emplace_back(imgResumeGoTitleSelect.get());
 
 
@@ -42,8 +42,16 @@ private:
 		sprites.emplace_back(imgNoText.get());
 		imgYesNoSelect = std::make_unique<Sprite>("Data/Texture/UserInterface/Pause/yesNoSelect.sprite");
 		imgYesNoSelect->UpdateAnimation();
-		imgYesNoSelect->SetPos({ 840, 400 });
+		imgYesNoSelect->SetPos({ 840, 425 });
 		sprites.emplace_back(imgYesNoSelect.get());
+
+		imgEnterKey = std::make_unique<Sprite>("Data/Texture/UserInterface/Pause/enterKey.png");
+		imgEnterKey->SetPos({ 603, 600 });
+		sprites.emplace_back(imgEnterKey.get());
+
+		imgEnterPad = std::make_unique<Sprite>("Data/Texture/UserInterface/Pause/enterPad.png");
+		imgEnterPad->SetPos({ 603, 600 });
+		sprites.emplace_back(imgEnterPad.get());
 	};
 
 	~UiPause()
@@ -131,4 +139,8 @@ private:
 	std::unique_ptr<Sprite> imgYesText;
 	std::unique_ptr<Sprite> imgNoText;
 	std::unique_ptr<Sprite> imgYesNoSelect;
+
+
+	std::unique_ptr<Sprite> imgEnterKey;
+	std::unique_ptr<Sprite> imgEnterPad;
 };

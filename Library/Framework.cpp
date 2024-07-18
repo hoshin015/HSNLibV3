@@ -105,6 +105,7 @@ void Framework::Update()
 #endif
 #endif
 			SceneManager::Instance().Update();
+
 #if USE_IMGUI
 #if SHOW_PERFORMANCE
 			// --- UpdateTimerèIóπ ---
@@ -257,9 +258,9 @@ LRESULT Framework::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 	case WM_KEYDOWN:
-		if (wParam == VK_ESCAPE)
-		{
+		if (wParam == VK_F4) {
 			DestroyWindow(hwnd);
+			return 0;
 		}
 		[[fallthrough]];
 	case WM_SYSKEYDOWN:

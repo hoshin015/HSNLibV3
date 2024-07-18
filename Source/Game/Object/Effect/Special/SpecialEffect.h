@@ -80,12 +80,12 @@ private:
 	Easing::EasingValue firstNovaSamplingUp    =
 	{
 		0.0f, 1.0f,
-		1.0f, 12.0f
+		0.0f, 0.1f
 	};
 	Easing::EasingValue firstNovaSamplingDown =
 	{
 		1.0f, 2.0f,
-		12.0f, 1.0f
+		0.1f, 0.0f
 	};
 	Easing::EasingValue firstNovaHeatHazeMaxShiftUp =
 	{

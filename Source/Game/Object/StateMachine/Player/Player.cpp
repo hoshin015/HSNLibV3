@@ -1268,6 +1268,19 @@ void Player::CollisionVsEnemy()
 				emitter->emitterData.burstsOneShot = true;
 				EmitterManager::Instance().Register(emitter);
 
+
+				bool weakness = eBoneSphere.skeletonType == SkeletonSphereCollision::SkeletonType::WeakPoint1;
+				OnHitAttack(weakness);
+
+				DirectX::XMFLOAT4 cMin = { 1.9, 1.9, 8.8, 1 };
+				DirectX::XMFLOAT4 cMax = { 1.9, 1.9, 10.8, 1 };
+
+				if(weakness)
+				{
+					cMin = { 8.8, 1.9, 1.9, 1 };
+					cMax = { 10.8, 1.9, 1.9, 1 };
+				}
+
 				Emitter* emitter1 = new Emitter();
 				emitter1->position = collisionPoint;
 				emitter1->emitterData.duration = 2.0;
@@ -1281,8 +1294,8 @@ void Player::CollisionVsEnemy()
 				emitter1->emitterData.particleSpeedMax = 0.0f;
 				emitter1->emitterData.particleSizeMin = { 70.0f, 2.0f };
 				emitter1->emitterData.particleSizeMax = { 70.0f, 2.0f };
-				emitter1->emitterData.particleColorMin = { 1.9, 1.9, 8.8, 1 };
-				emitter1->emitterData.particleColorMax = { 1.9, 1.9, 10.8, 1 };
+				emitter1->emitterData.particleColorMin = cMin;
+				emitter1->emitterData.particleColorMax = cMax;
 				emitter1->emitterData.particleAngleMin = 0;
 				emitter1->emitterData.particleAngleMax = 359;
 				emitter1->emitterData.particleGravity = 20;
@@ -1316,8 +1329,6 @@ void Player::CollisionVsEnemy()
 				emitter2->emitterData.burstsOneShot = 1;
 				EmitterManager::Instance().Register(emitter2);
 
-				bool weakness = eBoneSphere.skeletonType == SkeletonSphereCollision::SkeletonType::WeakPoint1;
-				OnHitAttack(weakness);
 				float rate = weakness ? 1.5f : 1;
 				float btStrength = Math::RandomRange(ability.bodyTrunkStrength * rate - ability.bodyTrunkStrengthRange, ability.bodyTrunkStrength * rate + ability.bodyTrunkStrengthRange);
 				float strength = Math::RandomRange(ability.strength * rate - ability.strengthRange, ability.strength * rate + ability.strengthRange);

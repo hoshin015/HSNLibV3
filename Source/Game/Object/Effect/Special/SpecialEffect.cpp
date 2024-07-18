@@ -189,6 +189,8 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 				lifeTimer         = 0.0f;
 				rockIntervalTimer = 0.0f;
 				isEndParticle = false;
+				isEndNova = false;
+				endRockGenTimer = 0.0f;
 				// ステート更新
 				specialState = SpecialState::chargeNova;
 			}
@@ -283,6 +285,53 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 						RockEffect::Instance().rockMesh1->Register(rock);
 					}
 				}
+			}
+
+			// --- endNova ---
+			if(!isEndNova && lifeTimer > endNovaTime)
+			{
+				isEndNova = true;
+
+				DirectX::XMFLOAT3 plPos = Player::Instance().GetPos();
+
+				constexpr int num = 9;
+				DirectX::XMFLOAT3 emitPos[num] =
+				{
+					{0,0,0},
+					{15, 0, 0},
+					{-15, 0, 0},
+					{15, 0, 0},
+					{-15, 0, 0},
+					{15, 0, 15},
+					{-15, 0, 15},
+					{15, 0, 15 },
+					{ 15, 0, -15 },
+				};
+
+				for(int i = 0; i < num; i++)
+				{
+					Emitter* emitter0 = new Emitter();
+					emitter0->position = (emitPos[i] + plPos);
+					emitter0->emitterData.duration = 10.0;
+					emitter0->emitterData.looping = false;
+					emitter0->emitterData.burstsTime = 0.01;
+					emitter0->emitterData.burstsCount = 1;
+					emitter0->emitterData.particleKind = pk_novaEndFire;
+					emitter0->emitterData.particleLifeTimeMin = 0.5f;
+					emitter0->emitterData.particleLifeTimeMax = 1.0f;
+					emitter0->emitterData.particleSpeedMin = 1.0f;
+					emitter0->emitterData.particleSpeedMax = 1.0f;
+					emitter0->emitterData.particleSizeMin = { 70.0f, 70.0f };
+					emitter0->emitterData.particleSizeMax = { 70.0f, 70.0f };
+					emitter0->emitterData.particleColorMin = { 3.0, 1.0, 1.0, 1 };
+					emitter0->emitterData.particleColorMax = { 3.0, 1.0, 1.0, 1 };
+					emitter0->emitterData.particleGravity = 0;
+					emitter0->emitterData.particleBillboardType = 0;
+					emitter0->emitterData.particleTextureType = 11;
+					emitter0->emitterData.burstsOneShot = 2;
+					EmitterManager::Instance().Register(emitter0);
+				}
+				
 			}
 				
 			// --- radialBlur ---

@@ -114,6 +114,9 @@ private:
 	float				endRockGenTimer = 0.0f;
 	float				endRockGenTime = 0.05f;
 
+	bool				isEndNova = false;
+	float				endNovaTime = 9.3f;
+
 	Easing::EasingValue chargeNovaHeatHazeMaxShiftDown =
 	{
 		8.5f, 10.0f,

@@ -125,10 +125,12 @@ void SceneTest::Initialize()
 		// ƒeƒXƒg
 		AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
 		AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
+
+		// --- skyMap ‰Šú‰» ---
+		skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
 	}
 
-	// --- skyMap ‰Šú‰» ---
-	skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
+
 
 	// --- AnimatedObject ‰Šú‰» ---
 	//blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");

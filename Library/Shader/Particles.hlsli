@@ -413,6 +413,30 @@ void spawn(uint id, inout Particle p)
 			    p.textureType = 8;
          }
 		break;
+	case pk_novaEndParticle:
+		{
+            p.position = emitterPosition;
+            p.position.y = emitterPosition.y + rand(seed) * 1.5;
 
+
+            p.velocity.y = rand(seed) * 8.0;
+
+            float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+
+            float r = (rand(seed) * 360) * 3.14 / 180;
+
+			// x •ûŒü
+            p.velocity.x = cos(r) * particleSpeed;
+
+			// z •ûŒü
+            p.velocity.z = -sin(r) * particleSpeed;
+
+            p.textureType = 3;
+            if (rand(seed) > 0.66)
+                p.textureType = 4;
+            if (rand(seed) > 0.66)
+                p.textureType = 5;
+		}
+        break;
     }
 }

@@ -45,6 +45,8 @@
 
 #define pk_swordPowerUp			13
 
+#define pk_novaEndParticle		14
+
 // billboardType
 #define bt_View		0
 #define bt_Velocity 1

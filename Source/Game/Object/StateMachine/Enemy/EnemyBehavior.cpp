@@ -901,9 +901,13 @@ BT_ActionState EnemyRushAction::Run(float elapsedTime)
 	{
 		// --- ê≥ñ Ç÷à⁄ìÆ ---
 		Vector3 rootMotionVel = owner_->GetAnimator().GetVelocity();
-		rootMotionVel *= 70;
-		float len = rootMotionVel.Length();
-		owner_->Move(owner_->targetVec, len);
+		rootMotionVel *= 1;
+		Matrix R;
+		R.MakeRotationFromQuaternion(owner_->quaternion_);
+		rootMotionVel.TransformCoord(rootMotionVel, R);
+		Vector3 pos = owner_->GetPos();
+		pos += rootMotionVel;
+		owner_->SetPos(pos.vec_);
 
 		// --- ä‚ê∂ê¨ ---
 		rockNowTimer += Timer::Instance().DeltaTime();

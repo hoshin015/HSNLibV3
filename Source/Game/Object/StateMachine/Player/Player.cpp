@@ -18,6 +18,7 @@
 
 #include "../../Source/Camera/CameraDerived.h"
 #include "../../../../../Library/3D/DebugPrimitive.h"
+#include "../../../../../Library/Graphics/ColorFilter.h"
 #include "../../../../UserInterface/UiClearAfter.h"
 #include "../../Stage/Gate.h"
 #include "../../../../../Library/Graphics/Shader.h"
@@ -44,31 +45,38 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	idle.motion = &animation[3];
 	idle.animationSpeed = 0.75f;
 	idle.threshold = { 0,0 };
+	idle.animationIndex = 3;
 
 	Animator::Motion walkMae;
 	walkMae.motion = &animation[16];
 	walkMae.animationSpeed = 1.2f;
 	walkMae.threshold = { 0,1 };
+	walkMae.animationIndex = 16;
 
 	Animator::Motion walkUsiro;
 	walkUsiro.motion = &animation[18];
 	walkUsiro.animationSpeed = 1.2f;
 	walkUsiro.threshold = { 0,-1 };
+	walkUsiro.animationIndex = 18;
 
 	Animator::Motion walkLeft;
 	walkLeft.motion = &animation[15];
 	walkLeft.animationSpeed = 1.2f;
 	walkLeft.threshold = { 1,0 };
+	walkLeft.animationIndex = 15;
+
 
 	Animator::Motion walkRight;
 	walkRight.motion = &animation[17];
 	walkRight.animationSpeed = 1.2f;
 	walkRight.threshold = { -1,0 };
+	walkRight.animationIndex = 17;
 
 	Animator::Motion runMotion;
 	runMotion.motion = &animation[9];
 	runMotion.animationSpeed = 1.25f;
 	runMotion.threshold = { 0,1 };
+	runMotion.animationIndex = 9;
 
 	Animator::Motion attack1;
 	attack1.motion = &animation[4];
@@ -103,54 +111,64 @@ Player::Player(const char* filePath) : AnimatedObject(filePath)
 	dodgeMae.animationSpeed = 1.f;
 	dodgeMae.threshold = { 0,1 };
 	dodgeMae.loop = false;
+	dodgeMae.animationIndex = 12;
 
 	Animator::Motion dodgeUsiro;
 	dodgeUsiro.motion = &animation[14];
 	dodgeUsiro.animationSpeed = 1.f;
 	dodgeUsiro.threshold = { 0,-1 };
 	dodgeUsiro.loop = false;
+	dodgeUsiro.animationIndex = 14;
 
 	Animator::Motion dodgeLeft;
 	dodgeLeft.motion = &animation[11];
 	dodgeLeft.animationSpeed = 1.f;
 	dodgeLeft.threshold = { 1,0 };
 	dodgeLeft.loop = false;
+	dodgeLeft.animationIndex = 11;
 
 	Animator::Motion dodgeRight;
 	dodgeRight.motion = &animation[13];
 	dodgeRight.animationSpeed = 1.f;
 	dodgeRight.threshold = { -1,0 };
 	dodgeRight.loop = false;
+	dodgeRight.animationIndex = 13;
 
 	Animator::Motion hit;
 	hit.motion = &animation[0];
 	hit.animationSpeed = 1.f;
 	hit.threshold = { -1,0 };
 	hit.loop = false;
+	hit.animationIndex = 0;
 
 	Animator::Motion down;
 	down.motion = &animation[1];
 	down.animationSpeed = 1.f;
 	down.threshold = { -1,0 };
 	down.loop = false;
+	down.animationIndex = 1;
 
 	Animator::Motion wakeUp;
 	wakeUp.motion = &animation[8];
 	wakeUp.animationSpeed = 1.f;
 	wakeUp.threshold = { -1,0 };
 	wakeUp.loop = false;
+	wakeUp.animationIndex = 8;
 
 	Animator::Motion rise;
 	rise.motion = &animation[8];
 	rise.animationSpeed = 1.f;
 	rise.threshold = { -1,0 };
 	rise.loop = false;
+	rise.animationIndex = 8;
 
 	Animator::Motion death;
-	death .motion = &animation[10];
-	death .animationSpeed = 1.f;
-	death .threshold = { -1,0 };
-	death .loop = false;
+	death.motion = &animation[10];
+	death.animationSpeed = 1.f;
+	death.threshold = { -1,0 };
+	death.loop = false;
+	death.animationIndex = 10;
+
 
 	Animator::BlendTree walkTree;
 	walkTree.motions.emplace_back(idle);
@@ -608,7 +626,10 @@ void Player::DrawDebugImGui(int number) {
 				ImGui::DragFloat(u8"ジャスト回避時間", &constant.justDodgeTime,0.01f);
 
 				ImGui::DragFloat(u8"最低攻撃力", &constant.leastStrength,0.01f);
-				ImGui::DragFloat(u8"最大攻撃力", &constant.maxStrength, 0.01f);
+				//ImGui::DragFloat(u8"最大攻撃力", &constant.maxStrength, 0.01f);
+
+				ImGui::DragFloat(u8"最低怯み力", &constant.leastBt, 0.01f);
+				//ImGui::DragFloat(u8"最大怯み力", &constant.maxBt, 0.01f);
 
 				ImGui::TreePop();
 			}
@@ -629,7 +650,6 @@ void Player::DrawDebugImGui(int number) {
 			}
 
 		}
-
 #ifdef _DEBUG
 		if(ImGui::CollapsingHeader(u8"デバッグ")) {
 			for (auto& [name, data] : debug) {
@@ -1011,29 +1031,51 @@ void Player::CalcJustDodge() {
 	float dt = Timer::Instance().DeltaTime();
 
 	if(ability.isJustDodge) {
-		ability.strength = min(ability.strength+constant.incrementStrength,constant.maxStrength);
-		ability.bodyTrunkStrength = min(ability.bodyTrunkStrength + constant.incrementBt, constant.maxBt);
+		//ability.strength = min(ability.strength+constant.incrementStrength,constant.maxStrength);
+		//ability.bodyTrunkStrength = min(ability.bodyTrunkStrength + constant.incrementBt, constant.maxBt);
 
 		//Timer::Instance().SetTimeScale(0.3f);
 		//OnHitAttack(false);
+		ability.skillGauge += Math::RandomRange(constant.incrementSkill - constant.incSkillRange, constant.incrementSkill + constant.incSkillRange);
+		if(ability.skillGauge>=constant.maxSkillGauge) {
+			ability.isSkillGaugeMax = true;
+		}
 		ability.justDodgeSlowTimer = 0;
 		ability.isJustDodge = false;
 	}
 	else {
-		ability.strength = max(ability.strength - dt, constant.leastStrength);
-		ability.bodyTrunkStrength = max(ability.bodyTrunkStrength - dt, constant.leastBt);
+		if (ability.skillGauge <= 0) { ability.isSkillGaugeMax = false; }
 
-		if (GetInputMap<bool>("Attack")) ability.justDodgeSlowTimer = 3;
+		// スキル関係
+		if (ability.isSkillGaugeMax) {
+			ability.strength = constant.leastStrength * constant.skillDamageRate;
+			ability.bodyTrunkStrength = constant.leastBt * constant.skillDamageRate;
+			ability.skillGauge -= dt;
+		}
+		else {
+			ability.strength = constant.leastStrength;
+			ability.bodyTrunkStrength = constant.leastBt;
+		}
+
+		ability.justDodgeInvincibleTimer -= dt;
+
+		if (GetInputMap<bool>("Attack")) {
+			ability.justDodgeSlowTimer = 3;
+			Timer::Instance().SetTimeScale(1);
+		}
 		ability.justDodgeSlowTimer += Timer::Instance().UnscaledDeltaTime();
 		if (ability.justDodgeSlowTimer >= 3) ability.justDodgeSlowTimer = 3;
-
-		Timer::Instance().SetTimeScale(Easing::InQuad(ability.justDodgeSlowTimer, 3.f,1.f,0.f));
+		//(cos(x * pi*2)+1)/2 = (cosf(ability.justDodgeSlowTimer/3 * 6.2831853072)+1)/2
+		static float sat = 1;
+		sat = Math::Lerp(sat, ability.justDodgeInvincibleTimer <= 0 ? 1 : 0, Timer::Instance().UnscaledDeltaTime() * 15);
+		colorFilter->SetSaturation(sat);
+		if(ability.justDodgeSlowTimer < 3)Timer::Instance().SetTimeScale(Easing::InQuad(ability.justDodgeSlowTimer, 3.f,1.f,0.f));
 	}
 }
 
 void Player::HitDamaged(float damage, bool invincibleInvalid, bool flying ,Vector3 vec) {
 	ability.hitDamage = damage;
-	ability.isHitDamage = true;
+	ability.isHitDamage = ability.hitDamage > 0;
 	ability.isInvincibleInvalidDamage = invincibleInvalid;
 	ability.isFlying = flying;
 	ability.flyVec = vec;
@@ -1059,7 +1101,7 @@ void Player::Turn()
 	}
 	else vel = velocity;
 
-	// 移動していなければ return 
+	// 移動していなければ return
 	if (vel.Length() < 0.0001f) return;
 	vel.Normalize();
 
@@ -1274,14 +1316,15 @@ void Player::CollisionVsEnemy()
 				emitter2->emitterData.burstsOneShot = 1;
 				EmitterManager::Instance().Register(emitter2);
 
-				//int dmg = rand() % 20 + 1;
-				//std::string dmgText = std::to_string(dmg);
-				//DamageTextManager::Instance().Register({ dmgText, collisionPoint });
-				OnHitAttack(false);
-				float btStrength = Math::RandomRange(ability.bodyTrunkStrength - ability.bodyTrunkStrengthRange, ability.bodyTrunkStrength + ability.bodyTrunkStrengthRange);
-				enemy.SetFlinchValue(enemy.GetFlinchValue() + btStrength);
+				bool weakness = eBoneSphere.skeletonType == SkeletonSphereCollision::SkeletonType::WeakPoint1;
+				OnHitAttack(weakness);
+				float rate = weakness ? 1.5f : 1;
+				float btStrength = Math::RandomRange(ability.bodyTrunkStrength * rate - ability.bodyTrunkStrengthRange, ability.bodyTrunkStrength * rate + ability.bodyTrunkStrengthRange);
+				float strength = Math::RandomRange(ability.strength * rate - ability.strengthRange, ability.strength * rate + ability.strengthRange);
+				enemy.SetFlinchValue(enemy.GetFlinchValue() - btStrength);
+				Enemy::Instance().OnAttacked(strength);
 
-				std::string dmgText = std::to_string(btStrength);
+				std::string dmgText = std::to_string(static_cast<int>(strength*10));
 				DamageTextManager::Instance().Register({ dmgText, collisionPoint });
 			}
 		}
@@ -1359,7 +1402,7 @@ void Player::DrawDebug()
 
 void Player::OnHitAttack(bool hitWeak)
 {
-	Enemy::Instance().OnAttacked(ability.strength);
+	// Enemy::Instance().OnAttacked(ability.strength);
 	Enemy::Instance().wasAttacked = true;
 
 	Timer::Instance().SetTimeScale(0.0f);
@@ -1495,7 +1538,6 @@ void Player::ClampPosition(float range)
 			}
 		}
 
-		
 		//// 左右の壁
 		//if (collision(entranceLWall.position, entranceLWall.size, position, { 1.0f, 1.0f, 1.0f }))
 		//{

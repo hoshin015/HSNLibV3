@@ -71,6 +71,9 @@ void SceneTitle::Initialize()
 	UiTitle::Instance().Initialize();
 
 	Particle::Instance().Initialize();
+
+	tutorialVideo.LoadFile(Graphics::Instance().GetDevice(),L"Data/Video/sample.mp4");
+	tutorialVideo.Play(true);
 }
 
 void SceneTitle::Finalize()
@@ -141,6 +144,7 @@ void SceneTitle::Update()
 	EmitterManager::Instance().Update();
 	Particle::Instance().Update();
 
+	tutorialVideo.Update(Graphics::Instance().GetDeviceContext());
 #if USE_IMGUI
 #endif
 }
@@ -223,9 +227,11 @@ void SceneTitle::Render()
 	}
 	frameBuffer->DeActivate();
 
+
+
 	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 	
-
+	tutorialVideo.Render(gfx->GetDeviceContext());
 	
 
 #if USE_IMGUI

@@ -27,12 +27,12 @@ public:
 private:
 	HWND hwnd;
 
-	const wchar_t* windowName   = L"HSNLibV3";
+	const wchar_t* windowName   = L"GAO";
 	const int      screenWidth  = 1280;
 	const int      screenHeight = 720;
 
 #ifdef _DEBUG
-	BOOL showCalcFrame = TRUE;
+	BOOL showCalcFrame = FALSE;
 	BOOL isFullScreen = FALSE;
 	BOOL showCorsor = TRUE;
 #else

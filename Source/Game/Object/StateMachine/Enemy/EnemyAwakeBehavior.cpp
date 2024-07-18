@@ -256,7 +256,7 @@ BT_ActionState EnemyLightningTailAction::Run(float elapsedTime)
 				tailPosition.y = 0.0f;
 				Vector3 vec = tailPosition - position;
 				vec.Normalize();
-				tailPosition += vec * (static_cast<float>(rand() % 3) + 3.0f);
+				tailPosition += vec * (static_cast<float>(rand() % 10) + 3.0f);
 				LightningEffect::Instance().Emit(tailPosition.vec_);
 			}
 		}

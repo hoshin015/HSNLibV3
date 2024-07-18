@@ -58,6 +58,8 @@ private:
 	std::unique_ptr<FullScreenQuad> capturedBackground;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> capturedSrv;
 
+	std::unique_ptr<ColorFilter> colorFilter;
+
 
 	float resultTimer = 0.0f;
 	float resultTime = 4.0f;

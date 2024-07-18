@@ -159,6 +159,7 @@ public:
 	float hissatuTimer;
 	bool awaking;
 	float maxFlinchValue = 100.0f;
+	bool awaked;
 
 	void DrawDebugImGui(int number);
 };

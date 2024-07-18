@@ -11,7 +11,7 @@ CaptureScreen::CaptureScreen()
 
 	for (size_t i = 0; i < MAX_CAPTURE; i++)
 	{
-		frameBuffers[i] = std::make_unique<FrameBuffer>(width, height, false);
+		captures[i].frameBuffer = std::make_unique<FrameBuffer>(width, height, false);
 	}
 }
 
@@ -19,7 +19,7 @@ CaptureScreen::CaptureScreen()
 void CaptureScreen::Initialize()
 {
 	for (size_t i = 0; i < MAX_CAPTURE; i++)
-		frameBuffers[i]->Clear();
+		captures[i].frameBuffer->Clear();
 
 	currentCaptureIndex = 0;
 	capture = false;
@@ -28,10 +28,11 @@ void CaptureScreen::Initialize()
 
 bool CaptureScreen::BeginCapture()
 {
-	if ((rand() % CAPTURE_FREQUENCY == 0 || capture) && Enemy::Instance().IsAwake() && Enemy::Instance().IsAlive())
+	if ((rand() % CAPTURE_FREQUENCY == 0 || capture) && Enemy::Instance().awaked && Enemy::Instance().IsAlive())
 	{
-		frameBuffers[currentCaptureIndex]->Clear();
-		frameBuffers[currentCaptureIndex]->Activate();
+		captures[currentCaptureIndex].frameBuffer->Clear();
+		captures[currentCaptureIndex].frameBuffer->Activate();
+		captures[currentCaptureIndex].captured = true;
 
 		return true;
 	}
@@ -41,7 +42,7 @@ bool CaptureScreen::BeginCapture()
 
 void CaptureScreen::EndCapture()
 {
-	frameBuffers[currentCaptureIndex]->DeActivate();
+	captures[currentCaptureIndex].frameBuffer->DeActivate();
 
 	// Todo : è„èëÇ´Ç≥ÇÍÇÈ
 	currentCaptureIndex++;
@@ -61,7 +62,7 @@ void CaptureScreen::DrawDebugGui()
 	for(size_t i = 0; i < 5; i++)
 	{
 		ImGui::Separator();
-		ImGui::Image(frameBuffers[i]->shaderResourceViews[0].Get(), { 320.0f, 180.0f });
+		ImGui::Image(captures[i].frameBuffer->shaderResourceViews[0].Get(), { 320.0f, 180.0f });
 	}
 
 	ImGui::End();
@@ -86,11 +87,11 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CaptureScreen::GetRandomTexture
 	std::vector<size_t> buf;
 	for (size_t i = 0; i < 5; i++)
 	{
-		if (frameBuffers[i]->shaderResourceViews[0])
+		if (captures[i].captured)
 			buf.emplace_back(i);
 	}
 	
 	size_t index = rand() % buf.size();
 
-	return frameBuffers[index]->shaderResourceViews[0];
+	return captures[index].frameBuffer->shaderResourceViews[0];
 }

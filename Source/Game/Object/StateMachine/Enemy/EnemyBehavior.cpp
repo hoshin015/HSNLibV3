@@ -1689,6 +1689,7 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 	{
 		if (owner_->GetAnimator().GetEndMotion())
 		{
+			owner_->awaked = true;
 			OnEndAction();
 			return BT_ActionState::Complete;
 		}

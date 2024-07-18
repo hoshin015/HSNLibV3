@@ -65,6 +65,7 @@ void Enemy::Initialize()
 	endRushingBite = false;
 	wasAttacked = false;
 	awaking = false;
+	awaked = false;
 
 	actionCount = 0;
 	roarNeededActionCount = 25;

@@ -27,7 +27,12 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetRandomTexture();
 
-	std::unique_ptr<FrameBuffer> frameBuffers[MAX_CAPTURE];
+	struct Capture
+	{
+		std::unique_ptr<FrameBuffer> frameBuffer;
+		bool captured;
+	};
+	Capture captures[MAX_CAPTURE];
 	size_t currentCaptureIndex;
 	bool capture;
 };

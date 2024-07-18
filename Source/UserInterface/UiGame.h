@@ -117,4 +117,7 @@ private:
 
 public:
 	void OnDown();
+
+	// ƒQ[ƒ€’†‚ÌŠÔ‘ª’è
+	float gameTimer = 0.0f;
 };

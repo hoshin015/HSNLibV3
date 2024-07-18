@@ -47,11 +47,23 @@ private:
 	void DrawDebugGUI();
 
 private:
+	enum class Rank
+	{
+		S,
+		A,
+		B,
+		C
+	};
+	int rank;
+
 	std::unique_ptr<Sprite> sprBlack;
 	std::unique_ptr<Sprite> sprBackground;
 	std::unique_ptr<Sprite> sprTimeBoard;
 	std::unique_ptr<Sprite> sprRankBoard;
 	std::unique_ptr<Sprite> sprRankS;
+	std::unique_ptr<Sprite> sprRankA;
+	std::unique_ptr<Sprite> sprRankB;
+	std::unique_ptr<Sprite> sprRankC;
 	std::unique_ptr<Sprite> sprGoTitle;
 
 	// îwåi

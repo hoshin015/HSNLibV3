@@ -10,6 +10,8 @@
 #include "../../Library/Easing.h"
 
 
+class ColorFilter;
+
 enum class PlayerAnimNum
 {
 	Attack,
@@ -24,21 +26,27 @@ class Player : public AnimatedObject
 public:
 	// ゲーム中変動する値
 	struct AbilityStatus {
-		float hp        = 0;
-		float strength  = 5;
-		float moveSpeed = 7;
-		float attackCount = 0;
-		float attackTimer = 0;
+		float hp          = 0;
+		float moveSpeed   = 7;
 
-		//回避
-		float dodgeTimer = 0;
-		float notAcceptTimer = 0;
+		// 攻撃
+		float strength      = 10;
+		float strengthRange = 5;
+		float attackCount   = 0;
+		float attackTimer   = 0;
+		float skillGauge    = 0;
+		bool isSkillGaugeMax = false;
+
+		// 回避
+		float dodgeTimer         = 0;
+		float notAcceptTimer     = 0;
 		float justDodgeSlowTimer = 3;
-		bool isJustDodge = false;
+		float justDodgeInvincibleTimer = 0;
+		bool  isJustDodge        = false;
 
-		//体幹
-		float bodyTrunkStrength = 1;
-		float bodyTrunkStrengthRange = 1; // ランダムの範囲
+		// 体幹
+		float bodyTrunkStrength      = 5;
+		float bodyTrunkStrengthRange = 3; // ランダムの範囲
 
 		float hitDamage = 0;
 		bool isHitDamage = false;
@@ -60,21 +68,26 @@ public:
 		// 回避
 		float dodgePower      = 24;
 		float dodgeTime       = 1.5f;
-		float dodgeLowestTime = 0.5f;
+		float dodgeLowestTime = 0.42f;
 		float dodgeInvincibleTime = 0.5f;
-		float justDodgeTime   = 0.1f;
+		float justDodgeTime   = 0.21f;
+		float justDodgeInvincibleTime = 0.3f;
 
 		// 攻撃
-		float maxAttackCombo = 4;
+		float maxAttackCombo      = 4;
 		float attackReceptionTime = 0.1f;
-		float notAcceptTime = 0.16f;
-		float leastStrength = 5;
-		float maxStrength = 60;
-		float incrementStrength = 2;
+		float notAcceptTime       = 0.16f;
+		float leastStrength       = 10;
+		//float maxStrength         = 60;
+		//float incrementStrength   = 2;
+		float maxSkillGauge   = 100;
+		float incrementSkill  = 7;
+		float incSkillRange   = 2;
+		float skillDamageRate = 3;
 
-		float leastBt = 1;
-		float maxBt = 10;
-		float incrementBt = 2;
+		float leastBt = 5;
+		//float maxBt = 25;
+		//float incrementBt = 2;
 
 		// alpha
 		float alphaTimer = 0.6f;
@@ -183,7 +196,7 @@ private:
 	// --- カメラのポインタ ---
 	CameraBase* camera;
 
-	//Animator animator;
+	ColorFilter* colorFilter;
 
 	// ステータス
 	AbilityStatus ability;
@@ -195,6 +208,7 @@ public:
 	DirectX::XMFLOAT3 GetVelocity() { return velocity; }
 	void              SetVelocity(DirectX::XMFLOAT3 velocity) { this->velocity = velocity; }
 
+	void SetColorFilter(ColorFilter* cf) { colorFilter = cf; }
 
 	template <typename T>
 	const T& GetInputMap(const std::string& str)

@@ -148,7 +148,7 @@ private:
 		imgEmitterTop->SetIsRender(false);
 		sprites.emplace_back(imgEmitterTop.get());
 
-		tutorialVideo.LoadFile(Graphics::Instance().GetDevice(), L"Data/Video/Skill.mp4");
+		tutorialVideo.LoadFile(Graphics::Instance().GetDevice(), L"Data/Video/tutorial.mp4");
 	};
 
 	~UiTitle()

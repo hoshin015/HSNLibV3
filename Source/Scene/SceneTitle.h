@@ -45,5 +45,4 @@ private:
 
 	std::unique_ptr<SkyMap> skyMap;
 
-	Video tutorialVideo;
 };

@@ -9,7 +9,7 @@
 SkyMap::SkyMap(const wchar_t* filename)
 {
 	Graphics*            gfx    = &Graphics::Instance();
-	lock_guard lock(gfx->GetMutex());
+	//lock_guard lock(gfx->GetMutex());
 
 	ID3D11Device*        device = gfx->GetDevice();
 	ID3D11DeviceContext* dc     = gfx->GetDeviceContext();

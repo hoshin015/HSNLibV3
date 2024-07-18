@@ -43,6 +43,7 @@
 
 void SceneTest::Initialize()
 {
+		
 	// --- カメラ初期設定 ---
 #if 0
 	Camera::Instance().SetLookAt(
@@ -85,31 +86,49 @@ void SceneTest::Initialize()
 	stageManager.Register(stageObject);
 
 	// --- buffer 系初期化 ---
-	bitBlockTransfer = std::make_unique<FullScreenQuad>();
-	frameBuffer      = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
-	                                            Framework::Instance().GetScreenHeightF(), true);
-	bloom = std::make_unique<Bloom>(Framework::Instance().GetScreenWidthF(), Framework::Instance().GetScreenHeightF());
-	shadow = std::make_unique<Shadow>();
-	wbOitBuffer = std::make_unique<WbOitBuffer>(Framework::Instance().GetScreenWidthF(),
-	                                            Framework::Instance().GetScreenHeightF());
-	radialBlur = std::make_unique<RadialBlur>(Framework::Instance().GetScreenWidthF(),
-	                                          Framework::Instance().GetScreenHeightF());
-	heatHaze = std::make_unique<HeatHaze>(Framework::Instance().GetScreenWidthF(),
-	                                          Framework::Instance().GetScreenHeightF());
-	colorFilter = std::make_unique<ColorFilter>(Framework::Instance().GetScreenWidthF(),
-	                                          Framework::Instance().GetScreenHeightF());
-	colorFilter->SetIsColorFilter(true);
-	colorFilter->SetBrightness(2.0f);
-	swordTrailBuffer = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
-	                                          Framework::Instance().GetScreenHeightF());
-	swordTrailBufferSub = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
-	                                          Framework::Instance().GetScreenHeightF());
+	{
+		std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex());
+
+		bitBlockTransfer = std::make_unique<FullScreenQuad>();
+		frameBuffer      = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
+		                                            Framework::Instance().GetScreenHeightF(), true);
+		bloom = std::make_unique<Bloom>(Framework::Instance().GetScreenWidthF(), Framework::Instance().GetScreenHeightF());
+		shadow = std::make_unique<Shadow>();
+		wbOitBuffer = std::make_unique<WbOitBuffer>(Framework::Instance().GetScreenWidthF(),
+		                                            Framework::Instance().GetScreenHeightF());
+		radialBlur = std::make_unique<RadialBlur>(Framework::Instance().GetScreenWidthF(),
+		                                          Framework::Instance().GetScreenHeightF());
+		heatHaze = std::make_unique<HeatHaze>(Framework::Instance().GetScreenWidthF(),
+		                                          Framework::Instance().GetScreenHeightF());
+		colorFilter = std::make_unique<ColorFilter>(Framework::Instance().GetScreenWidthF(),
+		                                          Framework::Instance().GetScreenHeightF());
+		colorFilter->SetIsColorFilter(true);
+		colorFilter->SetBrightness(2.0f);
+		swordTrailBuffer = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
+		                                          Framework::Instance().GetScreenHeightF());
+		swordTrailBufferSub = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
+		                                          Framework::Instance().GetScreenHeightF());
+		// 画面キャプチャの初期化
+		CaptureScreen::Instance().Initialize();
+
+		Enemy::Instance().radialBlur = radialBlur.get();
+
+		Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());	// 今のカメラを設定
+		UiPause::Instance();
+		UiGame::Instance().Initialize();
+		UiClearAfter::Instance();
+		LightningEffect::Instance().Initialize();
+		RockEffect::Instance().Initialize();
+
+		// ------- ps 生成 -------
+		CreatePsFromCso("Data/Shader/SwordTrailPS.cso", swordTrailPisxelShader.GetAddressOf());
+		// テスト
+		AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
+		AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
+	}
 
 	// --- skyMap 初期化 ---
 	skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
-
-	// 画面キャプチャの初期化
-	CaptureScreen::Instance().Initialize();
 
 	// --- AnimatedObject 初期化 ---
 	//blendTestPlayer = std::make_unique<BlendTestPlayer>("Data/Fbx/BlendTestPlayer/BlendTestPlayer.model");
@@ -117,32 +136,27 @@ void SceneTest::Initialize()
 
 	Gate::Instance().Initialize();
 
-
-
 	Enemy::Instance().Initialize();
-	Enemy::Instance().radialBlur = radialBlur.get();
-
 	Player::Instance().Initialize();
-	Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());	// 今のカメラを設定
-
 	Player::Instance().SetColorFilter(colorFilter.get());
 
+
 	UiPause::Instance().Initialize();
-	UiGame::Instance().Initialize();
+	//UiGame::Instance().Initialize();
 	UiClearAfter::Instance().Initialize();
 
-	LightningEffect::Instance().Initialize();
-	RockEffect::Instance().Initialize();
+	//LightningEffect::Instance().Initialize();
+	//RockEffect::Instance().Initialize();
 	BreathEffect::Instance().Initialize();
 
 	SpecialEffect::Instance().drawAfterStage = false;
 
 	// ------- ps 生成 -------
-	CreatePsFromCso("Data/Shader/SwordTrailPS.cso", swordTrailPisxelShader.GetAddressOf());
+	//CreatePsFromCso("Data/Shader/SwordTrailPS.cso", swordTrailPisxelShader.GetAddressOf());
 
 	// テスト
-	AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
-	AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
+	//AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
+	//AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
 
 	isFirst = true;
 

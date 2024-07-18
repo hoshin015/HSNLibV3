@@ -83,10 +83,10 @@ void FrameBuffer::Clear(float r, float g, float b, float a, float depth)
 
 void FrameBuffer::Clear(const float* color, const float depth)
 {
+	//std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex());
 	Graphics* gfx = &Graphics::Instance();
 	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
 
-	std::lock_guard<std::mutex> lock(gfx->GetMutex());
 
 	dc->ClearRenderTargetView(renderTargetView.Get(), color);
 	if (depthStencilView) dc->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, 0);

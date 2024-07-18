@@ -10,7 +10,7 @@ CameraBase::CameraBase()
 {
 	Graphics* gfx = &Graphics::Instance();
 
-	std::lock_guard<std::mutex> lock(gfx->GetMutex()); // 排他制御
+	//std::lock_guard<std::mutex> lock(gfx->GetMutex()); // 排他制御
 	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
 
 	// --- プロジェクション座標変換行列作成 ---

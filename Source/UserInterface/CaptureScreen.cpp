@@ -18,6 +18,7 @@ CaptureScreen::CaptureScreen()
 
 void CaptureScreen::Initialize()
 {
+
 	for (size_t i = 0; i < MAX_CAPTURE; i++)
 		captures[i].frameBuffer->Clear();
 

@@ -42,6 +42,8 @@ void SceneLoading::Initialize()
 
 	// スレッドの管理を放棄
 	//thread->detach();
+
+	loadTimer = 0.0f;
 }
 
 void SceneLoading::Finalize()
@@ -62,11 +64,11 @@ void SceneLoading::Update()
 
 	sprite->UpdateAnimation();
 
-	// loadTimer += Timer::Instance().DeltaTime();
-	// if(loadTimer > loadTime)
-	// {
-	// 	return;
-	// }
+	 loadTimer += Timer::Instance().DeltaTime();
+	 if(loadTimer < loadTime)
+	 {
+	 	return;
+	 }
 
 	// 次のシーンの準備ができたらシーンを切り替える
 	if(nextScene->IsReady())
@@ -77,7 +79,7 @@ void SceneLoading::Update()
 
 void SceneLoading::Render()
 {
-	std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex()); // 排他制御
+	//std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex()); // 排他制御
 
 	// 必要なポインタ取得
 	Graphics* gfx = &Graphics::Instance();
@@ -89,8 +91,7 @@ void SceneLoading::Render()
 	// imGuiBufferを使用しない場合はこっちを記述する
 	{
 		// renderTargetのクリア
-		float c[4] = { 0,0,0,1 };
-		dc->ClearRenderTargetView(gfx->GetRTV(), c);
+		dc->ClearRenderTargetView(gfx->GetRTV(), gfx->GetBgColor());
 		// depthStencilViewのクリア
 		dc->ClearDepthStencilView(gfx->GetDSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}

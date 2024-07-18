@@ -1344,7 +1344,6 @@ void Player::CollisionVsEnemy()
 				emitter2->emitterData.burstsOneShot = 1;
 				EmitterManager::Instance().Register(emitter2);
 
-				bool weakness = eBoneSphere.skeletonType == SkeletonSphereCollision::SkeletonType::WeakPoint1;
 				if (Enemy::Instance().GetHP() > 0) OnHitAttack(weakness);
 				float rate = weakness ? 1.5f : 1;
 				float btStrength = Math::RandomRange(ability.bodyTrunkStrength * rate - ability.bodyTrunkStrengthRange, ability.bodyTrunkStrength * rate + ability.bodyTrunkStrengthRange);

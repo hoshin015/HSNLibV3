@@ -162,6 +162,9 @@ void SceneTest::Initialize()
 
 	isFirst = true;
 
+	// ゲーム用のタイマーリセット
+	UiGame::Instance().gameTimer = 0.0f;
+
 #if SPECIAL_AUDIO_DELAY
 	AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE2, true);
 	AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE2, 0.0f);
@@ -200,6 +203,13 @@ void SceneTest::Update()
 
 
 	if (UiPause::Instance().Update()) return;
+
+	// クリアフラグがたっていないならタイムを加算
+	if(!UiClearAfter::Instance().clearFlag)
+	{
+		UiGame::Instance().gameTimer += Timer::Instance().DeltaTime();
+	}
+
 	UiGame::Instance().Update();
 	UiClearAfter::Instance().Update();
 

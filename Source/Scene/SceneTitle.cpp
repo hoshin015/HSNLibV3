@@ -170,7 +170,8 @@ void SceneTitle::Render()
 
 
 	// ====== •s“§–¾•`‰æ ======
-	frameBuffer->Clear(gfx->GetBgColor());
+	float bgcolor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	frameBuffer->Clear(bgcolor);
 	frameBuffer->Activate();
 	{
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
@@ -189,7 +190,6 @@ void SceneTitle::Render()
 			titlePlayer->Render();
 			titleFloor->NoAnimRender();
 		}
-		skyMap->Render();
 
 		// UI •`‰æ
 		UiTitle::Instance().Render();

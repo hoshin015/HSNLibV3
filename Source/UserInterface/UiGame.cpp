@@ -244,6 +244,8 @@ void UiGame::DrawDebugImGui()
 			OnDown();
 		}
 
+		ImGui::InputFloat(u8"ゲーム時間", &gameTimer);
+
 		ImGui::DragFloat(u8"ダウン時間", &downTime);
 		ImGui::DragFloat(u8"ダウンタイマー", &downTimer);
 		ImGui::SliderInt("soma", &soma, 0, 100);

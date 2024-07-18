@@ -41,7 +41,7 @@
 void SceneResult::Initialize()
 {
 	capturedBackground = std::make_unique<FullScreenQuad>();
-	capturedSrv = CaptureScreen::Instance().GetRandomTexture();
+	//capturedSrv = CaptureScreen::Instance().GetRandomTexture();
 
 	sprBlack = std::make_unique<Sprite>("Data/Texture/Black.png");
 	sprBackground = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/resultBackground.png");
@@ -51,9 +51,22 @@ void SceneResult::Initialize()
 	sprRankBoard = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/rankBoard.sprite");
 	sprRankBoard->UpdateAnimation();
 	sprRankBoard->SetPos({ 640, 450 });
+
+
 	sprRankS = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/rankS.sprite");
 	sprRankS->UpdateAnimation();
 	sprRankS->SetPos({ 900, 250 });
+	sprRankA = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/rankA.sprite");
+	sprRankA->UpdateAnimation();
+	sprRankA->SetPos({ 900, 250 });
+	sprRankB = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/rankB.sprite");
+	sprRankB->UpdateAnimation();
+	sprRankB->SetPos({ 900, 250 });
+	sprRankC = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/rankC.sprite");
+	sprRankC->UpdateAnimation();
+	sprRankC->SetPos({ 900, 250 });
+
+
 	sprGoTitle = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/goTitle.sprite");
 	sprGoTitle->UpdateAnimation();
 	sprGoTitle->SetPos({ 640, 650 });
@@ -66,6 +79,15 @@ void SceneResult::Initialize()
 	colorFilter->SetBrightness(1.3f);
 	colorFilter->SetContrast(1.3f);
 	colorFilter->SetContrast(0.8f);
+
+
+	// ƒ‰ƒ“ƒN‚ÌŒˆ’è
+	float gameClearTime = UiGame::Instance().gameTimer;
+
+	if(gameClearTime <= (60.0f * 2)) rank = static_cast<int>(Rank::S);
+	else if(gameClearTime <= (60.0f * 3)) rank = static_cast<int>(Rank::A);
+	else if(gameClearTime <= (60.0f * 5)) rank = static_cast<int>(Rank::B);
+	else rank = static_cast<int>(Rank::C);
 }
 
 void SceneResult::Finalize()
@@ -92,9 +114,43 @@ void SceneResult::Update()
     sprBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, blackAlpha));
 	sprTimeBoard->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, timeRankBoardAlpha));
 	sprRankBoard->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, timeRankBoardAlpha));
-	sprRankS->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, rankAlpha));
-	float scale = Easing::GetNowParam(Easing::OutBounce<float>, resultTimer, rankScale);
-	sprRankS->SetScale({ scale, scale });
+
+
+	switch (static_cast<Rank>(rank))
+	{
+	case Rank::S:
+		{
+			sprRankS->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, rankAlpha));
+			float scale = Easing::GetNowParam(Easing::OutBounce<float>, resultTimer, rankScale);
+			sprRankS->SetScale({ scale, scale });
+		}
+		break;
+	case Rank::A:
+		{
+			sprRankA->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, rankAlpha));
+			float scale = Easing::GetNowParam(Easing::OutBounce<float>, resultTimer, rankScale);
+			sprRankA->SetScale({ scale, scale });
+		}
+		break;
+	case Rank::B:
+		{
+			sprRankB->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, rankAlpha));
+			float scale = Easing::GetNowParam(Easing::OutBounce<float>, resultTimer, rankScale);
+			sprRankB->SetScale({ scale, scale });
+		}
+		break;
+	case Rank::C:
+		{
+			sprRankB->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, rankAlpha));
+			float scale = Easing::GetNowParam(Easing::OutBounce<float>, resultTimer, rankScale);
+			sprRankB->SetScale({ scale, scale });
+		}
+		break;
+	}
+
+	
+
+
 	sprGoTitle->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, resultTimer, goTitleAlpha));
 
 	if(resultTimer > resultTime)
@@ -140,7 +196,16 @@ void SceneResult::Render()
 	capturedBackground->blit(&useSrv, 0, 1);
 	sprRankBoard->Render();
 	sprTimeBoard->Render();
-	sprRankS->Render();
+
+
+	switch (static_cast<Rank>(rank))
+	{
+	case Rank::S: sprRankS->Render(); break;
+	case Rank::A: sprRankA->Render(); break;
+	case Rank::B: sprRankB->Render(); break;
+	case Rank::C: sprRankC->Render(); break;
+	}
+
 	sprGoTitle->Render();
 	sprBlack->Render();
 

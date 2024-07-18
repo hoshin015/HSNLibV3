@@ -300,24 +300,24 @@ void SceneTest::Update()
 	if (InputManager::Instance().GetKeyPressed(Keyboard::F5))
 	{
 		Emitter* emitter0 = new Emitter();
-		emitter0->position = { 0, 0, 0 };
+		emitter0->position = { 0, 3, 0 };
 		emitter0->emitterData.duration = 10.0;
 		emitter0->emitterData.looping = false;
 		emitter0->emitterData.burstsTime = 0.05;
 		emitter0->emitterData.burstsCount = 1;
-		emitter0->emitterData.particleKind = pk_simpleFire;
+		emitter0->emitterData.particleKind = pk_novaEndFire;
 		emitter0->emitterData.particleLifeTimeMin = 0.5f;
 		emitter0->emitterData.particleLifeTimeMax = 1.0f;
 		emitter0->emitterData.particleSpeedMin = 1.0f;
 		emitter0->emitterData.particleSpeedMax = 1.0f;
-		emitter0->emitterData.particleSizeMin = { 2.0f, 2.0f };
-		emitter0->emitterData.particleSizeMax = { 2.0f, 2.0f };
-		emitter0->emitterData.particleColorMin = { 30.0, 3.0, 3.0, 1 };
-		emitter0->emitterData.particleColorMax = { 30.0, 3.0, 3.0, 1 };
+		emitter0->emitterData.particleSizeMin = { 40.0f, 40.0f };
+		emitter0->emitterData.particleSizeMax = { 40.0f, 40.0f };
+		emitter0->emitterData.particleColorMin = { 3.0, 1.0, 1.0, 1 };
+		emitter0->emitterData.particleColorMax = { 3.0, 1.0, 1.0, 1 };
 		emitter0->emitterData.particleGravity = 0;
 		emitter0->emitterData.particleBillboardType = 0;
-		emitter0->emitterData.particleTextureType = 7;
-		emitter0->emitterData.burstsOneShot = 5;
+		emitter0->emitterData.particleTextureType = 11;
+		emitter0->emitterData.burstsOneShot = 1;
 		EmitterManager::Instance().Register(emitter0);
 	}
 	if (InputManager::Instance().GetKeyPressed(Keyboard::F6))

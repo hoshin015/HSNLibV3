@@ -172,6 +172,20 @@ void main(
                 texcoords[3] = float2(TEX_P_HALF_SIZE * (_x + 1) / TEX_W_SIZE, TEX_P_HALF_SIZE * _y / TEX_H_SIZE);
             }
             break;
+        case 11:
+	{
+                float animIndex = (1.0 - (p.lifeTimer / p.lifeTime)) * 21.0;
+
+                int _x = animIndex % 10;
+                int _y = animIndex / 10;
+
+                _y += 6; // ‚»‚à‚»‚à6’i(1024*6 px)‚¾‚¯‰º‚¾‚©‚ç‚»‚Ì•ª
+                texcoords[0] = float2(TEX_P_SIZE * _x / TEX_W_SIZE, TEX_P_SIZE * (_y + 1) / TEX_H_SIZE);
+                texcoords[1] = float2(TEX_P_SIZE * _x / TEX_W_SIZE, TEX_P_SIZE * _y / TEX_H_SIZE);
+                texcoords[2] = float2(TEX_P_SIZE * (_x + 1) / TEX_W_SIZE, TEX_P_SIZE * (_y + 1) / TEX_H_SIZE);
+                texcoords[3] = float2(TEX_P_SIZE * (_x + 1) / TEX_W_SIZE, TEX_P_SIZE * _y / TEX_H_SIZE);
+            }
+            break;
     }
 
 

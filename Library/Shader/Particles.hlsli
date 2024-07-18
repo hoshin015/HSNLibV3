@@ -437,7 +437,20 @@ void spawn(uint id, inout Particle p)
                 p.textureType = 4;
             if (rand(seed) > 0.66)
                 p.textureType = 5;
-}
+		}
+        break;
+	case pk_novaEndFire:
+		{
+			p.position = emitterPosition;
+
+			p.velocity.x = 0.0f;
+			p.velocity.y = 0.0f;
+			p.velocity.z = 0.0f;
+
+			p.textureType = 11;
+
+			p.angle = 0;
+            }
         break;
     }
 }

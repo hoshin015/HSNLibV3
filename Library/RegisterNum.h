@@ -46,6 +46,7 @@
 #define pk_swordPowerUp			13
 
 #define pk_novaEndParticle		14
+#define pk_novaEndFire			15
 
 // billboardType
 #define bt_View		0

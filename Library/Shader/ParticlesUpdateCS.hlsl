@@ -187,6 +187,12 @@ void main(uint3 DTid : SV_DispatchThreadID)
                 p.lifeTimer -= deltaTime;
             }
 			break;
+		case pk_novaEndFire:
+			{
+                p.color.a = (p.lifeTimer / p.lifeTime);
+				p.lifeTimer -= deltaTime;
+			}
+			break;
 		default:
 			break;
 		}

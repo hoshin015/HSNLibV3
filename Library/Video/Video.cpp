@@ -150,7 +150,7 @@ void Video::Update(ID3D11DeviceContext* deviceContext) {
 	if (!_isPlay) return;
 	//double elapsedTime = Timer::LaunchTimer().GetMilisecondsElapsed() * 1000;
 	_timer += Timer::Instance().UnscaledDeltaTime() * 1000;
-	if ((_timer - _pauseTime) * 10000 < _timeStamp) return;
+	if (_timer * 10000 < _timeStamp) return;
 
 	ComPtr<IMFSample> sample;
 	DWORD             striamIndex, dwStreamFlags;
@@ -241,7 +241,7 @@ bool Video::Play(bool loop) {
 	if (!_isPlay) {
 		_isPlay    = true;
 		_isLoop    = loop;
-		_pauseTime = Timer::Instance().UnscaledDeltaTime()* 1000 + _timeStamp * -0.0000001f;
+		//_pauseTime = Timer::Instance().UnscaledDeltaTime()* 1000 + _timeStamp * -0.0000001f;
 		return true;
 	}
 	return false;
@@ -263,7 +263,7 @@ void Video::SeekPosition(LONGLONG seekTime) {
 	time.lVal = seekTime;
 	_sourceReader->SetCurrentPosition(GUID_NULL, time);
 	PropVariantClear(&time);
-	_pauseTime = Timer::Instance().UnscaledDeltaTime() * 1000 + _timeStamp * -0.0000001f;
+	_timer = _timeStamp * -0.0000001f;
 }
 
 void Video::Render(ID3D11DeviceContext* deviceContext) {

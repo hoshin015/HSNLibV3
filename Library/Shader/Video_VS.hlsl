@@ -2,10 +2,10 @@
 
 VS_OUT main(in uint vID: SV_VERTEXID) {
     const float2 pos[4] = {
-        { -0.5f, 0.5f },
-        { 0.5f, 0.5f },
-        { -0.5f, -0.5f },
-        { 0.5f, -0.5f }
+        { -0.7f, 0.7f },
+        { 0.7f, 0.7f },
+        { -0.7f, -0.7f },
+        { 0.7f, -0.7f }
     };
     const float2 tex[4] = {
         { 0, 0 },

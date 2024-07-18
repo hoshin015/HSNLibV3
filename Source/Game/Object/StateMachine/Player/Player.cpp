@@ -1437,7 +1437,7 @@ void Player::OnHitAttack(bool hitWeak)
 	enemy.wasAttacked = true;
 
 	// ŠoÁ‚µ‚Ä‚È‚­‚Ä‘Ì—Í‚ª”¼•ªØ‚Á‚½‚ç
-	if (!enemy.IsAwake() && enemy.GetHP() < enemy.GetMaxHP() * 0.5f)
+	if (!enemy.IsAwake() && enemy.GetHP() < enemy.GetMaxHP() * enemy.awakeRate)
 	{
 		enemy.awaking = true;
 	}

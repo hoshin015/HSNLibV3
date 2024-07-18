@@ -72,7 +72,7 @@ void SceneTitle::Initialize()
 
 	Particle::Instance().Initialize();
 
-	tutorialVideo.LoadFile(Graphics::Instance().GetDevice(),L"Data/Video/sample.mp4");
+	//tutorialVideo.LoadFile(Graphics::Instance().GetDevice(),L"Data/Video/sample.mp4");
 	tutorialVideo.Play(true);
 }
 
@@ -230,9 +230,9 @@ void SceneTitle::Render()
 
 
 	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
-	
-	tutorialVideo.Render(gfx->GetDeviceContext());
-	
+
+	tutorialVideo.Render(gfx->GetDeviceContext(),{600,600},{100,100});
+
 
 #if USE_IMGUI
 	// --- デバッグ描画 ---

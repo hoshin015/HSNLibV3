@@ -13,7 +13,7 @@ class Video {
 private:
 	struct Vertex {
 		DirectX::XMFLOAT3 position;
-		DirectX::XMFLOAT4 color;
+		//DirectX::XMFLOAT4 color;
 		DirectX::XMFLOAT2 texcoord;
 	};
 
@@ -39,7 +39,8 @@ private:
 	bool  _isLoop    = false;
 	bool  _isEmpty   = true;
 
-	//inline static VertexBuffer<Vertex> _vertexBuffer;
+	inline static ComPtr<ID3D11Buffer> _vertexBuffer;
+	inline static ComPtr<ID3D11InputLayout> _inputLayout;
 	inline static ComPtr<ID3D11VertexShader> _vertexShader;
 	inline static ComPtr<ID3D11PixelShader> _pixelShader;
 
@@ -69,7 +70,7 @@ public:
 	void Render(ID3D11DeviceContext* deviceContext, DirectX::XMFLOAT2 dPos, DirectX::XMFLOAT2 dSize, DirectX::XMFLOAT4 color = { 1,1,1,1 }) {
 		Render(deviceContext, dPos, dSize, color, 0, { 0,0 }, _size.vec_);
 	}
-	void Render(ID3D11DeviceContext* deviceContext);
+	//void Render(ID3D11DeviceContext* deviceContext);
 
 	const ID3D11Texture2D*          GetTexture() const { return _texture.Get(); }
 	const ID3D11ShaderResourceView* GetResourceView() const { return _textureView.Get(); }

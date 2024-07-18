@@ -56,7 +56,7 @@ void Enemy::Initialize()
 
 
 	// --- ステータスの設定 ---
-	maxHP = 1000.0f;
+	maxHP = 5000.0f;
 	hp = maxHP;
 	flinchValue = maxFlinchValue;
 

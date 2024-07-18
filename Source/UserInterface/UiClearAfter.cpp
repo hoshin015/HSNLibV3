@@ -26,7 +26,7 @@ void UiClearAfter::Update()
 		break;
 	case State::ClearWait:
 		{
-			float deltaTime = Timer::Instance().DeltaTime();
+			float deltaTime = Timer::Instance().UnscaledDeltaTime();
 			clearAfterTimer -= deltaTime;
 			clearWaitTimer += deltaTime;
 
@@ -63,7 +63,7 @@ void UiClearAfter::Update()
 		break;
 	case State::ClearAnim:
 		{
-			float deltaTime = Timer::Instance().DeltaTime();
+			float deltaTime = Timer::Instance().UnscaledDeltaTime();
 			clearAnimTimer += deltaTime;
 
 			imgClearText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, clearAnimTimer, imgClearTextAlpha));

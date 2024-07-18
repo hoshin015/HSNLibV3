@@ -6,6 +6,7 @@
 #include "../../Library/Framework.h"
 #include "../../Library/Graphics/Shader.h"
 #include "../../Library/Graphics/Graphics.h"
+#include "../../Library/Graphics/Texture.h"
 #include "../../Library/Math/OperatorXMFloat3.h"
 #include "../../Library/Timer.h"
 #include "../../Library/ImGui/ConsoleData.h"
@@ -113,6 +114,11 @@ void SceneTest::Initialize()
 
 		Enemy::Instance().radialBlur = radialBlur.get();
 
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
+		D3D11_TEXTURE2D_DESC tex2d;
+		LoadTextureFromFile(L"./Data/Fbx/Monster/dummy.png", srv.GetAddressOf(), &tex2d);
+		Enemy::Instance().GetModel()->GetModelResource()->GetMaterials().find("lambert1")->second.shaderResourceViews[3] = srv;
+
 		Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());	// 今のカメラを設定
 		UiPause::Instance();
 		UiGame::Instance().Initialize();
@@ -123,8 +129,7 @@ void SceneTest::Initialize()
 		// ------- ps 生成 -------
 		CreatePsFromCso("Data/Shader/SwordTrailPS.cso", swordTrailPisxelShader.GetAddressOf());
 		// テスト
-		AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
-		AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
+		AudioManager::Instance();
 
 		// --- skyMap 初期化 ---
 		skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
@@ -186,6 +191,9 @@ void SceneTest::Update()
 {
 	if(isFirst)
 	{
+		AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
+		AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
+
 		isFirst = false;
 		Particle::Instance().Initialize();
 	}

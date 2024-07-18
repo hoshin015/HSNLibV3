@@ -568,6 +568,7 @@ void Player::DrawDebugImGui(int number) {
 			wallSpheres.emplace_back();
 		}
 
+		ImGui::ColorEdit3(u8"ヒットの色", &hitColor.x);
 		ImGui::DragFloat(u8"壁の球の半径", &wallSphereRadius);
 		ImGui::DragFloat(u8"プレイヤーの球の半径", &playerRadius);
 
@@ -769,7 +770,9 @@ void Player::Input()
 	bool dodge = input.GetKeyPressed(DirectX::Keyboard::Space);
 
 	if (input.IsGamePadConnected() && !dodge)
+	{
 		dodge = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
+	}
 
 	inputMap["Dodge"] = dodge;
 	animator.SetParameter("dodge", dodge);
@@ -817,6 +820,7 @@ void Player::InputAttack() {
 	// コントローラー対応
 	if (input.IsGamePadConnected() && !inputAttackData) {
 		inputAttackData = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::x);
+		//AudioManager::Instance().PlayMusic(MUSIC_LABEL::SLASH, false); // Todo : 攻撃音わからん
 	}
 
 
@@ -851,7 +855,7 @@ void Player::InputAttack() {
 	if (input.IsGamePadConnected() && !dodge)
 		dodge = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
 
-	if (ability.notAcceptTimer <= 0)inputMap["Dodge"] = dodge;
+	if (ability.notAcceptTimer <= 0) inputMap["Dodge"] = dodge;
 	else ability.notAcceptTimer -= dt;
 
 	if(end) {
@@ -1356,7 +1360,7 @@ void Player::CollisionVsEnemy()
 				enemy.OnAttacked(strength);
 
 				std::string dmgText = std::to_string(static_cast<int>(strength*10));
-				DamageTextManager::Instance().Register({ dmgText, collisionPoint });
+				DamageTextManager::Instance().Register({ dmgText, collisionPoint, weakness });
 			}
 		}
 	}
@@ -1438,7 +1442,7 @@ void Player::OnHitAttack(bool hitWeak)
 	enemy.wasAttacked = true;
 
 	// 覚醒してなくて体力が半分切ったら
-	if (!enemy.IsAwake() && enemy.GetHP() < enemy.GetMaxHP() * 0.5f)
+	if (!enemy.IsAwake() && enemy.GetHP() < enemy.GetMaxHP() * enemy.awakeRate)
 	{
 		enemy.awaking = true;
 	}

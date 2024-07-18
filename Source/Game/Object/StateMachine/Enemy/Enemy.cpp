@@ -22,6 +22,7 @@
 #include "../Player/Player.h"
 
 #include "../../../../UserInterface/UiClearAfter.h"
+#include "../../../../UserInterface/UiTitle.h"
 #include "../../Effect/Lightning/LightningEffect.h"
 
 
@@ -339,6 +340,9 @@ void Enemy::DrawDebugGui()
 	ImGui::Begin(u8"敵");
 
 	ImGui::DragFloat(u8"タイマー", &runTimer_);
+	ImGui::Checkbox(u8"覚醒", &awake);
+	ImGui::Checkbox(u8"覚醒中", &awaking);
+	ImGui::Checkbox(u8"覚醒後", &awaked);
 	if (ImGui::TreeNode(u8"移動関連"))
 	{
 		ImGui::DragFloat3(u8"速度", &velocity.x);

@@ -1,6 +1,7 @@
 #include "EnemyBehavior.h"
 
 #include "../../../../../Library/Graphics/RadialBlur.h"
+#include "../../../../../Library/Graphics/Texture.h"
 #include "../../Library/Math/Math.h"
 
 #include "../../Effect/Breath/BreathEffect.h"
@@ -493,7 +494,7 @@ bool EnemyBehindJudgment::Judgment()
 // ===== 覚醒の判定 ======================================================================================================================================================
 bool EnemyAwakeJudgment::Judgment()
 {
-	if (!owner_->IsAwake() && owner_->GetHP() < owner_->GetMaxHP() * 0.5f)
+	if (!owner_->IsAwake() && owner_->GetHP() < owner_->GetMaxHP() * owner_->awakeRate)
 	{
 		owner_->SetAwake(true);
 		return true;
@@ -1046,9 +1047,9 @@ BT_ActionState EnemyStampAction::Run(float elapsedTime)
 				DirectX::XMFLOAT3 rPos = { (rand() % 2 - 1.0f), (rand() % 2 - 1.0f) , (rand() % 2 - 1.0f) };
 				rock.position += rPos;
 				rock.angle = { Math::RandomRange(0,359), Math::RandomRange(0,359),Math::RandomRange(0,359) };
-				rock.scale = { Math::RandomRange(0.25,0.75), Math::RandomRange(0.25,0.75),Math::RandomRange(0.25,0.75) };
+				rock.scale = { Math::RandomRange(0.75,1.5), Math::RandomRange(0.75,1.5),Math::RandomRange(0.75,1.5) };
 				float r = Math::RandomRange(5, 10);
-				rock.velocity = { Math::RandomRange(-3,3),Math::RandomRange(1,5),Math::RandomRange(-3,3) };
+				rock.velocity = { Math::RandomRange(-7,7),Math::RandomRange(1,5),Math::RandomRange(-7,7) };
 				rock.gravity = 10;
 				rock.lifeTime = 3;
 				RockEffect::Instance().Emit(rock);
@@ -1676,6 +1677,12 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 
 		if (owner_->runTimer_ < 0.0f && owner_->GetAnimator().GetEndMotion())
 		{
+			// テクスチャ差し替え
+			Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
+			D3D11_TEXTURE2D_DESC tex2d;
+			LoadTextureFromFile(L"./Data/Fbx/Monster/gao_emi_uv.png", srv.GetAddressOf(), &tex2d);
+			Enemy::Instance().GetModel()->GetModelResource()->GetMaterials().find("lambert1")->second.shaderResourceViews[3] = srv;
+
 			owner_->GetAnimator().SetNextState("hissatu_3");
 			owner_->runTimer_ = 0.0f;
 			owner_->hissatuCount = 0;

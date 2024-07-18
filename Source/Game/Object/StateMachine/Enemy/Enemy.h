@@ -160,6 +160,7 @@ public:
 	bool awaking;
 	float maxFlinchValue = 100.0f;
 	bool awaked;
+	float awakeRate = 0.8f;
 
 	void DrawDebugImGui(int number);
 };

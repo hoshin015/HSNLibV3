@@ -112,10 +112,10 @@ void SceneTitle::Update()
 	titleFloor->Update();
 
 
-	if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter))
-	{
-		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
-	}
+	// if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter))
+	// {
+	// 	SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
+	// }
 	// テストエミッター
 	// if (InputManager::Instance().GetKeyPressed(Keyboard::F1))
 	// {

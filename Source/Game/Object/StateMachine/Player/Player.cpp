@@ -770,7 +770,9 @@ void Player::Input()
 	bool dodge = input.GetKeyPressed(DirectX::Keyboard::Space);
 
 	if (input.IsGamePadConnected() && !dodge)
+	{
 		dodge = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
+	}
 
 	inputMap["Dodge"] = dodge;
 	animator.SetParameter("dodge", dodge);
@@ -818,6 +820,7 @@ void Player::InputAttack() {
 	// コントローラー対応
 	if (input.IsGamePadConnected() && !inputAttackData) {
 		inputAttackData = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::x);
+		//AudioManager::Instance().PlayMusic(MUSIC_LABEL::SLASH, false); // Todo : 攻撃音わからん
 	}
 
 
@@ -852,7 +855,7 @@ void Player::InputAttack() {
 	if (input.IsGamePadConnected() && !dodge)
 		dodge = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
 
-	if (ability.notAcceptTimer <= 0)inputMap["Dodge"] = dodge;
+	if (ability.notAcceptTimer <= 0) inputMap["Dodge"] = dodge;
 	else ability.notAcceptTimer -= dt;
 
 	if(end) {

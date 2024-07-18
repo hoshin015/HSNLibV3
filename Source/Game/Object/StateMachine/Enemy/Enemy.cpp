@@ -22,6 +22,7 @@
 #include "../Player/Player.h"
 
 #include "../../../../UserInterface/UiClearAfter.h"
+#include "../../../../UserInterface/UiTitle.h"
 #include "../../Effect/Lightning/LightningEffect.h"
 
 

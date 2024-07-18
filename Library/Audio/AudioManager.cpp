@@ -38,5 +38,7 @@ void AudioManager::Initialize()
 	LoadMusic(MUSIC_LABEL::Lightning8, L"Data/Audio/Lightning/Lightning18.wav");
 	LoadMusic(MUSIC_LABEL::Lightning9, L"Data/Audio/Lightning/Lightning19.wav");
 	LoadMusic(MUSIC_LABEL::Lightning10, L"Data/Audio/Lightning/Lightning20.wav");
+	LoadMusic(MUSIC_LABEL::SLASH, L"Data/Audio/Slash.wav");
+	LoadMusic(MUSIC_LABEL::DODGE, L"Data/Audio/Dodge.wav");
 }
 

@@ -1677,6 +1677,7 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 
 		if (owner_->runTimer_ < 0.0f && owner_->GetAnimator().GetEndMotion())
 		{
+			// テクスチャ差し替え
 			Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
 			D3D11_TEXTURE2D_DESC tex2d;
 			LoadTextureFromFile(L"./Data/Fbx/Monster/gao_emi_uv.png", srv.GetAddressOf(), &tex2d);

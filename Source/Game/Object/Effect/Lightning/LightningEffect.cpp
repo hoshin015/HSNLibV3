@@ -408,5 +408,5 @@ void LightningEffect::PlayLightningSound()
 		if (checkCount > 100) break;
 	}
 	AudioManager::Instance().PlayMusic((static_cast<MUSIC_LABEL>(static_cast<int>(MUSIC_LABEL::Lightning1) + musicRand)), false);
-	AudioManager::Instance().SetMusicVolume((static_cast<MUSIC_LABEL>(static_cast<int>(MUSIC_LABEL::Lightning1) + musicRand)), 0.05f);
+	AudioManager::Instance().SetMusicVolume((static_cast<MUSIC_LABEL>(static_cast<int>(MUSIC_LABEL::Lightning1) + musicRand)), 0.3f);
 }

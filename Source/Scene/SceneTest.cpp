@@ -129,8 +129,7 @@ void SceneTest::Initialize()
 		// ------- ps ê∂ê¨ -------
 		CreatePsFromCso("Data/Shader/SwordTrailPS.cso", swordTrailPisxelShader.GetAddressOf());
 		// ÉeÉXÉg
-		AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
-		AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
+		AudioManager::Instance();
 
 		// --- skyMap èâä˙âª ---
 		skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
@@ -192,6 +191,9 @@ void SceneTest::Update()
 {
 	if(isFirst)
 	{
+		AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
+		AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
+
 		isFirst = false;
 		Particle::Instance().Initialize();
 	}

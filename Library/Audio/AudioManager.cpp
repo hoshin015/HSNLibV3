@@ -45,5 +45,8 @@ void AudioManager::Initialize()
 	LoadMusic(MUSIC_LABEL::WIN, L"Data/Audio/Win.wav");
 	LoadMusic(MUSIC_LABEL::DAMAGE, L"Data/Audio/Damage.wav");
 	LoadMusic(MUSIC_LABEL::SKILL, L"Data/Audio/Skill.wav");
+	LoadMusic(MUSIC_LABEL::BIG_HOERU, L"Data/Audio/BigHoeru.wav");
+	LoadMusic(MUSIC_LABEL::HOERU1, L"Data/Audio/Hoeru1.wav");
+	LoadMusic(MUSIC_LABEL::HOERU2, L"Data/Audio/Hoeru2.wav");
 }
 

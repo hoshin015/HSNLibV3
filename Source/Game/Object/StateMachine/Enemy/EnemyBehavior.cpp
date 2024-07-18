@@ -534,6 +534,8 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 		owner_->GetAnimator().SetNextState("hoeru_big");
 		owner_->SetFoundPlayer(true);
 
+		owner_->bigRoarAudio = false;
+
 		step++;
 		break;
 
@@ -550,6 +552,14 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 		{
 			CameraManager::Instance().shakeTimer = 1.5f;
 			CameraManager::Instance().shakePower = 200.0f;
+		}
+
+		// --- audio ---
+		if(!owner_->bigRoarAudio && 0.4f < owner_->bigRoarTimer)
+		{
+			owner_->bigRoarAudio = true;
+			AudioManager::Instance().PlayMusic(MUSIC_LABEL::BIG_HOERU);
+			AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BIG_HOERU, 2.0f);
 		}
 
 		// radialBlur ON OFF
@@ -808,6 +818,9 @@ BT_ActionState EnemyThreatAction::Run(float elapsedTime)
 	if (IsInterrupted())
 		return BT_ActionState::Failed;
 
+	static bool isAudioPlay = false;
+	static float audioTime = 0.2f;
+	static float audioTimer = 0.0f;
 
 
 	switch (step)
@@ -817,10 +830,20 @@ BT_ActionState EnemyThreatAction::Run(float elapsedTime)
 		// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROAR), false);
 		owner_->GetAnimator().SetNextState("hoeru");
 
+		isAudioPlay = false;
+		audioTime = 0.6f;
+		audioTimer = 0.0f;
+
 		step++;
 		break;
 
 	case 1:
+		audioTimer += Timer::Instance().DeltaTime();
+		if(!isAudioPlay && audioTime < audioTimer)
+		{
+			isAudioPlay = true;
+			AudioManager::Instance().PlayMusic(MUSIC_LABEL::HOERU1);
+		}
 
 		// --- アニメーションが終わったら終了 ---
 		if (owner_->GetAnimator().GetEndMotion())

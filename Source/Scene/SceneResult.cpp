@@ -41,7 +41,7 @@
 void SceneResult::Initialize()
 {
 	capturedBackground = std::make_unique<FullScreenQuad>();
-	//capturedSrv = CaptureScreen::Instance().GetRandomTexture();
+	capturedSrv = CaptureScreen::Instance().GetRandomTexture();
 
 	sprBlack = std::make_unique<Sprite>("Data/Texture/Black.png");
 	sprBackground = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/resultBackground.png");

@@ -97,8 +97,8 @@ void SceneResult::Initialize()
 	float gameClearTime = UiGame::Instance().gameTimer;
 
 	if(gameClearTime <= (60.0f * 5)) rank = static_cast<int>(Rank::S);
-	else if(gameClearTime <= (60.0f * 7)) rank = static_cast<int>(Rank::A);
-	else if(gameClearTime <= (60.0f * 11)) rank = static_cast<int>(Rank::B);
+	else if(gameClearTime <= (60.0f * 8)) rank = static_cast<int>(Rank::A);
+	else if(gameClearTime <= (60.0f * 15)) rank = static_cast<int>(Rank::B);
 	else rank = static_cast<int>(Rank::C);
 
 	goTitleFlag = false;

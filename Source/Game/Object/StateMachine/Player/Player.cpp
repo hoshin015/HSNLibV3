@@ -21,9 +21,13 @@
 #include "../../../../../Library/Graphics/ColorFilter.h"
 #include "../../../../UserInterface/UiClearAfter.h"
 #include "../../Stage/Gate.h"
+#include "../../../../../Library/Graphics/Shader.h"
 
 Player::Player(const char* filePath) : AnimatedObject(filePath)
 {
+	CreatePsFromCso("Data/Shader/PbrPS.cso", pbrPS.GetAddressOf());
+	CreatePsFromCso("Data/Shader/WbOitPbrPS.cso", wboitPbrPS.GetAddressOf());
+
 	stateMachine = std::make_unique<StateMachine<Player>>();
 	// １層目ステート登録
 	stateMachine->RegisterState(new PlayerNormalState(this));
@@ -479,6 +483,7 @@ void Player::Update()
 
 	CalcJustDodge();
 
+
 	// アニメーション更新
 	//SetAnimatorKeyFrame(keyFrame);
 	UpdateAnimationParam();
@@ -499,11 +504,17 @@ void Player::Update()
 
 	swordTrail->Update();
 	PowerSwordEffetUpdate();
+	AlphaUpdate();
 }
 
 void Player::Render(bool isShadow)
 {
 	model->Render(transform, &animatorKeyFrame, isShadow);
+}
+
+void Player::Render(ID3D11PixelShader* ps)
+{
+	model->Render(transform, &animatorKeyFrame, ps);
 }
 
 void Player::DrawDebugImGui(int number) {
@@ -1413,6 +1424,15 @@ void Player::UpdateHitStopTimer()
 			Timer::Instance().SetTimeScale(1.0f);
 		}
 	}
+}
+
+void Player::AlphaUpdate()
+{
+
+	if(constant.alphaTimer < constant.alphaTime)
+		constant.alphaTimer += Timer::Instance().DeltaTime();
+
+	GetModel()->data.materialColorKd.w = Easing::GetNowParam(Easing::OutQuad<float>, constant.alphaTimer, constant.dodgeAlphaUp);
 }
 
 

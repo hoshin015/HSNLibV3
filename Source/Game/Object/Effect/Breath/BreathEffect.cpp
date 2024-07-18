@@ -105,9 +105,8 @@ void BreathEffect::Update()
 					CameraManager::Instance().shakeTimer = 1.0f;
 					CameraManager::Instance().shakePower = 100.0f;
 
-					// TODO: これがエフェクトダメージフラグ
 					Player& player = Player::Instance();
-					player.HitDamaged(damage);
+					player.HitDamaged(damage, false, true, forward);
 
 					break;
 				}

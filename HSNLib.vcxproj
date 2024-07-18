@@ -171,6 +171,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\Object\DodgeEffect\DodgeEffect.cpp" />
     <ClCompile Include="Source\Game\Object\Effect\EffectDamageManager.cpp" />
     <ClCompile Include="Library\Graphics\ColorFilter.cpp" />
     <ClCompile Include="Library\Graphics\HeatHaze.cpp" />
@@ -291,6 +292,7 @@
     <ClCompile Include="Source\Other\SwordTrail\SwordTrail.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\Object\DodgeEffect\DodgeEffect.h" />
     <ClInclude Include="Source\Game\Object\Effect\EffectDamageManager.h" />
     <ClInclude Include="Library\Graphics\ColorFilter.h" />
     <ClInclude Include="Library\Graphics\HeatHaze.h" />
@@ -882,6 +884,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Library\Shader\SwordTrailPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\WbOitPbrPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

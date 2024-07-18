@@ -179,9 +179,9 @@ void UiGame::Render()
 		float injuryProportion = injury / static_cast<float>(hpMax);
 		injuryGauge->SetSizeX(injurySizeX * injuryProportion);
 
+		hpGaugeBg->Render();
 		injuryGauge->Render();
 		hpGauge->Render();
-		hpGaugeBg->Render();
 
 		hpGauge->SetSizeX(hpSizeX);
 		injuryGauge->SetSizeX(injurySizeX);

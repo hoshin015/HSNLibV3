@@ -161,6 +161,9 @@
     <Filter Include="シェーダーファイル\SwordTrail">
       <UniqueIdentifier>{edbfed58-b299-44a1-928f-a2518ba1053e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="2_Source\Game\Object\Effect\Dodge">
+      <UniqueIdentifier>{ae24d6d1-170d-48fb-a9ad-8c842d1a5ff9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -517,6 +520,9 @@
     </ClCompile>
     <ClCompile Include="Source\Game\Object\StateMachine\Enemy\EnemyAwakeBehavior.cpp">
       <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Object\DodgeEffect\DodgeEffect.cpp">
+      <Filter>2_Source\Game\Object\Effect\Dodge</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -908,6 +914,9 @@
     <ClInclude Include="Source\Game\Object\StateMachine\Enemy\EnemyAwakeBehavior.h">
       <Filter>2_Source\Game\Object\StateMachine\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\Object\DodgeEffect\DodgeEffect.h">
+      <Filter>2_Source\Game\Object\Effect\Dodge</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">
@@ -1106,6 +1115,9 @@
     </FxCompile>
     <FxCompile Include="Library\Shader\SwordTrailPS.hlsl">
       <Filter>シェーダーファイル\SwordTrail</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\WbOitPbrPS.hlsl">
+      <Filter>シェーダーファイル\PbrIbl</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

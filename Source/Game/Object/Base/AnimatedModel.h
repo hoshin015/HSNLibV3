@@ -13,6 +13,7 @@ public:
 
 	// 描画
 	void Render(DirectX::XMFLOAT4X4 world, ModelResource::KeyFrame* keyFrame, bool isShadow);
+	void Render(DirectX::XMFLOAT4X4 world, ModelResource::KeyFrame* keyFrame, ID3D11PixelShader* ps);
 
 	// オブジェクトの生成(あとで変える気がする)
 	void CreateComObject();
@@ -27,9 +28,9 @@ public:
 	struct Constants
 	{
 		DirectX::XMFLOAT4X4 world;
-		DirectX::XMFLOAT4   materialColorKd;
-		DirectX::XMFLOAT4   materialColorKs;
-		DirectX::XMFLOAT4   materialColorKa;
+		DirectX::XMFLOAT4   materialColorKd = {1,1,1,1};
+		DirectX::XMFLOAT4   materialColorKs = {1,1,1,1};
+		DirectX::XMFLOAT4   materialColorKa = {1,1,1,1};
 		DirectX::XMFLOAT4X4 boneTransforms[ModelResource::MAX_BONES] = {
 			{
 				1, 0, 0, 0,

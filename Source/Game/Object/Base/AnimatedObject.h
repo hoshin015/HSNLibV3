@@ -95,6 +95,7 @@ public:
 	bool GetAnimationLoopFlag() { return animationLoopFlag; }
 	bool GetIsPlayAnimation() { return isPlayAnimation; }
 	bool GetAnimationEndFlag() { return animationEndFlag; }
+	ModelResource::KeyFrame GetAnimatorKeyFrame() { return animatorKeyFrame; }
 
 	void SetKeyFrame(ModelResource::KeyFrame kf) { keyFrame = kf; }
 	void SetAnimatorKeyFrame(const ModelResource::KeyFrame& key) { animatorKeyFrame = key; }

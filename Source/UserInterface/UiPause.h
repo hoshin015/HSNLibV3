@@ -24,7 +24,7 @@ private:
 		sprites.emplace_back(imgGoTitle.get());
 		imgResumeGoTitleSelect = std::make_unique<Sprite>("Data/Texture/UserInterface/Pause/resumeGoTitleSelect.sprite");
 		imgResumeGoTitleSelect->UpdateAnimation();
-		imgResumeGoTitleSelect->SetPos({ 500, 550 });
+		imgResumeGoTitleSelect->SetPos({ 500, 575 });
 		sprites.emplace_back(imgResumeGoTitleSelect.get());
 
 
@@ -42,7 +42,7 @@ private:
 		sprites.emplace_back(imgNoText.get());
 		imgYesNoSelect = std::make_unique<Sprite>("Data/Texture/UserInterface/Pause/yesNoSelect.sprite");
 		imgYesNoSelect->UpdateAnimation();
-		imgYesNoSelect->SetPos({ 840, 400 });
+		imgYesNoSelect->SetPos({ 840, 425 });
 		sprites.emplace_back(imgYesNoSelect.get());
 	};
 

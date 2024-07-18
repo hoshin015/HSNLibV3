@@ -11,17 +11,29 @@ private:
 		imgBlack = std::make_unique<Sprite>("Data/Texture/Black.png");
 		sprites.emplace_back(imgBlack.get());
 
-		imgEnterText = std::make_unique<Sprite>("Data/Texture/Text/enterText.png");
-		imgEnterText->SetIsRender(false);
-		imgEnterText->SetColorA(0.0f);
-		imgEnterText->SetPos(imgEnterTextPos);
-		sprites.emplace_back(imgEnterText.get());
-		imgBackText = std::make_unique<Sprite>("Data/Texture/Text/backText.png");
-		imgBackText->SetIsRender(false);
-		imgBackText->SetColorA(0.0f);
-		imgBackText->SetPos(imgBackTextPos);
-		sprites.emplace_back(imgBackText.get());
+		imgEnterKeyText = std::make_unique<Sprite>("Data/Texture/Text/Key/enter.png");
+		imgEnterKeyText->SetIsRender(false);
+		imgEnterKeyText->SetColorA(0.0f);
+		imgEnterKeyText->SetPos(imgEnterTextPos);
+		sprites.emplace_back(imgEnterKeyText.get());
 
+		imgEnterPadText = std::make_unique<Sprite>("Data/Texture/Text/Pad/enter.png");
+		imgEnterPadText->SetIsRender(false);
+		imgEnterPadText->SetColorA(0.0f);
+		imgEnterPadText->SetPos(imgEnterTextPos);
+		sprites.emplace_back(imgEnterPadText.get());
+
+		imgBackKeyText = std::make_unique<Sprite>("Data/Texture/Text/Key/back.png");
+		imgBackKeyText->SetIsRender(false);
+		imgBackKeyText->SetColorA(0.0f);
+		imgBackKeyText->SetPos(imgBackTextPos);
+		sprites.emplace_back(imgBackKeyText.get());
+
+		imgBackPadText = std::make_unique<Sprite>("Data/Texture/Text/Pad/back.png");
+		imgBackPadText->SetIsRender(false);
+		imgBackPadText->SetColorA(0.0f);
+		imgBackPadText->SetPos(imgBackTextPos);
+		sprites.emplace_back(imgBackPadText.get());
 
 		imgTitleLogo = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/TitleLogo.png");
 		imgTitleLogo->SetDissolveTexture(L"Data/Texture/Noise/DirtGradient.png");
@@ -31,10 +43,15 @@ private:
 		imgTitleLogoSmall->SetColorA(0.0f);
 		sprites.emplace_back(imgTitleLogoSmall.get());
 
-		imgPressAnyButton = std::make_unique<Sprite>("Data/Texture/Text/PressAnyButton.sprite");
-		imgPressAnyButton->UpdateAnimation();
-		imgPressAnyButton->SetPos({ 640, 550 });
-		sprites.emplace_back(imgPressAnyButton.get());
+		imgPressAnyKeyButton = std::make_unique<Sprite>("Data/Texture/Text/Key/PressAnyButton.sprite");
+		imgPressAnyKeyButton->UpdateAnimation();
+		imgPressAnyKeyButton->SetPos({ 640, 550 });
+		sprites.emplace_back(imgPressAnyKeyButton.get());
+
+		imgPressAnyPadButton = std::make_unique<Sprite>("Data/Texture/Text/Pad/PressAnyButton.sprite");
+		imgPressAnyPadButton->UpdateAnimation();
+		imgPressAnyPadButton->SetPos({ 640, 550 });
+		sprites.emplace_back(imgPressAnyPadButton.get());
 
 		imgTitleText = std::make_unique<Sprite>("Data/Texture/UserInterface/Title/titleText.sprite");
 		imgTitleText->SetDissolveTexture(L"Data/Texture/Noise/DirtGradient2.png");
@@ -212,10 +229,12 @@ private:
 	};
 
 	// --- enter back text ---
-	std::unique_ptr<Sprite> imgEnterText;
-	DirectX::XMFLOAT2 imgEnterTextPos = { 100, 650 };
-	std::unique_ptr<Sprite> imgBackText;
-	DirectX::XMFLOAT2 imgBackTextPos = { 200, 650 };
+	std::unique_ptr<Sprite> imgEnterKeyText;
+	std::unique_ptr<Sprite> imgEnterPadText;
+	DirectX::XMFLOAT2 imgEnterTextPos = { 200, 650 };
+	std::unique_ptr<Sprite> imgBackKeyText;
+	std::unique_ptr<Sprite> imgBackPadText;
+	DirectX::XMFLOAT2 imgBackTextPos = { 300, 650 };
 
 	Easing::EasingValue imgEnterBackTextTitleToSelectMenuAlpha =
 	{
@@ -252,7 +271,8 @@ private:
 		1.0f, 0.0f
 	};
 
-	std::unique_ptr<Sprite> imgPressAnyButton;
+	std::unique_ptr<Sprite> imgPressAnyKeyButton;
+	std::unique_ptr<Sprite> imgPressAnyPadButton;
 	Easing::EasingValue imgPressAnyButtonScale =
 	{
 		0.0f, 0.25f,

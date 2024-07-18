@@ -25,7 +25,7 @@ bool UiPause::Update()
 	case UiPauseState::Hidden:
 		{
 			// ポーズフラグがtrueになったら遷移
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back) ||
+			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Escape) ||
 				InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::start))
 			{
 				imgBlack->SetIsRender(true);
@@ -50,15 +50,6 @@ bool UiPause::Update()
 			imgResume->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
 			imgGoTitle->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
 			imgResumeGoTitleSelect->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
-
-			// 表示中にポーズ解除されたら非表示遷移状態に遷移
-			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back) ||
-				InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::start))
-			{
-				isPause = false;
-				state   = UiPauseState::Hide;
-				break;
-			}
 
 			// 表示完了したら遷移
 			if (pauseTimer > pauseTotalTime)
@@ -87,9 +78,9 @@ bool UiPause::Update()
 			{
 			case CheckResumeGoTitle::Resume:
 				{
-					imgResumeGoTitleSelect->SetPos({ 500, 550 });
+					imgResumeGoTitleSelect->SetPosX(500);
 
-					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter) ||
+					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::F) ||
 						InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 					{
 						isPause = false;
@@ -99,9 +90,9 @@ bool UiPause::Update()
 				break;
 			case CheckResumeGoTitle::GoTitle:
 				{
-					imgResumeGoTitleSelect->SetPos({ 800, 550 });
+					imgResumeGoTitleSelect->SetPosX(800);
 
-					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter) ||
+					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::F) ||
 						InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 					{
 						imgPauseText->SetIsRender(false);
@@ -175,9 +166,9 @@ bool UiPause::Update()
 			{
 				case CheckYesNo::Yes:
 				{
-					imgYesNoSelect->SetPos({ 440, 400 });
+					imgYesNoSelect->SetPosX(440);
 
-					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter) ||
+					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::F) ||
 						InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 					{
 						SceneManager::Instance().ChangeScene(new SceneTitle);
@@ -187,9 +178,9 @@ bool UiPause::Update()
 				break;
 				case CheckYesNo::No:
 				{
-					imgYesNoSelect->SetPos({ 840, 400 });
+					imgYesNoSelect->SetPosX(840);
 
-					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter) ||
+					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::F) ||
 						InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 					{
 						imgPauseText->SetIsRender(true);

@@ -30,7 +30,7 @@ Particle::Particle()
 
 void Particle::Initialize()
 {
-	std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex()); // îrëºêßå‰
+	//std::lock_guard<std::mutex> lock(Graphics::Instance().GetMutex()); // îrëºêßå‰
 
 	Graphics* gfx = &Graphics::Instance();
 	ID3D11DeviceContext* dc = gfx->GetDeviceContext();

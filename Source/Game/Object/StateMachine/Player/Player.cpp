@@ -1347,7 +1347,10 @@ void Player::CollisionVsEnemy()
 				float rate = weakness ? 1.5f : 1;
 				float btStrength = Math::RandomRange(ability.bodyTrunkStrength * rate - ability.bodyTrunkStrengthRange, ability.bodyTrunkStrength * rate + ability.bodyTrunkStrengthRange);
 				float strength = Math::RandomRange(ability.strength * rate - ability.strengthRange, ability.strength * rate + ability.strengthRange) * (1 + (ability.attackCount + 1) * 0.1f);
-				enemy.SetFlinchValue(enemy.GetFlinchValue() - btStrength);
+				
+				if (!enemy.awaking)
+					enemy.SetFlinchValue(enemy.GetFlinchValue() - btStrength);
+
 				enemy.OnAttacked(strength);
 
 				std::string dmgText = std::to_string(static_cast<int>(strength*10));

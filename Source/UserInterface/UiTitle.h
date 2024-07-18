@@ -340,7 +340,7 @@ private:
 	};
 
 	std::unique_ptr<Sprite> imgSelectLevel;
-	DirectX::XMFLOAT2 imgSelectLevelPos = { 200.0f, 100.0f };
+	DirectX::XMFLOAT2 imgSelectLevelPos = { 300.0f, 100.0f };
 
 	std::unique_ptr<Sprite> imgEasy;
 	std::unique_ptr<Sprite> imgEasySelect;
@@ -353,7 +353,6 @@ private:
 	std::unique_ptr<Sprite> imgHard;
 	std::unique_ptr<Sprite> imgHardSelect;
 	DirectX::XMFLOAT2 imgHardPos = { 300.0f, 550.0f };
-
 
 private:
 	std::unique_ptr<Sprite> imgEmitterTop;

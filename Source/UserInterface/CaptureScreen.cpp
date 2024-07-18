@@ -2,6 +2,7 @@
 
 #include "../../../External/ImGui/imgui.h"
 #include "../Game/Object/StateMachine/Player/Player.h"
+#include "../Game/Object/StateMachine/Enemy/Enemy.h"
 
 CaptureScreen::CaptureScreen()
 {
@@ -21,13 +22,13 @@ void CaptureScreen::Initialize()
 		frameBuffers[i]->Clear();
 
 	currentCaptureIndex = 0;
-	debugCapture = false;
+	capture = false;
 }
 
 
 bool CaptureScreen::BeginCapture()
 {
-	if ((rand() % CAPTURE_FREQUENCY == 0 || debugCapture) && Player::Instance().enterStage)
+	if ((rand() % CAPTURE_FREQUENCY == 0 || capture) && Enemy::Instance().IsAwake() && Enemy::Instance().IsAlive())
 	{
 		frameBuffers[currentCaptureIndex]->Clear();
 		frameBuffers[currentCaptureIndex]->Activate();
@@ -47,7 +48,7 @@ void CaptureScreen::EndCapture()
 	if (currentCaptureIndex >= MAX_CAPTURE)
 		currentCaptureIndex = 0;
 
-	debugCapture = false;
+	capture = false;
 }
 
 void CaptureScreen::DrawDebugGui()
@@ -55,7 +56,7 @@ void CaptureScreen::DrawDebugGui()
 	ImGui::Begin(u8"画面キャプチャ");
 
 	if (ImGui::Button(u8"キャプチャ", { 200.0f, 30.0f }))
-		debugCapture = true;
+		capture = true;
 
 	for(size_t i = 0; i < 5; i++)
 	{
@@ -64,4 +65,32 @@ void CaptureScreen::DrawDebugGui()
 	}
 
 	ImGui::End();
+}
+
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CaptureScreen::GetRandomTexture()
+{
+	//size_t index = rand() % 5;
+	//
+	//auto srv = frameBuffers[index]->shaderResourceViews[0];
+	//if (srv)
+	//	return srv;
+
+	//else
+	//{
+	//	return GetRandomTexture();
+	//}
+
+	//return nullptr;
+
+
+	std::vector<size_t> buf;
+	for (size_t i = 0; i < 5; i++)
+	{
+		if (frameBuffers[i]->shaderResourceViews[0])
+			buf.emplace_back(i);
+	}
+	
+	size_t index = rand() % buf.size();
+
+	return frameBuffers[index]->shaderResourceViews[0];
 }

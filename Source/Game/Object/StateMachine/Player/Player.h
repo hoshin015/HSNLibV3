@@ -205,6 +205,6 @@ public:
 	// SwordTrail
 	std::unique_ptr<SwordTrail> swordTrail;
 	float hitStopTimer;
-	float hitStopTime = 0.05f;
-	float weakHitStopTime = 0.1f;
+	float hitStopTime = 0.025f;
+	float weakHitStopTime = 0.05f;
 };

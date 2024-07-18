@@ -11,6 +11,7 @@
 #include "../../Library/Graphics/RadialBlur.h"
 #include "../../Library/Graphics/HeatHaze.h"
 #include "../../Library/Graphics/ColorFilter.h"
+#include "../../Library/Graphics/FullScreenQuad.h"
 // --- Scene ---
 #include "Scene.h"
 // --- Game ---
@@ -52,6 +53,10 @@ private:
 	std::unique_ptr<Sprite> sprRankBoard;
 	std::unique_ptr<Sprite> sprRankS;
 	std::unique_ptr<Sprite> sprGoTitle;
+
+	// îwåi
+	std::unique_ptr<FullScreenQuad> capturedBackground;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> capturedSrv;
 
 
 	float resultTimer = 0.0f;

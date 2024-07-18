@@ -35,10 +35,14 @@
 #include "../UserInterface//UiPause.h"
 #include "../UserInterface/DamageTextManager.h"
 #include "../UserInterface/UiGame.h"
+#include "../UserInterface/CaptureScreen.h"
 
 
 void SceneResult::Initialize()
 {
+	capturedBackground = std::make_unique<FullScreenQuad>();
+	capturedSrv = CaptureScreen::Instance().GetRandomTexture();
+
 	sprBlack = std::make_unique<Sprite>("Data/Texture/Black.png");
 	sprBackground = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/resultBackground.png");
 	sprTimeBoard = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/timeBoard.sprite");
@@ -116,7 +120,8 @@ void SceneResult::Render()
 	gfx->SetBlend(BLEND_STATE::ALPHA);
 	gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_OFF_ZW_OFF);
 
-	sprBackground->Render();
+	//sprBackground->Render();
+	capturedBackground->blit(capturedSrv.GetAddressOf(), 0, 1);
 	sprRankBoard->Render();
 	sprTimeBoard->Render();
 	sprRankS->Render();

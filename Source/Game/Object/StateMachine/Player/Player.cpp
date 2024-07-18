@@ -1284,19 +1284,19 @@ void Player::PowerSwordEffetUpdate()
 
 void Player::DrawDebug()
 {
-	DebugPrimitive::Instance().AddSphere(restRoomCenter.vec_, restRoomRadius, { 0.3f, 0.3f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddCube(position, {1.5f, 1.5f, 1.5f}, { 0.3f, 0.3f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddCube(entrance.position.vec_, entrance.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddCube(entranceLWall.position.vec_, entranceLWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddCube(entranceLWall.position.vec_, entranceLWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddCube(entranceRWall.position.vec_, entranceRWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
+	//DebugPrimitive::Instance().AddSphere(restRoomCenter.vec_, restRoomRadius, { 0.3f, 0.3f, 1.0f, 1.0f });
+	//DebugPrimitive::Instance().AddCube(position, {1.5f, 1.5f, 1.5f}, { 0.3f, 0.3f, 1.0f, 1.0f });
+	//DebugPrimitive::Instance().AddCube(entrance.position.vec_, entrance.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
+	//DebugPrimitive::Instance().AddCube(entranceLWall.position.vec_, entranceLWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
+	//DebugPrimitive::Instance().AddCube(entranceLWall.position.vec_, entranceLWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
+	//DebugPrimitive::Instance().AddCube(entranceRWall.position.vec_, entranceRWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
 
-	for (auto& sphere : wallSpheres)
-	{
-		DebugPrimitive::Instance().AddSphere(sphere.vec_, wallSphereRadius, { 1.0f, 0.3f, 0.3f, 1.0f });
-	}
+	//for (auto& sphere : wallSpheres)
+	//{
+	//	DebugPrimitive::Instance().AddSphere(sphere.vec_, wallSphereRadius, { 1.0f, 0.3f, 0.3f, 1.0f });
+	//}
 
-	DebugPrimitive::Instance().AddSphere(position, playerRadius, { 1.0f, 0.3f, 0.3f, 1.0f });
+	//DebugPrimitive::Instance().AddSphere(position, playerRadius, { 1.0f, 0.3f, 0.3f, 1.0f });
 }
 
 void Player::OnHitAttack(bool hitWeak)
@@ -1310,6 +1310,8 @@ void Player::OnHitAttack(bool hitWeak)
 	{
 		enemy.awaking = true;
 	}
+
+	enemy.SetFoundPlayer(true);
 
 	Timer::Instance().SetTimeScale(0.0f);
 

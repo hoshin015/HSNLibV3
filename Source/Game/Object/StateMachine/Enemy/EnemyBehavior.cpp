@@ -11,6 +11,7 @@
 #include "../../Effect/Lightning/LightningEffect.h"
 #include "../../Effect/Rock/RockEffect.h"
 #include "../../Effect/Special/SpecialEffect.h"
+#include "../../../../UserInterface/CaptureScreen.h"
 
 
 
@@ -1674,6 +1675,8 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 			owner_->GetAnimator().SetNextState("hissatu_3");
 			owner_->runTimer_ = 0.0f;
 			owner_->hissatuCount = 0;
+
+			CaptureScreen::Instance().capture = true;
 
 			step++;
 		}

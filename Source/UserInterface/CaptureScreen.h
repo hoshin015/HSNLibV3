@@ -25,8 +25,10 @@ public:
 	void EndCapture();
 	void DrawDebugGui();
 
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetRandomTexture();
+
 	std::unique_ptr<FrameBuffer> frameBuffers[MAX_CAPTURE];
 	size_t currentCaptureIndex;
-	bool debugCapture;
+	bool capture;
 };
 

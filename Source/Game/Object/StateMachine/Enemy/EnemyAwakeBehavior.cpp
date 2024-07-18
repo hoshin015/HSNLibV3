@@ -212,7 +212,6 @@ BT_ActionState EnemyLightningTailAction::Run(float elapsedTime)
 	case 0:
 		// owner_->PlayAnimation(static_cast<int>(MonsterAnimation::ROTATION), false);
 		owner_->GetAnimator().SetNextState("kaiten");
-		owner_->runTimer_ = 0.125f;
 		LightningEffect::Instance().HeadAuraEmit(3.5f);
 
 		rockNowTimer = 0.0f;
@@ -244,18 +243,34 @@ BT_ActionState EnemyLightningTailAction::Run(float elapsedTime)
 
 				rockTimer -= rockTime;
 			}
+
+
+			// 雷エフェクト
+			owner_->runTimer_ -= Timer::Instance().DeltaTime();
+			if(owner_->runTimer_ < 0.0f)
+			{
+				owner_->runTimer_ = 0.05f;
+
+				Vector3 position = owner_->GetPos();
+				Vector3 tailPosition = Enemy::Instance().GetBonePosition("sippo_end");
+				tailPosition.y = 0.0f;
+				Vector3 vec = tailPosition - position;
+				vec.Normalize();
+				tailPosition += vec * (static_cast<float>(rand() % 3) + 3.0f);
+				LightningEffect::Instance().Emit(tailPosition.vec_);
+			}
 		}
 
 
 		// 雷
-		owner_->runTimer_ -= Timer::Instance().DeltaTime();
-		if (owner_->runTimer_ < 0.0f)
-		{
-			owner_->runTimer_ = 0.125f;
-			Vector3 tailPos = owner_->GetBonePosition("sippo_end");
-			tailPos.y = 0.0f;
-			LightningEffect::Instance().Emit(tailPos.vec_);
-		}
+		//owner_->runTimer_ -= Timer::Instance().DeltaTime();
+		//if (owner_->runTimer_ < 0.0f)
+		//{
+		//	owner_->runTimer_ = 0.125f;
+		//	Vector3 tailPos = owner_->GetBonePosition("sippo_end");
+		//	tailPos.y = 0.0f;
+		//	LightningEffect::Instance().Emit(tailPos.vec_);
+		//}
 
 
 

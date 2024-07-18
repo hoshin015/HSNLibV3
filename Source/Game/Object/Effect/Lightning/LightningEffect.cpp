@@ -75,14 +75,14 @@ void LightningEffect::Update()
 					DirectX::XMFLOAT3 sub;
 					DirectX::XMStoreFloat3(&sub, Sub);
 
-					if(sub.x<= FLT_EPSILON && sub.z<=FLT_EPSILON) {
+					if(sub.x<= 0 && sub.z <= 0) {
 						float rad = Player::Instance().GetAngleY() / 0.0174532925f;
 						sub.x = cosf(rad);
 						sub.z = sinf(rad);
 					}
-					sub.x *= 6;
-					sub.y *= 6;
-					sub.z *= 6;
+					sub.x *= 5;
+					sub.y *= 5;
+					sub.z *= 5;
 
 					Player& player = Player::Instance();
 					player.HitDamaged(damage, false, true, sub);

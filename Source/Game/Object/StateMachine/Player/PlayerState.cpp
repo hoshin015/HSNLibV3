@@ -343,7 +343,8 @@ void PlayerDodgeState::Execute() {
 		EmitterManager::Instance().Register(emitter0);
 	}
 
-	if (owner->AStatus().dodgeTimer > justDodgeTimer && owner->AStatus().isHitDamage) {
+	if (owner->AStatus().dodgeTimer > justDodgeTimer && owner->AStatus().isHitDamage &&
+		!owner->AStatus().isInvincibleInvalidDamage) {
 		owner->AStatus().isJustDodge = true;
 		owner->AStatus().justDodgeInvincibleTimer = cs.justDodgeInvincibleTime;
 

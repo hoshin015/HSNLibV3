@@ -503,7 +503,7 @@ void Player::Update()
 	UpdateTransform();
 
 	swordTrail->Update();
-	PowerSwordEffetUpdate();
+	
 	AlphaUpdate();
 }
 
@@ -701,6 +701,14 @@ void Player::UpdateAnimationParam() {
 // 入力データ取得
 void Player::Input()
 {
+	if (CameraManager::Instance().IsCurrentCamera("ClearCamera")) {
+		inputMap["Move"] = XMFLOAT2();
+		animator.SetParameter("moveX",0);
+		animator.SetParameter("moveY",0);
+
+		return;
+	}
+
 	InputManager& input = InputManager::Instance();
 	float dt = Timer::Instance().DeltaTime();
 	float frameDt = dt * 10;
@@ -811,10 +819,9 @@ void Player::InputAttack() {
 		inputAttackData = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::x);
 	}
 
+
 	if(inputAttackData && !at) {
 		at = true;
-		ability.attackCount++;
-		//if (ability.attackCount >= constant.maxAttackCombo) ability.attackTimer = 0;
 	}
 
 	if (animator.GetEndMotion()) {
@@ -822,6 +829,8 @@ void Player::InputAttack() {
 		animator.SetParameter("attack", at);
 		if (at)
 		{
+			ability.attackCount++;
+			if (ability.attackCount >= constant.maxAttackCombo) ability.attackCount = 0;
 			swordTrail->Clear();
 			ability.attackTimer = constant.attackReceptionTime;
 			ClearAnimSphereCollisionDamagedFlag();
@@ -1051,6 +1060,7 @@ void Player::CalcJustDodge() {
 
 		// スキル関係
 		if (ability.isSkillGaugeMax) {
+			PowerSwordEffetUpdate();
 			ability.strength = constant.leastStrength * constant.skillDamageRate;
 			ability.bodyTrunkStrength = constant.leastBt * constant.skillDamageRate;
 			ability.skillGauge -= dt;
@@ -1067,18 +1077,20 @@ void Player::CalcJustDodge() {
 			Timer::Instance().SetTimeScale(1);
 		}
 		ability.justDodgeSlowTimer += Timer::Instance().UnscaledDeltaTime();
-		if (ability.justDodgeSlowTimer >= 3) ability.justDodgeSlowTimer = 3;
+		if (ability.justDodgeSlowTimer >= 0.75f) ability.justDodgeSlowTimer = 0.75f;
 		//(cos(x * pi*2)+1)/2 = (cosf(ability.justDodgeSlowTimer/3 * 6.2831853072)+1)/2
 		static float sat = 1;
 		sat = Math::Lerp(sat, ability.justDodgeInvincibleTimer <= 0 ? 1 : 0, Timer::Instance().UnscaledDeltaTime() * 15);
 		colorFilter->SetSaturation(sat);
-		if(ability.justDodgeSlowTimer < 3)Timer::Instance().SetTimeScale(Easing::InQuad(ability.justDodgeSlowTimer, 3.f,1.f,0.f));
+		if(ability.justDodgeSlowTimer < 0.75f)Timer::Instance().SetTimeScale(Easing::InQuad(ability.justDodgeSlowTimer, 0.75f,1.f,0.f));
 	}
 }
 
 void Player::HitDamaged(float damage, bool invincibleInvalid, bool flying ,Vector3 vec) {
 	ability.hitDamage = damage;
 	ability.isHitDamage = ability.hitDamage > 0;
+
+	if (Enemy::Instance().GetHP() <= 0) ability.hitDamage = 0;
 	ability.isInvincibleInvalidDamage = invincibleInvalid;
 	ability.isFlying = flying;
 	ability.flyVec = vec;
@@ -1246,7 +1258,7 @@ void Player::CollisionVsEnemy()
 					collision.isDamaged = true;
 				}
 				Enemy& enemy = Enemy::Instance();
-				enemy.OnAttacked(ability.strength);
+				//enemy.OnAttacked(ability.strength*(1 + (ability.attackCount+1)*0.08));
 
 				//ConsoleData::Instance().logs.push_back("Damage!");
 
@@ -1332,11 +1344,13 @@ void Player::CollisionVsEnemy()
 				emitter2->emitterData.burstsOneShot = 1;
 				EmitterManager::Instance().Register(emitter2);
 
+				bool weakness = eBoneSphere.skeletonType == SkeletonSphereCollision::SkeletonType::WeakPoint1;
+				if (Enemy::Instance().GetHP() > 0) OnHitAttack(weakness);
 				float rate = weakness ? 1.5f : 1;
 				float btStrength = Math::RandomRange(ability.bodyTrunkStrength * rate - ability.bodyTrunkStrengthRange, ability.bodyTrunkStrength * rate + ability.bodyTrunkStrengthRange);
-				float strength = Math::RandomRange(ability.strength * rate - ability.strengthRange, ability.strength * rate + ability.strengthRange);
+				float strength = Math::RandomRange(ability.strength * rate - ability.strengthRange, ability.strength * rate + ability.strengthRange) * (1 + (ability.attackCount + 1) * 0.1f);
 				enemy.SetFlinchValue(enemy.GetFlinchValue() - btStrength);
-				Enemy::Instance().OnAttacked(strength);
+				enemy.OnAttacked(strength);
 
 				std::string dmgText = std::to_string(static_cast<int>(strength*10));
 				DamageTextManager::Instance().Register({ dmgText, collisionPoint });
@@ -1399,31 +1413,40 @@ void Player::PowerSwordEffetUpdate()
 
 void Player::DrawDebug()
 {
-	DebugPrimitive::Instance().AddSphere(restRoomCenter.vec_, restRoomRadius, { 0.3f, 0.3f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddCube(position, {1.5f, 1.5f, 1.5f}, { 0.3f, 0.3f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddCube(entrance.position.vec_, entrance.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddCube(entranceLWall.position.vec_, entranceLWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddCube(entranceLWall.position.vec_, entranceLWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
-	DebugPrimitive::Instance().AddCube(entranceRWall.position.vec_, entranceRWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
+	//DebugPrimitive::Instance().AddSphere(restRoomCenter.vec_, restRoomRadius, { 0.3f, 0.3f, 1.0f, 1.0f });
+	//DebugPrimitive::Instance().AddCube(position, {1.5f, 1.5f, 1.5f}, { 0.3f, 0.3f, 1.0f, 1.0f });
+	//DebugPrimitive::Instance().AddCube(entrance.position.vec_, entrance.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
+	//DebugPrimitive::Instance().AddCube(entranceLWall.position.vec_, entranceLWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
+	//DebugPrimitive::Instance().AddCube(entranceLWall.position.vec_, entranceLWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
+	//DebugPrimitive::Instance().AddCube(entranceRWall.position.vec_, entranceRWall.size.vec_, { 0.3f, 0.3f, 1.0f, 1.0f });
 
-	for (auto& sphere : wallSpheres)
-	{
-		DebugPrimitive::Instance().AddSphere(sphere.vec_, wallSphereRadius, { 1.0f, 0.3f, 0.3f, 1.0f });
-	}
+	//for (auto& sphere : wallSpheres)
+	//{
+	//	DebugPrimitive::Instance().AddSphere(sphere.vec_, wallSphereRadius, { 1.0f, 0.3f, 0.3f, 1.0f });
+	//}
 
-	DebugPrimitive::Instance().AddSphere(position, playerRadius, { 1.0f, 0.3f, 0.3f, 1.0f });
+	//DebugPrimitive::Instance().AddSphere(position, playerRadius, { 1.0f, 0.3f, 0.3f, 1.0f });
 }
 
 void Player::OnHitAttack(bool hitWeak)
 {
-	// Enemy::Instance().OnAttacked(ability.strength);
-	Enemy::Instance().wasAttacked = true;
+	Enemy& enemy = Enemy::Instance();
+	enemy.OnAttacked(ability.strength);
+	enemy.wasAttacked = true;
+
+	// 覚醒してなくて体力が半分切ったら
+	if (!enemy.IsAwake() && enemy.GetHP() < enemy.GetMaxHP() * 0.5f)
+	{
+		enemy.awaking = true;
+	}
+
+	enemy.SetFoundPlayer(true);
 
 	Timer::Instance().SetTimeScale(0.0f);
 
 	// Todo : 頭なら大き目にヒットストップさせる
-	CameraManager::Instance().shakeTimer = hitStopTime;
-	hitStopTimer = (hitWeak) ? weakHitStopTime : hitStopTime;
+	CameraManager::Instance().shakeTimer = hitStopTime * (ability.attackCount >= 3 ? 2 : 1);
+	hitStopTimer = (hitWeak ? weakHitStopTime : hitStopTime) * (ability.attackCount >= 3 ? 2 : 1);
 }
 
 void Player::UpdateHitStopTimer()

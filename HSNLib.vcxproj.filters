@@ -524,6 +524,9 @@
     <ClCompile Include="Source\Game\Object\DodgeEffect\DodgeEffect.cpp">
       <Filter>2_Source\Game\Object\Effect\Dodge</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UserInterface\CaptureScreen.cpp">
+      <Filter>2_Source\UserInterface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Graphics\Graphics.h">
@@ -916,6 +919,9 @@
     </ClInclude>
     <ClInclude Include="Source\Game\Object\DodgeEffect\DodgeEffect.h">
       <Filter>2_Source\Game\Object\Effect\Dodge</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UserInterface\CaptureScreen.h">
+      <Filter>2_Source\UserInterface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

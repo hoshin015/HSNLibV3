@@ -31,7 +31,7 @@ public:
 
 		// UŒ‚
 		float strength      = 10;
-		float strengthRange = 5;
+		float strengthRange = 1;
 		float attackCount   = 0;
 		float attackTimer   = 0;
 		float skillGauge    = 0;
@@ -252,8 +252,8 @@ public:
 	// SwordTrail
 	std::unique_ptr<SwordTrail> swordTrail;
 	float hitStopTimer;
-	float hitStopTime = 0.05f;
-	float weakHitStopTime = 0.1f;
+	float hitStopTime = 0.025f;
+	float weakHitStopTime = 0.05f;
 
 public:
 	// •`‰æƒJƒ‰[

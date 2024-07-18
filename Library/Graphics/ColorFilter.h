@@ -25,6 +25,7 @@ public:
 	void SetHueShift(float hueShift) { this->colorFilterConstants.hueShift = hueShift; }
 	void SetSaturation(float saturation) { this->colorFilterConstants.saturation = saturation; }
 	void SetBrightness(float brightness) { this->colorFilterConstants.brightness = brightness; }
+	void SetContrast(float contrast) { this->colorFilterConstants.contrast = contrast; }
 
 private:
 	bool isColorFilter = false;

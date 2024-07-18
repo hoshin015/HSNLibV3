@@ -1346,8 +1346,10 @@ void Player::CollisionVsEnemy()
 				if (Enemy::Instance().GetHP() > 0) OnHitAttack(weakness);
 				float rate = weakness ? 1.5f : 1;
 				float btStrength = Math::RandomRange(ability.bodyTrunkStrength * rate - ability.bodyTrunkStrengthRange, ability.bodyTrunkStrength * rate + ability.bodyTrunkStrengthRange);
-				float strength = Math::RandomRange(ability.strength * rate - ability.strengthRange, ability.strength * rate + ability.strengthRange) * (1 + (ability.attackCount + 1) * 0.1f);
-				
+				float strength = Math::RandomRange(ability.strength * rate - ability.strengthRange, ability.strength * rate + ability.strengthRange) *
+					(1 + (ability.attackCount + 1) * 0.1f) *
+					(ability.justDodgeInvincibleTimer > 0 ? 2 : 1);
+
 				if (!enemy.awaking)
 					enemy.SetFlinchValue(enemy.GetFlinchValue() - btStrength);
 
@@ -1447,7 +1449,10 @@ void Player::OnHitAttack(bool hitWeak)
 
 	// Todo : 頭なら大き目にヒットストップさせる
 	CameraManager::Instance().shakeTimer = hitStopTime * (ability.attackCount >= 3 ? 2 : 1);
-	hitStopTimer = (hitWeak ? weakHitStopTime : hitStopTime) * (ability.attackCount >= 3 ? 2 : 1);
+	hitStopTimer = 
+		(hitWeak ? weakHitStopTime : hitStopTime) *
+		(ability.attackCount >= 3 ? 2 : 1) *
+		(ability.justDodgeInvincibleTimer > 0 ? 2 : 1);
 }
 
 void Player::UpdateHitStopTimer()

@@ -606,11 +606,14 @@ void Player::DrawDebugImGui(int number) {
 				ImGui::DragFloat(u8"体幹攻撃力", &ability.bodyTrunkStrength, 0.1f);
 				ImGui::DragFloat(u8"体幹攻撃力の振れ幅", &ability.bodyTrunkStrengthRange, 0.1f);
 
+				ImGui::DragFloat(u8"skilゲージ", &ability.skillGauge, 0.1f);
+
 				ImGui::TreePop();
 			}
 
 			if(ImGui::TreeNode(u8"定数値")) {
 				ImGui::DragFloat(u8"最大体力", &constant.maxHp);
+				ImGui::DragFloat(u8"maxskilゲージ", &constant.maxSkillGauge, 0.01f);
 
 				ImGui::DragFloat(u8"歩き速度", &constant.walkSpeed,0.01f);
 				ImGui::DragFloat(u8"ダッシュ移行時間", &constant.shiftDashTimer,0.01f);

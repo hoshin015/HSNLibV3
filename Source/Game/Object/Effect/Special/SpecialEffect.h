@@ -117,6 +117,8 @@ private:
 	bool				isEndNova = false;
 	float				endNovaTime = 9.3f;
 
+	float				afterStageTime = 9.4f;
+
 	Easing::EasingValue chargeNovaHeatHazeMaxShiftDown =
 	{
 		8.5f, 10.0f,

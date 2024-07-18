@@ -45,6 +45,7 @@ private:
 	std::unique_ptr<Sprite> hpGauge;
 	std::unique_ptr<Sprite> hpGaugeBg;
 	std::unique_ptr<Sprite> injuryGauge;
+	std::unique_ptr<Sprite> hpGaugeLogo;
 
 	int hpMax = 100;
 	int hp = 80;
@@ -53,6 +54,7 @@ private:
 	// skillÉQÅ[ÉW
 	std::unique_ptr<Sprite> skillGauge;
 	std::unique_ptr<Sprite> skillGaugeBg;
+	std::unique_ptr<Sprite> skillGaugeLogo;
 
 	int skillMax = 100;
 	int skill = 50;

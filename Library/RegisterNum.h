@@ -48,6 +48,8 @@
 #define pk_novaEndParticle		14
 #define pk_novaEndFire			15
 
+#define pk_loadingParticle		16
+
 // billboardType
 #define bt_View		0
 #define bt_Velocity 1

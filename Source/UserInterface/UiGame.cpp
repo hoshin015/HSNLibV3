@@ -30,13 +30,21 @@ void UiGame::Initialize()
 	injuryGauge->UpdateAnimation();
 	injuryGauge->SetPos({ 50, 650 });
 
+	hpGaugeLogo = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/hpLogo.sprite");
+	hpGaugeLogo->UpdateAnimation();
+	hpGaugeLogo->SetPos({ 50, 650 });
+
 	skillGauge = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/skillGauge.sprite");
 	skillGauge->UpdateAnimation();
-	skillGauge->SetPos({ 50, 625 });
+	skillGauge->SetPos({ 70, 615 });
 
 	skillGaugeBg = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/skillGaugeBg.sprite");
 	skillGaugeBg->UpdateAnimation();
-	skillGaugeBg->SetPos({ 50, 625 });
+	skillGaugeBg->SetPos({ 70, 615 });
+
+	skillGaugeLogo = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/skillLogo.sprite");
+	skillGaugeLogo->UpdateAnimation();
+	skillGaugeLogo->SetPos({ 70, 615 });
 
 	imgDownOver = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/downOver.sprite");
 	imgDownOver->UpdateAnimation();
@@ -52,10 +60,10 @@ void UiGame::Initialize()
 	imgKeyOption->SetPos({ 20,20 });
 	imgKeyOption->UpdateAnimation();
 	imgKeyCameraMove = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Keyboard/CameraMove.sprite");
-	imgKeyCameraMove->SetPos({ 1260, 350 });
+	imgKeyCameraMove->SetPos({ 1260, 450 });
 	imgKeyCameraMove->UpdateAnimation();
 	imgKeyLockOn = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Keyboard/LockOn.sprite");
-	imgKeyLockOn->SetPos({ 1260, 400 });
+	imgKeyLockOn->SetPos({ 1260, 500 });
 	imgKeyLockOn->UpdateAnimation();
 	imgKeyMove = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Keyboard/Move.sprite");
 	imgKeyMove->SetPos({ 1260, 550 });
@@ -72,10 +80,10 @@ void UiGame::Initialize()
 	imgConOption->SetPos({ 20,20 });
 	imgConOption->UpdateAnimation();
 	imgConCameraMove = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Controller/CameraMove.sprite");
-	imgConCameraMove->SetPos({ 1260, 350 });
+	imgConCameraMove->SetPos({ 1260, 450 });
 	imgConCameraMove->UpdateAnimation();
 	imgConLockOn = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Controller/LockOn.sprite");
-	imgConLockOn->SetPos({ 1260, 400 });
+	imgConLockOn->SetPos({ 1260, 500 });
 	imgConLockOn->UpdateAnimation();
 	imgConMove = std::make_unique<Sprite>("Data/Texture/UserInterface/Game/Controller/Move.sprite");
 	imgConMove->SetPos({ 1260, 550 });
@@ -182,6 +190,7 @@ void UiGame::Render()
 		hpGaugeBg->Render();
 		injuryGauge->Render();
 		hpGauge->Render();
+		hpGaugeLogo->Render();
 
 		hpGauge->SetSizeX(hpSizeX);
 		injuryGauge->SetSizeX(injurySizeX);
@@ -195,12 +204,12 @@ void UiGame::Render()
 		float skillProportion = skill / static_cast<float>(skillMax);
 		skillGauge->SetSizeX(skillSizeX * skillProportion);
 
-		skillGauge->Render();
 		skillGaugeBg->Render();
+		skillGauge->Render();
+		skillGaugeLogo->Render();
 
 		skillGauge->SetSizeX(skillSizeX);
 	}
-
 	imgDownOver->Render();
 	imgBlack->Render();
 

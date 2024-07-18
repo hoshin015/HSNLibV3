@@ -74,4 +74,7 @@ private:
 
 	// swordTrail
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> swordTrailPisxelShader;
+
+
+	bool isFirst = true;
 };

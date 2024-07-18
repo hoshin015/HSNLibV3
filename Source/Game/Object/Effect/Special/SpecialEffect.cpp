@@ -333,6 +333,12 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 				}
 				
 			}
+
+			// --- drawAfterStage ---
+			if(!drawAfterStage && lifeTimer > afterStageTime)
+			{
+				drawAfterStage = true;
+			}
 				
 			// --- radialBlur ---
 			float sampCount;
@@ -417,7 +423,6 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 				}
 			}
 
-			drawAfterStage = true;
 
 			// ‰¼’u‚«m
 			Emitter* emitter = new Emitter();

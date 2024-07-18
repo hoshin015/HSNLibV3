@@ -123,30 +123,6 @@ void SceneTest::Initialize()
 
 	Player::Instance().SetColorFilter(colorFilter.get());
 
-	Particle::Instance().Initialize();
-
-	// --- Emitter ìoò^ ---
-	//Emitter* emitter0                           = new Emitter();
-	//emitter0->position                          = {0, 3, 3};
-	//emitter0->emitterData.duration              = 5.0;
-	//emitter0->emitterData.looping               = false;
-	//emitter0->emitterData.burstsTime            = 0.1;
-	//emitter0->emitterData.burstsCount           = 128;
-	//emitter0->emitterData.particleKind          = pk_Dust;
-	//emitter0->emitterData.particleLifeTimeMin   = 1.0f;
-	//emitter0->emitterData.particleLifeTimeMax   = 1.0f;
-	//emitter0->emitterData.particleSpeedMin      = 1.0f;
-	//emitter0->emitterData.particleSpeedMax      = 5.0f;
-	//emitter0->emitterData.particleSizeMin       = {0.1f, 0.1f};
-	//emitter0->emitterData.particleSizeMax       = {0.4f, 0.4f};
-	//emitter0->emitterData.particleColorMin      = {10.2, 0.0, 0.0, 1};
-	//emitter0->emitterData.particleColorMax      = {40.2, 0.8, 0.8, 1};
-	//emitter0->emitterData.particleGravity       = 1;
-	//emitter0->emitterData.particleBillboardType = 0;
-	//emitter0->emitterData.particleTextureType   = 0;
-	//emitter0->emitterData.burstsOneShot   = 1;
-	//EmitterManager::Instance().Register(emitter0);
-
 	UiPause::Instance().Initialize();
 	UiGame::Instance().Initialize();
 	UiClearAfter::Instance().Initialize();
@@ -163,6 +139,8 @@ void SceneTest::Initialize()
 	// ÉeÉXÉg
 	AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
 	AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
+
+	isFirst = true;
 
 #if SPECIAL_AUDIO_DELAY
 	AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE2, true);
@@ -186,6 +164,13 @@ void SceneTest::Finalize()
 
 void SceneTest::Update()
 {
+	if(isFirst)
+	{
+		isFirst = false;
+		Particle::Instance().Initialize();
+	}
+	
+
 #if USE_IMGUI
 	// --- imguiManagerèàóù ---
 	ImGuiManager::Instance().Update();

@@ -452,5 +452,22 @@ void spawn(uint id, inout Particle p)
 			p.angle = 0;
             }
         break;
+	case pk_loadingParticle:
+		{
+            p.scale.y = p.scale.x;
+
+            p.position = emitterPosition;
+
+            float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
+
+            float r = (rand(seed) * 360) * 3.14 / 180;
+
+			// x •ûŒü
+            p.velocity.x = cos(r) * particleSpeed;
+
+			// y •ûŒü
+            p.velocity.y = -sin(r) * particleSpeed;
+}
+		break;
     }
 }

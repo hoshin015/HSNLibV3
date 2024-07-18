@@ -33,6 +33,8 @@ bool UiPause::Update()
 				imgResume->SetIsRender(true);
 				imgGoTitle->SetIsRender(true);
 				imgResumeGoTitleSelect->SetIsRender(true);
+				imgEnterKey->SetIsRender(true);
+				imgEnterPad->SetIsRender(true);
 
 				checkResumeGoTitleState = static_cast<int>(CheckResumeGoTitle::Resume);
 
@@ -50,6 +52,8 @@ bool UiPause::Update()
 			imgResume->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
 			imgGoTitle->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
 			imgResumeGoTitleSelect->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
+			imgEnterKey->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
+			imgEnterPad->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
 
 			// •\Ž¦Š®—¹‚µ‚½‚ç‘JˆÚ
 			if (pauseTimer > pauseTotalTime)
@@ -124,6 +128,8 @@ bool UiPause::Update()
 			imgResume->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
 			imgGoTitle->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
 			imgResumeGoTitleSelect->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
+			imgEnterKey->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
+			imgEnterPad->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
 
 			// •\Ž¦’†‚Éƒ|[ƒY‰ðœ‚³‚ê‚½‚ç”ñ•\Ž¦‘JˆÚó‘Ô‚É‘JˆÚ
 			if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Back))
@@ -141,6 +147,8 @@ bool UiPause::Update()
 				imgResume->SetIsRender(false);
 				imgGoTitle->SetIsRender(false);
 				imgResumeGoTitleSelect->SetIsRender(false);
+				imgEnterKey->SetIsRender(false);
+				imgEnterPad->SetIsRender(false);
 
 				pauseTimer = 0.0f;
 				state      = UiPauseState::Hidden;
@@ -222,6 +230,15 @@ void UiPause::Render()
 	imgYesText->Render();
 	imgNoText->Render();
 	imgYesNoSelect->Render();
+
+	if(InputManager::Instance().IsGamePadConnected())
+	{
+		imgEnterPad->Render();
+	}
+	else
+	{
+		imgEnterKey->Render();
+	}
 }
 
 void UiPause::SetAllOffRender()

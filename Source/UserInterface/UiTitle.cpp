@@ -212,6 +212,7 @@ void UiTitle::Update()
 					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::F) ||
 						InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 					{
+						state = UiTitleState::SelectMenuToOption1;
 					}
 				}
 				break;
@@ -283,7 +284,7 @@ void UiTitle::Update()
 		break;
 	case UiTitleState::Level1:
 		{
-			emitterPos = { 50, 250 };
+			emitterPos = { 100, 250 };
 			isEmitterRender = true;
 			imgEmitterTop->SetIsRender(true);
 
@@ -318,7 +319,7 @@ void UiTitle::Update()
 			{
 			case SelectLevel::Easy:
 				{
-				emitterTargetPos = { 50, 250 };
+				emitterTargetPos = { 100, 250 };
 
 				imgEasySelect->SetIsRender(true);
 				imgNormalSelect->SetIsRender(false);
@@ -333,7 +334,7 @@ void UiTitle::Update()
 				break;
 			case SelectLevel::Normal:
 				{
-				emitterTargetPos = { 50, 400 };
+				emitterTargetPos = { 100, 400 };
 
 				imgEasySelect->SetIsRender(false);
 				imgNormalSelect->SetIsRender(true);
@@ -348,7 +349,7 @@ void UiTitle::Update()
 				break;
 			case SelectLevel::Hard:
 				{
-				emitterTargetPos = { 50, 550 };
+				emitterTargetPos = { 100, 550 };
 
 				imgEasySelect->SetIsRender(false);
 				imgNormalSelect->SetIsRender(false);
@@ -365,6 +366,52 @@ void UiTitle::Update()
 			EmitUpdate();
 		}
 		break;
+	case UiTitleState::SelectMenuToOption1:
+		{
+			SetAllOffRender();
+
+			imgBackBlack->SetIsRender(true);
+			imgBackKeyText->SetIsRender(true);
+			imgBackPadText->SetIsRender(true);
+			imgBackKeyText->SetPos(imgBackTextPos2);
+			imgBackPadText->SetPos(imgBackTextPos2);
+
+			titleTimer = 0.0f;
+			state = UiTitleState::SelectMenuToOption2;
+		}
+	case UiTitleState::SelectMenuToOption2:
+		{
+			titleTimer += Timer::Instance().DeltaTime();
+
+			imgBackBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgBlackSelectMenuToOptionAlpha));
+
+			imgBackKeyText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextSelectMenuToLevelAlpha));
+			imgBackPadText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, titleTimer, imgEnterBackTextSelectMenuToLevelAlpha));
+
+			// •\Ž¦Š®—¹‚µ‚½‚ç‘JˆÚ
+			if (titleTimer > selectMenuToSelectLevelTime)
+			{
+				state = UiTitleState::Option1;
+			}
+		}
+		break;
+	case UiTitleState::Option1:
+		{
+			titleTimer = 0.0f;
+			state = UiTitleState::Option2;
+		}
+	case UiTitleState::Option2:
+		{
+			if (InputManager::Instance().GetMousePressed(MOUSEBUTTON_STATE::rightButton) ||
+				InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::b))
+			{
+				imgBackKeyText->SetPos(imgBackTextPos);
+				imgBackPadText->SetPos(imgBackTextPos);
+
+				state = UiTitleState::ToTitle1;
+			}
+		}
+		break;
 	}
 }
 
@@ -373,6 +420,7 @@ void UiTitle::Render()
 {
 	//if (!isPause) return;
 
+	imgBackBlack->Render();
 	imgTitleLogo->Render();
 	imgTitleLogoSmall->Render();
 	imgTitleText->Render();

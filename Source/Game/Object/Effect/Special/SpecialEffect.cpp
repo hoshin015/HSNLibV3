@@ -395,8 +395,8 @@ void SpecialEffect::GenerateLightning()
 
 		float life = rand() % 1 * 0.3f + 0.1f;
 		l->SetLifeTime(life);
-		float s = (rand() % 1) * 5.0f + 1.5f;
-		l->SetScale({s + rand() % 3, s, s});
+		float s = (rand() % 1) * 8.0f + 1.5f;
+		l->SetScale({s + rand() % 6, s, s});
 
 		l->SetAngle({
 			static_cast<float>(rand() % 360), static_cast<float>(rand() % 360),

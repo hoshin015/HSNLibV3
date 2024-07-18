@@ -1059,6 +1059,9 @@ void Player::CalcJustDodge() {
 		if(ability.skillGauge>=constant.maxSkillGauge) {
 			ability.isSkillGaugeMax = true;
 			ability.skillGauge = constant.maxSkillGauge;
+
+			// Audio
+			AudioManager::Instance().PlayMusic(MUSIC_LABEL::SKILL);
 		}
 		ability.justDodgeSlowTimer = 0;
 		ability.isJustDodge = false;

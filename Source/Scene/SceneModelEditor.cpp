@@ -668,6 +668,11 @@ void SceneModelEditor::DrawDebugGUI()
 							"Lightning10",
 							"SLASH",
 							"DODGE",
+							"TITLE",
+							"LOOSE",
+							"WIN",
+							"DAMAGE",
+							"SKILL",
 						};
 
 						if (ImGui::BeginCombo("SE TYPE", musicTypeName[static_cast<int>(musicType)].c_str()))

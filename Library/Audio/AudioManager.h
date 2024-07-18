@@ -38,6 +38,10 @@ enum class MUSIC_LABEL
 	TITLE,
 	LOOSE,
 	WIN,
+
+	DAMAGE,
+	SKILL,
+
 	END,
 };
 

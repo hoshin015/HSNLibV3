@@ -2,11 +2,15 @@
 #include "SceneManager.h"
 #include "../../Library/Input/InputManager.h"
 #include "../../Library/Graphics/Graphics.h"
+#include "../../Library/Timer.h"
 
 void SceneLoading::Initialize()
 {
+	bg = std::make_unique<Sprite>("Data/Texture/UserInterface/Loading/bg.png");
+	
+
 	sprite = std::make_unique<Sprite>("Data/Texture/slash.sprite");
-	sprite->SetPos({ 1000,600 });
+	sprite->SetPos({ 640,360 });
 	sprite->UpdateAnimation();
 
 	// スレッド開始
@@ -27,6 +31,12 @@ void SceneLoading::Finalize()
 void SceneLoading::Update()
 {
 	sprite->UpdateAnimation();
+
+	loadTimer += Timer::Instance().DeltaTime();
+	if(loadTimer > loadTime)
+	{
+		return;
+	}
 
 	// 次のシーンの準備ができたらシーンを切り替える
 	if(nextScene->IsReady())
@@ -49,7 +59,8 @@ void SceneLoading::Render()
 	// imGuiBufferを使用しない場合はこっちを記述する
 	{
 		// renderTargetのクリア
-		dc->ClearRenderTargetView(gfx->GetRTV(), gfx->GetBgColor());
+		float c[4] = { 0,0,0,1 };
+		dc->ClearRenderTargetView(gfx->GetRTV(), c);
 		// depthStencilViewのクリア
 		dc->ClearDepthStencilView(gfx->GetDSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}
@@ -59,6 +70,7 @@ void SceneLoading::Render()
 	gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_ON_ZW_ON);
 	gfx->SetBlend(BLEND_STATE::ALPHA);
 
+	bg->Render();
 	sprite->Render();
 }
 

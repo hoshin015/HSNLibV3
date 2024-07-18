@@ -586,7 +586,6 @@ void SceneTest::Render()
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);
 
 		// ここに半透明オブジェクトの描画
-
 		Particle::Instance().Render();
 
 		gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);

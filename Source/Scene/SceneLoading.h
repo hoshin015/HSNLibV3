@@ -30,5 +30,9 @@ private:
 	Scene* nextScene = nullptr;
 	std::thread* thread = nullptr;
 
+	std::unique_ptr<Sprite> bg;
 	std::unique_ptr<Sprite> sprite;
+
+	float loadTime = 5.0f;
+	float loadTimer = 0.0f;
 };

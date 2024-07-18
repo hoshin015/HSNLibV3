@@ -68,8 +68,15 @@ void LightningEffect::Update()
 					CameraManager::Instance().shakeTimer = 1.0f;
 					CameraManager::Instance().shakePower = 100.0f;
 
+					// 球の中心からプレイヤーに向かうベクトルを取得
+					DirectX::XMVECTOR SphereV = DirectX::XMLoadFloat3(&lightningEmit.position);
+					DirectX::XMVECTOR PlayerV = DirectX::XMLoadFloat3(&playerBonePosition.vec_);
+					DirectX::XMVECTOR Sub = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(PlayerV, SphereV));
+					DirectX::XMFLOAT3 sub;
+					DirectX::XMStoreFloat3(&sub, Sub);
+
 					Player& player = Player::Instance();
-					player.HitDamaged(damage);
+					player.HitDamaged(damage, false, true, sub);
 
 					break;
 				}

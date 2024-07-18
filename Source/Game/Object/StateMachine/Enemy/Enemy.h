@@ -129,12 +129,12 @@ public:
 	Easing::EasingValue bigRoarRadialUpSampling =
 	{
 		0.8f, 1.8f,
-		1.0f, 16.0f
+		0.0f, 0.13f
 	};
 	Easing::EasingValue bigRoarRadialDownSampling =
 	{
 		1.8f, 2.8f,
-		16.0f, 1.0f
+		0.13f, 0.0f
 	};
 
 public:

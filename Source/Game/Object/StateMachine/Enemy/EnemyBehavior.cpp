@@ -549,7 +549,7 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 		// radialBlur ON OFF
 		if (!owner_->radialBlur->GetIsRadial() && owner_->bigRoarRadialUpSampling.startTime < owner_->bigRoarTimer)
 		{
-			owner_->radialBlur->SetSamplingCount(0.0f);
+			owner_->radialBlur->SetSamplingCount(8.0f);
 			owner_->radialBlur->SetBlurPower(0.02f);
 			owner_->radialBlur->SetIsRadial(true);
 		}
@@ -565,7 +565,7 @@ BT_ActionState EnemyBigRoarAction::Run(float elapsedTime)
 		{
 			sampCount = Easing::GetNowParam(Easing::OutQuad<float>, owner_->bigRoarTimer, owner_->bigRoarRadialDownSampling);
 		}
-		owner_->radialBlur->SetSamplingCount(static_cast<float>(static_cast<int>(sampCount)));
+		owner_->radialBlur->SetBlurPower(sampCount);
 
 		// ç¿ïWåvéZ
 		DirectX::XMFLOAT3 bonePos = Enemy::Instance().GetBonePosition("sitaago");

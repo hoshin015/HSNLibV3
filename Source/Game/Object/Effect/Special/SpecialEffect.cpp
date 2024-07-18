@@ -77,8 +77,8 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 
 			// --- radialBlur ON ---
 			radialBlur->SetIsRadial(true);
-			radialBlur->SetSamplingCount(0.0f);
-			radialBlur->SetBlurPower(0.02f);
+			radialBlur->SetSamplingCount(8.0f);
+			radialBlur->SetBlurPower(0.0f);
 
 			// --- heatHaze ON ---
 			heatHaze->SetIsHeatHaze(true);
@@ -142,7 +142,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 			{
 				sampCount = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, firstNovaSamplingDown);
 			}
-			radialBlur->SetSamplingCount(static_cast<float>(static_cast<int>(sampCount)));
+			radialBlur->SetBlurPower(sampCount);
 
 			DirectX::XMFLOAT2 ndc = Math::ScreenToNdcPos(Math::WorldToScreenPos({ 0,0,0 }, CameraManager::Instance().GetCamera().get()));
 			ndc.x = (ndc.x + 1.0f) / 2.0f;

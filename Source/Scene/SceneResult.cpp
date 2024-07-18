@@ -62,10 +62,9 @@ void SceneResult::Initialize()
 	colorFilter = std::make_unique<ColorFilter>(Framework::Instance().GetScreenWidthF(),
 		Framework::Instance().GetScreenHeightF());
 	colorFilter->SetIsColorFilter(true);
-	colorFilter->SetSaturation(1.15f);
-	colorFilter->SetBrightness(1.3f);
-	colorFilter->SetContrast(1.3f);
-	colorFilter->SetContrast(0.8f);
+	colorFilter->SetSaturation(0.9f);
+	colorFilter->SetBrightness(1.0f);
+	colorFilter->SetContrast(1.5f);
 }
 
 void SceneResult::Finalize()

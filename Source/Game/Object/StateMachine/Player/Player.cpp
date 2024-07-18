@@ -568,6 +568,7 @@ void Player::DrawDebugImGui(int number) {
 			wallSpheres.emplace_back();
 		}
 
+		ImGui::ColorEdit3(u8"ヒットの色", &hitColor.x);
 		ImGui::DragFloat(u8"壁の球の半径", &wallSphereRadius);
 		ImGui::DragFloat(u8"プレイヤーの球の半径", &playerRadius);
 
@@ -1354,7 +1355,7 @@ void Player::CollisionVsEnemy()
 				enemy.OnAttacked(strength);
 
 				std::string dmgText = std::to_string(static_cast<int>(strength*10));
-				DamageTextManager::Instance().Register({ dmgText, collisionPoint });
+				DamageTextManager::Instance().Register({ dmgText, collisionPoint, weakness });
 			}
 		}
 	}

@@ -8,7 +8,9 @@
 void DamageTextManager::Initialize()
 {
 	textSprite = std::make_unique<Sprite>("Data/Texture/Font/damageFont.sprite");
+	weakSprite = std::make_unique<Sprite>("Data/Texture/Font/damageFont2.sprite");
 	textSprite->UpdateAnimation();
+	weakSprite->UpdateAnimation();
 }
 
 void DamageTextManager::Update()
@@ -22,12 +24,12 @@ void DamageTextManager::Update()
 		dmgText.screenPosition.x -= dmgText.screenPositionBuffer.x;
 		dmgText.screenPosition.y -= dmgText.screenPositionBuffer.y;
 
-		if(dmgText.timer >= fadeOutTime)
+		if (dmgText.timer >= fadeOutTime)
 		{
 			dmgText.screenPositionBuffer.y += 30 * deltaTime;
 		}
 
-		if(dmgText.timer >= lifeTime)
+		if (dmgText.timer >= lifeTime)
 		{
 			damageTexts.erase(damageTexts.begin() + index);
 			continue;
@@ -38,11 +40,15 @@ void DamageTextManager::Update()
 
 void DamageTextManager::Render()
 {
-	if(!UiClearAfter::Instance().clearFlag)
+	if (!UiClearAfter::Instance().clearFlag)
 	{
 		for (auto& dmgText : damageTexts)
 		{
-			textSprite->SprTextOut(dmgText.text, dmgText.screenPosition);
+			if (dmgText.type == 0/*�ʏ펞*/)
+				textSprite->SprTextOut(dmgText.text, dmgText.screenPosition);
+
+			else
+				weakSprite->SprTextOut(dmgText.text, dmgText.screenPosition);
 		}
 	}
 }

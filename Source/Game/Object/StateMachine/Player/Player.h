@@ -260,4 +260,5 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pbrPS;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> wboitPbrPS;
 	DirectX::XMFLOAT4 drawColor = { 1,1,1,1 };
+	Vector4 hitColor = { 0.0f, 0.0f, 1.0f, 1.0f };
 };

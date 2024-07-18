@@ -1283,9 +1283,8 @@ void Player::CollisionVsEnemy()
 				emitter->emitterData.burstsOneShot = true;
 				EmitterManager::Instance().Register(emitter);
 
-
 				bool weakness = eBoneSphere.skeletonType == SkeletonSphereCollision::SkeletonType::WeakPoint1;
-				OnHitAttack(weakness);
+				//OnHitAttack(weakness);
 
 				DirectX::XMFLOAT4 cMin = { 1.9, 1.9, 8.8, 1 };
 				DirectX::XMFLOAT4 cMax = { 1.9, 1.9, 10.8, 1 };

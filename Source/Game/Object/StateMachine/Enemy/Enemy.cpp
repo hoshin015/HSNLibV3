@@ -56,7 +56,7 @@ void Enemy::Initialize()
 
 
 	// --- ステータスの設定 ---
-	maxHP = 1000.0f;
+	maxHP = 5000.0f;
 	hp = maxHP;
 	flinchValue = maxFlinchValue;
 
@@ -497,9 +497,12 @@ void Enemy::CollisionVSPlayer()
 				fryVec *= 10;
 				const Animator::State* current = animator.GetCurrentState();
 
+				float power = attackPower;
 				if (current == &animator.GetState("asidon")) frying = true;
+				if (activeNode_ && (activeNode_->GetName() == "M_LightningBigRoar" || activeNode_->GetName() == "L_LightningBigRoar"))
+					power = 0;
 
-				player.HitDamaged(attackPower,false,true,fryVec);
+				player.HitDamaged(power,false,true,fryVec);
 
 				// --- この攻撃でプレイヤーが死亡したとき ---
 				// if (player.AStatus().hp <= 0.0f && currentHP > 0.0f)

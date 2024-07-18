@@ -57,9 +57,12 @@ void Enemy::Initialize()
 
 
 	// --- ステータスの設定 ---
-	maxHP = 5000.0f;
+	int level = UiTitle::Instance().GetLevel();
+	maxHP = 5000.0f * (level + 1);
 	hp = maxHP;
 	flinchValue = maxFlinchValue;
+
+	attackPower = 30 * (level + 1);
 
 	alive = true;
 	awake = false;

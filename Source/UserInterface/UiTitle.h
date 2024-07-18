@@ -140,6 +140,7 @@ private:
 public:
 	bool GetIsStageRender() { return isStageRender; }
 	bool GetIsCharacterRender() { return isCharacterRender; }
+	int GetLevel() const { return selectLevel; }
 
 private:
 	void SetAllOffRender();

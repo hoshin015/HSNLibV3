@@ -11,6 +11,9 @@ private:
 		imgBlack = std::make_unique<Sprite>("Data/Texture/Black.png");
 		sprites.emplace_back(imgBlack.get());
 
+		imgBackBlack = std::make_unique<Sprite>("Data/Texture/Black.png");
+		sprites.emplace_back(imgBackBlack.get());
+
 		imgEnterKeyText = std::make_unique<Sprite>("Data/Texture/Text/Key/enter.png");
 		imgEnterKeyText->SetIsRender(false);
 		imgEnterKeyText->SetColorA(0.0f);
@@ -197,6 +200,10 @@ private:
 		SelectMenuToLevel2,
 		Level1,
 		Level2,
+		SelectMenuToOption1,
+		SelectMenuToOption2,
+		Option1,
+		Option2,
 	};
 	UiTitleState state;
 
@@ -204,6 +211,7 @@ private:
 
 	// --- black ---
 	std::unique_ptr<Sprite> imgBlack;
+	std::unique_ptr<Sprite> imgBackBlack;
 	Easing::EasingValue imgBlackToTitleAlpha =
 	{
 		0.0f, 0.3f,
@@ -213,6 +221,11 @@ private:
 	{
 		0.0f, 0.3f,
 		1.0f, 0.0f
+	};
+	Easing::EasingValue imgBlackSelectMenuToOptionAlpha =
+	{
+		0.0f, 0.5f,
+		0.0f, 0.75f
 	};
 
 	// --- toTitleMenu ---
@@ -235,6 +248,7 @@ private:
 	std::unique_ptr<Sprite> imgBackKeyText;
 	std::unique_ptr<Sprite> imgBackPadText;
 	DirectX::XMFLOAT2 imgBackTextPos = { 300, 650 };
+	DirectX::XMFLOAT2 imgBackTextPos2 = { 605, 650 };
 
 	Easing::EasingValue imgEnterBackTextTitleToSelectMenuAlpha =
 	{

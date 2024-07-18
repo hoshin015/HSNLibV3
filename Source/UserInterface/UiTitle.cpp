@@ -214,6 +214,7 @@ void UiTitle::Update()
 					if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
 						InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 					{
+						Framework::Instance().SetGameEnd();
 					}
 				}
 				break;

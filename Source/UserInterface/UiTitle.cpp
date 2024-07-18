@@ -224,10 +224,6 @@ void UiTitle::Update()
 		break;
 	case UiTitleState::SelectMenuToLevel1:
 		{
-			// テキストカラー設定
-			imgEasy->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
-			imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
-			imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
 
 			SetAllOffRender();
 
@@ -240,6 +236,8 @@ void UiTitle::Update()
 			imgEasy->SetIsRender(true);
 			imgNormal->SetIsRender(true);
 			imgHard->SetIsRender(true);
+
+			imgEasySelect->SetIsRender(true);
 
 			// ステージ非描画
 			isStageRender = false;
@@ -309,9 +307,10 @@ void UiTitle::Update()
 				{
 				emitterTargetPos = { 50, 250 };
 
-				imgEasy->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
-				imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
-				imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
+				imgEasySelect->SetIsRender(true);
+				imgNormalSelect->SetIsRender(false);
+				imgHardSelect->SetIsRender(false);
+
 				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
 					InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 				{
@@ -323,9 +322,10 @@ void UiTitle::Update()
 				{
 				emitterTargetPos = { 50, 400 };
 
-				imgEasy->spriteAddColorConstant.addColor = { 0,0,0,1 };
-				imgNormal->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
-				imgHard->spriteAddColorConstant.addColor = { 0,0,0,1 };
+				imgEasySelect->SetIsRender(false);
+				imgNormalSelect->SetIsRender(true);
+				imgHardSelect->SetIsRender(false);
+
 				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
 					InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 				{
@@ -337,9 +337,10 @@ void UiTitle::Update()
 				{
 				emitterTargetPos = { 50, 550 };
 
-				imgEasy->spriteAddColorConstant.addColor = { 0,0,0,1 };
-				imgNormal->spriteAddColorConstant.addColor = { 0,0,0,1 };
-				imgHard->spriteAddColorConstant.addColor = { 0,0.1,0,1 };
+				imgEasySelect->SetIsRender(false);
+				imgNormalSelect->SetIsRender(false);
+				imgHardSelect->SetIsRender(true);
+
 				if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Space) ||
 					InputManager::Instance().GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a))
 				{
@@ -373,6 +374,9 @@ void UiTitle::Render()
 	imgEasy->Render();
 	imgNormal->Render();
 	imgHard->Render();
+	imgEasySelect->Render();
+	imgNormalSelect->Render();
+	imgHardSelect->Render();
 
 	imgEnterText->Render();
 	imgBackText->Render();

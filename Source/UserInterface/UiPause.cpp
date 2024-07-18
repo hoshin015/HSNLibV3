@@ -43,7 +43,7 @@ bool UiPause::Update()
 		break;
 	case UiPauseState::Showing:
 		{
-			pauseTimer += Timer::Instance().DeltaTime();
+			pauseTimer += Timer::Instance().UnscaledDeltaTime();
 
 			imgBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgBlackAlpha));
 			imgPauseText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));
@@ -126,7 +126,7 @@ bool UiPause::Update()
 		break;
 	case UiPauseState::Hide:
 		{
-			pauseTimer -= Timer::Instance().DeltaTime();
+			pauseTimer -= Timer::Instance().UnscaledDeltaTime();
 
 			imgBlack->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgBlackAlpha));
 			imgPauseText->SetColorA(Easing::GetNowParam(Easing::OutQuad<float>, pauseTimer, imgPauseTextAlpha));

@@ -72,6 +72,9 @@ void SceneTitle::Initialize()
 
 	Particle::Instance().Initialize();
 
+	tutorialVideo.LoadFile(Graphics::Instance().GetDevice(),L"Data/Video/Skill.mp4");
+	tutorialVideo.Play(true);
+
 	AudioManager::Instance().PlayMusic(MUSIC_LABEL::TITLE, true);
 	AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::TITLE, 0.75f);
 }
@@ -146,6 +149,7 @@ void SceneTitle::Update()
 	EmitterManager::Instance().Update();
 	Particle::Instance().Update();
 
+	tutorialVideo.Update(Graphics::Instance().GetDeviceContext());
 #if USE_IMGUI
 #endif
 }
@@ -228,10 +232,12 @@ void SceneTitle::Render()
 	}
 	frameBuffer->DeActivate();
 
-	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
-	
 
-	
+
+	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
+
+	tutorialVideo.Render(gfx->GetDeviceContext(),{600,600},{100,100});
+
 
 #if USE_IMGUI
 	// --- デバッグ描画 ---

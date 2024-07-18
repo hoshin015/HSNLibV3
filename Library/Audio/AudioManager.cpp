@@ -43,5 +43,7 @@ void AudioManager::Initialize()
 	LoadMusic(MUSIC_LABEL::TITLE, L"Data/Audio/Title.wav");
 	LoadMusic(MUSIC_LABEL::LOOSE, L"Data/Audio/Loose.wav");
 	LoadMusic(MUSIC_LABEL::WIN, L"Data/Audio/Win.wav");
+	LoadMusic(MUSIC_LABEL::DAMAGE, L"Data/Audio/Damage.wav");
+	LoadMusic(MUSIC_LABEL::SKILL, L"Data/Audio/Skill.wav");
 }
 

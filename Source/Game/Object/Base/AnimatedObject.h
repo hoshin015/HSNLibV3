@@ -34,6 +34,7 @@ public:
 
 	// 効果音フラグのクリア
 	void ClearSeFlag();
+	void ClearAllSeFlag();
 protected:
 	// 姿勢行列更新
 	void UpdateTransform() override;

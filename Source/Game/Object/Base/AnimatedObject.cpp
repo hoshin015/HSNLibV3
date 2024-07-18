@@ -356,6 +356,13 @@ void AnimatedObject::ClearSeFlag()
 	}
 }
 
+void AnimatedObject::ClearAllSeFlag() {
+	for(auto&& animation: model->GetModelResource()->GetAnimationClips()){
+		for (auto&& animSe: animation.animSes) {
+			animSe.isPlay = false;
+		}
+	}
+}
 
 DirectX::XMFLOAT3 AnimatedObject::GetBonePosition(std::string boneName)
 {

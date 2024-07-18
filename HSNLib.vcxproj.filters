@@ -164,6 +164,12 @@
     <Filter Include="2_Source\Game\Object\Effect\Dodge">
       <UniqueIdentifier>{ae24d6d1-170d-48fb-a9ad-8c842d1a5ff9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="1_HSNLib\Video">
+      <UniqueIdentifier>{38a5f9b5-604e-4203-bf43-cbe14011bb0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダーファイル\Video">
+      <UniqueIdentifier>{92cbb68d-c9bf-427b-b480-0033a49ee75e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Graphics\Graphics.cpp">
@@ -526,6 +532,9 @@
     </ClCompile>
     <ClCompile Include="Source\UserInterface\CaptureScreen.cpp">
       <Filter>2_Source\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Video\Video.cpp">
+      <Filter>1_HSNLib\Video</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -923,6 +932,9 @@
     <ClInclude Include="Source\UserInterface\CaptureScreen.h">
       <Filter>2_Source\UserInterface</Filter>
     </ClInclude>
+    <ClInclude Include="Library\Video\Video.h">
+      <Filter>1_HSNLib\Video</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library\Icon\Icon.rc">
@@ -1124,6 +1136,12 @@
     </FxCompile>
     <FxCompile Include="Library\Shader\WbOitPbrPS.hlsl">
       <Filter>シェーダーファイル\PbrIbl</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Video_VS.hlsl">
+      <Filter>シェーダーファイル\Video</Filter>
+    </FxCompile>
+    <FxCompile Include="Library\Shader\Video_PS.hlsl">
+      <Filter>シェーダーファイル\Video</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -385,6 +385,11 @@ void PlayerDamageState::Enter() {
 		owner->GetAnimator().SetNextState("death");
 		CameraManager::Instance().SetCurrentCamera("PlayerDeadCamera");
 		UiGame::Instance().OnDown();
+
+		AudioManager::Instance().PlayMusic(MUSIC_LABEL::LOOSE, false);
+		AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::LOOSE, 0.25f);
+		AudioManager::Instance().StopMusic(MUSIC_LABEL::BATTLE1);
+		AudioManager::Instance().StopMusic(MUSIC_LABEL::BATTLE2);
 	}
 }
 

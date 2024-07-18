@@ -84,6 +84,9 @@ void SceneResult::Initialize()
 	colorFilter = std::make_unique<ColorFilter>(Framework::Instance().GetScreenWidthF(),
 		Framework::Instance().GetScreenHeightF());
 	colorFilter->SetIsColorFilter(true);
+	colorFilter->SetSaturation(0.9f);
+	colorFilter->SetBrightness(1.0f);
+	colorFilter->SetContrast(1.5f);
 	colorFilter->SetSaturation(1.15f);
 	colorFilter->SetBrightness(1.3f);
 	colorFilter->SetContrast(1.3f);
@@ -94,8 +97,8 @@ void SceneResult::Initialize()
 	float gameClearTime = UiGame::Instance().gameTimer;
 
 	if(gameClearTime <= (60.0f * 5)) rank = static_cast<int>(Rank::S);
-	else if(gameClearTime <= (60.0f * 7)) rank = static_cast<int>(Rank::A);
-	else if(gameClearTime <= (60.0f * 11)) rank = static_cast<int>(Rank::B);
+	else if(gameClearTime <= (60.0f * 8)) rank = static_cast<int>(Rank::A);
+	else if(gameClearTime <= (60.0f * 15)) rank = static_cast<int>(Rank::B);
 	else rank = static_cast<int>(Rank::C);
 
 	goTitleFlag = false;
@@ -103,6 +106,7 @@ void SceneResult::Initialize()
 
 void SceneResult::Finalize()
 {
+	AudioManager::Instance().StopMusic(MUSIC_LABEL::WIN);
 }
 
 void SceneResult::Update()

@@ -51,6 +51,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     metalness = clamp(metalness + metalnessPower, 0.0, 1.0);
 #endif
     emissiveColor *= emissivePower;
+    emissiveColor.rgb *= emissiveColor.w;
 
     //roughness = 1.0f;
     //metalness = 0.0f;

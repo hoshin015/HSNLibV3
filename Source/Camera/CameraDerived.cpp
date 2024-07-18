@@ -399,6 +399,11 @@ void EnemyDeadCamera::Update()
 	{
 	case 0:
 
+		AudioManager::Instance().StopMusic(MUSIC_LABEL::BATTLE1);
+		AudioManager::Instance().StopMusic(MUSIC_LABEL::BATTLE2);
+		AudioManager::Instance().PlayMusic(MUSIC_LABEL::WIN);
+		AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::WIN, 0.5f);
+
 		timer = state1Data.time;
 
 		state++;
@@ -607,6 +612,20 @@ void PlayerDeadCamera::Update()
 			Player::Instance().Respawn();
 			Player::Instance().SetCamera(camera.get());
 			Enemy::Instance().OnPlayerDead();
+
+			AudioManager::Instance().StopMusic(MUSIC_LABEL::LOOSE);
+
+			if (!Enemy::Instance().IsAwake())
+			{
+				AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
+				AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
+			}
+
+			else
+			{
+				AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE2, true);
+				AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE2, 0.5f);
+			}
 		}
 
 		break;
@@ -650,6 +669,7 @@ void ClearCamera::Update()
 	case 0:
 	{
 		Initialize();
+
 		state++;
 		break;
 	}

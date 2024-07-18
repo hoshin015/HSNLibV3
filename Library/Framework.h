@@ -31,9 +31,16 @@ private:
 	const int      screenWidth  = 1280;
 	const int      screenHeight = 720;
 
+#ifdef _DEBUG
 	BOOL showCalcFrame = TRUE;
-
 	BOOL isFullScreen = FALSE;
+	BOOL showCorsor = TRUE;
+#else
+	BOOL showCalcFrame = FALSE;
+	BOOL isFullScreen = TRUE;
+	BOOL showCorsor = FALSE;
+#endif
+
 
 public:
 	int   GetScreenWidth() { return screenWidth; }

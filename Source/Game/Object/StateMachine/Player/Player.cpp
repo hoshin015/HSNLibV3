@@ -22,6 +22,7 @@
 #include "../../../../UserInterface/UiClearAfter.h"
 #include "../../Stage/Gate.h"
 #include "../../../../../Library/Graphics/Shader.h"
+#include "../../../../UserInterface/UiTitle.h"
 
 Player::Player(const char* filePath) : AnimatedObject(filePath)
 {
@@ -568,6 +569,7 @@ void Player::DrawDebugImGui(int number) {
 			wallSpheres.emplace_back();
 		}
 
+		ImGui::ColorEdit3(u8"ヒットの色", &hitColor.x);
 		ImGui::DragFloat(u8"壁の球の半径", &wallSphereRadius);
 		ImGui::DragFloat(u8"プレイヤーの球の半径", &playerRadius);
 
@@ -769,7 +771,9 @@ void Player::Input()
 	bool dodge = input.GetKeyPressed(DirectX::Keyboard::Space);
 
 	if (input.IsGamePadConnected() && !dodge)
+	{
 		dodge = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
+	}
 
 	inputMap["Dodge"] = dodge;
 	animator.SetParameter("dodge", dodge);
@@ -817,6 +821,7 @@ void Player::InputAttack() {
 	// コントローラー対応
 	if (input.IsGamePadConnected() && !inputAttackData) {
 		inputAttackData = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::x);
+		//AudioManager::Instance().PlayMusic(MUSIC_LABEL::SLASH, false); // Todo : 攻撃音わからん
 	}
 
 
@@ -851,7 +856,7 @@ void Player::InputAttack() {
 	if (input.IsGamePadConnected() && !dodge)
 		dodge = input.GetGamePadButtonPressed(GAMEPADBUTTON_STATE::a);
 
-	if (ability.notAcceptTimer <= 0)inputMap["Dodge"] = dodge;
+	if (ability.notAcceptTimer <= 0) inputMap["Dodge"] = dodge;
 	else ability.notAcceptTimer -= dt;
 
 	if(end) {
@@ -1048,7 +1053,9 @@ void Player::CalcJustDodge() {
 
 		//Timer::Instance().SetTimeScale(0.3f);
 		//OnHitAttack(false);
-		ability.skillGauge += Math::RandomRange(constant.incrementSkill - constant.incSkillRange, constant.incrementSkill + constant.incSkillRange);
+		int level = UiTitle::Instance().GetLevel();
+		float val = 1.0f + level * 0.5f;
+		ability.skillGauge += Math::RandomRange(constant.incrementSkill - constant.incSkillRange, constant.incrementSkill + constant.incSkillRange) * val;
 		if(ability.skillGauge>=constant.maxSkillGauge) {
 			ability.isSkillGaugeMax = true;
 		}
@@ -1063,7 +1070,9 @@ void Player::CalcJustDodge() {
 			PowerSwordEffetUpdate();
 			ability.strength = constant.leastStrength * constant.skillDamageRate;
 			ability.bodyTrunkStrength = constant.leastBt * constant.skillDamageRate;
-			ability.skillGauge -= dt;
+			int level = UiTitle::Instance().GetLevel();
+			float val = 1.0f + level * 1.0f;
+			ability.skillGauge -= dt * val;
 		}
 		else {
 			ability.strength = constant.leastStrength;
@@ -1283,9 +1292,8 @@ void Player::CollisionVsEnemy()
 				emitter->emitterData.burstsOneShot = true;
 				EmitterManager::Instance().Register(emitter);
 
-
 				bool weakness = eBoneSphere.skeletonType == SkeletonSphereCollision::SkeletonType::WeakPoint1;
-				OnHitAttack(weakness);
+				//OnHitAttack(weakness);
 
 				DirectX::XMFLOAT4 cMin = { 1.9, 1.9, 8.8, 1 };
 				DirectX::XMFLOAT4 cMax = { 1.9, 1.9, 10.8, 1 };
@@ -1347,15 +1355,17 @@ void Player::CollisionVsEnemy()
 				if (Enemy::Instance().GetHP() > 0) OnHitAttack(weakness);
 				float rate = weakness ? 1.5f : 1;
 				float btStrength = Math::RandomRange(ability.bodyTrunkStrength * rate - ability.bodyTrunkStrengthRange, ability.bodyTrunkStrength * rate + ability.bodyTrunkStrengthRange);
-				float strength = Math::RandomRange(ability.strength * rate - ability.strengthRange, ability.strength * rate + ability.strengthRange) * (1 + (ability.attackCount + 1) * 0.1f);
-				
+				float strength = Math::RandomRange(ability.strength * rate - ability.strengthRange, ability.strength * rate + ability.strengthRange) *
+					(1 + (ability.attackCount + 1) * 0.1f) *
+					(ability.justDodgeInvincibleTimer > 0 ? 2 : 1);
+
 				if (!enemy.awaking)
 					enemy.SetFlinchValue(enemy.GetFlinchValue() - btStrength);
 
 				enemy.OnAttacked(strength);
 
 				std::string dmgText = std::to_string(static_cast<int>(strength*10));
-				DamageTextManager::Instance().Register({ dmgText, collisionPoint });
+				DamageTextManager::Instance().Register({ dmgText, collisionPoint, weakness });
 			}
 		}
 	}
@@ -1437,7 +1447,7 @@ void Player::OnHitAttack(bool hitWeak)
 	enemy.wasAttacked = true;
 
 	// 覚醒してなくて体力が半分切ったら
-	if (!enemy.IsAwake() && enemy.GetHP() < enemy.GetMaxHP() * 0.5f)
+	if (!enemy.IsAwake() && enemy.GetHP() < enemy.GetMaxHP() * enemy.awakeRate)
 	{
 		enemy.awaking = true;
 	}
@@ -1448,7 +1458,16 @@ void Player::OnHitAttack(bool hitWeak)
 
 	// Todo : 頭なら大き目にヒットストップさせる
 	CameraManager::Instance().shakeTimer = hitStopTime * (ability.attackCount >= 3 ? 2 : 1);
-	hitStopTimer = (hitWeak ? weakHitStopTime : hitStopTime) * (ability.attackCount >= 3 ? 2 : 1);
+	hitStopTimer = 
+		(hitWeak ? weakHitStopTime : hitStopTime) *
+		(ability.attackCount >= 3 ? 2 : 1) *
+		(ability.justDodgeInvincibleTimer > 0 ? 2 : 1);
+
+	if (ability.isSkillGaugeMax)
+	{
+		hitStopTimer *= 1.5f;
+		CameraManager::Instance().shakeTimer *= 1.25f;
+	}
 }
 
 void Player::UpdateHitStopTimer()

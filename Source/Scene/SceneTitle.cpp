@@ -71,6 +71,9 @@ void SceneTitle::Initialize()
 	UiTitle::Instance().Initialize();
 
 	Particle::Instance().Initialize();
+
+	AudioManager::Instance().PlayMusic(MUSIC_LABEL::TITLE, true);
+	AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::TITLE, 0.75f);
 }
 
 void SceneTitle::Finalize()
@@ -78,6 +81,8 @@ void SceneTitle::Finalize()
 	StageManager::Instance().Clear();
 	LightManager::Instance().Clear();
 	EmitterManager::Instance().Clear();
+
+	AudioManager::Instance().StopMusic(MUSIC_LABEL::TITLE);
 }
 
 void SceneTitle::Update()

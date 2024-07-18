@@ -31,7 +31,7 @@ public:
 
 		// UŒ‚
 		float strength      = 10;
-		float strengthRange = 5;
+		float strengthRange = 1;
 		float attackCount   = 0;
 		float attackTimer   = 0;
 		float skillGauge    = 0;

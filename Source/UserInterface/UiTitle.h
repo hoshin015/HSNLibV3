@@ -2,6 +2,8 @@
 #include <memory>
 #include "../../Library/2D/Sprite.h"
 #include "../../Library/Easing.h"
+#include "../../Library/Video/Video.h"
+#include "../../Library/Graphics/Graphics.h"
 
 class UiTitle
 {
@@ -145,6 +147,8 @@ private:
 		imgEmitterTop->SetColor({ 1.0,2.0,2.0,0.7 });
 		imgEmitterTop->SetIsRender(false);
 		sprites.emplace_back(imgEmitterTop.get());
+
+		tutorialVideo.LoadFile(Graphics::Instance().GetDevice(), L"Data/Video/tutorial.mp4");
 	};
 
 	~UiTitle()
@@ -401,4 +405,8 @@ private:
 	void EmitUpdate();
 public:
 	bool isEmitterRender = false;
+
+private:
+	Video tutorialVideo;
+	bool isVideoRender = false;
 };

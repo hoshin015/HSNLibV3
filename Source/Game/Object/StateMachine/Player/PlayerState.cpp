@@ -294,6 +294,7 @@ void PlayerDodgeState::Enter() {
 	dodge->trans = owner->GetTransform();
 	dodge->key = owner->GetAnimatorKeyFrame();
 	DodgeEffect::Instance().Register(dodge);
+	owner->ClearAllSeFlag();
 }
 
 void PlayerDodgeState::Execute() {
@@ -370,6 +371,7 @@ void PlayerDodgeState::Execute() {
 }
 
 void PlayerDodgeState::Exit() {
+
 }
 
 void PlayerDamageState::Enter() {

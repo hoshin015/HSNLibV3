@@ -1640,7 +1640,7 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 			owner_->GetAnimator().SetNextState("hissatu_2");
 			SpecialEffect::Instance().Emit();
 
-			owner_->runTimer_ = 8.5f;
+			owner_->runTimer_ = 7.5f;
 			step++;
 		}
 

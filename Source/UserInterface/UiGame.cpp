@@ -146,10 +146,10 @@ void UiGame::Update()
 	skill = player.AStatus().skillGauge;
 	skillMax = player.CStatus().maxSkillGauge;
 
-	if (enemy.GetFlinchValue() < 0.0f)
-		enemy.SetFlinchValue(0.0f);
-	soma = enemy.maxFlinchValue - enemy.GetFlinchValue();
 	somaMax = enemy.maxFlinchValue;
+	soma = enemy.maxFlinchValue - enemy.GetFlinchValue();
+	if (soma > somaMax)
+		soma = somaMax;
 }
 
 // •`‰æ

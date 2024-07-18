@@ -60,9 +60,10 @@ void Enemy::Initialize()
 	int level = UiTitle::Instance().GetLevel();
 	maxHP = 5000.0f * (level + 1);
 	hp = maxHP;
+	maxFlinchValue = 300.0f * (level + 1);
 	flinchValue = maxFlinchValue;
 
-	attackPower = 30 * (level + 1);
+	attackPower = 20 * (level + 1);
 
 	alive = true;
 	awake = false;

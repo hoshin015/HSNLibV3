@@ -72,9 +72,6 @@ void SceneTitle::Initialize()
 
 	Particle::Instance().Initialize();
 
-	tutorialVideo.LoadFile(Graphics::Instance().GetDevice(),L"Data/Video/Skill.mp4");
-	tutorialVideo.Play(true);
-
 	AudioManager::Instance().PlayMusic(MUSIC_LABEL::TITLE, true);
 	AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::TITLE, 0.75f);
 }
@@ -120,36 +117,35 @@ void SceneTitle::Update()
 		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
 	}
 	// テストエミッター
-	if (InputManager::Instance().GetKeyPressed(Keyboard::F1))
-	{
-		Emitter* emitter0                           = new Emitter();
-		emitter0->position                          = {100, 100, 0};
-		emitter0->emitterData.duration              = 5.0;
-		emitter0->emitterData.looping               = false;
-		emitter0->emitterData.burstsTime            = 0.1;
-		emitter0->emitterData.burstsCount           = 1;
-		emitter0->emitterData.particleKind          = pk_titleSelect;
-		emitter0->emitterData.particleLifeTimeMin   = 1.0f;
-		emitter0->emitterData.particleLifeTimeMax   = 2.0f;
-		emitter0->emitterData.particleSpeedMin      = 0.0f;
-		emitter0->emitterData.particleSpeedMax      = 0.0f;
-		emitter0->emitterData.particleSizeMin       = {30.0f, 30.0f};
-		emitter0->emitterData.particleSizeMax       = {30.0f, 30.0f};
-		emitter0->emitterData.particleColorMin      = {1.0, 1.0, 1.0, 1};
-		emitter0->emitterData.particleColorMax      = {1.0, 1.0, 1.0, 1};
-		emitter0->emitterData.particleGravity       = 1;
-		emitter0->emitterData.particleBillboardType = 0;
-		emitter0->emitterData.particleTextureType   = 0;
-		emitter0->emitterData.burstsOneShot = 1;
-		EmitterManager::Instance().Register(emitter0);
-	}
+	// if (InputManager::Instance().GetKeyPressed(Keyboard::F1))
+	// {
+	// 	Emitter* emitter0                           = new Emitter();
+	// 	emitter0->position                          = {100, 100, 0};
+	// 	emitter0->emitterData.duration              = 5.0;
+	// 	emitter0->emitterData.looping               = false;
+	// 	emitter0->emitterData.burstsTime            = 0.1;
+	// 	emitter0->emitterData.burstsCount           = 1;
+	// 	emitter0->emitterData.particleKind          = pk_titleSelect;
+	// 	emitter0->emitterData.particleLifeTimeMin   = 1.0f;
+	// 	emitter0->emitterData.particleLifeTimeMax   = 2.0f;
+	// 	emitter0->emitterData.particleSpeedMin      = 0.0f;
+	// 	emitter0->emitterData.particleSpeedMax      = 0.0f;
+	// 	emitter0->emitterData.particleSizeMin       = {30.0f, 30.0f};
+	// 	emitter0->emitterData.particleSizeMax       = {30.0f, 30.0f};
+	// 	emitter0->emitterData.particleColorMin      = {1.0, 1.0, 1.0, 1};
+	// 	emitter0->emitterData.particleColorMax      = {1.0, 1.0, 1.0, 1};
+	// 	emitter0->emitterData.particleGravity       = 1;
+	// 	emitter0->emitterData.particleBillboardType = 0;
+	// 	emitter0->emitterData.particleTextureType   = 0;
+	// 	emitter0->emitterData.burstsOneShot = 1;
+	// 	EmitterManager::Instance().Register(emitter0);
+	// }
 
 	UiTitle::Instance().Update();
 
 	EmitterManager::Instance().Update();
 	Particle::Instance().Update();
 
-	tutorialVideo.Update(Graphics::Instance().GetDeviceContext());
 #if USE_IMGUI
 #endif
 }
@@ -236,7 +232,6 @@ void SceneTitle::Render()
 
 	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 
-	tutorialVideo.Render(gfx->GetDeviceContext(),{600,600},{100,100});
 
 
 #if USE_IMGUI

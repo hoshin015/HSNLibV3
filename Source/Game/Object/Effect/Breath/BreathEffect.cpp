@@ -106,7 +106,11 @@ void BreathEffect::Update()
 					CameraManager::Instance().shakePower = 100.0f;
 
 					Player& player = Player::Instance();
-					player.HitDamaged(damage, false, true, forward);
+					DirectX::XMFLOAT3 fryPower = forward;
+					fryPower.x *= 6;
+					fryPower.y *= 6;
+					fryPower.z *= 6;
+					player.HitDamaged(damage, false, true, fryPower);
 
 					break;
 				}

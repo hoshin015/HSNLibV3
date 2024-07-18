@@ -32,11 +32,11 @@ void SceneLoading::Update()
 {
 	sprite->UpdateAnimation();
 
-	loadTimer += Timer::Instance().DeltaTime();
-	if(loadTimer > loadTime)
-	{
-		return;
-	}
+	// loadTimer += Timer::Instance().DeltaTime();
+	// if(loadTimer > loadTime)
+	// {
+	// 	return;
+	// }
 
 	// 次のシーンの準備ができたらシーンを切り替える
 	if(nextScene->IsReady())

@@ -59,7 +59,7 @@ public:
 	// ƒQ[ƒ€I—¹
 	void SetGameEnd()
 	{
-		PostMessage(hwnd, WM_KEYDOWN, VK_ESCAPE, 0);
+		PostMessage(hwnd, WM_KEYDOWN, VK_F4, 0);
 	}
 
 private:

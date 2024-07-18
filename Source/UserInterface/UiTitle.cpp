@@ -17,6 +17,8 @@ void UiTitle::Initialize()
 
 void UiTitle::Update()
 {
+	tutorialVideo.Update(Graphics::Instance().GetDeviceContext());
+
 	switch (state)
 	{
 	case UiTitleState::Init:
@@ -398,6 +400,10 @@ void UiTitle::Update()
 	case UiTitleState::Option1:
 		{
 			titleTimer = 0.0f;
+			isVideoRender = true;
+
+			tutorialVideo.Stop();
+			tutorialVideo.Play(true);
 			state = UiTitleState::Option2;
 		}
 	case UiTitleState::Option2:
@@ -407,6 +413,8 @@ void UiTitle::Update()
 			{
 				imgBackKeyText->SetPos(imgBackTextPos);
 				imgBackPadText->SetPos(imgBackTextPos);
+
+				isVideoRender = false;
 
 				state = UiTitleState::ToTitle1;
 			}
@@ -450,7 +458,11 @@ void UiTitle::Render()
 		imgEnterKeyText->Render();
 		imgBackKeyText->Render();
 	}
-	
+
+	if (isVideoRender)
+	{
+		tutorialVideo.Render(Graphics::Instance().GetDeviceContext(), { 320, 180 }, { 640,360 });
+	}
 
 	imgBlack->Render();
 

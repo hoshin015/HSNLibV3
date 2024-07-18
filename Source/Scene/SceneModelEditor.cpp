@@ -645,7 +645,30 @@ void SceneModelEditor::DrawDebugGUI()
 						MUSIC_LABEL& musicType = animationClip.animSes.at(index).musicType;
 
 						// TODO: SEçXêVâ”èä
-						std::string musicTypeName[] = {"TEST_MUISC", "WEAPON"};
+						std::string musicTypeName[] = {
+							"TEST_MUISC",
+							"WEAPON",
+							"SELECT_MOVE",
+							"BATTLE1",
+							"BATTLE2",
+							"Fire1",
+							"MonsterRoar1",
+							"Breath",
+							"NovaNoise1",
+							"NovaNoise2",
+							"Lightning1",
+							"Lightning2",
+							"Lightning3",
+							"Lightning4",
+							"Lightning5",
+							"Lightning6",
+							"Lightning7",
+							"Lightning8",
+							"Lightning9",
+							"Lightning10",
+							"SLASH",
+							"DODGE",
+						};
 
 						if (ImGui::BeginCombo("SE TYPE", musicTypeName[static_cast<int>(musicType)].c_str()))
 						{

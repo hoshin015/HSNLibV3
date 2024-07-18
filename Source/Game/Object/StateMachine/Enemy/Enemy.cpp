@@ -192,6 +192,7 @@ void Enemy::Initialize()
 	animator.EnableRootMotion("joint1");
 
 	//PlayAnimation(static_cast<int>(MonsterAnimation::WALK_FOWARD), true);
+	GetModel()->data.emissivePower = 3.5f;
 }
 
 void Enemy::Finalize()

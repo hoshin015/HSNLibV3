@@ -491,7 +491,7 @@ void Player::Update()
 	animatorKeyFrame = animator.PlayAnimation(Timer::Instance().DeltaTime());
 	currentKeyFrame = animator.GetKeyFrameIndex();
 	currentAnimationIndex = animator.GetMotionIndex();
-
+	UpdateSe();
 
 	// --- ˆÊ’u‚Ì§ŒÀ ---
 	ClampPosition(79.0f);
@@ -1055,6 +1055,7 @@ void Player::CalcJustDodge() {
 		ability.skillGauge += Math::RandomRange(constant.incrementSkill - constant.incSkillRange, constant.incrementSkill + constant.incSkillRange);
 		if(ability.skillGauge>=constant.maxSkillGauge) {
 			ability.isSkillGaugeMax = true;
+			ability.skillGauge = constant.maxSkillGauge;
 		}
 		ability.justDodgeSlowTimer = 0;
 		ability.isJustDodge = false;

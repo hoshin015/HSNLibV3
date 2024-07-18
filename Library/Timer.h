@@ -174,6 +174,8 @@ public:
 		return static_cast<float>(deltaTime);
 	}
 
+	float TimeScale() const { return timeScale; }
+
 	void CheckTick()
 	{
 		if (stopped)

@@ -65,10 +65,15 @@ void SceneResult::Initialize()
 	colorFilter->SetSaturation(0.9f);
 	colorFilter->SetBrightness(1.0f);
 	colorFilter->SetContrast(1.5f);
+
+	AudioManager::Instance().StopMusic(MUSIC_LABEL::WIN);
+	AudioManager::Instance().PlayMusic(MUSIC_LABEL::TITLE, true);
+	AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::TITLE, 0.75f);
 }
 
 void SceneResult::Finalize()
 {
+	AudioManager::Instance().StopMusic(MUSIC_LABEL::TITLE);
 }
 
 void SceneResult::Update()

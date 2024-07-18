@@ -35,6 +35,9 @@ enum class MUSIC_LABEL
 
 	SLASH,
 	DODGE,
+	TITLE,
+	LOOSE,
+	WIN,
 	END,
 };
 

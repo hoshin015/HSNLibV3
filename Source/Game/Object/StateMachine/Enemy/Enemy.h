@@ -72,6 +72,7 @@ public:
 	void ClampPosition(float range);
 	void OnPlayerDead();
 	void OnAttacked(const float attackPower);
+	void PlayFanLightning(const Vector3& vec, const float ScatterAngle, const float range, const int randRange);
 
 
 	// --- エフェクト関連 ---
@@ -154,6 +155,11 @@ public:
 
 	bool wasAttacked;
 	int hissatuCount;
+
+	float hissatuTimer;
+	bool awaking;
+	float maxFlinchValue = 100.0f;
+	bool awaked;
 
 	void DrawDebugImGui(int number);
 };

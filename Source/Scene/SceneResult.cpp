@@ -35,10 +35,14 @@
 #include "../UserInterface//UiPause.h"
 #include "../UserInterface/DamageTextManager.h"
 #include "../UserInterface/UiGame.h"
+#include "../UserInterface/CaptureScreen.h"
 
 
 void SceneResult::Initialize()
 {
+	capturedBackground = std::make_unique<FullScreenQuad>();
+	capturedSrv = CaptureScreen::Instance().GetRandomTexture();
+
 	sprBlack = std::make_unique<Sprite>("Data/Texture/Black.png");
 	sprBackground = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/resultBackground.png");
 	sprTimeBoard = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/timeBoard.sprite");
@@ -53,6 +57,15 @@ void SceneResult::Initialize()
 	sprGoTitle = std::make_unique<Sprite>("Data/Texture/UserInterface/Result/goTitle.sprite");
 	sprGoTitle->UpdateAnimation();
 	sprGoTitle->SetPos({ 640, 650 });
+
+
+	colorFilter = std::make_unique<ColorFilter>(Framework::Instance().GetScreenWidthF(),
+		Framework::Instance().GetScreenHeightF());
+	colorFilter->SetIsColorFilter(true);
+	colorFilter->SetSaturation(1.15f);
+	colorFilter->SetBrightness(1.3f);
+	colorFilter->SetContrast(1.3f);
+	colorFilter->SetContrast(0.8f);
 }
 
 void SceneResult::Finalize()
@@ -116,7 +129,15 @@ void SceneResult::Render()
 	gfx->SetBlend(BLEND_STATE::ALPHA);
 	gfx->SetDepthStencil(DEPTHSTENCIL_STATE::ZT_OFF_ZW_OFF);
 
-	sprBackground->Render();
+	//sprBackground->Render();
+	ID3D11ShaderResourceView* useSrv;
+		// ====== colorFilter =====
+	if (colorFilter->GetIsColorFilter())
+	{
+		colorFilter->Make(capturedSrv.Get());
+		useSrv = colorFilter->GetSrv();
+	}
+	capturedBackground->blit(&useSrv, 0, 1);
 	sprRankBoard->Render();
 	sprTimeBoard->Render();
 	sprRankS->Render();
@@ -133,6 +154,7 @@ void SceneResult::Render()
 #if USE_IMGUI
 	// --- デバッグGUI描画 ---
 	DrawDebugGUI();
+	colorFilter->DrawDebugGui();
 
 
 #if SHOW_PERFORMANCE

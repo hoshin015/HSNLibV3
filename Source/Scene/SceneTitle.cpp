@@ -72,7 +72,7 @@ void SceneTitle::Initialize()
 
 	Particle::Instance().Initialize();
 
-	//tutorialVideo.LoadFile(Graphics::Instance().GetDevice(),L"Data/Video/sample.mp4");
+	tutorialVideo.LoadFile(Graphics::Instance().GetDevice(),L"Data/Video/Skill.mp4");
 	tutorialVideo.Play(true);
 
 	AudioManager::Instance().PlayMusic(MUSIC_LABEL::TITLE, true);

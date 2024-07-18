@@ -90,7 +90,7 @@ void UiClearAfter::Render()
 	imgQuestClearText->Render();
 	imgClearAfterTimer->Render();
 
-	imgText->SprTextOut(text, {640, 100});
+	ClearTimerDraw(text, {640, 100});
 
 	imgClearBackBar->Render();
 	imgClearText->Render();
@@ -131,4 +131,13 @@ void UiClearAfter::SetAllOffRender()
 	{
 		sprite->SetIsRender(false);
 	}
+}
+
+void UiClearAfter::ClearTimerDraw(std::string text, DirectX::XMFLOAT2 pos)
+{
+	int num = text.size() - 1;
+
+	pos.x -= num * 17;
+
+	imgText->SprTextOut(text, pos);
 }

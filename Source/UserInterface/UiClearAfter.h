@@ -17,6 +17,7 @@ private:
 		imgClearAfterTimer->UpdateAnimation();
 		imgClearAfterTimer->SetPos({ 640, 100 });
 		imgClearAfterTimer->SetIsRender(false);
+		imgClearAfterTimer->SetScale({0.6f, 0.6f});
 		sprites.emplace_back(imgClearAfterTimer.get());
 
 		imgQuestClearText = std::make_unique<Sprite>("Data/Texture/UserInterface/ClearAfter/questClear.sprite");
@@ -71,6 +72,8 @@ public:
 
 	void SetAllOffRender();
 
+	void ClearTimerDraw(std::string text, DirectX::XMFLOAT2 pos);
+
 	bool clearFlag = false;	// このフラグをONにするとリザルト画面まで流れる
 private:
 	std::vector<Sprite*> sprites;
@@ -115,7 +118,6 @@ private:
 	std::unique_ptr<Sprite> imgQuestClearText;
 	std::unique_ptr<Sprite> imgClearAfterTimer;
 
-
 	// clearAnim
 	float clearAnimTimer = 0.0f;
 	float clearAnimTime = 6.5f;
@@ -126,7 +128,6 @@ private:
 		3.3, 3.8,
 		0.0f, 1.0f,
 	};
-
 
 	std::unique_ptr<Sprite> imgClearText;
 	Easing::EasingValue imgClearTextAlpha =

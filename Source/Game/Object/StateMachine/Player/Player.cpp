@@ -22,6 +22,7 @@
 #include "../../../../UserInterface/UiClearAfter.h"
 #include "../../Stage/Gate.h"
 #include "../../../../../Library/Graphics/Shader.h"
+#include "../../../../UserInterface/UiTitle.h"
 
 Player::Player(const char* filePath) : AnimatedObject(filePath)
 {
@@ -1052,7 +1053,9 @@ void Player::CalcJustDodge() {
 
 		//Timer::Instance().SetTimeScale(0.3f);
 		//OnHitAttack(false);
-		ability.skillGauge += Math::RandomRange(constant.incrementSkill - constant.incSkillRange, constant.incrementSkill + constant.incSkillRange);
+		int level = UiTitle::Instance().GetLevel();
+		float val = 1.0f + level * 0.5f;
+		ability.skillGauge += Math::RandomRange(constant.incrementSkill - constant.incSkillRange, constant.incrementSkill + constant.incSkillRange) * val;
 		if(ability.skillGauge>=constant.maxSkillGauge) {
 			ability.isSkillGaugeMax = true;
 			ability.skillGauge = constant.maxSkillGauge;
@@ -1068,7 +1071,9 @@ void Player::CalcJustDodge() {
 			PowerSwordEffetUpdate();
 			ability.strength = constant.leastStrength * constant.skillDamageRate;
 			ability.bodyTrunkStrength = constant.leastBt * constant.skillDamageRate;
-			ability.skillGauge -= dt;
+			int level = UiTitle::Instance().GetLevel();
+			float val = 1.0f + level * 1.0f;
+			ability.skillGauge -= dt * val;
 		}
 		else {
 			ability.strength = constant.leastStrength;
@@ -1458,6 +1463,12 @@ void Player::OnHitAttack(bool hitWeak)
 		(hitWeak ? weakHitStopTime : hitStopTime) *
 		(ability.attackCount >= 3 ? 2 : 1) *
 		(ability.justDodgeInvincibleTimer > 0 ? 2 : 1);
+
+	if (ability.isSkillGaugeMax)
+	{
+		hitStopTimer *= 1.5f;
+		CameraManager::Instance().shakeTimer *= 1.25f;
+	}
 }
 
 void Player::UpdateHitStopTimer()

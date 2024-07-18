@@ -69,6 +69,7 @@ void SceneResult::Initialize()
 
 void SceneResult::Finalize()
 {
+	AudioManager::Instance().StopMusic(MUSIC_LABEL::WIN);
 }
 
 void SceneResult::Update()

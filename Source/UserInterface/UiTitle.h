@@ -74,7 +74,6 @@ private:
 		imgSelectLevelBgCover->SetIsRender(false);
 		imgSelectLevelBgCover->SetDissolveTexture(L"Data/Texture/Noise/GrungeMap.png");
 		imgSelectLevelBgCover->spriteDissolveConstant.edgeThreshold = 0.0f;
-		imgSelectLevelBgCover->spriteDissolveConstant.edgeColor = { 0.2f, 0.2f, 1.0f, 1.0f };
 		sprites.emplace_back(imgSelectLevelBgCover.get());
 
 		imgSelectLevel = std::make_unique<Sprite>("Data/Texture/Text/LevelSelect.sprite");
@@ -89,17 +88,35 @@ private:
 		imgEasy->SetPos(imgEasyPos);
 		sprites.emplace_back(imgEasy.get());
 
+		imgEasySelect = std::make_unique<Sprite>("Data/Texture/Text/easySelect.sprite");
+		imgEasySelect->UpdateAnimation();
+		imgEasySelect->SetIsRender(false);
+		imgEasySelect->SetPos(imgEasyPos);
+		sprites.emplace_back(imgEasySelect.get());
+
 		imgNormal = std::make_unique<Sprite>("Data/Texture/Text/normal.sprite");
 		imgNormal->UpdateAnimation();
 		imgNormal->SetIsRender(false);
 		imgNormal->SetPos(imgNormalPos);
 		sprites.emplace_back(imgNormal.get());
 
+		imgNormalSelect = std::make_unique<Sprite>("Data/Texture/Text/normalSelect.sprite");
+		imgNormalSelect->UpdateAnimation();
+		imgNormalSelect->SetIsRender(false);
+		imgNormalSelect->SetPos(imgNormalPos);
+		sprites.emplace_back(imgNormalSelect.get());
+
 		imgHard = std::make_unique<Sprite>("Data/Texture/Text/hard.sprite");
 		imgHard->UpdateAnimation();
 		imgHard->SetIsRender(false);
 		imgHard->SetPos(imgHardPos);
 		sprites.emplace_back(imgHard.get());
+
+		imgHardSelect = std::make_unique<Sprite>("Data/Texture/Text/hardSelect.sprite");
+		imgHardSelect->UpdateAnimation();
+		imgHardSelect->SetIsRender(false);
+		imgHardSelect->SetPos(imgHardPos);
+		sprites.emplace_back(imgHardSelect.get());
 
 		// eitter
 		imgEmitterTop = std::make_unique<Sprite>("Data/Texture/Effect/particle0.sprite");
@@ -327,13 +344,16 @@ private:
 	DirectX::XMFLOAT2 imgSelectLevelPos = { 200.0f, 100.0f };
 
 	std::unique_ptr<Sprite> imgEasy;
-	DirectX::XMFLOAT2 imgEasyPos = { 200.0f, 250.0f };
+	std::unique_ptr<Sprite> imgEasySelect;
+	DirectX::XMFLOAT2 imgEasyPos = { 300.0f, 250.0f };
 
 	std::unique_ptr<Sprite> imgNormal;
-	DirectX::XMFLOAT2 imgNormalPos = { 200.0f, 400.0f };
+	std::unique_ptr<Sprite> imgNormalSelect;
+	DirectX::XMFLOAT2 imgNormalPos = { 300.0f, 400.0f };
 
 	std::unique_ptr<Sprite> imgHard;
-	DirectX::XMFLOAT2 imgHardPos = { 200.0f, 550.0f };
+	std::unique_ptr<Sprite> imgHardSelect;
+	DirectX::XMFLOAT2 imgHardPos = { 300.0f, 550.0f };
 
 
 private:

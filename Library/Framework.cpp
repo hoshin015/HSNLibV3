@@ -56,6 +56,10 @@ bool Framework::Initialize(HINSTANCE hInstance)
 	// --- シーン初期化 ---
 	SceneManager::Instance().ChangeScene(new SceneTitle);
 
+	// --- Cursor表示 ---
+	if (!showCorsor)
+		while (ShowCursor(showCorsor)>0) {}
+
 	return true;
 }
 
@@ -141,6 +145,9 @@ void Framework::Finalize()
 
 	// --- SceneManager終了化 ---
 	SceneManager::Instance().Clear();
+
+	if(!showCorsor)
+		while (ShowCursor(!showCorsor)<0) {}
 }
 
 // ウィンドウ作成

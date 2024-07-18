@@ -1,6 +1,7 @@
 #include "EnemyBehavior.h"
 
 #include "../../../../../Library/Graphics/RadialBlur.h"
+#include "../../../../../Library/Graphics/Texture.h"
 #include "../../Library/Math/Math.h"
 
 #include "../../Effect/Breath/BreathEffect.h"
@@ -1676,6 +1677,11 @@ BT_ActionState EnemyDeathBlowAction::Run(float elapsedTime)
 
 		if (owner_->runTimer_ < 0.0f && owner_->GetAnimator().GetEndMotion())
 		{
+			Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
+			D3D11_TEXTURE2D_DESC tex2d;
+			LoadTextureFromFile(L"./Data/Fbx/Monster/gao_emi_uv.png", srv.GetAddressOf(), &tex2d);
+			Enemy::Instance().GetModel()->GetModelResource()->GetMaterials().find("lambert1")->second.shaderResourceViews[3] = srv;
+
 			owner_->GetAnimator().SetNextState("hissatu_3");
 			owner_->runTimer_ = 0.0f;
 			owner_->hissatuCount = 0;

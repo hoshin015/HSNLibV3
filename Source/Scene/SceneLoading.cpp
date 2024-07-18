@@ -42,7 +42,7 @@ void SceneLoading::Initialize()
 	thread = new std::thread(LoadingThread, this);
 
 	// スレッドの管理を放棄
-	//thread->detach();
+	thread->detach();
 
 	loadTimer = 0.0f;
 }
@@ -148,13 +148,14 @@ void SceneLoading::Render()
 	}
 
 	// ====== ブルーム処理しての描画 ======
-	bloom->Make(useSrv);
-	ID3D11ShaderResourceView* shvs[2] =
-	{
-		useSrv,
-		bloom->GetSrv()
-	};
-	bitBlockTransfer->blit(shvs, 0, 2, bloom->GetFinalPassPs());
+	//bloom->Make(useSrv);
+	//ID3D11ShaderResourceView* shvs[2] =
+	//{
+	//	useSrv,
+	//	bloom->GetSrv()
+	//};
+	//bitBlockTransfer->blit(shvs, 0, 2, bloom->GetFinalPassPs());
+	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
 
 
 	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_SOLID);

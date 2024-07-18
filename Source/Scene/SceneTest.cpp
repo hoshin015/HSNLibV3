@@ -109,8 +109,7 @@ void SceneTest::Initialize()
 		                                          Framework::Instance().GetScreenHeightF());
 		swordTrailBufferSub = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
 		                                          Framework::Instance().GetScreenHeightF());
-		// 画面キャプチャの初期化
-		CaptureScreen::Instance().Initialize();
+		
 
 		Enemy::Instance().radialBlur = radialBlur.get();
 
@@ -131,8 +130,7 @@ void SceneTest::Initialize()
 		// テスト
 		AudioManager::Instance();
 
-		// --- skyMap 初期化 ---
-		skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
+		
 	}
 
 
@@ -199,6 +197,10 @@ void SceneTest::Update()
 
 		isFirst = false;
 		Particle::Instance().Initialize();
+		// 画面キャプチャの初期化
+		CaptureScreen::Instance().Initialize();
+		// --- skyMap 初期化 ---
+		skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
 	}
 	
 
@@ -719,8 +721,8 @@ void SceneTest::Render()
 	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
 
 	UiGame::Instance().Render();
-	UiPause::Instance().Render();
 	UiClearAfter::Instance().Render();
+	UiPause::Instance().Render();
 
 	// ここで文字描画
 	DamageTextManager::Instance().Render();

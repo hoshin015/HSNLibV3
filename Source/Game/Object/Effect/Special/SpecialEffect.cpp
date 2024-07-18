@@ -13,6 +13,7 @@
 #include "../../../../../Library/Math/Collision.h"
 #include "../../Stage/StageManager.h"
 #include "../../Stage/StageMain.h"
+#include "../../StateMachine/Enemy/Enemy.h"
 
 // XV
 void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
@@ -279,7 +280,19 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 						CameraManager::Instance().shakePower = 100.0f;
 
 						Player& player = Player::Instance();
-						player.HitDamaged(damage);
+
+						if((player.CStatus().maxHp*0.5f)>=player.AStatus().hp)
+							player.HitDamaged(player.AStatus().hp,true);
+						else
+						{
+							Vector3 ePos = Enemy::Instance().GetPos();
+							Vector3 pPos = player.GetPos();
+							Vector3 vec = pPos - ePos;
+							vec.Normalize();
+							vec *= 35;
+
+							player.HitDamaged(player.AStatus().hp * 0.7, true, true, vec);
+						}
 
 						break;
 					}
@@ -338,6 +351,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 	case SpecialState::End:
 		{
 			isSpecialEffect = false;
+			isDamaged = false;
 		}
 		break;
 	}

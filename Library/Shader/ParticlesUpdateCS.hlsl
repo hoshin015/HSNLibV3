@@ -173,6 +173,20 @@ void main(uint3 DTid : SV_DispatchThreadID)
 				p.lifeTimer -= deltaTime;
 			}
 			break;
+		case pk_novaEndParticle:
+			{
+				if(p.lifeTimer < 7.0)
+				{
+					p.velocity.y = -4.0f;
+                    p.velocity.x = 0.0;
+                    p.velocity.z = 0.0f;
+                }
+					
+                p.position += p.velocity * deltaTime;
+
+                p.lifeTimer -= deltaTime;
+            }
+			break;
 		default:
 			break;
 		}

@@ -419,11 +419,12 @@ void spawn(uint id, inout Particle p)
             p.position.y = emitterPosition.y + rand(seed) * 1.5;
 
 
-            p.velocity.y = rand(seed) * 8.0;
 
             float particleSpeed = lerp(particleSpeedMin.x, particleSpeedMax.x, rand(seed));
 
             float r = (rand(seed) * 360) * 3.14 / 180;
+
+			p.velocity.y = rand(seed) *particleSpeed;
 
 			// x •ûŒü
             p.velocity.x = cos(r) * particleSpeed;
@@ -436,7 +437,7 @@ void spawn(uint id, inout Particle p)
                 p.textureType = 4;
             if (rand(seed) > 0.66)
                 p.textureType = 5;
-		}
+}
         break;
     }
 }

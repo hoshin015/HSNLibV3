@@ -189,6 +189,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 				radialBlur->SetIsRadial(false);
 				lifeTimer         = 0.0f;
 				rockIntervalTimer = 0.0f;
+				isEndParticle = false;
 				// ステート更新
 				specialState = SpecialState::chargeNova;
 			}
@@ -202,12 +203,16 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 			heatHaze->SetMaxShift(heatHazeMaxShift);
 
 			// --- rock ---
-			rockIntervalTimer += deltaTime;
-			while (rockIntervalTimer > rockIntervalTime)
+			if(lifeTimer < endRockStartTime)
 			{
-				GenerateRock();
-				rockIntervalTimer -= rockIntervalTime;
+				rockIntervalTimer += deltaTime;
+				while (rockIntervalTimer > rockIntervalTime)
+				{
+					GenerateRock();
+					rockIntervalTimer -= rockIntervalTime;
+				}
 			}
+			
 
 			// --- lightning ---
 			lightningIntervalTimer += deltaTime;
@@ -216,6 +221,72 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 				GenerateLightning();
 				lightningIntervalTimer -= 0.2;
 			}
+
+			// --- endParticle ---
+			if (!isEndParticle && lifeTimer > endParticleTime)
+			{
+				isEndParticle = true;
+
+				Emitter* emitter = new Emitter();
+				emitter->position = { 0, 0, 0 };
+				emitter->emitterData.duration = 3.0;
+				emitter->emitterData.looping = false;
+				emitter->emitterData.burstsTime = 0.05;
+				emitter->emitterData.burstsCount = 36;
+				emitter->emitterData.particleKind = pk_novaEndParticle;
+				emitter->emitterData.particleLifeTimeMin = 10.0f;
+				emitter->emitterData.particleLifeTimeMax = 10.0f;
+				emitter->emitterData.particleSpeedMin = 12.0f;
+				emitter->emitterData.particleSpeedMax = 36.0f;
+				emitter->emitterData.particleSizeMin = { 0.1f, 0.1f };
+				emitter->emitterData.particleSizeMax = { 0.3f, 0.3f };
+				emitter->emitterData.particleColorMin = { 6.0, 0.8, 0.8, 1 };
+				emitter->emitterData.particleColorMax = { 10.0, 0.8, 0.8, 1 };
+				emitter->emitterData.particleGravity = 0;
+				emitter->emitterData.particleBillboardType = 0;
+				emitter->emitterData.particleTextureType = 0;
+				emitter->emitterData.burstsOneShot = 6;
+				EmitterManager::Instance().Register(emitter);
+			}
+
+			// --- endRock ---
+			if(lifeTimer > endRockStartTime && lifeTimer <= endRockEndTime)
+			{
+				endRockGenTimer += Timer::Instance().DeltaTime();
+
+				while(endRockGenTimer > endRockGenTime)
+				{
+					endRockGenTimer -= endRockGenTime;
+
+					for (int i = 0; i < 10; i++)
+					{
+						DirectX::XMFLOAT3 rPos = { (rand() % 100) - 50.0f, 0, rand() % 100 - 50.0f };
+						DirectX::XMFLOAT3 rVec = { (rand() % 3) - 1.5f, rand() % 20 + 20.0f, rand() % 3 - 1.5f };
+
+						RockData* rock = new RockData();
+						rock->SetPos(rPos);
+						rock->SetVeloicty(rVec);
+						rock->SetLifeTime(10.0f);
+						rock->SetEmissivePower(0.0f);
+						float rScale = Math::RandomRange(0.25, 0.35);
+						rock->SetScale({ rScale + Math::RandomRange(0.25, 0.35), rScale, rScale });
+						float rX = rand() % 360;
+						float rY = rand() % 360;
+						float rZ = rand() % 360;
+						rock->SetAngle({ rX, rY, rZ });
+						rock->SetColor({ 0.1, 0.1, 0.1, 1 });
+						rock->SetUpdateType(RockData::RockFuncEnum::Default);
+
+						rock->isDamaged = false;
+						rock->damage = 0.0f;
+						rock->damageRadius = 0.0f;
+
+						RockEffect::Instance().rockMesh1->Register(rock);
+					}
+				}
+			}
+				
+
 
 			// --- ambientColor ---
 			float rColor = Easing::GetNowParam(Easing::OutQuad<float>, lifeTimer, firstNovaColorDown);
@@ -309,6 +380,7 @@ void SpecialEffect::Update(RadialBlur* radialBlur, HeatHaze* heatHaze)
 			emitter->emitterData.particleTextureType = 0;
 			emitter->emitterData.burstsOneShot = 1;
 			EmitterManager::Instance().Register(emitter);
+
 
 
 #if SPECIAL_AUDIO_DELAY

@@ -105,6 +105,15 @@ private:
 	float               lightningIntervalTimer = 0.0f;
 	float               lightningIntervalTime  = 0.05f;
 
+	bool				isEndParticle = false;
+	float				endParticleTime = 8.6f;
+
+	bool				isEndRock = false;
+	float				endRockStartTime = 9.0f;
+	float				endRockEndTime = 9.3f;
+	float				endRockGenTimer = 0.0f;
+	float				endRockGenTime = 0.05f;
+
 	Easing::EasingValue chargeNovaHeatHazeMaxShiftDown =
 	{
 		8.5f, 10.0f,

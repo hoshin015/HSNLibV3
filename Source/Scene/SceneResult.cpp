@@ -259,8 +259,8 @@ void SceneResult::Render()
 	colon->Render();
 
 	imgText->SprTextOut("05 00", { 600, 375 });
-	imgText->SprTextOut("07 00", { 600, 445 });
-	imgText->SprTextOut("11 00", { 600, 515 });
+	imgText->SprTextOut("08 00", { 600, 445 });
+	imgText->SprTextOut("15 00", { 600, 515 });
 
 	colon->SetPos({ 662, 380 });
 	colon->Render();

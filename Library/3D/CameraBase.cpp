@@ -8,17 +8,11 @@
 
 CameraBase::CameraBase()
 {
-	Graphics* gfx = &Graphics::Instance();
+	//Graphics* gfx = &Graphics::Instance();
 
-	//std::lock_guard<std::mutex> lock(gfx->GetMutex()); // 排他制御
-	ID3D11DeviceContext* dc = gfx->GetDeviceContext();
+	
 
-	// --- プロジェクション座標変換行列作成 ---
-	D3D11_VIEWPORT viewport;
-	UINT numViewports{ 1 };
-	dc->RSGetViewports(&numViewports, &viewport);
-
-	aspect = viewport.Width / viewport.Height;
+	aspect = 1.7778;
 
 	Update();
 }

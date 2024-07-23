@@ -27,13 +27,20 @@ public:
 private:
 	HWND hwnd;
 
-	const wchar_t* windowName   = L"HSNLibV3";
+	const wchar_t* windowName   = L"GAO";
 	const int      screenWidth  = 1280;
 	const int      screenHeight = 720;
 
-	BOOL showCalcFrame = TRUE;
-
+#ifdef _DEBUG
+	BOOL showCalcFrame = FALSE;
 	BOOL isFullScreen = FALSE;
+	BOOL showCorsor = TRUE;
+#else
+	BOOL showCalcFrame = FALSE;
+	BOOL isFullScreen = TRUE;
+	BOOL showCorsor = FALSE;
+#endif
+
 
 public:
 	int   GetScreenWidth() { return screenWidth; }
@@ -52,7 +59,7 @@ public:
 	// ÉQÅ[ÉÄèIóπ
 	void SetGameEnd()
 	{
-		PostMessage(hwnd, WM_KEYDOWN, VK_ESCAPE, 0);
+		PostMessage(hwnd, WM_KEYDOWN, VK_F4, 0);
 	}
 
 private:

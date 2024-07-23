@@ -56,9 +56,9 @@ public:
 	float TimeStamp() const  // in seconds
 	{
 		// If we are stopped, do not count the time that has passed since we stopped.
-		// Moreover, if we previously already had a pause, the distance 
+		// Moreover, if we previously already had a pause, the distance
 		// stopTime - baseTime includes paused time, which we do not want to count.
-		// To correct this, we can subtract the paused time from mStopTime:  
+		// To correct this, we can subtract the paused time from mStopTime:
 		//
 		//                     |<--pausedTime-->|
 		// ----*---------------*-----------------*------------*------------*------> time
@@ -70,10 +70,10 @@ public:
 		}
 
 		// The distance thisTime - mBaseTime includes paused time,
-		// which we do not want to count.  To correct this, we can subtract 
-		// the paused time from thisTime:  
+		// which we do not want to count.  To correct this, we can subtract
+		// the paused time from thisTime:
 		//
-		//  (thisTime - pausedTime) - baseTime 
+		//  (thisTime - pausedTime) - baseTime
 		//
 		//                     |<--pausedTime-->|
 		// ----*---------------*-----------------*------------*------> time
@@ -108,7 +108,7 @@ public:
 		//
 		//                     |<-------d------->|
 		// ----*---------------*-----------------*------------> time
-		//  baseTime       stopTime        start_time     
+		//  baseTime       stopTime        start_time
 		if (stopped)
 		{
 			pausedTime += (start_time - stopTime);
@@ -143,7 +143,7 @@ public:
 		// Prepare for next frame.
 		lastTime = thisTime;
 
-		// Force nonnegative.  The DXSDK's CDXUTTimer mentions that if the 
+		// Force nonnegative.  The DXSDK's CDXUTTimer mentions that if the
 		// processor goes into a power save mode or we get shuffled to another
 		// processor, then mDeltaTime can be negative.
 		if (deltaTime < 0.0)
@@ -174,6 +174,8 @@ public:
 		return static_cast<float>(deltaTime);
 	}
 
+	float TimeScale() const { return timeScale; }
+
 	void CheckTick()
 	{
 		if (stopped)
@@ -190,7 +192,7 @@ public:
 		// Prepare for next frame.
 		lastTime = thisTime;
 
-		// Force nonnegative.  The DXSDK's CDXUTTimer mentions that if the 
+		// Force nonnegative.  The DXSDK's CDXUTTimer mentions that if the
 		// processor goes into a power save mode or we get shuffled to another
 		// processor, then mDeltaTime can be negative.
 		if (checkTime < 0.0)
@@ -245,4 +247,6 @@ public:
 	{
 		return static_cast<float>(storeRenderTime);
 	}
+
+	//float UpdateTime() { return updateTime; }
 };

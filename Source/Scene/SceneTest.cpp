@@ -6,6 +6,7 @@
 #include "../../Library/Framework.h"
 #include "../../Library/Graphics/Shader.h"
 #include "../../Library/Graphics/Graphics.h"
+#include "../../Library/Graphics/Texture.h"
 #include "../../Library/Math/OperatorXMFloat3.h"
 #include "../../Library/Timer.h"
 #include "../../Library/ImGui/ConsoleData.h"
@@ -108,10 +109,14 @@ void SceneTest::Initialize()
 		                                          Framework::Instance().GetScreenHeightF());
 		swordTrailBufferSub = std::make_unique<FrameBuffer>(Framework::Instance().GetScreenWidthF(),
 		                                          Framework::Instance().GetScreenHeightF());
-		// 画面キャプチャの初期化
-		CaptureScreen::Instance().Initialize();
+		
 
 		Enemy::Instance().radialBlur = radialBlur.get();
+
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
+		D3D11_TEXTURE2D_DESC tex2d;
+		LoadTextureFromFile(L"./Data/Fbx/Monster/dummy.png", srv.GetAddressOf(), &tex2d);
+		Enemy::Instance().GetModel()->GetModelResource()->GetMaterials().find("lambert1")->second.shaderResourceViews[3] = srv;
 
 		Player::Instance().SetCamera(CameraManager::Instance().GetCamera().get());	// 今のカメラを設定
 		UiPause::Instance();
@@ -123,11 +128,9 @@ void SceneTest::Initialize()
 		// ------- ps 生成 -------
 		CreatePsFromCso("Data/Shader/SwordTrailPS.cso", swordTrailPisxelShader.GetAddressOf());
 		// テスト
-		AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
-		AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
+		AudioManager::Instance();
 
-		// --- skyMap 初期化 ---
-		skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
+		
 	}
 
 
@@ -189,8 +192,15 @@ void SceneTest::Update()
 {
 	if(isFirst)
 	{
+		AudioManager::Instance().PlayMusic(MUSIC_LABEL::BATTLE1, true);
+		AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::BATTLE1, 0.5f);
+
 		isFirst = false;
 		Particle::Instance().Initialize();
+		// 画面キャプチャの初期化
+		CaptureScreen::Instance().Initialize();
+		// --- skyMap 初期化 ---
+		skyMap = std::make_unique<SkyMap>(L"Data/Texture/winter_evening_4k.DDS");
 	}
 	
 
@@ -249,221 +259,221 @@ void SceneTest::Update()
 	Gate::Instance().Update();
 
 	// テストエミッター
-	if (InputManager::Instance().GetKeyPressed(Keyboard::F1))
-	{
-		for(int i = 0; i < 10; i++)
-		{
-			DirectX::XMFLOAT3 rPos = { (rand() % 10) - 5.0f, 0, rand() % 10 - 5.0f };
-			DirectX::XMFLOAT3 rVec = { (rand() % 10) - 5.0f, 5, rand() % 10 - 5.0f };
-			RockEffect::Instance().Emit(rPos, rVec,{0.1, 1});
-		}
-	}
-	if (InputManager::Instance().GetKeyPressed(Keyboard::F2))
-	{
-		for (int i = 0; i < 30; i++)
-		{
-			DirectX::XMFLOAT3 rPos = { (rand() % 30) - 15.0f, 0, rand() % 30 - 15.0f };
-			DirectX::XMFLOAT3 rVec = { (rand() % 3) - 1.5f, 5, rand() % 3 - 1.5f };
+	// if (InputManager::Instance().GetKeyPressed(Keyboard::F1))
+	// {
+	// 	for(int i = 0; i < 10; i++)
+	// 	{
+	// 		DirectX::XMFLOAT3 rPos = { (rand() % 10) - 5.0f, 0, rand() % 10 - 5.0f };
+	// 		DirectX::XMFLOAT3 rVec = { (rand() % 10) - 5.0f, 5, rand() % 10 - 5.0f };
+	// 		RockEffect::Instance().Emit(rPos, rVec,{0.1, 1});
+	// 	}
+	// }
+	// if (InputManager::Instance().GetKeyPressed(Keyboard::F2))
+	// {
+	// 	for (int i = 0; i < 30; i++)
+	// 	{
+	// 		DirectX::XMFLOAT3 rPos = { (rand() % 30) - 15.0f, 0, rand() % 30 - 15.0f };
+	// 		DirectX::XMFLOAT3 rVec = { (rand() % 3) - 1.5f, 5, rand() % 3 - 1.5f };
+	//
+	// 		RockData* rock = new RockData();
+	// 		rock->SetPos(rPos);
+	// 		rock->SetVeloicty(rVec);
+	// 		rock->SetLifeTime(10.0f);
+	// 		rock->SetEmissivePower(0.0f);
+	// 		float rScale = Math::RandomRange(0.25, 0.5);
+	// 		rock->SetScale({ rScale, rScale, rScale });
+	// 		float rX = rand() % 360;
+	// 		float rY = rand() % 360;
+	// 		float rZ = rand() % 360;
+	// 		rock->SetAngle({ rX, rY, rZ });
+	// 		rock->SetColor({ 1.0, 1.0, 1.0, 1 });
+	// 		rock->SetUpdateType(RockData::RockFuncEnum::Up);
+	// 		RockEffect::Instance().rockMesh1->Register(rock);
+	// 	}
+	// }
+	// if (InputManager::Instance().GetKeyPressed(Keyboard::F3))
+	// {
+	// 	for(int i = 0; i < 1; i++)
+	// 	{
+	// 		DirectX::XMFLOAT3 rPos = { (rand() % 40) - 20.0f, 0, rand() % 40 - 20.0f };
+	// 		//DirectX::XMFLOAT3 rPos = { 0,0,0};
+	// 		LightningEffect::Instance().Emit(rPos);
+	// 	}
+	// }
+	// if (InputManager::Instance().GetKeyPressed(Keyboard::F4))
+	// {
+	// 	Emitter* emitter0 = new Emitter();
+	// 	emitter0->position = { 0, 0, 0 };
+	// 	emitter0->emitterData.duration = 3.0;
+	// 	emitter0->emitterData.looping = false;
+	// 	emitter0->emitterData.burstsTime = 0.3;
+	// 	emitter0->emitterData.burstsCount = 3;
+	// 	emitter0->emitterData.particleKind = pk_smoke;
+	// 	emitter0->emitterData.particleLifeTimeMin = 1.0f;
+	// 	emitter0->emitterData.particleLifeTimeMax = 2.0f;
+	// 	emitter0->emitterData.particleSpeedMin = 20.0f;
+	// 	emitter0->emitterData.particleSpeedMax = 30.0f;
+	// 	emitter0->emitterData.particleSizeMin = { 30.0f, 30.0f };
+	// 	emitter0->emitterData.particleSizeMax = { 50.0f, 50.0f };
+	// 	emitter0->emitterData.particleColorMin = { 0.9, 0.9, 0.9, 1 };
+	// 	emitter0->emitterData.particleColorMax = { 1.0, 1.0, 1.0, 1 };
+	// 	emitter0->emitterData.particleGravity = 0;
+	// 	emitter0->emitterData.particleBillboardType = 0;
+	// 	emitter0->emitterData.particleTextureType = 6;
+	// 	EmitterManager::Instance().Register(emitter0);
+	// }
+	// if (InputManager::Instance().GetKeyPressed(Keyboard::F5))
+	// {
+	// 	Emitter* emitter0 = new Emitter();
+	// 	emitter0->position = { 0, 3, 0 };
+	// 	emitter0->emitterData.duration = 10.0;
+	// 	emitter0->emitterData.looping = false;
+	// 	emitter0->emitterData.burstsTime = 0.05;
+	// 	emitter0->emitterData.burstsCount = 1;
+	// 	emitter0->emitterData.particleKind = pk_novaEndFire;
+	// 	emitter0->emitterData.particleLifeTimeMin = 0.5f;
+	// 	emitter0->emitterData.particleLifeTimeMax = 1.0f;
+	// 	emitter0->emitterData.particleSpeedMin = 1.0f;
+	// 	emitter0->emitterData.particleSpeedMax = 1.0f;
+	// 	emitter0->emitterData.particleSizeMin = { 40.0f, 40.0f };
+	// 	emitter0->emitterData.particleSizeMax = { 40.0f, 40.0f };
+	// 	emitter0->emitterData.particleColorMin = { 3.0, 1.0, 1.0, 1 };
+	// 	emitter0->emitterData.particleColorMax = { 3.0, 1.0, 1.0, 1 };
+	// 	emitter0->emitterData.particleGravity = 0;
+	// 	emitter0->emitterData.particleBillboardType = 0;
+	// 	emitter0->emitterData.particleTextureType = 11;
+	// 	emitter0->emitterData.burstsOneShot = 1;
+	// 	EmitterManager::Instance().Register(emitter0);
+	// }
+	// if (InputManager::Instance().GetKeyPressed(Keyboard::F6))
+	// {
+	// 	Emitter* emitter0 = new Emitter();
+	// 	emitter0->position = { 0, 0, 0 };
+	// 	emitter0->emitterData.duration = 3.0;
+	// 	emitter0->emitterData.looping = false;
+	// 	emitter0->emitterData.burstsTime = 0.05;
+	// 	emitter0->emitterData.burstsCount = 24;
+	// 	emitter0->emitterData.particleKind = pk_novaBurst;
+	// 	emitter0->emitterData.particleLifeTimeMin = 2.0f;
+	// 	emitter0->emitterData.particleLifeTimeMax = 2.0f;
+	// 	emitter0->emitterData.particleSpeedMin = 24.0f;
+	// 	emitter0->emitterData.particleSpeedMax = 36.0f;
+	// 	emitter0->emitterData.particleSizeMin = { 0.1f, 0.1f };
+	// 	emitter0->emitterData.particleSizeMax = { 0.3f, 0.3f };
+	// 	emitter0->emitterData.particleColorMin = { 6.0, 0.8, 0.8, 1 };
+	// 	emitter0->emitterData.particleColorMax = { 10.0, 0.8, 0.8, 1 };
+	// 	emitter0->emitterData.particleGravity = 0;
+	// 	emitter0->emitterData.particleBillboardType = 0;
+	// 	emitter0->emitterData.particleTextureType = 0;
+	// 	emitter0->emitterData.burstsOneShot = 6;
+	// 	EmitterManager::Instance().Register(emitter0);
+	// }
+	//
+	// if (InputManager::Instance().GetKeyPressed(Keyboard::F7))
+	// {
+	// 	Emitter* emitter0 = new Emitter();
+	// 	emitter0->position = { 0, 0, 0 };
+	// 	emitter0->emitterData.duration = 3.0;
+	// 	emitter0->emitterData.looping = false;
+	// 	emitter0->emitterData.burstsTime = 0.1;
+	// 	emitter0->emitterData.burstsCount = 36;
+	// 	emitter0->emitterData.particleKind = pk_novaStartFire;
+	// 	emitter0->emitterData.particleLifeTimeMin = 0.7f;
+	// 	emitter0->emitterData.particleLifeTimeMax = 0.9f;
+	// 	emitter0->emitterData.particleSpeedMin = 50.0f;
+	// 	emitter0->emitterData.particleSpeedMax = 60.0f;
+	// 	emitter0->emitterData.particleSizeMin = { 17.0f, 17.0f };
+	// 	emitter0->emitterData.particleSizeMax = { 18.0f, 18.0f };
+	// 	emitter0->emitterData.particleColorMin = { 5.0, 0.9, 0.9, 1 };
+	// 	emitter0->emitterData.particleColorMax = { 5.0, 1.0, 1.0, 1 };
+	// 	emitter0->emitterData.particleGravity = 0;
+	// 	emitter0->emitterData.particleBillboardType = 0;
+	// 	emitter0->emitterData.particleTextureType = 9;
+	// 	emitter0->emitterData.burstsOneShot = 1;
+	// 	EmitterManager::Instance().Register(emitter0);
+	// }
+	//
+	// if (InputManager::Instance().GetKeyPressed(Keyboard::F8))
+	// {
+	// 	Emitter* emitter0 = new Emitter();
+	// 	emitter0->position = { 0, 0, 0 };
+	// 	emitter0->emitterData.duration = 3.0;
+	// 	emitter0->emitterData.looping = false;
+	// 	emitter0->emitterData.burstsTime = 0.025;
+	// 	emitter0->emitterData.burstsCount = 5;
+	// 	emitter0->emitterData.particleKind = pk_fireBreath;
+	// 	emitter0->emitterData.particleLifeTimeMin = 2.0f;
+	// 	emitter0->emitterData.particleLifeTimeMax = 4.0f;
+	// 	emitter0->emitterData.particleSpeedMin = 10.0f;
+	// 	emitter0->emitterData.particleSpeedMax = 15.0f;
+	// 	emitter0->emitterData.particleSizeMin = { 2.0f, 2.0f };
+	// 	emitter0->emitterData.particleSizeMax = { 3.0f, 3.0f };
+	// 	emitter0->emitterData.particleColorMin = { 3.0, 1.0, 1.0, 1 };
+	// 	emitter0->emitterData.particleColorMax = { 3.0, 1.0, 1.0, 1 };
+	// 	emitter0->emitterData.particleGravity = 0;
+	// 	emitter0->emitterData.particleBillboardType = 0;
+	// 	emitter0->emitterData.particleTextureType = 10;
+	// 	EmitterManager::Instance().Register(emitter0);
+	// }
+	//
+	// if (InputManager::Instance().GetKeyPressed(Keyboard::F9))
+	// {
+	// 	BreathEffect::Instance().Emit();
+	// }
+	//
+	// if (InputManager::Instance().GetKeyPressed(Keyboard::F10))
+	// {
+	// 	SpecialEffect::Instance().Emit();
+	// }
 
-			RockData* rock = new RockData();
-			rock->SetPos(rPos);
-			rock->SetVeloicty(rVec);
-			rock->SetLifeTime(10.0f);
-			rock->SetEmissivePower(0.0f);
-			float rScale = Math::RandomRange(0.25, 0.5);
-			rock->SetScale({ rScale, rScale, rScale });
-			float rX = rand() % 360;
-			float rY = rand() % 360;
-			float rZ = rand() % 360;
-			rock->SetAngle({ rX, rY, rZ });
-			rock->SetColor({ 1.0, 1.0, 1.0, 1 });
-			rock->SetUpdateType(RockData::RockFuncEnum::Up);
-			RockEffect::Instance().rockMesh1->Register(rock);
-		}
-	}
-	if (InputManager::Instance().GetKeyPressed(Keyboard::F3))
-	{
-		for(int i = 0; i < 1; i++)
-		{
-			DirectX::XMFLOAT3 rPos = { (rand() % 40) - 20.0f, 0, rand() % 40 - 20.0f };
-			//DirectX::XMFLOAT3 rPos = { 0,0,0};
-			LightningEffect::Instance().Emit(rPos);
-		}
-	}
-	if (InputManager::Instance().GetKeyPressed(Keyboard::F4))
-	{
-		Emitter* emitter0 = new Emitter();
-		emitter0->position = { 0, 0, 0 };
-		emitter0->emitterData.duration = 3.0;
-		emitter0->emitterData.looping = false;
-		emitter0->emitterData.burstsTime = 0.3;
-		emitter0->emitterData.burstsCount = 3;
-		emitter0->emitterData.particleKind = pk_smoke;
-		emitter0->emitterData.particleLifeTimeMin = 1.0f;
-		emitter0->emitterData.particleLifeTimeMax = 2.0f;
-		emitter0->emitterData.particleSpeedMin = 20.0f;
-		emitter0->emitterData.particleSpeedMax = 30.0f;
-		emitter0->emitterData.particleSizeMin = { 30.0f, 30.0f };
-		emitter0->emitterData.particleSizeMax = { 50.0f, 50.0f };
-		emitter0->emitterData.particleColorMin = { 0.9, 0.9, 0.9, 1 };
-		emitter0->emitterData.particleColorMax = { 1.0, 1.0, 1.0, 1 };
-		emitter0->emitterData.particleGravity = 0;
-		emitter0->emitterData.particleBillboardType = 0;
-		emitter0->emitterData.particleTextureType = 6;
-		EmitterManager::Instance().Register(emitter0);
-	}
-	if (InputManager::Instance().GetKeyPressed(Keyboard::F5))
-	{
-		Emitter* emitter0 = new Emitter();
-		emitter0->position = { 0, 3, 0 };
-		emitter0->emitterData.duration = 10.0;
-		emitter0->emitterData.looping = false;
-		emitter0->emitterData.burstsTime = 0.05;
-		emitter0->emitterData.burstsCount = 1;
-		emitter0->emitterData.particleKind = pk_novaEndFire;
-		emitter0->emitterData.particleLifeTimeMin = 0.5f;
-		emitter0->emitterData.particleLifeTimeMax = 1.0f;
-		emitter0->emitterData.particleSpeedMin = 1.0f;
-		emitter0->emitterData.particleSpeedMax = 1.0f;
-		emitter0->emitterData.particleSizeMin = { 40.0f, 40.0f };
-		emitter0->emitterData.particleSizeMax = { 40.0f, 40.0f };
-		emitter0->emitterData.particleColorMin = { 3.0, 1.0, 1.0, 1 };
-		emitter0->emitterData.particleColorMax = { 3.0, 1.0, 1.0, 1 };
-		emitter0->emitterData.particleGravity = 0;
-		emitter0->emitterData.particleBillboardType = 0;
-		emitter0->emitterData.particleTextureType = 11;
-		emitter0->emitterData.burstsOneShot = 1;
-		EmitterManager::Instance().Register(emitter0);
-	}
-	if (InputManager::Instance().GetKeyPressed(Keyboard::F6))
-	{
-		Emitter* emitter0 = new Emitter();
-		emitter0->position = { 0, 0, 0 };
-		emitter0->emitterData.duration = 3.0;
-		emitter0->emitterData.looping = false;
-		emitter0->emitterData.burstsTime = 0.05;
-		emitter0->emitterData.burstsCount = 24;
-		emitter0->emitterData.particleKind = pk_novaBurst;
-		emitter0->emitterData.particleLifeTimeMin = 2.0f;
-		emitter0->emitterData.particleLifeTimeMax = 2.0f;
-		emitter0->emitterData.particleSpeedMin = 24.0f;
-		emitter0->emitterData.particleSpeedMax = 36.0f;
-		emitter0->emitterData.particleSizeMin = { 0.1f, 0.1f };
-		emitter0->emitterData.particleSizeMax = { 0.3f, 0.3f };
-		emitter0->emitterData.particleColorMin = { 6.0, 0.8, 0.8, 1 };
-		emitter0->emitterData.particleColorMax = { 10.0, 0.8, 0.8, 1 };
-		emitter0->emitterData.particleGravity = 0;
-		emitter0->emitterData.particleBillboardType = 0;
-		emitter0->emitterData.particleTextureType = 0;
-		emitter0->emitterData.burstsOneShot = 6;
-		EmitterManager::Instance().Register(emitter0);
-	}
-
-	if (InputManager::Instance().GetKeyPressed(Keyboard::F7))
-	{
-		Emitter* emitter0 = new Emitter();
-		emitter0->position = { 0, 0, 0 };
-		emitter0->emitterData.duration = 3.0;
-		emitter0->emitterData.looping = false;
-		emitter0->emitterData.burstsTime = 0.1;
-		emitter0->emitterData.burstsCount = 36;
-		emitter0->emitterData.particleKind = pk_novaStartFire;
-		emitter0->emitterData.particleLifeTimeMin = 0.7f;
-		emitter0->emitterData.particleLifeTimeMax = 0.9f;
-		emitter0->emitterData.particleSpeedMin = 50.0f;
-		emitter0->emitterData.particleSpeedMax = 60.0f;
-		emitter0->emitterData.particleSizeMin = { 17.0f, 17.0f };
-		emitter0->emitterData.particleSizeMax = { 18.0f, 18.0f };
-		emitter0->emitterData.particleColorMin = { 5.0, 0.9, 0.9, 1 };
-		emitter0->emitterData.particleColorMax = { 5.0, 1.0, 1.0, 1 };
-		emitter0->emitterData.particleGravity = 0;
-		emitter0->emitterData.particleBillboardType = 0;
-		emitter0->emitterData.particleTextureType = 9;
-		emitter0->emitterData.burstsOneShot = 1;
-		EmitterManager::Instance().Register(emitter0);
-	}
-
-	if (InputManager::Instance().GetKeyPressed(Keyboard::F8))
-	{
-		Emitter* emitter0 = new Emitter();
-		emitter0->position = { 0, 0, 0 };
-		emitter0->emitterData.duration = 3.0;
-		emitter0->emitterData.looping = false;
-		emitter0->emitterData.burstsTime = 0.025;
-		emitter0->emitterData.burstsCount = 5;
-		emitter0->emitterData.particleKind = pk_fireBreath;
-		emitter0->emitterData.particleLifeTimeMin = 2.0f;
-		emitter0->emitterData.particleLifeTimeMax = 4.0f;
-		emitter0->emitterData.particleSpeedMin = 10.0f;
-		emitter0->emitterData.particleSpeedMax = 15.0f;
-		emitter0->emitterData.particleSizeMin = { 2.0f, 2.0f };
-		emitter0->emitterData.particleSizeMax = { 3.0f, 3.0f };
-		emitter0->emitterData.particleColorMin = { 3.0, 1.0, 1.0, 1 };
-		emitter0->emitterData.particleColorMax = { 3.0, 1.0, 1.0, 1 };
-		emitter0->emitterData.particleGravity = 0;
-		emitter0->emitterData.particleBillboardType = 0;
-		emitter0->emitterData.particleTextureType = 10;
-		EmitterManager::Instance().Register(emitter0);
-	}
-
-	if (InputManager::Instance().GetKeyPressed(Keyboard::F9))
-	{
-		BreathEffect::Instance().Emit();
-	}
-
-	if (InputManager::Instance().GetKeyPressed(Keyboard::F10))
-	{
-		SpecialEffect::Instance().Emit();
-	}
-
-	static float f11TotalTimer = 0.0f;
-	static float f11Timer = 0.0f;
-	static float f11Time = 0.025f;
-
-	if(f11TotalTimer > 0.0f)
-	{
-		f11TotalTimer -= Timer::Instance().DeltaTime();
-		f11Timer += Timer::Instance().DeltaTime();
-		while(f11Timer > f11Time)
-		{
-			f11Timer -= f11Time;
-
-			LightningData* l = new LightningData();
-			l->SetLifeTime(0.2f);
-			l->SetEmissivePower(5.0f);
-			float rScale = Math::RandomRange(0.0f, 0.2f) + 0.05f;
-			l->SetScale({ Math::RandomRange(0.0f, 0.05f) + 0.01f, rScale, rScale });
-			l->SetColor({ 1.5, 0.8, 0.8, 1 });
-			l->SetAngle({ static_cast<float>(rand() % 360), static_cast<float>(rand() % 360), static_cast<float>(rand() % 360) });
-			l->SetUpdateType(LightningData::LightningFuncEnum::HeadAura);
-			l->SetUvScroll({ 0, static_cast<float>(rand() % 1) ,0,0 });
-
-			DirectX::XMFLOAT3 s = Enemy::Instance().GetBonePosition("tosaka");
-			DirectX::XMFLOAT3 e = Enemy::Instance().GetBonePosition("tosaka_end");
-			DirectX::XMVECTOR S = DirectX::XMLoadFloat3(&s);
-			DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&e);
-			DirectX::XMVECTOR L = DirectX::XMVectorSubtract(E, S);
-			float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(L));
-
-			l->SetBufferLength(Math::RandomRange(0.0f, length));
-
-			int rLightning = rand() % 6;
-			switch (rLightning)
-			{
-			case 0: LightningEffect::Instance().lightningMesh4->Register(l); break;
-			case 1: LightningEffect::Instance().lightningMesh5->Register(l); break;
-			case 2: LightningEffect::Instance().lightningMesh6->Register(l); break;
-			case 3: LightningEffect::Instance().lightningMesh7->Register(l); break;
-			case 4: LightningEffect::Instance().lightningMesh8->Register(l); break;
-			case 5: LightningEffect::Instance().lightningMesh9->Register(l); break;
-			}
-		}
-	}
-
-	if (InputManager::Instance().GetKeyPressed(Keyboard::F11))
-	{
-		f11TotalTimer = 1.0f;
-	}
+	// static float f11TotalTimer = 0.0f;
+	// static float f11Timer = 0.0f;
+	// static float f11Time = 0.025f;
+	//
+	// if(f11TotalTimer > 0.0f)
+	// {
+	// 	f11TotalTimer -= Timer::Instance().DeltaTime();
+	// 	f11Timer += Timer::Instance().DeltaTime();
+	// 	while(f11Timer > f11Time)
+	// 	{
+	// 		f11Timer -= f11Time;
+	//
+	// 		LightningData* l = new LightningData();
+	// 		l->SetLifeTime(0.2f);
+	// 		l->SetEmissivePower(5.0f);
+	// 		float rScale = Math::RandomRange(0.0f, 0.2f) + 0.05f;
+	// 		l->SetScale({ Math::RandomRange(0.0f, 0.05f) + 0.01f, rScale, rScale });
+	// 		l->SetColor({ 1.5, 0.8, 0.8, 1 });
+	// 		l->SetAngle({ static_cast<float>(rand() % 360), static_cast<float>(rand() % 360), static_cast<float>(rand() % 360) });
+	// 		l->SetUpdateType(LightningData::LightningFuncEnum::HeadAura);
+	// 		l->SetUvScroll({ 0, static_cast<float>(rand() % 1) ,0,0 });
+	//
+	// 		DirectX::XMFLOAT3 s = Enemy::Instance().GetBonePosition("tosaka");
+	// 		DirectX::XMFLOAT3 e = Enemy::Instance().GetBonePosition("tosaka_end");
+	// 		DirectX::XMVECTOR S = DirectX::XMLoadFloat3(&s);
+	// 		DirectX::XMVECTOR E = DirectX::XMLoadFloat3(&e);
+	// 		DirectX::XMVECTOR L = DirectX::XMVectorSubtract(E, S);
+	// 		float length = DirectX::XMVectorGetX(DirectX::XMVector3Length(L));
+	//
+	// 		l->SetBufferLength(Math::RandomRange(0.0f, length));
+	//
+	// 		int rLightning = rand() % 6;
+	// 		switch (rLightning)
+	// 		{
+	// 		case 0: LightningEffect::Instance().lightningMesh4->Register(l); break;
+	// 		case 1: LightningEffect::Instance().lightningMesh5->Register(l); break;
+	// 		case 2: LightningEffect::Instance().lightningMesh6->Register(l); break;
+	// 		case 3: LightningEffect::Instance().lightningMesh7->Register(l); break;
+	// 		case 4: LightningEffect::Instance().lightningMesh8->Register(l); break;
+	// 		case 5: LightningEffect::Instance().lightningMesh9->Register(l); break;
+	// 		}
+	// 	}
+	// }
+	//
+	// if (InputManager::Instance().GetKeyPressed(Keyboard::F11))
+	// {
+	// 	f11TotalTimer = 1.0f;
+	// }
 
 
 	LightningEffect::Instance().Update();
@@ -711,8 +721,8 @@ void SceneTest::Render()
 	gfx->SetRasterizer(RASTERIZER_STATE::CLOCK_FALSE_CULL_NONE);
 
 	UiGame::Instance().Render();
-	UiPause::Instance().Render();
 	UiClearAfter::Instance().Render();
+	UiPause::Instance().Render();
 
 	// ここで文字描画
 	DamageTextManager::Instance().Render();

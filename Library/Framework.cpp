@@ -16,6 +16,7 @@
 #include "../Source/Scene/SceneManager.h"
 #include "../Source/UserInterface/DamageTextManager.h"
 #include "Graphics/Texture.h"
+#include "Video/Video.h"
 
 // 初期化
 bool Framework::Initialize(HINSTANCE hInstance)
@@ -55,6 +56,13 @@ bool Framework::Initialize(HINSTANCE hInstance)
 
 	// --- シーン初期化 ---
 	SceneManager::Instance().ChangeScene(new SceneTitle);
+
+	// --- 動画 初期化 ----
+	Video::Initialize(Graphics::Instance().GetDevice());
+
+	// --- Cursor表示 ---
+	if (!showCorsor)
+		while (ShowCursor(showCorsor)>0) {}
 
 	return true;
 }
@@ -142,6 +150,10 @@ void Framework::Finalize()
 
 	// --- SceneManager終了化 ---
 	SceneManager::Instance().Clear();
+
+	Video::Finalize();
+	if(!showCorsor)
+		while (ShowCursor(!showCorsor)<0) {}
 }
 
 // ウィンドウ作成
@@ -165,7 +177,7 @@ void Framework::CreateHSNWindow(HINSTANCE hInstance)
 	wc.lpszMenuName  = NULL;                               // ウィンドウ上段に設定するメニューの名前（メニューがなければNULL）
 	wc.lpszClassName = windowName;                         // 登録時に使用するウィンドウクラスの名前
 
-	RegisterClassExW(&wc); // 情報をOSに登録								
+	RegisterClassExW(&wc); // 情報をOSに登録
 
 	// --- ウィンドウサイズの調整 ---
 	int  centerScreenX = GetSystemMetrics(SM_CXSCREEN) / 2 - screenWidth / 2;
@@ -210,7 +222,7 @@ void Framework::CreateHSNWindow(HINSTANCE hInstance)
 		hwnd, DWMWINDOWATTRIBUTE::DWMWA_BORDER_COLOR,
 		&WINDOW_COLOR, sizeof(WINDOW_COLOR));
 
-	// --- キャプションのカラー変更 ---		
+	// --- キャプションのカラー変更 ---
 	COLORREF CAPTION_COLOR = 0x282828;
 	DwmSetWindowAttribute(
 		hwnd, DWMWINDOWATTRIBUTE::DWMWA_CAPTION_COLOR,

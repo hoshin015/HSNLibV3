@@ -71,6 +71,9 @@ void SceneTitle::Initialize()
 	UiTitle::Instance().Initialize();
 
 	Particle::Instance().Initialize();
+
+	AudioManager::Instance().PlayMusic(MUSIC_LABEL::TITLE, true);
+	AudioManager::Instance().SetMusicVolume(MUSIC_LABEL::TITLE, 0.75f);
 }
 
 void SceneTitle::Finalize()
@@ -78,6 +81,8 @@ void SceneTitle::Finalize()
 	StageManager::Instance().Clear();
 	LightManager::Instance().Clear();
 	EmitterManager::Instance().Clear();
+
+	AudioManager::Instance().StopMusic(MUSIC_LABEL::TITLE);
 }
 
 void SceneTitle::Update()
@@ -107,34 +112,34 @@ void SceneTitle::Update()
 	titleFloor->Update();
 
 
-	if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter))
-	{
-		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
-	}
+	// if (InputManager::Instance().GetKeyPressed(DirectX::Keyboard::Enter))
+	// {
+	// 	SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTest));
+	// }
 	// テストエミッター
-	if (InputManager::Instance().GetKeyPressed(Keyboard::F1))
-	{
-		Emitter* emitter0                           = new Emitter();
-		emitter0->position                          = {100, 100, 0};
-		emitter0->emitterData.duration              = 5.0;
-		emitter0->emitterData.looping               = false;
-		emitter0->emitterData.burstsTime            = 0.1;
-		emitter0->emitterData.burstsCount           = 1;
-		emitter0->emitterData.particleKind          = pk_titleSelect;
-		emitter0->emitterData.particleLifeTimeMin   = 1.0f;
-		emitter0->emitterData.particleLifeTimeMax   = 2.0f;
-		emitter0->emitterData.particleSpeedMin      = 0.0f;
-		emitter0->emitterData.particleSpeedMax      = 0.0f;
-		emitter0->emitterData.particleSizeMin       = {30.0f, 30.0f};
-		emitter0->emitterData.particleSizeMax       = {30.0f, 30.0f};
-		emitter0->emitterData.particleColorMin      = {1.0, 1.0, 1.0, 1};
-		emitter0->emitterData.particleColorMax      = {1.0, 1.0, 1.0, 1};
-		emitter0->emitterData.particleGravity       = 1;
-		emitter0->emitterData.particleBillboardType = 0;
-		emitter0->emitterData.particleTextureType   = 0;
-		emitter0->emitterData.burstsOneShot = 1;
-		EmitterManager::Instance().Register(emitter0);
-	}
+	// if (InputManager::Instance().GetKeyPressed(Keyboard::F1))
+	// {
+	// 	Emitter* emitter0                           = new Emitter();
+	// 	emitter0->position                          = {100, 100, 0};
+	// 	emitter0->emitterData.duration              = 5.0;
+	// 	emitter0->emitterData.looping               = false;
+	// 	emitter0->emitterData.burstsTime            = 0.1;
+	// 	emitter0->emitterData.burstsCount           = 1;
+	// 	emitter0->emitterData.particleKind          = pk_titleSelect;
+	// 	emitter0->emitterData.particleLifeTimeMin   = 1.0f;
+	// 	emitter0->emitterData.particleLifeTimeMax   = 2.0f;
+	// 	emitter0->emitterData.particleSpeedMin      = 0.0f;
+	// 	emitter0->emitterData.particleSpeedMax      = 0.0f;
+	// 	emitter0->emitterData.particleSizeMin       = {30.0f, 30.0f};
+	// 	emitter0->emitterData.particleSizeMax       = {30.0f, 30.0f};
+	// 	emitter0->emitterData.particleColorMin      = {1.0, 1.0, 1.0, 1};
+	// 	emitter0->emitterData.particleColorMax      = {1.0, 1.0, 1.0, 1};
+	// 	emitter0->emitterData.particleGravity       = 1;
+	// 	emitter0->emitterData.particleBillboardType = 0;
+	// 	emitter0->emitterData.particleTextureType   = 0;
+	// 	emitter0->emitterData.burstsOneShot = 1;
+	// 	EmitterManager::Instance().Register(emitter0);
+	// }
 
 	UiTitle::Instance().Update();
 
@@ -223,10 +228,11 @@ void SceneTitle::Render()
 	}
 	frameBuffer->DeActivate();
 
-	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
-	
 
-	
+
+	bitBlockTransfer->blit(frameBuffer->shaderResourceViews[0].GetAddressOf(), 0, 1);
+
+
 
 #if USE_IMGUI
 	// --- デバッグ描画 ---

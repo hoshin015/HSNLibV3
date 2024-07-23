@@ -81,8 +81,8 @@ public:
 		//float maxStrength         = 60;
 		//float incrementStrength   = 2;
 		float maxSkillGauge   = 100;
-		float incrementSkill  = 7;
-		float incSkillRange   = 2;
+		float incrementSkill  = 20;
+		float incSkillRange   = 5;
 		float skillDamageRate = 3;
 
 		float leastBt = 5;
@@ -260,4 +260,5 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pbrPS;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> wboitPbrPS;
 	DirectX::XMFLOAT4 drawColor = { 1,1,1,1 };
+	Vector4 hitColor = { 0.0f, 0.0f, 1.0f, 1.0f };
 };

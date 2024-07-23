@@ -3,6 +3,7 @@
 #include "../../../External/ImGui/imgui.h"
 #include "../Game/Object/StateMachine/Player/Player.h"
 #include "../Game/Object/StateMachine/Enemy/Enemy.h"
+#include "../../Library/Timer.h"
 
 CaptureScreen::CaptureScreen()
 {
@@ -29,7 +30,7 @@ void CaptureScreen::Initialize()
 
 bool CaptureScreen::BeginCapture()
 {
-	if ((rand() % CAPTURE_FREQUENCY == 0 || capture) && Enemy::Instance().awaked && Enemy::Instance().IsAlive())
+	if ((rand() % CAPTURE_FREQUENCY == 0 || capture) && Enemy::Instance().awaked && Enemy::Instance().IsAlive() && !(Timer::Instance().TimeScale() < 1.0f))
 	{
 		captures[currentCaptureIndex].frameBuffer->Clear();
 		captures[currentCaptureIndex].frameBuffer->Activate();

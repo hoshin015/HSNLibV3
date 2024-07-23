@@ -32,6 +32,20 @@ enum class MUSIC_LABEL
 	Lightning8,
 	Lightning9,
 	Lightning10,
+
+	SLASH,
+	DODGE,
+	TITLE,
+	LOOSE,
+	WIN,
+
+	DAMAGE,
+	SKILL,
+
+	BIG_HOERU,
+	HOERU1,
+	HOERU2,
+
 	END,
 };
 

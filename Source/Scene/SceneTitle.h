@@ -8,6 +8,7 @@
 #include "../../Library/3D/SkyMap.h"
 // --- Scene ---
 #include "Scene.h"
+#include "../../Library/Video/Video.h"
 #include "../Game/Object/TestAnimated.h"
 
 
@@ -43,4 +44,5 @@ private:
 	std::unique_ptr<TestAnimated> titleFloor;
 
 	std::unique_ptr<SkyMap> skyMap;
+
 };

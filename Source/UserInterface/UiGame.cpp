@@ -145,6 +145,11 @@ void UiGame::Update()
 	hpMax = player.CStatus().maxHp;
 	skill = player.AStatus().skillGauge;
 	skillMax = player.CStatus().maxSkillGauge;
+
+	somaMax = enemy.maxFlinchValue;
+	soma = enemy.maxFlinchValue - enemy.GetFlinchValue();
+	if (soma > somaMax)
+		soma = somaMax;
 }
 
 // •`‰æ

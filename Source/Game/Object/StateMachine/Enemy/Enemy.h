@@ -127,6 +127,7 @@ public:
 	// --- 大咆哮用のステータス ---
 	RadialBlur* radialBlur;
 	float bigRoarTimer = 0.0f;
+	bool bigRoarAudio = false;
 	Easing::EasingValue bigRoarRadialUpSampling =
 	{
 		0.8f, 1.8f,
@@ -160,6 +161,7 @@ public:
 	bool awaking;
 	float maxFlinchValue = 100.0f;
 	bool awaked;
+	float awakeRate = 0.8f;
 
 	void DrawDebugImGui(int number);
 };
